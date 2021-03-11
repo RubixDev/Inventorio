@@ -1,0 +1,38 @@
+{
+  "required": true,
+  "package": "me.danetnaverno.inventorio.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "EnderChestBlockMinix",
+    "PlayerEntityAccessor",
+    "PlayerEntityMixin",
+    "PlayerInventoryAccessor",
+    "PlayerInventoryMixin",
+    "PlayerScreenHandlerAccessor",
+    "PlayerScreenHandlerMixin",
+    "ScreenHandlerAccessor",
+    "ScreenHandlerMixin",
+    "ServerPlayerInteractionManagerMixin",
+    "ServerPlayNetworkHandlerMixin",
+    "SimpleInventoryAccessor",
+    "SlotAccessor"
+  ],
+  "client": [
+    "client.ClientPlayerEntityMixin",
+    "client.ClientPlayerInteractionManagerMixin",
+    "client.HandledScreenAccessor",
+    "client.InGameHudMixin",
+    "client.InventoryScreenMixin",
+    "client.MinecraftClientAccessor",
+    "client.MinecraftClientMixin",
+    "client.ScreenAccessor",
+    "client.screen.AbstractFurnaceScreenMixin",
+    "client.screen.CraftingScreenMixin",
+    "client.screen.GrindstoneScreenMixin",
+    "client.screen.HandledScreenMixin",
+    "client.ClientPlayNetworkHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "enchantment.inventorio.deep_pockets": "Deep Pockets",
+  "inventorio.ignore_screen.tooltip": "Disable Inventorio for this screen",
+
+  "inventorio.keys.category": "Inventorio",
+
+  "inventorio.keys.quickbar_10": "Hotbar Slot 10",
+  "inventorio.keys.quickbar_11": "Hotbar Slot 11",
+  "inventorio.keys.quickbar_12": "Hotbar Slot 12",
+
+  "inventorio.keys.next_utility": "Next Utility",
+  "inventorio.keys.prev_utility": "Previous Utility",
+  "inventorio.keys.use_utility": "Use Utility",
+  "inventorio.keys.open_config": "Open Inventorio Settings"
+}
