@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class ServerPlayerInteractionManagerMixin
 {
     @Inject(method = "interactBlock", at = @At(value = "HEAD"))
-    private void todoRenameMe(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir)
+    private void displayBlockWhileDigging(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir)
     {
         PlayerAddon.get(player).getInventoryAddon().setMainHandDisplayTool(ItemStack.EMPTY);
     }

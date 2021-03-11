@@ -24,6 +24,8 @@ class ExternalInventoryHandlerAddon internal constructor(val handler: ScreenHand
 
     override fun tryInitialize(slot: Slot): Boolean
     {
+        //The problem is that we want to inject into every single ScreenHandler, that has a slot assigned to the player's inventory.
+        //But a general ScreenHandler has no way to trace a player. This is a workaround.
         if (slot.inventory is PlayerInventory)
         {
             if (initStage == 0)

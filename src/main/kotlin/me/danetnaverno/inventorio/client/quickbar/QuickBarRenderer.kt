@@ -33,12 +33,12 @@ object QuickBarRenderer
 
     fun renderQuickBar(hud: InGameHud, tickDelta: Float, matrices: MatrixStack)
     {
-        val playerWrapper = PlayerAddon.Client.local
-        val player = playerWrapper.player
+        val playerAddon = PlayerAddon.Client.local
+        val player = playerAddon.player
 
         val simplifiedQuickBarMode = InventorioConfigData.config().quickBarSimplifiedGlobal != QuickBarSimplified.OFF
-        val utilBelt = playerWrapper.inventoryAddon.getDisplayedUtilities()
-        val activeTool = playerWrapper.inventoryAddon.mainHandDisplayTool
+        val utilBelt = playerAddon.inventoryAddon.getDisplayedUtilities()
+        val activeTool = playerAddon.inventoryAddon.mainHandDisplayTool
 
         val arm = player.mainArm.opposite
         val scaledWidthHalfed = client.window.scaledWidth / 2 - 30

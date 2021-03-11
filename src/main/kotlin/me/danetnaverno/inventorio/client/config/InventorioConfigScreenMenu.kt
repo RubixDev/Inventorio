@@ -87,30 +87,30 @@ object InventorioConfigScreenMenu
 
         if (MinecraftClient.getInstance().player != null)
         {
-            val playerWrapper = PlayerAddon.Client.local
+            val playerAddon = PlayerAddon.Client.local
 
             world.addEntry(entryBuilder
                     .startEnumSelector(
                             TranslatableText("inventorio.config.quick_bar_mode_world"),
                             QuickBarMode::class.java,
-                            playerWrapper.quickBarMode
+                            playerAddon.quickBarMode
                     )
                     .setEnumNameProvider { TranslatableText("inventorio.config.quick_bar_mode."+it.name) }
                     .setTooltip(TranslatableText("inventorio.config.quick_bar_mode_world.tooltip"))
                     .setDefaultValue(QuickBarMode.DEFAULT)
-                    .setSaveConsumer { playerWrapper.trySetRestrictionModesC2S(it, playerWrapper.utilityBeltMode) }
+                    .setSaveConsumer { playerAddon.trySetRestrictionModesC2S(it, playerAddon.utilityBeltMode) }
                     .build())
 
             world.addEntry(entryBuilder
                     .startEnumSelector(
                             TranslatableText("inventorio.config.utility_belt_mode_world"),
                             UtilityBeltMode::class.java,
-                            playerWrapper.utilityBeltMode
+                            playerAddon.utilityBeltMode
                     )
                     .setEnumNameProvider { TranslatableText("inventorio.config.utility_belt_mode."+it.name) }
                     .setTooltip(TranslatableText("inventorio.config.utility_belt_mode_world.tooltip"))
                     .setDefaultValue(UtilityBeltMode.FILTERED)
-                    .setSaveConsumer { playerWrapper.trySetRestrictionModesC2S(playerWrapper.quickBarMode, it) }
+                    .setSaveConsumer { playerAddon.trySetRestrictionModesC2S(playerAddon.quickBarMode, it) }
                     .build())
         }
         else

@@ -13,6 +13,7 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,19 +22,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @SuppressWarnings("ConstantConditions")
 @Mixin(ScreenHandler.class)
-public class ScreenHandlerMixin implements HandlerDuck
+public abstract class ScreenHandlerMixin implements HandlerDuck
 {
+    @Shadow protected abstract Slot addSlot(Slot slot);
+
     @Unique public ScreenHandlerAddon addon;
 
     @Inject(method = "<init>", at = @At(value = "RETURN"))
-    private void attachAddon(@Nullable ScreenHandlerType<?> type, int syncId, CallbackInfo ci)
+    private void createHandlerAddon(@Nullable ScreenHandlerType<?> type, int syncId, CallbackInfo ci)
     {
         if (!((Object) this instanceof PlayerScreenHandler))
             addon = new ExternalInventoryHandlerAddon((ScreenHandler) (Object) this);
     }
 
     @Inject(method = "onSlotClick", at = @At(value = "HEAD"), cancellable = true)
-    private void onSlotClickInject(int slotIndex, int clickData, SlotActionType actionType, PlayerEntity playerEntity, CallbackInfoReturnable<ItemStack> cir)
+    private void onAddonSlotClick(int slotIndex, int clickData, SlotActionType actionType, PlayerEntity playerEntity, CallbackInfoReturnable<ItemStack> cir)
     {
         ItemStack result = ((HandlerDuck)this).getAddon().onSlotClick(slotIndex, clickData, actionType, playerEntity);
         if (result != null)
@@ -41,7 +44,7 @@ public class ScreenHandlerMixin implements HandlerDuck
     }
 
     @Inject(method = "onSlotClick", at = @At(value = "RETURN"))
-    private void onSlotClickInject2(int slotIndex, int clickData, SlotActionType actionType, PlayerEntity playerEntity, CallbackInfoReturnable<ItemStack> cir)
+    private void postSlotClick(int slotIndex, int clickData, SlotActionType actionType, PlayerEntity playerEntity, CallbackInfoReturnable<ItemStack> cir)
     {
         if ((Object) this instanceof PlayerScreenHandler)
             ((PlayerScreenHandlerAddon)(((HandlerDuck)this).getAddon())).considerCheckingCapacity(slotIndex);
@@ -50,14 +53,14 @@ public class ScreenHandlerMixin implements HandlerDuck
     @Inject(method = "addSlot", at = @At(value = "HEAD"), cancellable = true)
     private void addSlotInject(Slot slot, CallbackInfoReturnable<Slot> cir)
     {
-        if (!hallo2(this, slot))
+        if (!tryInitAddon(this, slot))
         {
             cir.setReturnValue(slot);
             cir.cancel();
         }
     }
 
-    private boolean hallo2(Object object, Slot slot)
+    private boolean tryInitAddon(Object object, Slot slot)
     {
         if (object instanceof PlayerScreenHandler)
             return true;

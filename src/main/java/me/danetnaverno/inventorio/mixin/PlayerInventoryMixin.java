@@ -26,11 +26,10 @@ public class PlayerInventoryMixin implements InventoryDuck
     @Unique public PlayerInventoryAddon addon;
 
     @Inject(method = "<init>", at = @At(value = "RETURN"))
-    private <E> void todoRenameMe(PlayerEntity player, CallbackInfo ci)
+    private <E> void createInventoryAddon(PlayerEntity player, CallbackInfo ci)
     {
         addon = new PlayerInventoryAddon((PlayerInventory)(Object)this);
         ((PlayerInventoryAccessor)this).setCombinedInventory(addon.getCombinedInventory());
-        //InventorioNetworking.INSTANCE.S2CSendPlayerSettings(player);
     }
 
     @Overwrite
@@ -48,6 +47,7 @@ public class PlayerInventoryMixin implements InventoryDuck
     @Inject(method = "getEmptySlot", at = @At(value = "RETURN"), cancellable = true)
     public void getEmptySlot(CallbackInfoReturnable<Integer> cir)
     {
+        //If no free slot is found in the main inventory, look in the Deep Pockets' extension
         if (cir.getReturnValue() == -1)
             cir.setReturnValue(addon.getEmptyExtensionSlot());
     }
@@ -55,6 +55,7 @@ public class PlayerInventoryMixin implements InventoryDuck
     @Inject(method = "getOccupiedSlotWithRoomForStack", at = @At(value = "RETURN"), cancellable = true)
     public void getOccupiedSlotWithRoomForStack(ItemStack stack, CallbackInfoReturnable<Integer> cir)
     {
+        //If no fitting slot is found in the main inventory, look in the Deep Pockets' extension
         if (cir.getReturnValue() == 40 || cir.getReturnValue() == -1)
             cir.setReturnValue(addon.getOccupiedExtensionSlotWithRoomForStack(stack));
     }

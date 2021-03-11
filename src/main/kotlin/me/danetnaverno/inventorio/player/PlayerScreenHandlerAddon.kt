@@ -21,8 +21,8 @@ import java.awt.Rectangle
 class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHandler) : ScreenHandlerAddon
 {
     private val accessor = handler as PlayerScreenHandlerAccessor
-    private val playerWrapper = PlayerAddon[accessor.owner]
-    private val quickBarHandlerWidget = QuickBarHandlerWidget(playerWrapper.inventoryAddon)
+    private val playerAddon = PlayerAddon[accessor.owner]
+    private val quickBarHandlerWidget = QuickBarHandlerWidget(playerAddon.inventoryAddon)
 
     //==============================
     //Injects. These functions are either injected or redirected to by a mixin of a [PlayerInventory] class
@@ -42,8 +42,8 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
                             guiOffsetX: Int, guiOffsetY: Int,
                             slotOffsetX: Int, slotOffsetY: Int)
     {
-        val player = playerWrapper.player
-        val inventory = playerWrapper.player.inventory
+        val player = this.playerAddon.player
+        val inventory = this.playerAddon.player.inventory
         //todo if we spawn with deep pockets, it bugs out
         val rows = MathStuffConstants.getExtraRows(player)
 
@@ -179,7 +179,7 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
 
     fun checkCapacity()
     {
-        val player = playerWrapper.player
+        val player = playerAddon.player
         val range = MathStuffConstants.getAvailableExtensionSlotsRange(player)
         for (i in range)
         {
@@ -213,7 +213,7 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
     @Environment(EnvType.CLIENT)
     fun refreshSlots()
     {
-        val player = playerWrapper.player
+        val player = playerAddon.player
         val rows = MathStuffConstants.getExtraRows(player)
         val mainRect = SLOTS_PLAYER_INVENTORY_ENTIRE_MAIN_PART(rows)
 

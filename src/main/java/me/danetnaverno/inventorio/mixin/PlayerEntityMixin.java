@@ -35,7 +35,7 @@ public abstract class PlayerEntityMixin implements PlayerDuck
     @Shadow public abstract EnderChestInventory getEnderChestInventory();
 
     @Inject(method = "<init>", at = @At(value = "RETURN"))
-    private void createAddon(World world, BlockPos pos, float yaw, GameProfile profile, CallbackInfo ci)
+    private void createPlayerAddon(World world, BlockPos pos, float yaw, GameProfile profile, CallbackInfo ci)
     {
         PlayerEntity thisPlayer = (PlayerEntity)(Object)this;
         addon = PlayerAddon.Companion.create(thisPlayer);
@@ -53,7 +53,7 @@ public abstract class PlayerEntityMixin implements PlayerDuck
     }
 
     @Inject(method = "equipStack", at = @At(value = "JUMP"), cancellable = true)
-    public void todoRenameMe(EquipmentSlot slot, ItemStack stack, CallbackInfo ci)
+    public void makeMainHandWorkWithQuickBar(EquipmentSlot slot, ItemStack stack, CallbackInfo ci)
     {
         if (slot == EquipmentSlot.MAINHAND)
             addon.getInventoryAddon().getShortcutQuickBar().setStack(inventory.selectedSlot, stack);
@@ -62,7 +62,7 @@ public abstract class PlayerEntityMixin implements PlayerDuck
     }
 
     @Inject(method = "getEquippedStack", at = @At(value = "HEAD"), cancellable = true)
-    public void todoRenameMe(EquipmentSlot slot, CallbackInfoReturnable<ItemStack> cir)
+    public void displayUilityInOffhand(EquipmentSlot slot, CallbackInfoReturnable<ItemStack> cir)
     {
         if (slot == EquipmentSlot.OFFHAND)
         {
@@ -70,12 +70,10 @@ public abstract class PlayerEntityMixin implements PlayerDuck
             ItemStack stack = inventory.getStack(index);
             cir.setReturnValue(stack);
         }
-        else if (slot.getType() == EquipmentSlot.Type.ARMOR)
-            cir.setReturnValue(this.inventory.armor.get(slot.getEntitySlotId()));
     }
 
     @Redirect(method = "getBlockBreakingSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isEmpty()Z", ordinal = 0))
-    public boolean todoRenameMe(ItemStack itemStack)
+    public boolean removeBadCheck(ItemStack itemStack)
     {
         return false;
     }
@@ -95,13 +93,13 @@ public abstract class PlayerEntityMixin implements PlayerDuck
     }
 
     @Inject(method = "readCustomDataFromTag", at = @At(value = "RETURN"))
-    public void todoRenameMe2(CompoundTag tag, CallbackInfo ci)
+    public void deserializePlayerAddon(CompoundTag tag, CallbackInfo ci)
     {
         InventorioPlayerSerializer.INSTANCE.deserialize(addon, tag.getCompound("Inventorio"));
     }
 
     @Inject(method = "writeCustomDataToTag", at = @At(value = "RETURN"))
-    public void todoRenameMe3(CompoundTag tag, CallbackInfo ci)
+    public void serializePlayerAddon(CompoundTag tag, CallbackInfo ci)
     {
         CompoundTag inventorioTag = new CompoundTag();
         InventorioPlayerSerializer.INSTANCE.serialize(addon, inventorioTag);

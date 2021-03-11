@@ -52,7 +52,7 @@ object InventorioNetworking
 
     fun S2CSendPlayerSettings(player: PlayerEntity)
     {
-        val wrapper = PlayerAddon[player]
-        ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, SetInventorySettingsS2CPacket(wrapper.quickBarMode, wrapper.utilityBeltMode))
+        val addon = PlayerAddon[player]
+        ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, SetInventorySettingsS2CPacket(addon.quickBarMode, addon.utilityBeltMode))
     }
 }

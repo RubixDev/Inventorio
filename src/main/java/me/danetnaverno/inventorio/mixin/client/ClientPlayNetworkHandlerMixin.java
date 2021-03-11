@@ -1,6 +1,5 @@
 package me.danetnaverno.inventorio.mixin.client;
 
-import me.danetnaverno.inventorio.duck.PlayerDuck;
 import me.danetnaverno.inventorio.packet.InventorioNetworking;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -13,10 +12,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayNetworkHandler.class)
 @Environment(EnvType.CLIENT)
-public abstract class ClientPlayNetworkHandlerMixin implements PlayerDuck
+public class ClientPlayNetworkHandlerMixin
 {
     @Inject(method = "onGameJoin", at = @At(value = "RETURN"))
-    private void createAddon(GameJoinS2CPacket packet, CallbackInfo ci)
+    private void sendIgnoredScreensC2S(GameJoinS2CPacket packet, CallbackInfo ci)
     {
         InventorioNetworking.INSTANCE.C2SSendIgnoredScreenHandlers();
     }

@@ -36,7 +36,7 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
     val combinedInventory = ImmutableList.of(inventory.main, inventory.armor, dudOffhand, extension, toolBelt, utilityBelt, physicalQuickQar)!!
 
     private val player = inventory.player!!
-    private val playerWrapper by lazy { PlayerAddon[player] }
+    private val playerAddon by lazy { PlayerAddon[player] }
 
     var selectedUtility = 0
     var mainHandDisplayTool = ItemStack.EMPTY
@@ -56,8 +56,8 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
             mainHandDisplayTool
         else if (physicalQuickQar[inventory.selectedSlot].isNotEmpty)
             physicalQuickQar[inventory.selectedSlot]
-        else if (hasAnySimilar(playerWrapper.inventoryAddon.shortcutQuickBar.getStack(inventory.selectedSlot)))
-            playerWrapper.inventoryAddon.shortcutQuickBar.getStack(inventory.selectedSlot)
+        else if (hasAnySimilar(playerAddon.inventoryAddon.shortcutQuickBar.getStack(inventory.selectedSlot)))
+            playerAddon.inventoryAddon.shortcutQuickBar.getStack(inventory.selectedSlot)
         else
             ItemStack.EMPTY
     }

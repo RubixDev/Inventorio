@@ -10,7 +10,7 @@ import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
 import net.minecraft.util.collection.DefaultedList
 
-class QuickBarInventory(private val inventoryWrapper: PlayerInventoryAddon) : Inventory
+class QuickBarInventory(private val inventoryAddon: PlayerInventoryAddon) : Inventory
 {
     val stacks = DefaultedList.ofSize(inventorioRowLength, ItemStack.EMPTY)!!
 
@@ -50,7 +50,7 @@ class QuickBarInventory(private val inventoryWrapper: PlayerInventoryAddon) : In
 
     override fun setStack(slot: Int, stack: ItemStack)
     {
-        stacks[slot] = QuickBarItemStack(inventoryWrapper, stack)
+        stacks[slot] = QuickBarItemStack(inventoryAddon, stack)
     }
 
     override fun markDirty()

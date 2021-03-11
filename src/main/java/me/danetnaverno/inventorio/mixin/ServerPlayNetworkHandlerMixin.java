@@ -16,7 +16,7 @@ public class ServerPlayNetworkHandlerMixin
     @Shadow public ServerPlayerEntity player;
 
     @Inject(method = "onClientSettings", at = @At(value = "RETURN"))
-    private void todoRenameMe(ClientSettingsC2SPacket packet, CallbackInfo ci)
+    private void setPlayerSettingsBack(ClientSettingsC2SPacket packet, CallbackInfo ci)
     {
         InventorioNetworking.INSTANCE.S2CSendPlayerSettings(this.player);
     }

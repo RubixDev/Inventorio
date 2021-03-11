@@ -15,21 +15,20 @@ import net.minecraft.item.ItemStack
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.slot.SlotActionType
 
-class QuickBarHandlerWidget(val inventoryWrapper: PlayerInventoryAddon)
+class QuickBarHandlerWidget(val inventoryAddon: PlayerInventoryAddon)
 {
     fun createQuickBarSlots(handler: ScreenHandler, startX: Int, startY: Int, slotIndicesRange: IntRange)
     {
         val accessor = handler as ScreenHandlerAccessor
-        //Shortcut QuickBar
         val shortCutSlots = mutableListOf<QuickBarShortcutSlot>()
         //Physical QuickBar
         for ((absolute, relative) in slotIndicesRange.indicesAndOffsets())
         {
-            val shortCutSlot = QuickBarShortcutSlot(inventoryWrapper.shortcutQuickBar, relative,
+            val shortCutSlot = QuickBarShortcutSlot(inventoryAddon.shortcutQuickBar, relative,
                     startX + relative * gui_canvas_inventorySlotSize,
                     startY)
             shortCutSlots.add(shortCutSlot)
-            accessor.addASlot(QuickBarPhysicalSlot(shortCutSlot, inventoryWrapper.inventory, absolute,
+            accessor.addASlot(QuickBarPhysicalSlot(shortCutSlot, inventoryAddon.inventory, absolute,
                     startX + relative * gui_canvas_inventorySlotSize,
                     startY))
         }

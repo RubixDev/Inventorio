@@ -19,6 +19,8 @@ class InventorioConfigData : ConfigData
     var ignoredScreensGlobal = listOf<String>()
 
     //Defaults
+    //QuickBar Mode and Utility Belt Mode are assigned to player's entity on both sides,
+    // because this setting changes how the inventory works physically.
     var quickBarModeDefault = QuickBarMode.DEFAULT
     var utilityBeltModeDefault = UtilityBeltMode.FILTERED
 

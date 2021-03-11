@@ -25,22 +25,22 @@ object InventorioScreenAddon
 {
     private val BACKGROUND_TEXTURE = Identifier("inventorio", "textures/gui/player_inventory.png")
 
-    private lateinit var playerWrapper : PlayerAddon
+    private lateinit var playerAddon : PlayerAddon
     private lateinit var handlerAccessor: HandledScreenAccessor
     private lateinit var quickBarWidget: QuickBarInventoryWidget
 
     fun init(inventoryScreen: InventoryScreen)
     {
-        playerWrapper = PlayerAddon.Client.local
-        quickBarWidget = QuickBarInventoryWidget(playerWrapper)
+        playerAddon = PlayerAddon.Client.local
+        quickBarWidget = QuickBarInventoryWidget(playerAddon)
         handlerAccessor = inventoryScreen as HandledScreenAccessor
         handlerAccessor.backgroundWidth = gui_generalInventoryWidth
-        handlerAccessor.backgroundHeight += MathStuffConstants.getExtraPixelHeight(playerWrapper.player)
+        handlerAccessor.backgroundHeight += MathStuffConstants.getExtraPixelHeight(playerAddon.player)
     }
 
     fun postInit()
     {
-        (playerWrapper.handlerAddon as PlayerScreenHandlerAddon).refreshSlots()
+        (playerAddon.handlerAddon as PlayerScreenHandlerAddon).refreshSlots()
         if (handlerAccessor.buttons.isNotEmpty())
             handlerAccessor.buttons[0].x = -9385
         handlerAccessor.titleX = 130
@@ -52,7 +52,7 @@ object InventorioScreenAddon
 
         val screenX = handlerAccessor.x
         val screenY = handlerAccessor.y
-        val extensionRows = MathStuffConstants.getExtraRows(playerWrapper.player)
+        val extensionRows = MathStuffConstants.getExtraRows(playerAddon.player)
 
         //Top Part
         DrawableHelper.drawTexture(matrices,
@@ -101,8 +101,8 @@ object InventorioScreenAddon
 
         //UtilityBeltFrame
         DrawableHelper.drawTexture(matrices,
-                screenX + GUI_PLAYER_INVENTORY_UTILITY_SELECTION_START_POS.x + (playerWrapper.inventoryAddon.selectedUtility / 4) * GUI_INVENTORY_SLOT_SIZE,
-                screenY + GUI_PLAYER_INVENTORY_UTILITY_SELECTION_START_POS.y + (playerWrapper.inventoryAddon.selectedUtility % 4) * GUI_INVENTORY_SLOT_SIZE,
+                screenX + GUI_PLAYER_INVENTORY_UTILITY_SELECTION_START_POS.x + (playerAddon.inventoryAddon.selectedUtility / 4) * GUI_INVENTORY_SLOT_SIZE,
+                screenY + GUI_PLAYER_INVENTORY_UTILITY_SELECTION_START_POS.y + (playerAddon.inventoryAddon.selectedUtility % 4) * GUI_INVENTORY_SLOT_SIZE,
                 CANVAS_PLAYER_INVENTORY_UTILITY_SELECTION_WITH_DECO.x.toFloat(), CANVAS_PLAYER_INVENTORY_UTILITY_SELECTION_WITH_DECO.y.toFloat(),
                 CANVAS_PLAYER_INVENTORY_UTILITY_SELECTION_WITH_DECO.width, CANVAS_PLAYER_INVENTORY_UTILITY_SELECTION_WITH_DECO.height,
                 256, 512)
@@ -111,7 +111,7 @@ object InventorioScreenAddon
         //This isn't particularly nice, but the built-in system requires an empty slot icon to be a part of a vanilla block atlas
         for ((absolute, relative) in toolBeltSlotsRange.indicesAndOffsets())
         {
-            if (playerWrapper.player.inventory.getStack(absolute).isEmpty)
+            if (playerAddon.player.inventory.getStack(absolute).isEmpty)
             {
                 val slotSlot = SLOTS_PLAYER_INVENTORY_TOOL_BELT_SLOT(relative)
                 val canvasSlot = CANVAS_PLAYER_INVENTORY_TOOL_BELT_SLOT(relative)

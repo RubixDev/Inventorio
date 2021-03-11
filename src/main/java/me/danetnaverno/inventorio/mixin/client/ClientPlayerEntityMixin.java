@@ -1,7 +1,6 @@
 package me.danetnaverno.inventorio.mixin.client;
 
 import me.danetnaverno.inventorio.client.config.InventorioConfigData;
-import me.danetnaverno.inventorio.duck.PlayerDuck;
 import me.danetnaverno.inventorio.player.PlayerAddon;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -18,14 +17,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayerEntity.class)
 @Environment(EnvType.CLIENT)
-public abstract class ClientPlayerEntityMixin implements PlayerDuck
+public class ClientPlayerEntityMixin
 {
     @Inject(method = "<init>", at = @At(value = "RETURN"))
-    private void createAddon(MinecraftClient client, ClientWorld world, ClientPlayNetworkHandler networkHandler, StatHandler stats, ClientRecipeBook recipeBook, boolean lastSneaking, boolean lastSprinting, CallbackInfo ci)
+    private void setIgnoredScreens(MinecraftClient client, ClientWorld world, ClientPlayNetworkHandler networkHandler, StatHandler stats, ClientRecipeBook recipeBook, boolean lastSneaking, boolean lastSprinting, CallbackInfo ci)
     {
         PlayerAddon playerAddon = PlayerAddon.Companion.get((ClientPlayerEntity)(Object)this);
         playerAddon.setAllIgnoredScreenHandlers(InventorioConfigData.Companion.config().getIgnoredScreensGlobal());
-        //InventorioNetworking.INSTANCE.C2SSendIgnoredScreenHandlers();
-        //InventorioNetworking.INSTANCE.C2SSendPlayerSettingsFromDefault();
     }
 }
