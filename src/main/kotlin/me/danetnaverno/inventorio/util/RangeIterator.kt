@@ -1,6 +1,9 @@
 package me.danetnaverno.inventorio.util
 
-fun IntProgression.indicesAndOffsets(): IntProgressionIterator
+/**
+ * This adds the ability to iterate over an IntProgression with both relative and absolute indices at the same time
+ */
+fun IntProgression.withRelativeIndex(): IntProgressionIterator
 {
     return IntProgressionIterator(this)
 }

@@ -1,17 +1,17 @@
 package me.danetnaverno.inventorio.packet.c2s
 
-import me.danetnaverno.inventorio.QuickBarMode
 import me.danetnaverno.inventorio.RobertoGarbagio
-import me.danetnaverno.inventorio.UtilityBeltMode
 import me.danetnaverno.inventorio.player.PlayerAddon
+import me.danetnaverno.inventorio.util.QuickBarMode
+import me.danetnaverno.inventorio.util.UtilityBeltMode
 import net.minecraft.network.Packet
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.network.listener.ServerPlayPacketListener
 import net.minecraft.server.network.ServerPlayNetworkHandler
 
 class SetInventorySettingsC2SPacket(
-    var quickBarMode: QuickBarMode = QuickBarMode.DEFAULT,
-    var utilityBeltMode: UtilityBeltMode = UtilityBeltMode.FILTERED
+        var quickBarMode: QuickBarMode = QuickBarMode.DEFAULT,
+        var utilityBeltMode: UtilityBeltMode = UtilityBeltMode.FILTERED
 ) : Packet<ServerPlayPacketListener>
 {
     override fun read(buf: PacketByteBuf)

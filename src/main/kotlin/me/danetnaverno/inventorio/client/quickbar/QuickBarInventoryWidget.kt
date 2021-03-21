@@ -1,8 +1,10 @@
 package me.danetnaverno.inventorio.client.quickbar
 
-import me.danetnaverno.inventorio.*
 import me.danetnaverno.inventorio.player.PlayerAddon
-import me.danetnaverno.inventorio.util.indicesAndOffsets
+import me.danetnaverno.inventorio.util.INVENTORY_SLOT_SIZE
+import me.danetnaverno.inventorio.util.QuickBarMode
+import me.danetnaverno.inventorio.util.isNotEmpty
+import me.danetnaverno.inventorio.util.quickBarPhysicalSlotsRange
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.gui.DrawableHelper
@@ -11,26 +13,27 @@ import net.minecraft.client.util.math.MatrixStack
 @Environment(EnvType.CLIENT)
 class QuickBarInventoryWidget(val playerAddon: PlayerAddon)
 {
-    fun drawBackground(matrices: MatrixStack, guiStartX: Int, guiStartY: Int, canvasEmptyRowStartX: Int, canvasEmptyRowStartY: Int)
+    fun drawPhysSlots(matrices: MatrixStack, guiX: Int, guiY: Int, canvasX: Int, canvasY: Int, slotWidth: Int, canvasSizeX: Int, canvasSizeY: Int)
     {
         if (playerAddon.quickBarMode == QuickBarMode.PHYSICAL_SLOTS)
         {
             DrawableHelper.drawTexture(matrices,
-                    guiStartX, guiStartY,
-                    canvasEmptyRowStartX.toFloat(), canvasEmptyRowStartY.toFloat(),
-                    gui_canvas_inventorySlotSize * inventorioRowLength, gui_canvas_inventorySlotSize,
-                    256, 512)
+                    guiX, guiY,
+                    canvasX.toFloat(), canvasY.toFloat(),
+                    INVENTORY_SLOT_SIZE * slotWidth, INVENTORY_SLOT_SIZE,
+                    canvasSizeX, canvasSizeY)
         }
         else
         {
-            for ((absolute, relative) in quickBarPhysicalSlotsRange.indicesAndOffsets())
+            val start = quickBarPhysicalSlotsRange.first
+            for (relative in 0 until slotWidth)
             {
-                if (playerAddon.player.playerScreenHandler.getSlot(absolute).stack.isNotEmpty)
+                if (playerAddon.player.playerScreenHandler.getSlot(start + relative).stack.isNotEmpty)
                     DrawableHelper.drawTexture(matrices,
-                            guiStartX + relative * gui_canvas_inventorySlotSize, guiStartY,
-                            canvasEmptyRowStartX.toFloat(), canvasEmptyRowStartY.toFloat(),
-                            gui_canvas_inventorySlotSize, gui_canvas_inventorySlotSize,
-                            256, 512)
+                            guiX + relative * INVENTORY_SLOT_SIZE, guiY,
+                            canvasX.toFloat(), canvasY.toFloat(),
+                            INVENTORY_SLOT_SIZE, INVENTORY_SLOT_SIZE,
+                            canvasSizeX, canvasSizeY)
             }
         }
     }

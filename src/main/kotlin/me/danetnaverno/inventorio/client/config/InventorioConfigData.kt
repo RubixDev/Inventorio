@@ -1,8 +1,8 @@
 package me.danetnaverno.inventorio.client.config
 
-import me.danetnaverno.inventorio.QuickBarMode
-import me.danetnaverno.inventorio.QuickBarSimplified
-import me.danetnaverno.inventorio.UtilityBeltMode
+import me.danetnaverno.inventorio.util.QuickBarMode
+import me.danetnaverno.inventorio.util.QuickBarSimplified
+import me.danetnaverno.inventorio.util.UtilityBeltMode
 import me.shedaniel.autoconfig.AutoConfig
 import me.shedaniel.autoconfig.ConfigData
 import me.shedaniel.autoconfig.ConfigHolder

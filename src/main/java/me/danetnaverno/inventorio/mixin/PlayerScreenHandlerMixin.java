@@ -1,6 +1,6 @@
 package me.danetnaverno.inventorio.mixin;
 
-import me.danetnaverno.inventorio.duck.HandlerDuck;
+import me.danetnaverno.inventorio.util.HandlerDuck;
 import me.danetnaverno.inventorio.player.PlayerScreenHandlerAddon;
 import me.danetnaverno.inventorio.util.ScreenHandlerAddon;
 import net.minecraft.entity.player.PlayerEntity;

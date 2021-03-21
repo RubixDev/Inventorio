@@ -37,7 +37,6 @@ class DudOffhandSlot(inventory: Inventory, index: Int, x: Int, y: Int): Slot(inv
 
     override fun setStack(stack: ItemStack)
     {
-        //throw IllegalAccessException("Setting a stack of a dud offhand isn't allowed")
     }
 }
    

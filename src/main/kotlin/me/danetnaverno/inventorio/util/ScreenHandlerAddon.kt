@@ -12,11 +12,5 @@ interface ScreenHandlerAddon
 
     fun initialize(playerAddon: PlayerAddon)
 
-    fun initialize(playerAddon: PlayerAddon,
-                   guiOffsetX: Int, guiOffsetY: Int,
-                   slotOffsetX: Int, slotOffsetY: Int)
-
-    fun offsetPlayerSlots(containerSlotOffsetX: Int, containerSlotOffsetY: Int, playerSlotOffsetX: Int, playerSlotOffsetY: Int)
-
     fun onSlotClick(slotIndex: Int, clickData: Int, actionType: SlotActionType, player: PlayerEntity): ItemStack?
 }

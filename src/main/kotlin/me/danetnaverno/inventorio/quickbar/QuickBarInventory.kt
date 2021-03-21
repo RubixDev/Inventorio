@@ -1,9 +1,9 @@
 package me.danetnaverno.inventorio.quickbar
 
-import me.danetnaverno.inventorio.inventorioRowLength
-import me.danetnaverno.inventorio.isNotEmpty
 import me.danetnaverno.inventorio.player.PlayerInventoryAddon
 import me.danetnaverno.inventorio.slot.QuickBarItemStack
+import me.danetnaverno.inventorio.util.inventorioRowLength
+import me.danetnaverno.inventorio.util.isNotEmpty
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.inventory.Inventories
 import net.minecraft.inventory.Inventory

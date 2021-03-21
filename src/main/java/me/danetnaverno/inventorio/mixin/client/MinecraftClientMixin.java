@@ -1,8 +1,7 @@
 package me.danetnaverno.inventorio.mixin.client;
 
-import me.danetnaverno.inventorio.player.PlayerAddon;
 import me.danetnaverno.inventorio.client.InventorioKeyHandler;
-import me.danetnaverno.inventorio.client.inventory.InventorioScreenAddon;
+import me.danetnaverno.inventorio.player.PlayerAddon;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -24,7 +23,7 @@ public class MinecraftClientMixin
     @Redirect(method = "handleInputEvents", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerInventory;selectedSlot:I"))
     private void handleInputEvents(PlayerInventory inventory, int selectedSlot)
     {
-        InventorioScreenAddon.INSTANCE.handleInputEvents(inventory, selectedSlot);
+        InventorioKeyHandler.INSTANCE.handleInputEvents(inventory, selectedSlot);
     }
 
     @Redirect(method = "doItemUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Hand;values()[Lnet/minecraft/util/Hand;"))

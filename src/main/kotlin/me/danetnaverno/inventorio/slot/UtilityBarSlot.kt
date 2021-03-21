@@ -1,8 +1,8 @@
 package me.danetnaverno.inventorio.slot
 
-import me.danetnaverno.inventorio.UtilityBeltMode
 import me.danetnaverno.inventorio.player.PlayerAddon
 import me.danetnaverno.inventorio.util.SlotRestrictionFilters
+import me.danetnaverno.inventorio.util.UtilityBeltMode
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.item.ItemStack
 

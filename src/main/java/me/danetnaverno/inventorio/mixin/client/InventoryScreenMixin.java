@@ -1,6 +1,6 @@
 package me.danetnaverno.inventorio.mixin.client;
 
-import me.danetnaverno.inventorio.client.inventory.InventorioScreenAddon;
+import me.danetnaverno.inventorio.client.inventory.PlayerInventoryScreenAddon;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
@@ -18,18 +18,18 @@ public class InventoryScreenMixin
     @Inject(method = "init", at = @At(value = "HEAD"))
     private void initScreenAddon(CallbackInfo ci)
     {
-        InventorioScreenAddon.INSTANCE.init((InventoryScreen)(Object)this);
+        PlayerInventoryScreenAddon.INSTANCE.init((InventoryScreen)(Object)this);
     }
 
     @Inject(method = "init", at = @At(value = "RETURN"))
     private void postInitScreenAddon(CallbackInfo ci)
     {
-        InventorioScreenAddon.INSTANCE.postInit();
+        PlayerInventoryScreenAddon.INSTANCE.postInit();
     }
 
     @Redirect(method = "drawBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V"))
     public void drawScreenAddon(InventoryScreen inventoryScreen, MatrixStack matrices, int x, int y, int u, int v, int width, int height)
     {
-        InventorioScreenAddon.INSTANCE.drawAddon(matrices);
+        PlayerInventoryScreenAddon.INSTANCE.drawAddon(matrices);
     }
 }

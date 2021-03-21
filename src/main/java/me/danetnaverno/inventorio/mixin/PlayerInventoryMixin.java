@@ -1,8 +1,8 @@
 package me.danetnaverno.inventorio.mixin;
 
-import me.danetnaverno.inventorio.MathStuffConstantsKt;
-import me.danetnaverno.inventorio.duck.InventoryDuck;
 import me.danetnaverno.inventorio.player.PlayerInventoryAddon;
+import me.danetnaverno.inventorio.util.GeneralConstantsKt;
+import me.danetnaverno.inventorio.util.InventoryDuck;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
@@ -76,13 +76,13 @@ public class PlayerInventoryMixin implements InventoryDuck
     @Overwrite
     public static boolean isValidHotbarIndex(int slot)
     {
-        return slot >= 0 && slot < MathStuffConstantsKt.inventorioRowLength;
+        return slot >= 0 && slot < GeneralConstantsKt.inventorioRowLength;
     }
 
     @Overwrite
     public static int getHotbarSize()
     {
-        return MathStuffConstantsKt.inventorioRowLength;
+        return GeneralConstantsKt.inventorioRowLength;
     }
 
     @Override

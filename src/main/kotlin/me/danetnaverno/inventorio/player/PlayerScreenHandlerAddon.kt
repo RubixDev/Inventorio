@@ -1,6 +1,6 @@
 package me.danetnaverno.inventorio.player
 
-import me.danetnaverno.inventorio.*
+import me.danetnaverno.inventorio.RobertoGarbagio
 import me.danetnaverno.inventorio.mixin.PlayerScreenHandlerAccessor
 import me.danetnaverno.inventorio.mixin.SlotAccessor
 import me.danetnaverno.inventorio.quickbar.QuickBarHandlerWidget
@@ -20,8 +20,7 @@ import java.awt.Rectangle
 
 class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHandler) : ScreenHandlerAddon
 {
-    private val accessor = handler as PlayerScreenHandlerAccessor
-    private val playerAddon = PlayerAddon[accessor.owner]
+    private val playerAddon = PlayerAddon[(handler as PlayerScreenHandlerAccessor).owner]
     private val quickBarHandlerWidget = QuickBarHandlerWidget(playerAddon.inventoryAddon)
 
     //==============================
@@ -38,21 +37,24 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
         initialize(playerAddon, 0, 0, 0, 0)
     }
 
-    override fun initialize(playerAddon: PlayerAddon,
+    fun initialize(playerAddon: PlayerAddon,
                             guiOffsetX: Int, guiOffsetY: Int,
                             slotOffsetX: Int, slotOffsetY: Int)
     {
         val player = this.playerAddon.player
         val inventory = this.playerAddon.player.inventory
+        val accessor = handler as PlayerScreenHandlerAccessor
         //todo if we spawn with deep pockets, it bugs out
         val rows = MathStuffConstants.getExtraRows(player)
 
-        handler.slots.clear() //Because we can't avoid calling a super constructor, we have to delete slots which have been created.
+        //Because we can't avoid calling a super constructor, we have to delete slots which have been created.
+        handler.slots.clear()
+        accessor.trackedSlots.clear()
 
         for (i in mainSlotsRange)
             accessor.addASlot(Slot(inventory, i,
-                    SLOTS_PLAYER_INVENTORY_ENTIRE_MAIN_PART(rows).x + (i % inventorioRowLength) * GUI_INVENTORY_SLOT_SIZE,
-                    SLOTS_PLAYER_INVENTORY_ENTIRE_MAIN_PART(rows).y + (i / inventorioRowLength) * GUI_INVENTORY_SLOT_SIZE))
+                    SLOTS_PLAYER_INVENTORY_ENTIRE_MAIN_PART(rows).x + (i % inventorioRowLength) * INVENTORY_SLOT_SIZE,
+                    SLOTS_PLAYER_INVENTORY_ENTIRE_MAIN_PART(rows).y + (i / inventorioRowLength) * INVENTORY_SLOT_SIZE))
 
         //todo constants
         accessor.addASlot(ArmorSlot(inventory, EquipmentSlot.HEAD, armorSlotsRange.first + 3, 8, 8 + 0 * 18))
@@ -69,11 +71,11 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
         //Extended Section (Deep Pockets Enchantment)
         for (i in extensionSlotsRange)
             accessor.addASlot(ExtensionSlot(inventory, i,
-                    SLOTS_PLAYER_INVENTORY_EXTENSION_PART(rows).x + (i % inventorioRowLength) * GUI_INVENTORY_SLOT_SIZE,
-                    SLOTS_PLAYER_INVENTORY_EXTENSION_PART(rows).y + (i / inventorioRowLength) * GUI_INVENTORY_SLOT_SIZE))
+                    SLOTS_PLAYER_INVENTORY_EXTENSION_PART(rows).x + (i % inventorioRowLength) * INVENTORY_SLOT_SIZE,
+                    SLOTS_PLAYER_INVENTORY_EXTENSION_PART(rows).y + (i / inventorioRowLength) * INVENTORY_SLOT_SIZE))
 
         //ToolBelt
-        for ((absolute, relative) in toolBeltSlotsRange.indicesAndOffsets())
+        for ((absolute, relative) in toolBeltSlotsRange.withRelativeIndex())
         {
             val rect = SLOTS_PLAYER_INVENTORY_TOOL_BELT_SLOT(relative)
             accessor.addASlot(ToolBeltSlot(inventory, SlotRestrictionFilters.toolBelt[relative], absolute,
@@ -82,12 +84,12 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
         }
 
         //UtilityBar
-        for ((absolute, relative) in utilityBarSlotsRange.indicesAndOffsets())
+        for ((absolute, relative) in utilityBarSlotsRange.withRelativeIndex())
         {
             val rect = SLOTS_PLAYER_INVENTORY_UTILITY_BAR_TOTAL
             accessor.addASlot(UtilityBarSlot(inventory, absolute,
-                    rect.x + GUI_INVENTORY_SLOT_SIZE * (relative / 4),
-                    rect.y + GUI_INVENTORY_SLOT_SIZE * (relative % 4)))
+                    rect.x + INVENTORY_SLOT_SIZE * (relative / 4),
+                    rect.y + INVENTORY_SLOT_SIZE * (relative % 4)))
         }
 
         quickBarHandlerWidget.createQuickBarSlots(handler, SLOTS_PLAYER_INVENTORY_QUICK_BAR(rows).x, SLOTS_PLAYER_INVENTORY_QUICK_BAR(rows).y, quickBarPhysicalSlotsRange)
@@ -97,10 +99,6 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
             accessor.addASlot(Slot(accessor.craftingInput, x + y * 2,
                     134 + x * 18,
                     18 + y * 18))
-    }
-
-    override fun offsetPlayerSlots(containerSlotOffsetX: Int, containerSlotOffsetY: Int, playerSlotOffsetX: Int, playerSlotOffsetY: Int)
-    {
     }
 
     override fun onSlotClick(slotIndex: Int, clickData: Int, actionType: SlotActionType, player: PlayerEntity): ItemStack?
@@ -116,6 +114,8 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
         val slot = handler.slots[index]
         if (slot == null || !slot.hasStack())
             return ItemStack.EMPTY
+
+        val accessor = handler as PlayerScreenHandlerAccessor
 
         val itemStack = slot.stack
         val itemStackCopy = itemStack.copy()
@@ -194,7 +194,7 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
             slot.stack = ItemStack.EMPTY
             slot.canTakeItems = false
         }
-        for (i in utilityBarSlotsRange.first + 4..utilityBarSlotsRange.last)
+        for (i in utilityBarExtensionSlotsRange)
         {
             val slot = handler.getSlot(i) as ExtensionSlot
             if (range.isEmpty())
@@ -217,11 +217,11 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
         val rows = MathStuffConstants.getExtraRows(player)
         val mainRect = SLOTS_PLAYER_INVENTORY_ENTIRE_MAIN_PART(rows)
 
-        for ((absolute, relative) in mainSlotsRange.indicesAndOffsets())
+        for ((absolute, relative) in mainSlotsRange.withRelativeIndex())
             repositionSlot(handler.getSlot(absolute), mainRect, relative)
 
         val extensionRect = SLOTS_PLAYER_INVENTORY_EXTENSION_PART(rows)
-        for ((absolute, relative) in MathStuffConstants.getAvailableExtensionSlotsRange(player).indicesAndOffsets())
+        for ((absolute, relative) in MathStuffConstants.getAvailableExtensionSlotsRange(player).withRelativeIndex())
         {
             val slot = handler.getSlot(absolute)
             repositionSlot(slot, extensionRect, relative)
@@ -229,9 +229,9 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
         }
 
         val quickBarRect = SLOTS_PLAYER_INVENTORY_QUICK_BAR(rows)
-        for ((absolute, relative) in quickBarPhysicalSlotsRange.indicesAndOffsets())
+        for ((absolute, relative) in quickBarPhysicalSlotsRange.withRelativeIndex())
             repositionSlot(handler.getSlot(absolute), quickBarRect, relative)
-        for ((absolute, relative) in quickBarShortcutSlotsRange.indicesAndOffsets())
+        for ((absolute, relative) in quickBarShortcutSlotsRange.withRelativeIndex())
             repositionSlot(handler.getSlot(absolute), quickBarRect, relative)
 
         for (i in MathStuffConstants.getUnavailableExtensionSlotsRange(player))
@@ -244,7 +244,7 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
     private fun repositionSlot(slot: Slot, rect: Rectangle, index: Int)
     {
         val accessor = slot as SlotAccessor
-        accessor.x = rect.x + GUI_INVENTORY_SLOT_SIZE * (index % inventorioRowLength)
-        accessor.y = rect.y + GUI_INVENTORY_SLOT_SIZE * (index / inventorioRowLength)
+        accessor.x = rect.x + INVENTORY_SLOT_SIZE * (index % inventorioRowLength)
+        accessor.y = rect.y + INVENTORY_SLOT_SIZE * (index / inventorioRowLength)
     }
 }

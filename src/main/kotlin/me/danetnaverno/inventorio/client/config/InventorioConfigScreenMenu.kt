@@ -1,9 +1,9 @@
 package me.danetnaverno.inventorio.client.config
 
-import me.danetnaverno.inventorio.QuickBarMode
-import me.danetnaverno.inventorio.QuickBarSimplified
-import me.danetnaverno.inventorio.UtilityBeltMode
 import me.danetnaverno.inventorio.player.PlayerAddon
+import me.danetnaverno.inventorio.util.QuickBarMode
+import me.danetnaverno.inventorio.util.QuickBarSimplified
+import me.danetnaverno.inventorio.util.UtilityBeltMode
 import me.shedaniel.clothconfig2.api.ConfigBuilder
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -23,9 +23,11 @@ object InventorioConfigScreenMenu
                 .setParentScreen(parent)
                 .setTitle(TranslatableText("inventorio.config.title"))
         val entryBuilder = builder.entryBuilder()
-        val global = builder.getOrCreateCategory(TranslatableText("inventorio.config.category_global"))
+        val category = builder.getOrCreateCategory(TranslatableText("inventorio.keys.category"))
 
-        global.addEntry(entryBuilder
+        category.addEntry(entryBuilder.startTextDescription(TranslatableText("inventorio.config.category_global")).build())
+
+        category.addEntry(entryBuilder
                 .startEnumSelector(
                         TranslatableText("inventorio.config.simplified_quick_bar"),
                         QuickBarSimplified::class.java,
@@ -40,7 +42,7 @@ object InventorioConfigScreenMenu
                 }
                 .build())
 
-        global.addEntry(entryBuilder
+        category.addEntry(entryBuilder
                 .startStrList(TranslatableText("inventorio.config.ignored_screens_list"), InventorioConfigData.config().ignoredScreensGlobal)
                 .setTooltip(TranslatableText("inventorio.config.ignored_screens_list.tooltip"))
                 .setSaveConsumer {
@@ -53,7 +55,7 @@ object InventorioConfigScreenMenu
                 .build()
         )
 
-        global.addEntry(entryBuilder
+        category.addEntry(entryBuilder
                 .startEnumSelector(
                         TranslatableText("inventorio.config.quick_bar_mode_default"),
                         QuickBarMode::class.java,
@@ -68,7 +70,7 @@ object InventorioConfigScreenMenu
                 }
                 .build())
 
-        global.addEntry(entryBuilder
+        category.addEntry(entryBuilder
                 .startEnumSelector(
                         TranslatableText("inventorio.config.utility_belt_mode_default"),
                         UtilityBeltMode::class.java,
@@ -83,13 +85,13 @@ object InventorioConfigScreenMenu
                 }
                 .build())
 
-        val world = builder.getOrCreateCategory(TranslatableText("inventorio.config.category_world"))
+        category.addEntry(entryBuilder.startTextDescription(TranslatableText("inventorio.config.category_world")).build())
 
         if (MinecraftClient.getInstance().player != null)
         {
             val playerAddon = PlayerAddon.Client.local
 
-            world.addEntry(entryBuilder
+            category.addEntry(entryBuilder
                     .startEnumSelector(
                             TranslatableText("inventorio.config.quick_bar_mode_world"),
                             QuickBarMode::class.java,
@@ -101,7 +103,7 @@ object InventorioConfigScreenMenu
                     .setSaveConsumer { playerAddon.trySetRestrictionModesC2S(it, playerAddon.utilityBeltMode) }
                     .build())
 
-            world.addEntry(entryBuilder
+            category.addEntry(entryBuilder
                     .startEnumSelector(
                             TranslatableText("inventorio.config.utility_belt_mode_world"),
                             UtilityBeltMode::class.java,
@@ -115,7 +117,7 @@ object InventorioConfigScreenMenu
         }
         else
         {
-            world.addEntry(entryBuilder.startTextDescription(TranslatableText("inventorio.config.world_locked_tooltip")).build())
+            category.addEntry(entryBuilder.startTextDescription(TranslatableText("inventorio.config.world_locked_tooltip")).build())
         }
 
         return builder.build()

@@ -1,11 +1,10 @@
 package me.danetnaverno.inventorio.client.quickbar
 
 import com.mojang.blaze3d.systems.RenderSystem
-import me.danetnaverno.inventorio.*
 import me.danetnaverno.inventorio.client.config.InventorioConfigData
 import me.danetnaverno.inventorio.player.PlayerAddon
 import me.danetnaverno.inventorio.player.PlayerAddon.Client.selectedQuickBarSection
-import me.danetnaverno.inventorio.util.PhysicalQuickBarLogic
+import me.danetnaverno.inventorio.util.*
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
@@ -197,7 +196,7 @@ object QuickBarRenderer
         if (stack.isNotEmpty)
         {
             client.itemRenderer.renderInGuiWithOverrides(player, stack, x, y)
-            if (!PhysicalQuickBarLogic.canPlayerStoreItemStackPhysicallyInQuickBar(player, stack))
+            if (!MathStuffConstants.canPlayerStoreItemStackPhysicallyInQuickBar(player, stack))
             {
                 RenderSystem.enableBlend()
                 renderGuiItemOverlay(player, client.textRenderer, stack, x, y, sumTotalAmount)
@@ -233,7 +232,7 @@ object QuickBarRenderer
             renderer.draw(string, 0f, 0f, color, true, matrixStack.peek().model, immediate, false, 0, 15728880)
             immediate.draw()
         }
-        else
+        else if (!player.isCreative)
         {
             matrixStack.translate(0.0, 0.0, 200.0)
             DrawableHelper.fill(matrixStack, x, y, x + 16, y + 16, BackgroundHelper.ColorMixer.getArgb(140, 64, 64, 64))

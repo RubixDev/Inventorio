@@ -4,7 +4,7 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "EnderChestBlockMinix",
-    "PlayerEntityAccessor",
+    "ExperienceOrbEntityMixin",
     "PlayerEntityMixin",
     "PlayerInventoryAccessor",
     "PlayerInventoryMixin",
@@ -20,6 +20,9 @@
   "client": [
     "client.ClientPlayerEntityMixin",
     "client.ClientPlayerInteractionManagerMixin",
+    "client.ClientPlayNetworkHandlerMixin",
+    "client.CreativeInventoryScreenMixin",
+    "client.CreativeScreenHandlerMixin",
     "client.HandledScreenAccessor",
     "client.InGameHudMixin",
     "client.InventoryScreenMixin",
@@ -30,7 +33,7 @@
     "client.screen.CraftingScreenMixin",
     "client.screen.GrindstoneScreenMixin",
     "client.screen.HandledScreenMixin",
-    "client.ClientPlayNetworkHandlerMixin"
+    "client.CreativeInventoryScreenAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

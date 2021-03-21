@@ -1,8 +1,8 @@
 package me.danetnaverno.inventorio.player
 
-import me.danetnaverno.inventorio.QuickBarMode
-import me.danetnaverno.inventorio.UtilityBeltMode
-import me.danetnaverno.inventorio.isNotEmpty
+import me.danetnaverno.inventorio.util.QuickBarMode
+import me.danetnaverno.inventorio.util.UtilityBeltMode
+import me.danetnaverno.inventorio.util.isNotEmpty
 import net.fabricmc.fabric.api.util.NbtType
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
@@ -36,7 +36,7 @@ object InventorioPlayerSerializer
         inventorioTag.put("UtilityBelt", utilityBelt)
         inventorioTag.put("ToolBelt", toolBelt)
         inventorioTag.put("PhysBar", physBar)
-        inventorioTag.put("QuickBar", quickBar)
+        inventorioTag.put("QuickBar", quickBar) //todo
     }
 
     private fun serializeSection(section: DefaultedList<ItemStack>, tag: ListTag)

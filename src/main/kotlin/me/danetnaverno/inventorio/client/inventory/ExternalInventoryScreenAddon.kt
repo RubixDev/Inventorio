@@ -1,11 +1,8 @@
 package me.danetnaverno.inventorio.client.inventory
 
 import com.mojang.blaze3d.systems.RenderSystem
-import me.danetnaverno.inventorio.MathStuffConstants
-import me.danetnaverno.inventorio.duck.HandlerDuck
-import me.danetnaverno.inventorio.gui_canvas_inventorySlotSize
-import me.danetnaverno.inventorio.gui_generalInventoryWidth
-import me.danetnaverno.inventorio.isPlayerSlot
+import me.danetnaverno.inventorio.client.quickbar.QuickBarInventoryWidget
+import me.danetnaverno.inventorio.container.ExternalScreenHandlerAddon
 import me.danetnaverno.inventorio.mixin.client.HandledScreenAccessor
 import me.danetnaverno.inventorio.player.PlayerAddon
 import me.danetnaverno.inventorio.util.*
@@ -29,6 +26,7 @@ object ExternalInventoryScreenAddon
     private var screen: HandledScreen<*>? = null
     private lateinit var accessor: HandledScreenAccessor
     private val client = MinecraftClient.getInstance()!!
+    private lateinit var quickBarWidget: QuickBarInventoryWidget
     private var isIgnored = false
     private lateinit var offsetPoint : Point
 
@@ -38,14 +36,15 @@ object ExternalInventoryScreenAddon
         isIgnored = PlayerAddon.Client.local.isScreenHandlerIgnored(handledScreen.screenHandler)
         if (isIgnored)
             return
-        this.offsetPoint = SlotRestrictionFilters.screenHandlerOffsets[handledScreen.screenHandler.javaClass] ?: Point(0, 0)
+        offsetPoint = SlotRestrictionFilters.screenHandlerOffsets[handledScreen.screenHandler.javaClass] ?: Point(0, 0)
         accessor = screen as HandledScreenAccessor
         accessor.backgroundHeight += MathStuffConstants.getExtraPixelHeight(client.player!!)
         accessor.y = (handledScreen.height - accessor.backgroundHeight) / 2
-        val screenHandlerAddon = (screen!!.screenHandler as? HandlerDuck)?.addon
-        screenHandlerAddon?.offsetPlayerSlots(
+        val screenHandlerAddon = (handledScreen.screenHandler as? HandlerDuck)?.addon as ExternalScreenHandlerAddon
+        screenHandlerAddon.offsetPlayerSlots(
                 Math.min(0, (accessor.backgroundWidth - gui_generalInventoryWidth) / 2), 0,
                 0, 0)
+        quickBarWidget = QuickBarInventoryWidget(PlayerAddon.Client.local)
     }
 
     fun drawAddon(handledScreen: HandledScreen<*>, matrices: MatrixStack, mouseX: Int, mouseY: Int)
@@ -55,10 +54,10 @@ object ExternalInventoryScreenAddon
         if (isIgnored)
             return
 
-        val nonPlayerItems = screen!!.screenHandler.slots.filterNot { it.isPlayerSlot }
+        val nonPlayerSlots = screen!!.screenHandler.slots.filterNot { it.isPlayerSlot }
 
         val screenX = accessor.x + offsetPoint.x + Math.min(0, (accessor.backgroundWidth - gui_generalInventoryWidth) / 2)
-        val screenY = accessor.y + offsetPoint.y + (nonPlayerItems.maxOfOrNull { it.y } ?: 0) + gui_canvas_inventorySlotSize + 3
+        val screenY = accessor.y + offsetPoint.y + (nonPlayerSlots.maxOfOrNull { it.y } ?: 0) + INVENTORY_SLOT_SIZE + 3
         val expansionRows = MathStuffConstants.getExtraRows(client.player!!)
 
         RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f)
@@ -94,11 +93,13 @@ object ExternalInventoryScreenAddon
                     256, 512)
         }
 
-        //QuickBar - Physical slots
-        /*val offset = if (extraPixelHeight > 0) extraPixelHeight + canvas_inventoryGap else 0
-        quickBarWidget.drawBackground(matrices,
-                screenX, screenY + offset,
-                7, 149)*/
+        //QuickBar (Physical slots when present)
+        val quickBarRect = GUI_EXTERNAL_INVENTORY_QUICK_BAR(expansionRows)
+        quickBarWidget.drawPhysSlots(matrices,
+                screenX + quickBarRect.x, screenY + quickBarRect.y,
+                CANVAS_PLAYER_INVENTORY_PHYS_BAR.x, CANVAS_PLAYER_INVENTORY_PHYS_BAR.y,
+                inventorioRowLength,
+                256, 512)
 
         val extRec3 = GUI_EXTERNAL_INVENTORY_INGORE_BUTTON(expansionRows)
         val text = LiteralText("✘")

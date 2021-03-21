@@ -1,6 +1,6 @@
 package me.danetnaverno.inventorio.enchantment
 
-import me.danetnaverno.inventorio.maxDeepPocketsLevel
+import me.danetnaverno.inventorio.util.maxDeepPocketsLevel
 import net.minecraft.enchantment.Enchantment
 import net.minecraft.enchantment.EnchantmentTarget
 import net.minecraft.entity.EquipmentSlot

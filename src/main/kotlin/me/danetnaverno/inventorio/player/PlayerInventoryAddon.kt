@@ -1,12 +1,11 @@
 package me.danetnaverno.inventorio.player
 
 import com.google.common.collect.ImmutableList
-import me.danetnaverno.inventorio.*
 import me.danetnaverno.inventorio.mixin.client.MinecraftClientAccessor
 import me.danetnaverno.inventorio.packet.InventorioNetworking
 import me.danetnaverno.inventorio.quickbar.QuickBarInventory
 import me.danetnaverno.inventorio.slot.QuickBarItemStack
-import me.danetnaverno.inventorio.util.PhysicalQuickBarLogic
+import me.danetnaverno.inventorio.util.*
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.block.BlockState
@@ -39,7 +38,7 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
     private val playerAddon by lazy { PlayerAddon[player] }
 
     var selectedUtility = 0
-    var mainHandDisplayTool = ItemStack.EMPTY
+    var mainHandDisplayTool = ItemStack.EMPTY!!
 
     //==============================
     //Injects. These functions are either injected or redirected to by a mixin of a [PlayerInventory] class
@@ -56,7 +55,7 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
             mainHandDisplayTool
         else if (physicalQuickQar[inventory.selectedSlot].isNotEmpty)
             physicalQuickQar[inventory.selectedSlot]
-        else if (hasAnySimilar(playerAddon.inventoryAddon.shortcutQuickBar.getStack(inventory.selectedSlot)))
+        else if (player.isCreative || hasAnySimilar(playerAddon.inventoryAddon.shortcutQuickBar.getStack(inventory.selectedSlot)))
             playerAddon.inventoryAddon.shortcutQuickBar.getStack(inventory.selectedSlot)
         else
             ItemStack.EMPTY
@@ -114,6 +113,20 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
             inventory.selectedSlot += inventorioRowLength
         while (inventory.selectedSlot >= inventorioRowLength)
             inventory.selectedSlot -= inventorioRowLength
+    }
+
+    fun mendToolBeltItems(experience: Int): Int
+    {
+        var amount = experience
+        for (itemStack in toolBelt)
+            if (itemStack.isNotEmpty && itemStack.isDamaged)
+            {
+                val delta = Math.min(amount * 2, itemStack.damage)
+                amount -= delta
+                itemStack.damage -= delta
+                return amount
+            }
+        return amount
     }
 
     //==============================
@@ -178,7 +191,7 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
 
     fun getTotalAmount(stack: ItemStack): Int
     {
-        if (PhysicalQuickBarLogic.canPlayerStoreItemStackPhysicallyInQuickBar(player, stack))
+        if (MathStuffConstants.canPlayerStoreItemStackPhysicallyInQuickBar(player, stack))
             //return stack.count
             throw IllegalStateException("A physical item is stored in a shortcut quickbar")
         var result = 0
@@ -222,7 +235,6 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
     {
         return stack1.isNotEmpty && stack1.item === stack2.item && ItemStack.areTagsEqual(stack1, stack2)
     }
-
 
     companion object
     {

@@ -1,7 +1,8 @@
-package me.danetnaverno.inventorio.client.quickbar
+package me.danetnaverno.inventorio.client.config
 
 import me.danetnaverno.inventorio.Inventorio
-import me.danetnaverno.inventorio.isNotEmpty
+import me.danetnaverno.inventorio.util.inventorioRowLength
+import me.danetnaverno.inventorio.util.isNotEmpty
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.util.NbtType
@@ -18,21 +19,27 @@ class QuickBarStorage(private val file: File)
     private val entries = mutableListOf<HotbarStorageEntry>()
     private var loaded = false
 
-    fun load()
+    fun tryLoad()
     {
-        try
+        if (!loaded)
         {
-            val compoundTag = NbtIo.read(file) ?: return
-            for (i in 0 until compoundTag.size)
+            for(i in 0 until inventorioRowLength)
+                entries.add(i,HotbarStorageEntry())
+            try
             {
-                val entry = HotbarStorageEntry()
-                entry.fromListTag(compoundTag.getList(i.toString(), NbtType.COMPOUND))
-                entries.add(entry)
+                val compoundTag = NbtIo.read(file) ?: return
+                for (i in 0 until compoundTag.size)
+                {
+                    val entry = HotbarStorageEntry()
+                    entry.fromListTag(compoundTag.getList(i.toString(), NbtType.COMPOUND))
+                    entries[i] = entry
+                }
             }
-        }
-        catch (ex: Exception)
-        {
-            Inventorio.LOGGER.error("Failed to load quickbar entries", ex)
+            catch (ex: Exception)
+            {
+                Inventorio.LOGGER.error("Failed to load quickbar entries", ex)
+            }
+            loaded = true
         }
     }
 
@@ -53,6 +60,7 @@ class QuickBarStorage(private val file: File)
 
     fun setSavedQuickBar(index: Int, quickBar: List<ItemStack>)
     {
+        tryLoad()
         val result = HotbarStorageEntry()
         for ((i, entry) in quickBar.withIndex())
             if (entry.isNotEmpty)
@@ -66,11 +74,7 @@ class QuickBarStorage(private val file: File)
 
     fun getSavedQuickBar(index: Int): HotbarStorageEntry
     {
-        if (!loaded)
-        {
-            load()
-            loaded = true
-        }
+        tryLoad()
         return if (index in entries.indices) entries[index] else HotbarStorageEntry()
     }
 

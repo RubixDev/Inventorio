@@ -1,13 +1,10 @@
 package me.danetnaverno.inventorio.container
 
-import me.danetnaverno.inventorio.*
 import me.danetnaverno.inventorio.mixin.ScreenHandlerAccessor
 import me.danetnaverno.inventorio.mixin.SlotAccessor
 import me.danetnaverno.inventorio.player.PlayerAddon
 import me.danetnaverno.inventorio.quickbar.QuickBarHandlerWidget
-import me.danetnaverno.inventorio.util.ScreenHandlerAddon
-import me.danetnaverno.inventorio.util.SlotRestrictionFilters
-import me.danetnaverno.inventorio.util.indicesAndOffsets
+import me.danetnaverno.inventorio.util.*
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.item.ItemStack
@@ -16,9 +13,8 @@ import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
 import java.awt.Point
 
-class ExternalInventoryHandlerAddon internal constructor(val handler: ScreenHandler) : ScreenHandlerAddon
+class ExternalScreenHandlerAddon internal constructor(val handler: ScreenHandler) : ScreenHandlerAddon
 {
-    private val accessor = handler as ScreenHandlerAccessor
     private var quickBarHandlerWidget: QuickBarHandlerWidget? = null
     private var initStage = 0
 
@@ -49,7 +45,7 @@ class ExternalInventoryHandlerAddon internal constructor(val handler: ScreenHand
         val offsetPoint = SlotRestrictionFilters.screenHandlerOffsets[handler.javaClass] ?: Point(0, 0)
         val playerStartX = offsetPoint.x
         val playerStartY = (nonPlayerItems.maxOfOrNull { it.y } ?: 0) +
-                gui_canvas_inventorySlotSize + gui_canvas_container_gap_height + 4 + offsetPoint.y
+                INVENTORY_SLOT_SIZE + gui_canvas_container_gap_height + 4 + offsetPoint.y
         val slotOffsetX = 0
         val slotOffsetY = 0
         initialize(playerAddon,
@@ -57,9 +53,10 @@ class ExternalInventoryHandlerAddon internal constructor(val handler: ScreenHand
                 slotOffsetX, slotOffsetY)
     }
 
-    override fun initialize(playerAddon: PlayerAddon, guiOffsetX: Int, guiOffsetY: Int, slotOffsetX: Int, slotOffsetY: Int)
+    fun initialize(playerAddon: PlayerAddon, guiOffsetX: Int, guiOffsetY: Int, slotOffsetX: Int, slotOffsetY: Int)
     {
         val playerInventory = playerAddon.inventoryAddon.inventory
+        val accessor = handler as ScreenHandlerAccessor
         quickBarHandlerWidget = QuickBarHandlerWidget(playerAddon.inventoryAddon)
 
         val gui_container_extension_slot_startX = 8
@@ -67,33 +64,32 @@ class ExternalInventoryHandlerAddon internal constructor(val handler: ScreenHand
         val mainStartY = MathStuffConstants.getExtraPixelHeight(playerAddon.player)
 
         //Expansion
-        for (slot in expansionSize.indicesAndOffsets())
+        for (slot in expansionSize.withRelativeIndex())
         {
             val x = slot.relativeIndex % inventorioRowLength
             val y = slot.relativeIndex / inventorioRowLength
             accessor.addASlot(Slot(playerInventory, slot.absoluteIndex,
-                    guiOffsetX + gui_container_extension_slot_startX + x * gui_canvas_inventorySlotSize,
-                    guiOffsetY + y * gui_canvas_inventorySlotSize))
+                    guiOffsetX + gui_container_extension_slot_startX + x * INVENTORY_SLOT_SIZE,
+                    guiOffsetY + y * INVENTORY_SLOT_SIZE))
         }
 
         val offset = if (expansionSize.isEmpty()) 0 else canvas_inventoryGap
 
         //Main Inventory
-        for (slot in mainSlotsRange.indicesAndOffsets())
+        for (slot in mainSlotsRange.withRelativeIndex())
         {
             val x = slot.relativeIndex % inventorioRowLength
             val y = slot.relativeIndex / inventorioRowLength
             accessor.addASlot(Slot(playerInventory, slot.absoluteIndex,
-                    guiOffsetX + gui_container_extension_slot_startX + x * gui_canvas_inventorySlotSize,
-                    guiOffsetY + offset + mainStartY + y * gui_canvas_inventorySlotSize))
+                    guiOffsetX + gui_container_extension_slot_startX + x * INVENTORY_SLOT_SIZE,
+                    guiOffsetY + offset + mainStartY + y * INVENTORY_SLOT_SIZE))
         }
 
-        val normalStart = offset + mainStartY + gui_canvas_inventorySlotSize * 3 + canvas_inventoryGap
+        val normalStart = offset + mainStartY + INVENTORY_SLOT_SIZE * 3 + canvas_inventoryGap
         quickBarHandlerWidget?.createQuickBarSlots(handler, guiOffsetX + 8, guiOffsetY + normalStart, quickBarPhysicalSlotsRange)
     }
 
-
-    override fun offsetPlayerSlots(containerSlotOffsetX: Int, containerSlotOffsetY: Int, playerSlotOffsetX: Int, playerSlotOffsetY: Int)
+    fun offsetPlayerSlots(containerSlotOffsetX: Int, containerSlotOffsetY: Int, playerSlotOffsetX: Int, playerSlotOffsetY: Int)
     {
         for (slot in handler.slots)
         {

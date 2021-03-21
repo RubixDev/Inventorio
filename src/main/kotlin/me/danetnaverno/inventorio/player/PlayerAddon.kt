@@ -1,14 +1,10 @@
 package me.danetnaverno.inventorio.player
 
-import me.danetnaverno.inventorio.QuickBarMode
-import me.danetnaverno.inventorio.UtilityBeltMode
 import me.danetnaverno.inventorio.client.config.InventorioConfigData
-import me.danetnaverno.inventorio.duck.HandlerDuck
-import me.danetnaverno.inventorio.duck.InventoryDuck
-import me.danetnaverno.inventorio.duck.PlayerDuck
-import me.danetnaverno.inventorio.isNotEmpty
 import me.danetnaverno.inventorio.packet.InventorioNetworking
+import me.danetnaverno.inventorio.util.*
 import net.fabricmc.api.EnvType
+import net.fabricmc.api.Environment
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.options.HotbarStorageEntry
@@ -24,11 +20,8 @@ class PlayerAddon private constructor(val player: PlayerEntity)
     var utilityBeltMode = UtilityBeltMode.FILTERED
     private var ignoredScreenHandlers = listOf<Class<out ScreenHandler>>()
 
-    val inventoryAddon get() = invDuck.addon
-    val handlerAddon get() = screenDuck.addon
-
-    private val invDuck get() = player.inventory as InventoryDuck
-    private val screenDuck get() = player.playerScreenHandler as HandlerDuck
+    val inventoryAddon get() = (player.inventory as InventoryDuck).addon
+    val handlerAddon get() = (player.playerScreenHandler as HandlerDuck).addon
 
     fun trySetRestrictionModesC2S(quickBarMode: QuickBarMode, utilityBarMode: UtilityBeltMode): Boolean
     {
@@ -90,7 +83,7 @@ class PlayerAddon private constructor(val player: PlayerEntity)
             InventorioNetworking.C2SSendNewQuickBar(newItems)
     }
 
-    fun fireRocket()
+    fun fireRocketFromInventory()
     {
         for (section in inventoryAddon.combinedInventory)
             for (itemStack in section)
@@ -106,14 +99,15 @@ class PlayerAddon private constructor(val player: PlayerEntity)
                         player.swingHand(Hand.MAIN_HAND)
                         itemStack.decrement(1)
                         inventoryAddon.mainHandDisplayTool = itemStack
-                        break
+                        return
                     }
                 }
     }
 
+    @Environment(EnvType.CLIENT)
     object Client
     {
-        @JvmStatic val local get() = get(MinecraftClient.getInstance().player!!)
+        val local get() = get(MinecraftClient.getInstance().player!!)
         var selectedQuickBarSection = -1
         @JvmField var triesToUseUtility = false
     }

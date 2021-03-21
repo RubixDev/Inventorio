@@ -1,8 +1,8 @@
-package me.danetnaverno.inventorio
+package me.danetnaverno.inventorio.util
 
 import me.danetnaverno.inventorio.enchantment.DeepPocketsEnchantment
+import me.danetnaverno.inventorio.player.PlayerAddon
 import me.danetnaverno.inventorio.quickbar.QuickBarInventory
-import me.danetnaverno.inventorio.util.SlotRestrictionFilters
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
@@ -15,13 +15,14 @@ const val inventorioRowLength = 12
 const val mainInventorySize = inventorioRowLength * 3
 const val maxExtensionSlots = maxDeepPocketsLevel * inventorioRowLength
 
+const val INVENTORY_SLOT_SIZE = 18
+
 const val armorLength = 4
 val toolbeltLength = SlotRestrictionFilters.toolBelt.size
 const val utilityBarLength = 8
 
 const val gui_canvas_physical_quickbarW = 216
 const val gui_canvas_physical_quickbarH = 18
-const val gui_canvas_inventorySlotSize = 18
 const val gui_canvas_container_gap_height = 17
 
 const val gui_generalInventoryWidth = 230
@@ -83,6 +84,7 @@ val quickBarPhysicalSlotsRange = utilityBarSlotsRange.last + 1 until (utilityBar
 val quickBarShortcutSlotsRange = quickBarPhysicalSlotsRange.last + 1 until (quickBarPhysicalSlotsRange.last + 1) + inventorioRowLength
 val craftGridSlotsRange = quickBarShortcutSlotsRange.last + 1 until (quickBarShortcutSlotsRange.last + 1) + 5
 
+val utilityBarExtensionSlotsRange = utilityBarSlotsRange.first + 4 .. utilityBarSlotsRange.last
 val quickBarContainerPhysicalSlotsRange = quickBarPhysicalSlotsRange.first + 100 until quickBarPhysicalSlotsRange.last + 100
 val quickBarContainerShortcutSlotsRange = quickBarContainerPhysicalSlotsRange.first + quickBarContainerPhysicalSlotsRange.count() until quickBarContainerPhysicalSlotsRange.last + quickBarContainerPhysicalSlotsRange.count()
 
@@ -119,7 +121,7 @@ object MathStuffConstants
 
     fun getExtraPixelHeight(player: PlayerEntity): Int
     {
-        return getExtraRows(player) * gui_canvas_inventorySlotSize
+        return getExtraRows(player) * INVENTORY_SLOT_SIZE
     }
 
     fun getMainInventoryStartHeight(player: PlayerEntity): Int
@@ -132,19 +134,12 @@ object MathStuffConstants
     {
         return 1 + canvas_inventoryTopPartHeight
     }
-}
 
-enum class QuickBarMode
-{
-    DEFAULT, NO_SPECIAL_CASES, HANDLE_SPECIAL_CASES, PHYSICAL_SLOTS, NOT_SELECTED
-}
 
-enum class UtilityBeltMode
-{
-    FILTERED, UNFILTERED
-}
-
-enum class QuickBarSimplified
-{
-    OFF, ONLY_VISUAL, ON
+    fun canPlayerStoreItemStackPhysicallyInQuickBar(player: PlayerEntity, itemStack: ItemStack): Boolean
+    {
+        val resMode = PlayerAddon[player].quickBarMode
+        return resMode == QuickBarMode.PHYSICAL_SLOTS ||
+                (resMode == QuickBarMode.HANDLE_SPECIAL_CASES && SlotRestrictionFilters.physicalUtilityBar.invoke(itemStack))
+    }
 }

@@ -1,6 +1,5 @@
 package me.danetnaverno.inventorio.packet.c2s
 
-import me.danetnaverno.inventorio.RobertoGarbagio
 import me.danetnaverno.inventorio.player.PlayerAddon
 import net.minecraft.network.Packet
 import net.minecraft.network.PacketByteBuf
@@ -19,6 +18,6 @@ class FireBoostRocketC2SPacket : Packet<ServerPlayPacketListener>
 
     override fun apply(listener: ServerPlayPacketListener)
     {
-        PlayerAddon[(listener as ServerPlayNetworkHandler).player].fireRocket()
+        PlayerAddon[(listener as ServerPlayNetworkHandler).player].fireRocketFromInventory()
     }
 }

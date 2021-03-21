@@ -1,12 +1,12 @@
 package me.danetnaverno.inventorio.mixin;
 
 import com.mojang.authlib.GameProfile;
-import me.danetnaverno.inventorio.MathStuffConstantsKt;
-import me.danetnaverno.inventorio.duck.HandlerDuck;
-import me.danetnaverno.inventorio.duck.PlayerDuck;
+import me.danetnaverno.inventorio.util.HandlerDuck;
+import me.danetnaverno.inventorio.util.PlayerDuck;
 import me.danetnaverno.inventorio.player.InventorioPlayerSerializer;
 import me.danetnaverno.inventorio.player.PlayerAddon;
 import me.danetnaverno.inventorio.player.PlayerScreenHandlerAddon;
+import me.danetnaverno.inventorio.util.GeneralConstantsKt;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
@@ -48,8 +48,8 @@ public abstract class PlayerEntityMixin implements PlayerDuck
     private void resizeEnderChest(World world, BlockPos pos, float yaw, GameProfile profile, CallbackInfo ci)
     {
         SimpleInventoryAccessor accessor = ((SimpleInventoryAccessor) getEnderChestInventory());
-        accessor.setSize(MathStuffConstantsKt.vanillaRowLength * 6);
-        accessor.setStacks(DefaultedList.ofSize(MathStuffConstantsKt.vanillaRowLength * 6, ItemStack.EMPTY));
+        accessor.setSize(GeneralConstantsKt.vanillaRowLength * 6);
+        accessor.setStacks(DefaultedList.ofSize(GeneralConstantsKt.vanillaRowLength * 6, ItemStack.EMPTY));
     }
 
     @Inject(method = "equipStack", at = @At(value = "JUMP"), cancellable = true)
@@ -66,7 +66,7 @@ public abstract class PlayerEntityMixin implements PlayerDuck
     {
         if (slot == EquipmentSlot.OFFHAND)
         {
-            int index = MathStuffConstantsKt.getUtilityBarSlotsRange().getFirst() + addon.getInventoryAddon().getSelectedUtility();
+            int index = GeneralConstantsKt.getUtilityBarSlotsRange().getFirst() + addon.getInventoryAddon().getSelectedUtility();
             ItemStack stack = inventory.getStack(index);
             cir.setReturnValue(stack);
         }

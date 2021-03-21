@@ -1,15 +1,11 @@
 package me.danetnaverno.inventorio.quickbar
 
-import me.danetnaverno.inventorio.QuickBarMode
-import me.danetnaverno.inventorio.gui_canvas_inventorySlotSize
 import me.danetnaverno.inventorio.mixin.ScreenHandlerAccessor
 import me.danetnaverno.inventorio.player.PlayerAddon
 import me.danetnaverno.inventorio.player.PlayerInventoryAddon
 import me.danetnaverno.inventorio.slot.QuickBarPhysicalSlot
 import me.danetnaverno.inventorio.slot.QuickBarShortcutSlot
-import me.danetnaverno.inventorio.util.PhysicalQuickBarLogic
-import me.danetnaverno.inventorio.util.SlotRestrictionFilters
-import me.danetnaverno.inventorio.util.indicesAndOffsets
+import me.danetnaverno.inventorio.util.*
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.screen.ScreenHandler
@@ -22,14 +18,14 @@ class QuickBarHandlerWidget(val inventoryAddon: PlayerInventoryAddon)
         val accessor = handler as ScreenHandlerAccessor
         val shortCutSlots = mutableListOf<QuickBarShortcutSlot>()
         //Physical QuickBar
-        for ((absolute, relative) in slotIndicesRange.indicesAndOffsets())
+        for ((absolute, relative) in slotIndicesRange.withRelativeIndex())
         {
             val shortCutSlot = QuickBarShortcutSlot(inventoryAddon.shortcutQuickBar, relative,
-                    startX + relative * gui_canvas_inventorySlotSize,
+                    startX + relative * INVENTORY_SLOT_SIZE,
                     startY)
             shortCutSlots.add(shortCutSlot)
             accessor.addASlot(QuickBarPhysicalSlot(shortCutSlot, inventoryAddon.inventory, absolute,
-                    startX + relative * gui_canvas_inventorySlotSize,
+                    startX + relative * INVENTORY_SLOT_SIZE,
                     startY))
         }
 
@@ -51,11 +47,11 @@ class QuickBarHandlerWidget(val inventoryAddon: PlayerInventoryAddon)
 
             if (cursor.isEmpty)
             {
-                if (!PhysicalQuickBarLogic.canPlayerStoreItemStackPhysicallyInQuickBar(player, currentStack))
+                if (!MathStuffConstants.canPlayerStoreItemStackPhysicallyInQuickBar(player, currentStack))
                     shortCutSlot.stack = ItemStack.EMPTY
                 return null
             }
-            else if (PhysicalQuickBarLogic.canPlayerStoreItemStackPhysicallyInQuickBar(player, cursor))
+            else if (MathStuffConstants.canPlayerStoreItemStackPhysicallyInQuickBar(player, cursor))
             {
                 shortCutSlot.stack = ItemStack.EMPTY
                 return null

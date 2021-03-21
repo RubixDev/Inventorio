@@ -15,9 +15,8 @@ class SetNewQuickBarC2SPacket(var items: HotbarStorageEntry = HotbarStorageEntry
     override fun read(buf: PacketByteBuf)
     {
         val len = buf.readByte()
-        for(i in 0 until len)
+        for (i in 0 until len)
             items[i] = ItemStack.fromTag(buf.readCompoundTag())
-        RobertoGarbagio.LOGGER.info("Reading SetNewQuickBarC2SPacket: $items")
     }
 
     override fun write(buf: PacketByteBuf)
@@ -25,7 +24,6 @@ class SetNewQuickBarC2SPacket(var items: HotbarStorageEntry = HotbarStorageEntry
         buf.writeByte(items.size)
         for (item in items)
             buf.writeCompoundTag(item.toTag(CompoundTag()))
-        RobertoGarbagio.LOGGER.info("Writing SetNewQuickBarC2SPacket: $items")
     }
 
     override fun apply(listener: ServerPlayPacketListener)
