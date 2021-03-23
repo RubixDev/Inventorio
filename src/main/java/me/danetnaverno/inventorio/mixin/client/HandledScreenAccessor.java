@@ -23,10 +23,13 @@ public interface HandledScreenAccessor extends ScreenAccessor
     void setBackgroundHeight(int value);
 
     @Accessor("playerInventoryTitleX")
-    int etPlayerInventoryTitleX();
+    int getPlayerInventoryTitleX();
 
     @Accessor("playerInventoryTitleX")
     void setPlayerInventoryTitleX(int value);
+
+    @Accessor("playerInventoryTitleY")
+    int getPlayerInventoryTitleY();
 
     @Accessor("playerInventoryTitleY")
     void setPlayerInventoryTitleY(int value);

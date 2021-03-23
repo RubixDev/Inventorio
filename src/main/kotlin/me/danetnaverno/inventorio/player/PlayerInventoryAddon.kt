@@ -14,21 +14,22 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.item.ItemStack
+import net.minecraft.item.ToolItem
 import net.minecraft.util.collection.DefaultedList
 import kotlin.math.max
 import kotlin.math.sign
 
 class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
 {
-    internal val extension = DefaultedList.ofSize(maxExtensionSlots, ItemStack.EMPTY)!!
-    internal val toolBelt = DefaultedList.ofSize(toolbeltLength, ItemStack.EMPTY)!!
-    internal val utilityBelt = DefaultedList.ofSize(utilityBarLength, ItemStack.EMPTY)!!
+    internal val extension = DefaultedList.ofSize(EXTENSION_SIZE, ItemStack.EMPTY)!!
+    internal val toolBelt = DefaultedList.ofSize(TOOL_BELT_SIZE, ItemStack.EMPTY)!!
+    internal val utilityBelt = DefaultedList.ofSize(UTILITY_BELT_SIZE, ItemStack.EMPTY)!!
     //Minecraft has hardcoded slot indexes (40 for inventory and 45 for screen handlers) for the offhand.
     //This is a hack to counter-act any potential unaccounted Mojang hardcoding
     internal val dudOffhand = DefaultedList.ofSize(1, ItemStack.EMPTY)!!
     //Some QuickBar modes allow the player to store some items _physically_ on the QuickBar.
     //Thus, they have to be saved within player's inventory
-    internal val physicalQuickQar = DefaultedList.ofSize(inventorioRowLength, ItemStack.EMPTY)!!
+    internal val physicalQuickQar = DefaultedList.ofSize(INVENTORIO_ROW_LENGTH, ItemStack.EMPTY)!!
     val shortcutQuickBar = QuickBarInventory(this)
 
     //Note: the order of elements is important. Don't change it.
@@ -63,8 +64,8 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
 
     fun getEmptyExtensionSlot(): Int
     {
-        val offset = extensionSlotsRange.first
-        for (i in MathStuffConstants.getAvailableExtensionSlotsRange(player))
+        val offset = EXTENSION_RANGE.first
+        for (i in GeneralConstants.getAvailableExtensionSlotsRange(player))
         {
             if (extension[i - offset].isEmpty)
                 return i
@@ -74,8 +75,8 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
 
     fun getOccupiedExtensionSlotWithRoomForStack(stack: ItemStack): Int
     {
-        val offset = extensionSlotsRange.first
-        for (i in MathStuffConstants.getAvailableExtensionSlotsRange(player))
+        val offset = EXTENSION_RANGE.first
+        for (i in GeneralConstants.getAvailableExtensionSlotsRange(player))
         {
             if (canStackAddMore(extension[i - offset], stack))
                 return i
@@ -110,9 +111,9 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
     {
         inventory.selectedSlot -= scrollAmount.sign.toInt()
         while (inventory.selectedSlot < 0)
-            inventory.selectedSlot += inventorioRowLength
-        while (inventory.selectedSlot >= inventorioRowLength)
-            inventory.selectedSlot -= inventorioRowLength
+            inventory.selectedSlot += INVENTORIO_ROW_LENGTH
+        while (inventory.selectedSlot >= INVENTORIO_ROW_LENGTH)
+            inventory.selectedSlot -= INVENTORIO_ROW_LENGTH
     }
 
     fun mendToolBeltItems(experience: Int): Int
@@ -155,9 +156,9 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
     fun findNextUtility(direction: Int): Pair<ItemStack, Int>
     {
         val range = if (direction.sign >= 0)
-            (selectedUtility + 1 until utilityBarLength) + (0 until selectedUtility)
+            (selectedUtility + 1 until UTILITY_BELT_SIZE) + (0 until selectedUtility)
         else
-            (selectedUtility - 1 downTo 0) + (utilityBarLength - 1 downTo selectedUtility + 1)
+            (selectedUtility - 1 downTo 0) + (UTILITY_BELT_SIZE - 1 downTo selectedUtility + 1)
 
         for (i in range)
             if (utilityBelt[i].isNotEmpty)
@@ -191,8 +192,7 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
 
     fun getTotalAmount(stack: ItemStack): Int
     {
-        if (MathStuffConstants.canPlayerStoreItemStackPhysicallyInQuickBar(player, stack))
-            //return stack.count
+        if (GeneralConstants.canPlayerStoreItemStackPhysicallyInQuickBar(player, stack))
             throw IllegalStateException("A physical item is stored in a shortcut quickbar")
         var result = 0
 
@@ -209,6 +209,8 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
 
     fun getMostEffectiveTool(block: BlockState): ItemStack
     {
+        if (player.mainHandStack.item is ToolItem)
+            return player.mainHandStack
         val result = toolBelt.maxByOrNull { it.getMiningSpeedMultiplier(block) } ?: ItemStack.EMPTY
         return if (result.getMiningSpeedMultiplier(block) > 1.0f)
             result

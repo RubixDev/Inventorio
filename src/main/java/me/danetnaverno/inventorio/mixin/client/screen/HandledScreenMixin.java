@@ -3,6 +3,7 @@ package me.danetnaverno.inventorio.mixin.client.screen;
 import me.danetnaverno.inventorio.client.inventory.ExternalInventoryScreenAddon;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.util.math.MatrixStack;
@@ -24,7 +25,7 @@ public class HandledScreenMixin
     public void drawAddon(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci)
     {
         HandledScreen thisScreen = (HandledScreen)(Object)this;
-        if (!(thisScreen instanceof InventoryScreen))
+        if (!(thisScreen instanceof InventoryScreen) && !(thisScreen instanceof CreativeInventoryScreen))
             ExternalInventoryScreenAddon.INSTANCE.drawAddon(thisScreen, matrices, mouseX, mouseY);
     }
 

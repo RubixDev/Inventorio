@@ -3,7 +3,6 @@ package me.danetnaverno.inventorio.client.inventory
 import com.google.common.collect.ImmutableList
 import me.danetnaverno.inventorio.client.quickbar.QuickBarInventoryWidget
 import me.danetnaverno.inventorio.mixin.client.HandledScreenAccessor
-import me.danetnaverno.inventorio.player.CreativeScreenHandlerAddon
 import me.danetnaverno.inventorio.player.PlayerAddon
 import me.danetnaverno.inventorio.util.*
 import net.fabricmc.api.EnvType
@@ -55,8 +54,7 @@ object CreativeInventoryScreenAddon
                 inventoryScreen.screenHandler.slots.addAll(slots)
                 return null
             }
-            if (lastGroup == ItemGroup.INVENTORY)
-                ((inventoryScreen.screenHandler as HandlerDuck).addon as CreativeScreenHandlerAddon).disableSurvivalInventory(playerAddon)
+            ((inventoryScreen.screenHandler as HandlerDuck).addon as CreativeScreenHandlerAddon).disableSurvivalInventory(playerAddon)
         }
         lastGroup = group
         return slots
@@ -96,7 +94,7 @@ object CreativeInventoryScreenAddon
         quickBarWidget.drawPhysSlots(matrices,
                 screenX + quickBarRect.x, screenY + quickBarRect.y,
                 CANVAS_CREATIVE_INVENTORY_PHYS_BAR.x, CANVAS_CREATIVE_INVENTORY_PHYS_BAR.y,
-                inventorioRowLength,
+                INVENTORIO_ROW_LENGTH,
                 256, 256)
     }
 
@@ -127,7 +125,7 @@ object CreativeInventoryScreenAddon
         quickBarWidget.drawPhysSlots(matrices,
                 screenX + quickBarRect.x, screenY + quickBarRect.y,
                 CANVAS_CREATIVE_INVENTORY_PHYS_BAR.x, CANVAS_CREATIVE_INVENTORY_PHYS_BAR.y,
-                inventorioRowLength,
+                INVENTORIO_ROW_LENGTH,
                 256, 256)
     }
 

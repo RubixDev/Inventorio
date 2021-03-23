@@ -2,6 +2,43 @@
   "enchantment.inventorio.deep_pockets": "Deep Pockets",
   "inventorio.ignore_screen.tooltip": "Disable Inventorio for this screen",
 
+
+  "inventorio.config.title": "Inventorio",
+
+  "inventorio.config.category_global": "Global Settings",
+  "inventorio.config.simplified_quick_bar": "Simplified Quick Bar",
+  "inventorio.config.simplified_quick_bar.tooltip": "When enabled, a player first presses 1-3\nto select a group and then presses 1-4 to select a slot",
+  "inventorio.config.quick_bar_mode_default": "Quick Bar Mode (Default)",
+  "inventorio.config.quick_bar_mode_default.tooltip": "Sets the Quick Bar Mode on the first world join",
+  "inventorio.config.utility_belt_mode_default": "Utility Belt Mode (Default)",
+  "inventorio.config.utility_belt_mode_default.tooltip": "Sets the UtilityBelt Mode on the first world join",
+
+  "inventorio.config.category_world": "World-Specific Settings",
+  "inventorio.config.quick_bar_mode_world": "Quick Bar Mode (World)",
+  "inventorio.config.quick_bar_mode_world.tooltip": "A Quick Bar Mode for this specific world",
+  "inventorio.config.utility_belt_mode_world": "UtilityBelt Mode (World)",
+  "inventorio.config.utility_belt_mode_world.tooltip": "A UtilityBelt Mode for this specific world",
+
+  "inventorio.config.mod_compatibility": "Mod Compatibility",
+  "inventorio.config.ignored_screens": "Ignored Screens (Mod Compatibility)",
+  "inventorio.config.ignored_screens.tooltip": "When another mod doesn't like Inventorio's inventory",
+  "inventorio.config.inventory_text_offsets": "Text Offset (Mod Compatibility)",
+  "inventorio.config.inventory_text_offsets.tooltip": "When the \"Inventory\" text is misplaced in another mod's inventory",
+
+  "inventorio.config.simplified_quick_bar.OFF": "Off",
+  "inventorio.config.simplified_quick_bar.ON": "On",
+  "inventorio.config.simplified_quick_bar.ONLY_VISUAL": "Only Visual",
+
+  "inventorio.config.quick_bar_mode.DEFAULT": "Default",
+  "inventorio.config.quick_bar_mode.NO_SPECIAL_CASES": "(Everything) No Special Cases",
+  "inventorio.config.quick_bar_mode.HANDLE_SPECIAL_CASES": "(Everything) Handle Special Cases",
+  "inventorio.config.quick_bar_mode.PHYSICAL_SLOTS": "Physical QuickBar",
+  "inventorio.config.quick_bar_mode.NOT_SELECTED": "ERROR",
+
+  "inventorio.config.utility_belt_mode.FILTERED": "Filtered",
+  "inventorio.config.utility_belt_mode.UNFILTERED": "Everything",
+
+
   "inventorio.keys.category": "Inventorio",
 
   "inventorio.keys.quickbar_10": "Hotbar Slot 10",

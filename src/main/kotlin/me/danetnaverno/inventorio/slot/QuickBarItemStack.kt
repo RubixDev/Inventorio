@@ -24,6 +24,7 @@ class QuickBarItemStack(val inventorio: PlayerInventoryAddon, item: ItemConverti
 
     override fun getCount(): Int
     {
+        //return Math.max(1, inventorio.getTotalAmount(this))
         return 1
     }
 

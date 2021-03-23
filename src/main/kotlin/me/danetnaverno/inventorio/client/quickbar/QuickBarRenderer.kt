@@ -35,7 +35,7 @@ object QuickBarRenderer
         val playerAddon = PlayerAddon.Client.local
         val player = playerAddon.player
 
-        val simplifiedQuickBarMode = InventorioConfigData.config().quickBarSimplifiedGlobal != QuickBarSimplified.OFF
+        val simplifiedQuickBarMode = InventorioConfigData.config().quickBarSimplified != QuickBarSimplified.OFF
         val utilBelt = playerAddon.inventoryAddon.getDisplayedUtilities()
         val activeTool = playerAddon.inventoryAddon.mainHandDisplayTool
 
@@ -56,13 +56,13 @@ object QuickBarRenderer
         if (!simplifiedQuickBarMode)
             hud.drawTexture(matrices,
                     scaledWidthHalfed - 91, scaledHeight - 22,
-                    canvas_quickBarStartX, canvas_quickBarStartY,
-                    canvas_quickBarWidth, 22)
+                    CANVAS_QUICK_BAR_START_X, CANVAS_QUICK_BAR_START_Y,
+                    CANVAS_QUICK_BAR_WIDTH, 22)
         else
             hud.drawTexture(matrices,
                     scaledWidthHalfed - 97, scaledHeight - 22,
-                    canvas_splitQuickBarStartX, canvas_splitQuickBarStartY,
-                    canvas_splitQuickBarWidth, 22)
+                    CANVAS_QUICK_BAR_SPLIT_START_X, CANVAS_QUICK_BAR_SPLIT_START_Y,
+                    CANVAS_QUICK_BAR_SPLIT_WIDTH, 22)
 
         //Draw the selected slot frame (or selected section in a simplified mode)
         if (selectedQuickBarSection == -1)
@@ -75,8 +75,8 @@ object QuickBarRenderer
             hud.drawTexture(matrices,
                     scaledWidthHalfed - 92 - splitOffset + 28 * selectedQuickBarSection * 3,
                     scaledHeight - 23,
-                    canvas_qbSectionSelectionX, canvas_qbSectionSelectionY,
-                    canvas_qbSectionSelectionW, canvas_qbSectionSelectionH)
+                    CANVAS_QUICK_BAR_SECSEL_X, CANVAS_QUICK_BAR_SECSEL_Y,
+                    CANVAS_QUICK_BAR_SECSEL_W, CANVAS_QUICK_BAR_SECSEL_H)
 
         //Draw the frame for an active tool
         if (player.handSwinging && activeTool.isNotEmpty)
@@ -98,11 +98,11 @@ object QuickBarRenderer
         {
             val x = scaledWidthHalfed - 90 + i * 20 + 2 + groupOffset * (i / 4) - splitOffset
             val y = scaledHeight - 16 - 3
-            val physicalSlot = handler.getSlot(quickBarPhysicalSlotsRange.first + i)
+            val physicalSlot = handler.getSlot(QUICK_BAR_PHYS_RANGE.first + i)
             if (physicalSlot.stack.isNotEmpty)
                 renderPhysBarItem(x, y, tickDelta, player, physicalSlot.stack)
             else
-                renderQuickBarItem(x, y, tickDelta, player, handler.getSlot(quickBarShortcutSlotsRange.first + i).stack, true)
+                renderQuickBarItem(x, y, tickDelta, player, handler.getSlot(QUICK_BAR_SHORTCUTS_RANGE.first + i).stack, true)
         }
 
         //Draw utility belt
@@ -196,7 +196,7 @@ object QuickBarRenderer
         if (stack.isNotEmpty)
         {
             client.itemRenderer.renderInGuiWithOverrides(player, stack, x, y)
-            if (!MathStuffConstants.canPlayerStoreItemStackPhysicallyInQuickBar(player, stack))
+            if (!GeneralConstants.canPlayerStoreItemStackPhysicallyInQuickBar(player, stack))
             {
                 RenderSystem.enableBlend()
                 renderGuiItemOverlay(player, client.textRenderer, stack, x, y, sumTotalAmount)

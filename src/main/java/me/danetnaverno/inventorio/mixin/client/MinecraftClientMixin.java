@@ -20,12 +20,21 @@ public class MinecraftClientMixin
 {
     @Shadow @Nullable public ClientPlayerEntity player;
 
+    /**
+     * This redirect replaced vanilla QuickBar slot selection with ours (in case if Simplified QuickBar is enabled)
+     */
     @Redirect(method = "handleInputEvents", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerInventory;selectedSlot:I"))
     private void handleInputEvents(PlayerInventory inventory, int selectedSlot)
     {
         InventorioKeyHandler.INSTANCE.handleInputEvents(inventory, selectedSlot);
     }
 
+    /**
+     * This redirect enables the ability to bind the Offhand/Utility to a separate button.
+     *
+     * If option is enabled, a regular RightClick won't attempt to use an Offhand item,
+     * but a dedicated key will attempt to use ONLY an Offhand item.
+     */
     @Redirect(method = "doItemUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Hand;values()[Lnet/minecraft/util/Hand;"))
     private Hand[] doItemUse()
     {

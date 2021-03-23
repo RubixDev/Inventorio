@@ -1,23 +1,16 @@
 package me.danetnaverno.inventorio.packet.c2s
 
 import me.danetnaverno.inventorio.player.PlayerAddon
-import net.minecraft.network.Packet
+import net.fabricmc.fabric.api.network.PacketContext
 import net.minecraft.network.PacketByteBuf
-import net.minecraft.network.listener.ServerPlayPacketListener
-import net.minecraft.server.network.ServerPlayNetworkHandler
+import net.minecraft.util.Identifier
 
-class FireBoostRocketC2SPacket : Packet<ServerPlayPacketListener>
+object FireBoostRocketC2SPacket
 {
-    override fun read(buf: PacketByteBuf)
-    {
-    }
+    val identifier = Identifier("inventorio","fire_boost_rocket_c2s")
 
-    override fun write(buf: PacketByteBuf)
+    fun consume(context: PacketContext, buf: PacketByteBuf)
     {
-    }
-
-    override fun apply(listener: ServerPlayPacketListener)
-    {
-        PlayerAddon[(listener as ServerPlayNetworkHandler).player].fireRocketFromInventory()
+        PlayerAddon[context.player].fireRocketFromInventory()
     }
 }

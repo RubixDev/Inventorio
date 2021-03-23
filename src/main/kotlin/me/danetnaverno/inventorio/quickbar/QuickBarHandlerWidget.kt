@@ -47,11 +47,11 @@ class QuickBarHandlerWidget(val inventoryAddon: PlayerInventoryAddon)
 
             if (cursor.isEmpty)
             {
-                if (!MathStuffConstants.canPlayerStoreItemStackPhysicallyInQuickBar(player, currentStack))
+                if (!GeneralConstants.canPlayerStoreItemStackPhysicallyInQuickBar(player, currentStack))
                     shortCutSlot.stack = ItemStack.EMPTY
                 return null
             }
-            else if (MathStuffConstants.canPlayerStoreItemStackPhysicallyInQuickBar(player, cursor))
+            else if (GeneralConstants.canPlayerStoreItemStackPhysicallyInQuickBar(player, cursor))
             {
                 shortCutSlot.stack = ItemStack.EMPTY
                 return null

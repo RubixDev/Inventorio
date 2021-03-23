@@ -7,10 +7,10 @@ import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.options.HotbarStorageEntry
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.projectile.FireworkRocketEntity
 import net.minecraft.item.FireworkItem
+import net.minecraft.item.ItemStack
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.util.Hand
 
@@ -63,7 +63,7 @@ class PlayerAddon private constructor(val player: PlayerEntity)
         ignoredScreenHandlers = ignoredScreenHandlers + screenHandler.javaClass
         if (FabricLoader.getInstance().environmentType == EnvType.CLIENT)
         {
-            InventorioConfigData.config().ignoredScreensGlobal += screenHandler.javaClass.name
+            InventorioConfigData.config().ignoredScreens += screenHandler.javaClass.name
             InventorioConfigData.holder().save()
             InventorioNetworking.C2SSendIgnoredScreenHandlers()
         }
@@ -74,7 +74,7 @@ class PlayerAddon private constructor(val player: PlayerEntity)
         return ignoredScreenHandlers.contains(screenHandler.javaClass)
     }
 
-    fun setQuickBar(newItems: HotbarStorageEntry)
+    fun setQuickBar(newItems: MutableList<ItemStack>)
     {
         val qbStacks = inventoryAddon.shortcutQuickBar.stacks
         for(i in 0 until Math.min(qbStacks.size, newItems.size))

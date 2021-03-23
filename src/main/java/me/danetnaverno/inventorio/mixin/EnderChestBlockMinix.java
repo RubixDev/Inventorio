@@ -12,6 +12,10 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.OptionalInt;
 
+/**
+ * This mixin enlarges the Ender Chest's Inventory Screen to 6 rows.
+ * To enlarge the actual storage, {@link PlayerEntityMixin#resizeEnderChest}
+ */
 @Mixin(EnderChestBlock.class)
 public class EnderChestBlockMinix
 {

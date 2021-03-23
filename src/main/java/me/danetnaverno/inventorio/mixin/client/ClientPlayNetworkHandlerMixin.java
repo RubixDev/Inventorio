@@ -10,6 +10,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/**
+ * This mixin sends player's list of ignored screens to the server, because Server Handler has a server-side component,
+ * that acts differently if a user flagged a specific gui to be ignored by the mod
+ */
 @Mixin(ClientPlayNetworkHandler.class)
 @Environment(EnvType.CLIENT)
 public class ClientPlayNetworkHandlerMixin

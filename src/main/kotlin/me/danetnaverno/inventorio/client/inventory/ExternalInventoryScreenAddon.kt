@@ -1,6 +1,7 @@
 package me.danetnaverno.inventorio.client.inventory
 
 import com.mojang.blaze3d.systems.RenderSystem
+import me.danetnaverno.inventorio.client.InventoryOffsets
 import me.danetnaverno.inventorio.client.quickbar.QuickBarInventoryWidget
 import me.danetnaverno.inventorio.container.ExternalScreenHandlerAddon
 import me.danetnaverno.inventorio.mixin.client.HandledScreenAccessor
@@ -36,15 +37,22 @@ object ExternalInventoryScreenAddon
         isIgnored = PlayerAddon.Client.local.isScreenHandlerIgnored(handledScreen.screenHandler)
         if (isIgnored)
             return
-        offsetPoint = SlotRestrictionFilters.screenHandlerOffsets[handledScreen.screenHandler.javaClass] ?: Point(0, 0)
+
+        offsetPoint = InventoryOffsets.getScreenHandlerOffset(handledScreen.screenHandler)
         accessor = screen as HandledScreenAccessor
-        accessor.backgroundHeight += MathStuffConstants.getExtraPixelHeight(client.player!!)
+        accessor.backgroundHeight += GeneralConstants.getExtraPixelHeight(client.player!!)
         accessor.y = (handledScreen.height - accessor.backgroundHeight) / 2
+
+        quickBarWidget = QuickBarInventoryWidget(PlayerAddon.Client.local)
+
+        val offset = InventoryOffsets.getInventoryTextOffset(handledScreen)
+        accessor.playerInventoryTitleX = accessor.playerInventoryTitleX + offset.x
+        accessor.playerInventoryTitleY = accessor.playerInventoryTitleY + offset.y
+
         val screenHandlerAddon = (handledScreen.screenHandler as? HandlerDuck)?.addon as ExternalScreenHandlerAddon
         screenHandlerAddon.offsetPlayerSlots(
-                Math.min(0, (accessor.backgroundWidth - gui_generalInventoryWidth) / 2), 0,
+                Math.min(0, (accessor.backgroundWidth - GUI_GENERAL_SCREEN_WIDTH) / 2), 0,
                 0, 0)
-        quickBarWidget = QuickBarInventoryWidget(PlayerAddon.Client.local)
     }
 
     fun drawAddon(handledScreen: HandledScreen<*>, matrices: MatrixStack, mouseX: Int, mouseY: Int)
@@ -56,9 +64,9 @@ object ExternalInventoryScreenAddon
 
         val nonPlayerSlots = screen!!.screenHandler.slots.filterNot { it.isPlayerSlot }
 
-        val screenX = accessor.x + offsetPoint.x + Math.min(0, (accessor.backgroundWidth - gui_generalInventoryWidth) / 2)
+        val screenX = accessor.x + offsetPoint.x + Math.min(0, (accessor.backgroundWidth - GUI_GENERAL_SCREEN_WIDTH) / 2)
         val screenY = accessor.y + offsetPoint.y + (nonPlayerSlots.maxOfOrNull { it.y } ?: 0) + INVENTORY_SLOT_SIZE + 3
-        val expansionRows = MathStuffConstants.getExtraRows(client.player!!)
+        val expansionRows = GeneralConstants.getExtraRows(client.player!!)
 
         RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f)
         client.textureManager.bindTexture(BACKGROUND_TEXTURE)
@@ -67,14 +75,14 @@ object ExternalInventoryScreenAddon
                 screenX + GUI_EXTERNAL_INVENTORY_TOP_PART.x, screenY + GUI_EXTERNAL_INVENTORY_TOP_PART.y,
                 CANVAS_EXTERNAL_INVENTORY_TOP_PART.x.toFloat(), CANVAS_EXTERNAL_INVENTORY_TOP_PART.y.toFloat(),
                 GUI_EXTERNAL_INVENTORY_TOP_PART.width, GUI_EXTERNAL_INVENTORY_TOP_PART.height,
-                256, 512)
+                256, 256)
 
         val mainRec = GUI_EXTERNAL_INVENTORY_MAIN_PART(expansionRows)
         DrawableHelper.drawTexture(matrices,
                 screenX + mainRec.x, screenY + mainRec.y,
                 CANVAS_EXTERNAL_INVENTORY_MAIN_PART.x.toFloat(), CANVAS_EXTERNAL_INVENTORY_MAIN_PART.y.toFloat(),
                 mainRec.width, mainRec.height,
-                256, 512)
+                256, 256)
 
         if (expansionRows > 0)
         {
@@ -83,14 +91,14 @@ object ExternalInventoryScreenAddon
                     screenX + extRec.x, screenY + extRec.y,
                     CANVAS_EXTERNAL_INVENTORY_EXTENSION_PART_TOP.x.toFloat(), CANVAS_EXTERNAL_INVENTORY_EXTENSION_PART_TOP.y.toFloat(),
                     extRec.width, extRec.height,
-                    256, 512)
+                    256, 256)
 
             val extRec2 = GUI_EXTERNAL_INVENTORY_EXTENSION_PART_BOTTOM(expansionRows)
             DrawableHelper.drawTexture(matrices,
                     screenX + extRec2.x, screenY + extRec2.y,
                     CANVAS_EXTERNAL_INVENTORY_EXTENSION_PART_BOTTOM.x.toFloat(), CANVAS_EXTERNAL_INVENTORY_EXTENSION_PART_BOTTOM.y.toFloat(),
                     extRec2.width, extRec2.height,
-                    256, 512)
+                    256, 256)
         }
 
         //QuickBar (Physical slots when present)
@@ -98,18 +106,21 @@ object ExternalInventoryScreenAddon
         quickBarWidget.drawPhysSlots(matrices,
                 screenX + quickBarRect.x, screenY + quickBarRect.y,
                 CANVAS_PLAYER_INVENTORY_PHYS_BAR.x, CANVAS_PLAYER_INVENTORY_PHYS_BAR.y,
-                inventorioRowLength,
-                256, 512)
+                INVENTORIO_ROW_LENGTH,
+                256, 256)
 
-        val extRec3 = GUI_EXTERNAL_INVENTORY_INGORE_BUTTON(expansionRows)
-        val text = LiteralText("✘")
-        accessor.addAButton(ButtonWidget(screenX + extRec3.x, screenY + extRec3.y, extRec3.width, extRec3.height, text,
-                { button ->
-                    val playerAddonLocal = PlayerAddon.Client.local
-                    playerAddonLocal.addScreenHandlerToIgnored(playerAddonLocal.player.currentScreenHandler)
-                    client.player!!.closeHandledScreen()
-                }, { buttonWidget: ButtonWidget, matrixStack: MatrixStack, x: Int, y: Int ->
-            screen!!.renderTooltip(matrices, TranslatableText("inventorio.ignore_screen.tooltip"), x, y)
-        }))
+        if (!handledScreen.javaClass.name.startsWith("net.minecraft."))
+        {
+            val extRec3 = GUI_EXTERNAL_INVENTORY_INGORE_BUTTON(expansionRows)
+            val text = LiteralText("✘")
+            accessor.addAButton(ButtonWidget(screenX + extRec3.x, screenY + extRec3.y, extRec3.width, extRec3.height, text,
+                    { button ->
+                        val playerAddonLocal = PlayerAddon.Client.local
+                        playerAddonLocal.addScreenHandlerToIgnored(playerAddonLocal.player.currentScreenHandler)
+                        client.player!!.closeHandledScreen()
+                    }, { buttonWidget: ButtonWidget, matrixStack: MatrixStack, x: Int, y: Int ->
+                screen!!.renderTooltip(matrices, TranslatableText("inventorio.ignore_screen.tooltip"), x, y)
+            }))
+        }
     }
 }

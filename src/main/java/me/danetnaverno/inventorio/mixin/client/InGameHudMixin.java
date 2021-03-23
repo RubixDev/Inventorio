@@ -10,6 +10,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+/**
+ * This mixin overwrites the Quickbar rendering on the HUD
+ */
 @Mixin(value = InGameHud.class, priority = 9000)
 @Environment(EnvType.CLIENT)
 public abstract class InGameHudMixin

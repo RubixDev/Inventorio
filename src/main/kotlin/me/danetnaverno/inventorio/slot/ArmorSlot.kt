@@ -1,8 +1,8 @@
 package me.danetnaverno.inventorio.slot
 
 import com.mojang.datafixers.util.Pair
-import me.danetnaverno.inventorio.isNotEmpty
 import me.danetnaverno.inventorio.mixin.PlayerScreenHandlerAccessor
+import me.danetnaverno.inventorio.util.isNotEmpty
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.enchantment.EnchantmentHelper

@@ -76,13 +76,13 @@ public class PlayerInventoryMixin implements InventoryDuck
     @Overwrite
     public static boolean isValidHotbarIndex(int slot)
     {
-        return slot >= 0 && slot < GeneralConstantsKt.inventorioRowLength;
+        return slot >= 0 && slot < GeneralConstantsKt.INVENTORIO_ROW_LENGTH;
     }
 
     @Overwrite
     public static int getHotbarSize()
     {
-        return GeneralConstantsKt.inventorioRowLength;
+        return GeneralConstantsKt.INVENTORIO_ROW_LENGTH;
     }
 
     @Override

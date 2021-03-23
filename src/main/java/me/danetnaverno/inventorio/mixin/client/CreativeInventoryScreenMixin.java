@@ -17,12 +17,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
+/**
+ * This mixin attaches {@link CreativeInventoryScreenAddon} to {@link CreativeInventoryScreen}
+ */
 @Mixin(CreativeInventoryScreen.class)
 @Environment(EnvType.CLIENT)
 public class CreativeInventoryScreenMixin
 {
     @Shadow @Nullable private List<Slot> slots;
-
     @Shadow private float scrollPosition;
 
     @Inject(method = "init", at = @At(value = "HEAD"))

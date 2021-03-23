@@ -1,5 +1,6 @@
 package me.danetnaverno.inventorio.client.config
 
+import me.danetnaverno.inventorio.packet.InventorioNetworking
 import me.danetnaverno.inventorio.player.PlayerAddon
 import me.danetnaverno.inventorio.util.QuickBarMode
 import me.danetnaverno.inventorio.util.QuickBarSimplified
@@ -31,29 +32,16 @@ object InventorioConfigScreenMenu
                 .startEnumSelector(
                         TranslatableText("inventorio.config.simplified_quick_bar"),
                         QuickBarSimplified::class.java,
-                        config.quickBarSimplifiedGlobal
+                        config.quickBarSimplified
                 )
                 .setEnumNameProvider { TranslatableText("inventorio.config.simplified_quick_bar."+it.name) }
                 .setTooltip(TranslatableText("inventorio.config.simplified_quick_bar.tooltip"))
                 .setDefaultValue(QuickBarSimplified.OFF)
                 .setSaveConsumer {
-                    config.quickBarSimplifiedGlobal = it
+                    config.quickBarSimplified = it
                     configHolder.save()
                 }
                 .build())
-
-        category.addEntry(entryBuilder
-                .startStrList(TranslatableText("inventorio.config.ignored_screens_list"), InventorioConfigData.config().ignoredScreensGlobal)
-                .setTooltip(TranslatableText("inventorio.config.ignored_screens_list.tooltip"))
-                .setSaveConsumer {
-                    config.ignoredScreensGlobal = it
-                    configHolder.save()
-                    val player = MinecraftClient.getInstance().player
-                    if (player != null)
-                        PlayerAddon[player].setAllIgnoredScreenHandlers(it)
-                }
-                .build()
-        )
 
         category.addEntry(entryBuilder
                 .startEnumSelector(
@@ -119,6 +107,38 @@ object InventorioConfigScreenMenu
         {
             category.addEntry(entryBuilder.startTextDescription(TranslatableText("inventorio.config.world_locked_tooltip")).build())
         }
+
+        category.addEntry(entryBuilder.startTextDescription(TranslatableText("inventorio.config.mod_compatibility")).build())
+
+        category.addEntry(entryBuilder
+                .startStrList(TranslatableText("inventorio.config.ignored_screens"), InventorioConfigData.config().ignoredScreens)
+                .setTooltip(TranslatableText("inventorio.config.ignored_screens.tooltip"))
+                .setSaveConsumer {
+                    config.ignoredScreens = it
+                    configHolder.save()
+                    val player = MinecraftClient.getInstance().player
+                    if (player != null)
+                    {
+                        PlayerAddon[player].setAllIgnoredScreenHandlers(it)
+                        InventorioNetworking.C2SSendIgnoredScreenHandlers() //todo check this
+                    }
+                }
+                .build()
+        )
+
+        category.addEntry(entryBuilder
+                .startStrList(TranslatableText("inventorio.config.inventory_text_offsets"), InventorioConfigData.config().inventoryTextOffsets)
+                .setTooltip(TranslatableText("inventorio.config.inventory_text_offsets.tooltip"))
+                .setSaveConsumer {
+                    config.inventoryTextOffsets = it
+                    configHolder.save()
+                    //todo
+                    //it.map {  }
+                    //val ass = Map<Class<out HandledScreen<*>>, Point>
+                    //TitleOffsets.setCustomTitleOffsets(it)
+                }
+                .build()
+        )
 
         return builder.build()
     }

@@ -1,14 +1,9 @@
 package me.danetnaverno.inventorio.util
 
 import com.google.common.collect.ImmutableList
-import com.google.common.collect.ImmutableMap
 import net.minecraft.block.ShulkerBoxBlock
 import net.minecraft.item.*
-import net.minecraft.screen.AnvilScreenHandler
-import net.minecraft.screen.EnchantmentScreenHandler
-import net.minecraft.screen.ScreenHandler
 import net.minecraft.util.registry.Registry
-import java.awt.Point
 
 object SlotRestrictionFilters
 {
@@ -23,8 +18,6 @@ object SlotRestrictionFilters
                 || (it.item == Items.WRITABLE_BOOK || it.item == Items.WRITABLE_BOOK)
                 || it.item is ToolItem
     }
-
-    val screenHandlerOffsets: Map<Class<out ScreenHandler>, Point>
 
     init
     {
@@ -85,11 +78,5 @@ object SlotRestrictionFilters
         this.quickBarItems = ImmutableList.copyOf(quickBarItems + unsuredItems)
         this.utilityBeltItems = ImmutableList.copyOf(utilityBarItems + unsuredItems)
         this.toolBelt = ImmutableList.copyOf(toolBeltItems)
-
-        val screenHandlerOffsets = mutableMapOf<Class<out ScreenHandler>, Point>()
-        screenHandlerOffsets[EnchantmentScreenHandler::class.java] = Point(0, 5)
-        screenHandlerOffsets[AnvilScreenHandler::class.java] = Point(0, 12)
-
-        this.screenHandlerOffsets = ImmutableMap.copyOf(screenHandlerOffsets)
     }
 }

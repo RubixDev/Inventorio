@@ -11,6 +11,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/**
+ * This mixin attaches {@link PlayerInventoryScreenAddon} to {@link InventoryScreen} (Player's inventory screen)
+ */
 @Mixin(InventoryScreen.class)
 @Environment(EnvType.CLIENT)
 public class InventoryScreenMixin

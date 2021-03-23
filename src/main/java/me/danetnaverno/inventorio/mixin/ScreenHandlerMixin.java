@@ -1,10 +1,10 @@
 package me.danetnaverno.inventorio.mixin;
 
+import me.danetnaverno.inventorio.MixinHelper;
 import me.danetnaverno.inventorio.container.ExternalScreenHandlerAddon;
 import me.danetnaverno.inventorio.player.PlayerScreenHandlerAddon;
 import me.danetnaverno.inventorio.util.HandlerDuck;
 import me.danetnaverno.inventorio.util.ScreenHandlerAddon;
-import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.PlayerScreenHandler;
@@ -30,7 +30,7 @@ public class ScreenHandlerMixin implements HandlerDuck
     private void createHandlerAddon(@Nullable ScreenHandlerType<?> type, int syncId, CallbackInfo ci)
     {
         Object thisObject = this;
-        if (!(thisObject instanceof PlayerScreenHandler) && !(thisObject instanceof CreativeInventoryScreen.CreativeScreenHandler))
+        if (!(thisObject instanceof PlayerScreenHandler) && !MixinHelper.isThisCreativeScreenHandler(thisObject))
             addon = new ExternalScreenHandlerAddon((ScreenHandler) (Object) this);
     }
 
@@ -64,7 +64,7 @@ public class ScreenHandlerMixin implements HandlerDuck
 
     private boolean tryInitAddon(Object object, Slot slot)
     {
-        if (object instanceof PlayerScreenHandler || object instanceof CreativeInventoryScreen.CreativeScreenHandler)
+        if (object instanceof PlayerScreenHandler || MixinHelper.isThisCreativeScreenHandler(object))
             return true;
         return ((HandlerDuck)object).getAddon().tryInitialize(slot);
     }

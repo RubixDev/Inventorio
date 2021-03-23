@@ -4,32 +4,27 @@ import me.danetnaverno.inventorio.RobertoGarbagio
 import me.danetnaverno.inventorio.player.PlayerAddon
 import me.danetnaverno.inventorio.util.QuickBarMode
 import me.danetnaverno.inventorio.util.UtilityBeltMode
-import net.minecraft.network.Packet
+import net.fabricmc.fabric.api.network.PacketContext
 import net.minecraft.network.PacketByteBuf
-import net.minecraft.network.listener.ServerPlayPacketListener
-import net.minecraft.server.network.ServerPlayNetworkHandler
+import net.minecraft.util.Identifier
 
-class SetInventorySettingsC2SPacket(
-        var quickBarMode: QuickBarMode = QuickBarMode.DEFAULT,
-        var utilityBeltMode: UtilityBeltMode = UtilityBeltMode.FILTERED
-) : Packet<ServerPlayPacketListener>
+object SetInventorySettingsC2SPacket
 {
-    override fun read(buf: PacketByteBuf)
+    val identifier = Identifier("inventorio", "set_inventory_settings_c2s")
+
+    fun consume(context: PacketContext, buf: PacketByteBuf)
     {
-        quickBarMode = QuickBarMode.values()[buf.readByte().toInt()]
-        utilityBeltMode = UtilityBeltMode.values()[buf.readByte().toInt()]
+        val quickBarMode = QuickBarMode.values()[buf.readByte().toInt()]
+        val utilityBeltMode = UtilityBeltMode.values()[buf.readByte().toInt()]
+
+        val player = context.player
+        PlayerAddon[player].trySetRestrictionModesC2S(quickBarMode, utilityBeltMode)
+        RobertoGarbagio.LOGGER.info("Applying SetInventorySettingsC2SPacket: $quickBarMode $utilityBeltMode")
     }
 
-    override fun write(buf: PacketByteBuf)
+    fun write(buf: PacketByteBuf, quickBarMode: QuickBarMode = QuickBarMode.DEFAULT, utilityBeltMode: UtilityBeltMode = UtilityBeltMode.FILTERED)
     {
         buf.writeByte(quickBarMode.ordinal)
         buf.writeByte(utilityBeltMode.ordinal)
-    }
-
-    override fun apply(listener: ServerPlayPacketListener)
-    {
-        val player = (listener as ServerPlayNetworkHandler).player
-        PlayerAddon[player].trySetRestrictionModesC2S(quickBarMode, utilityBeltMode)
-        RobertoGarbagio.LOGGER.info("Applying SetInventorySettingsC2SPacket: $quickBarMode $utilityBeltMode")
     }
 }

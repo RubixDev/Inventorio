@@ -13,11 +13,15 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+/**
+ * This mixin empties the main hand when a player starts to mine a block,
+ * causing a correct tool to be display instead of the currently selected quickbar item
+ */
 @Mixin(ServerPlayerInteractionManager.class)
 public class ServerPlayerInteractionManagerMixin
 {
     @Inject(method = "interactBlock", at = @At(value = "HEAD"))
-    private void displayBlockWhileDigging(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir)
+    private void displayToolWhileDigging(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, BlockHitResult hitResult, CallbackInfoReturnable<ActionResult> cir)
     {
         PlayerAddon.get(player).getInventoryAddon().setMainHandDisplayTool(ItemStack.EMPTY);
     }

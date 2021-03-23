@@ -1,7 +1,7 @@
 package me.danetnaverno.inventorio.client.config
 
 import me.danetnaverno.inventorio.Inventorio
-import me.danetnaverno.inventorio.util.inventorioRowLength
+import me.danetnaverno.inventorio.util.INVENTORIO_ROW_LENGTH
 import me.danetnaverno.inventorio.util.isNotEmpty
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -23,16 +23,14 @@ class QuickBarStorage(private val file: File)
     {
         if (!loaded)
         {
-            for(i in 0 until inventorioRowLength)
-                entries.add(i,HotbarStorageEntry())
             try
             {
                 val compoundTag = NbtIo.read(file) ?: return
-                for (i in 0 until compoundTag.size)
+                for (i in 0 until Math.min(INVENTORIO_ROW_LENGTH, compoundTag.size))
                 {
                     val entry = HotbarStorageEntry()
                     entry.fromListTag(compoundTag.getList(i.toString(), NbtType.COMPOUND))
-                    entries[i] = entry
+                    entries.add(entry)
                 }
             }
             catch (ex: Exception)
@@ -80,6 +78,15 @@ class QuickBarStorage(private val file: File)
 
     companion object
     {
-        val default = QuickBarStorage(MinecraftClient.getInstance().runDirectory.resolve("quickbar.nbt"))
+        private val directory = MinecraftClient.getInstance().runDirectory.resolve("quickbars")
+        val global = QuickBarStorage(directory.resolve("global.nbt"))
+        var local = QuickBarStorage(directory.resolve(MinecraftClient.getInstance().currentServerEntry?.name + ".nbt"))
+            private set
+
+        init
+        {
+            if (!directory.exists())
+                directory.mkdir()
+        }
     }
 }

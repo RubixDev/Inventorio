@@ -15,8 +15,9 @@ import net.fabricmc.api.Environment
 class InventorioConfigData : ConfigData
 {
     //Global
-    var quickBarSimplifiedGlobal = QuickBarSimplified.OFF
-    var ignoredScreensGlobal = listOf<String>()
+    var quickBarSimplified = QuickBarSimplified.OFF
+    var ignoredScreens = listOf<String>()
+    var inventoryTextOffsets = listOf<String>()
 
     //Defaults
     //QuickBar Mode and Utility Belt Mode are assigned to player's entity on both sides,

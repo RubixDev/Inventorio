@@ -11,6 +11,7 @@ import me.danetnaverno.inventorio.client.InventorioControls.keyUseUtility
 import me.danetnaverno.inventorio.client.config.InventorioConfigData
 import me.danetnaverno.inventorio.client.config.InventorioConfigScreenMenu
 import me.danetnaverno.inventorio.client.config.QuickBarStorage
+import me.danetnaverno.inventorio.mixin.client.MinecraftClientAccessor
 import me.danetnaverno.inventorio.player.PlayerAddon
 import me.danetnaverno.inventorio.util.QuickBarSimplified
 import net.fabricmc.api.EnvType
@@ -18,6 +19,7 @@ import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.text.Text
+import net.minecraft.world.level.LevelProperties
 
 @Environment(EnvType.CLIENT)
 object InventorioKeyHandler
@@ -29,7 +31,7 @@ object InventorioKeyHandler
 
     fun handleInputEvents(inventory: PlayerInventory, selectedSlot: Int)
     {
-        if (InventorioConfigData.config().quickBarSimplifiedGlobal != QuickBarSimplified.ON)
+        if (InventorioConfigData.config().quickBarSimplified != QuickBarSimplified.ON)
         {
             inventory.selectedSlot = selectedSlot
         }
@@ -51,13 +53,21 @@ object InventorioKeyHandler
         val player = client.player ?: return
 
         if (keyOpenConfig.wasPressed())
+        {
+            val name = if (client.server != null)
+                (client.server!!.worlds.first().levelProperties as LevelProperties).levelName
+            else
+                client.networkHandler?.connection?.address
+            RobertoGarbagio.LOGGER.info("name=$name")
             client.openScreen(InventorioConfigScreenMenu.get(null))
+            InventoryOffsets.init()
+        }
 
         if (keyNextUtility.wasPressed())
             PlayerAddon[player].inventoryAddon.switchToNextUtility(1)
         if (keyPrevUtility.wasPressed())
             PlayerAddon[player].inventoryAddon.switchToNextUtility(-1)
-        if (hasDedicatedUseUtilityButton() && keyUseUtility.isPressed)
+        if (hasDedicatedUseUtilityButton() && keyUseUtility.isPressed && (client as MinecraftClientAccessor).itemUseCooldown > 0)
             PlayerAddon[player].inventoryAddon.activateSelectedUtility()
 
         if (keyQuickBar10.wasPressed())
@@ -78,7 +88,7 @@ object InventorioKeyHandler
                 if (options.keysHotbar[quickBarIndex].wasPressed()) //todo wasPressed would be better but it doesn't work here
                 {
                     RobertoGarbagio.LOGGER.info("saving in $quickBarIndex")
-                    QuickBarStorage.default.setSavedQuickBar(quickBarIndex, PlayerAddon[player].inventoryAddon.shortcutQuickBar.stacks)
+                    QuickBarStorage.global.setSavedQuickBar(quickBarIndex, PlayerAddon[player].inventoryAddon.shortcutQuickBar.stacks)
                     client.inGameHud.setOverlayMessage(Text.of("saved at $quickBarIndex"), false)
                 }
         }
@@ -88,7 +98,7 @@ object InventorioKeyHandler
                 if (options.keysHotbar[quickBarIndex].wasPressed())
                 {
                     RobertoGarbagio.LOGGER.info("loaded from $quickBarIndex")
-                    val bar = QuickBarStorage.default.getSavedQuickBar(quickBarIndex)
+                    val bar = QuickBarStorage.global.getSavedQuickBar(quickBarIndex)
                     PlayerAddon[player].setQuickBar(bar)
                     client.inGameHud.setOverlayMessage(Text.of("loaded from $quickBarIndex"), false)
                 }

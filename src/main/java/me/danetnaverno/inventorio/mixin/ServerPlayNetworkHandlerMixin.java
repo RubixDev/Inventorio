@@ -19,15 +19,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ServerPlayNetworkHandler.class)
 public class ServerPlayNetworkHandlerMixin
 {
-    @Shadow
-    public ServerPlayerEntity player;
+    @Shadow public ServerPlayerEntity player;
 
+    /**
+     * This inject sends gameplay-impacting Player's settings (QuickBar Mode and UtilityBelt Mode) from the server to the player
+     */
     @Inject(method = "onClientSettings", at = @At(value = "RETURN"))
     private void setPlayerSettingsBack(ClientSettingsC2SPacket packet, CallbackInfo ci)
     {
         InventorioNetworking.INSTANCE.S2CSendPlayerSettings(this.player);
     }
 
+    /**
+     * This inject rebuilds the block list of the creative inventory.
+     * If you know how to change the "45" constant instead of just making the same method again, please let me know.
+     * //todo find a way
+     */
     @Inject(method = "onCreativeInventoryAction", at = @At(value = "RETURN"))
     private void creativeSlotUpdateFix(CreativeInventoryActionC2SPacket packet, CallbackInfo ci)
     {

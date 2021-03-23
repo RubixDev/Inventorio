@@ -2,34 +2,34 @@ package me.danetnaverno.inventorio.packet.c2s
 
 import me.danetnaverno.inventorio.RobertoGarbagio
 import me.danetnaverno.inventorio.player.PlayerAddon
-import net.minecraft.client.options.HotbarStorageEntry
+import me.danetnaverno.inventorio.util.INVENTORIO_ROW_LENGTH
+import net.fabricmc.fabric.api.network.PacketContext
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.network.Packet
 import net.minecraft.network.PacketByteBuf
-import net.minecraft.network.listener.ServerPlayPacketListener
-import net.minecraft.server.network.ServerPlayNetworkHandler
+import net.minecraft.util.Identifier
+import net.minecraft.util.collection.DefaultedList
 
-class SetNewQuickBarC2SPacket(var items: HotbarStorageEntry = HotbarStorageEntry()) : Packet<ServerPlayPacketListener>
+object SetNewQuickBarC2SPacket
 {
-    override fun read(buf: PacketByteBuf)
+    val identifier = Identifier("inventorio", "set_new_quickbar_c2s")
+
+    fun consume(context: PacketContext, buf: PacketByteBuf)
     {
+        val items = DefaultedList.ofSize(INVENTORIO_ROW_LENGTH, ItemStack.EMPTY)
+
         val len = buf.readByte()
         for (i in 0 until len)
             items[i] = ItemStack.fromTag(buf.readCompoundTag())
+
+        RobertoGarbagio.LOGGER.info("Applying SetNewQuickBarC2SPacket: $items")
+        PlayerAddon[context.player].setQuickBar(items)
     }
 
-    override fun write(buf: PacketByteBuf)
+    fun write(buf: PacketByteBuf, items: MutableList<ItemStack>)
     {
         buf.writeByte(items.size)
         for (item in items)
             buf.writeCompoundTag(item.toTag(CompoundTag()))
-    }
-
-    override fun apply(listener: ServerPlayPacketListener)
-    {
-        RobertoGarbagio.LOGGER.info("Applying SetNewQuickBarC2SPacket: $items")
-        val player = (listener as ServerPlayNetworkHandler).player
-        PlayerAddon[player].setQuickBar(items)
     }
 }

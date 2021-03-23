@@ -1,6 +1,6 @@
 package me.danetnaverno.inventorio.mixin.client;
 
-import me.danetnaverno.inventorio.player.CreativeScreenHandlerAddon;
+import me.danetnaverno.inventorio.client.inventory.CreativeScreenHandlerAddon;
 import me.danetnaverno.inventorio.player.PlayerAddon;
 import me.danetnaverno.inventorio.util.GeneralConstantsKt;
 import me.danetnaverno.inventorio.util.HandlerDuck;
@@ -14,14 +14,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/**
+ * This mixin attaches {@link CreativeScreenHandlerAddon} to {@link CreativeInventoryScreen.CreativeScreenHandler}
+ */
 @Mixin(CreativeInventoryScreen.CreativeScreenHandler.class)
 public class CreativeScreenHandlerMixin implements HandlerDuck
 {
-    @Shadow
-    @Final
-    public DefaultedList<ItemStack> itemList;
-    @Unique
-    public CreativeScreenHandlerAddon addon;
+    @Unique public CreativeScreenHandlerAddon addon;
+    @Shadow @Final public DefaultedList<ItemStack> itemList;
 
     @Inject(method = "<init>", at = @At(value = "RETURN"))
     private void createHandlerAddon(PlayerEntity playerEntity, CallbackInfo ci)
@@ -41,7 +41,7 @@ public class CreativeScreenHandlerMixin implements HandlerDuck
     @Overwrite
     public boolean shouldShowScrollbar()
     {
-        return this.itemList.size() > GeneralConstantsKt.inventorioRowLength * 5;
+        return this.itemList.size() > GeneralConstantsKt.INVENTORIO_ROW_LENGTH * 5;
     }
 
     @Override

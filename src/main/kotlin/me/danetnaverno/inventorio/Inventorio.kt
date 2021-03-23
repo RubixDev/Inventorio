@@ -5,7 +5,7 @@ import me.danetnaverno.inventorio.client.InventorioKeyHandler
 import me.danetnaverno.inventorio.client.config.InventorioConfigData
 import me.danetnaverno.inventorio.enchantment.DeepPocketsEnchantment
 import me.danetnaverno.inventorio.mixin.client.CreativeInventoryScreenAccessor
-import me.danetnaverno.inventorio.util.inventorioRowLength
+import me.danetnaverno.inventorio.util.INVENTORIO_ROW_LENGTH
 import me.shedaniel.autoconfig.AutoConfig
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer
 import net.fabricmc.api.EnvType
@@ -38,7 +38,7 @@ open class Inventorio : ModInitializer
 
     private fun onInitializeClient()
     {
-        CreativeInventoryScreenAccessor.setCreativeInventory(SimpleInventory(inventorioRowLength * 5))
+        CreativeInventoryScreenAccessor.setCreativeInventory(SimpleInventory(INVENTORIO_ROW_LENGTH * 5))
         InventorioControls.initialize()
         ClientTickEvents.START_CLIENT_TICK.register(ClientTickEvents.StartTick { InventorioKeyHandler.tick(it) })
         AutoConfig.register(InventorioConfigData::class.java) { definition, configClass -> GsonConfigSerializer(definition, configClass) }

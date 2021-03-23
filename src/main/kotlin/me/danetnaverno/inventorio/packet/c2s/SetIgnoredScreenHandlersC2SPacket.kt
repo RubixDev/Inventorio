@@ -2,32 +2,29 @@ package me.danetnaverno.inventorio.packet.c2s
 
 import me.danetnaverno.inventorio.RobertoGarbagio
 import me.danetnaverno.inventorio.player.PlayerAddon
-import net.minecraft.network.Packet
+import net.fabricmc.fabric.api.network.PacketContext
 import net.minecraft.network.PacketByteBuf
-import net.minecraft.network.listener.ServerPlayPacketListener
-import net.minecraft.server.network.ServerPlayNetworkHandler
+import net.minecraft.util.Identifier
 
-class SetIgnoredScreenHandlersC2SPacket(var ignoredScreenHandlers: List<String> = mutableListOf()) : Packet<ServerPlayPacketListener>
+object SetIgnoredScreenHandlersC2SPacket
 {
-    override fun read(buf: PacketByteBuf)
+    val identifier = Identifier("inventorio","set_ignored_screens_c2s")
+
+    fun consume(context: PacketContext, buf: PacketByteBuf)
     {
         val size = buf.readInt()
         val list = mutableListOf<String>()
         for (i in 0 until size)
-            list.add(buf.readString())
+            list.add(buf.readString(32767))
+
+        RobertoGarbagio.LOGGER.info("Applying SetIgnoredScreenHandlersC2SPacket: $list")
+        PlayerAddon[context.player].setAllIgnoredScreenHandlers(list)
     }
 
-    override fun write(buf: PacketByteBuf)
+    fun write(buf: PacketByteBuf, ignoredScreenHandlers: List<String> = mutableListOf())
     {
         buf.writeInt(ignoredScreenHandlers.count())
         for (str in ignoredScreenHandlers)
             buf.writeString(str)
-    }
-
-    override fun apply(listener: ServerPlayPacketListener)
-    {
-        RobertoGarbagio.LOGGER.info("Applying SetIgnoredScreenHandlersC2SPacket: $ignoredScreenHandlers")
-        val player = (listener as ServerPlayNetworkHandler).player
-        PlayerAddon[player].setAllIgnoredScreenHandlers(ignoredScreenHandlers)
     }
 }

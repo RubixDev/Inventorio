@@ -4,7 +4,7 @@ import me.danetnaverno.inventorio.player.PlayerAddon
 import me.danetnaverno.inventorio.util.INVENTORY_SLOT_SIZE
 import me.danetnaverno.inventorio.util.QuickBarMode
 import me.danetnaverno.inventorio.util.isNotEmpty
-import me.danetnaverno.inventorio.util.quickBarPhysicalSlotsRange
+import me.danetnaverno.inventorio.util.QUICK_BAR_PHYS_RANGE
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.gui.DrawableHelper
@@ -25,7 +25,7 @@ class QuickBarInventoryWidget(val playerAddon: PlayerAddon)
         }
         else
         {
-            val start = quickBarPhysicalSlotsRange.first
+            val start = QUICK_BAR_PHYS_RANGE.first
             for (relative in 0 until slotWidth)
             {
                 if (playerAddon.player.playerScreenHandler.getSlot(start + relative).stack.isNotEmpty)

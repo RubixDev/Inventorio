@@ -1,6 +1,6 @@
 package me.danetnaverno.inventorio.enchantment
 
-import me.danetnaverno.inventorio.util.maxDeepPocketsLevel
+import me.danetnaverno.inventorio.util.DEEP_POCKETS_MAX_LEVEL
 import net.minecraft.enchantment.Enchantment
 import net.minecraft.enchantment.EnchantmentTarget
 import net.minecraft.entity.EquipmentSlot
@@ -14,7 +14,7 @@ object DeepPocketsEnchantment : Enchantment(Rarity.RARE, EnchantmentTarget.ARMOR
 
     override fun getMaxLevel(): Int
     {
-        return maxDeepPocketsLevel
+        return DEEP_POCKETS_MAX_LEVEL
     }
 
     override fun getMinPower(level: Int): Int
