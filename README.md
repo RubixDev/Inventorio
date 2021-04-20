@@ -3,6 +3,13 @@
 Video Demonstration:
 [![Video Demonstration](https://img.youtube.com/vi/XJmlAsdC5Sc/maxresdefault.jpg)](https://youtu.be/XJmlAsdC5Sc)
  
-### Warning! This mod is not playable yet, I needed an additional piece of Minecraft-related code on display before I could finish it.
-### This mod WILL corrupt your player save in its current state, that's why some config files are deliberately missing 
-### Come back in a week  
+#### Warning! The current version has numerous bugs.
+Consider this a snapshot: it's technically playable, but can (and will) change in major incompatible ways.
+That said, it can be compiled and played with.
+#### I aim the eventual release version to be applicable long-term for both Survival and Creative
+Including the ability to remove the mod and continue your world without it.
+
+Dependencies: 
+* [Cloth Config](https://github.com/shedaniel/cloth-config)
+* [Fabric API](https://github.com/FabricMC/fabric)
+* [Fabric Language Kotlin](https://github.com/FabricMC/fabric-language-kotlin)

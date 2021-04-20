@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "inventorio",
+  "version": "in-dev",
+
+  "name": "Inventorio",
+  "description": "My vision of the Inventory Update. Includes a shortcut-based quickbar, bigger inventory, Deep Pockets enchantment and more.",
+  "authors": [
+    "Lizard Of Oz"
+  ],
+  "contact": {
+    "sources": "https://github.com/Lizard-Of-Oz/Inventorio"
+  },
+
+
+  "icon": "assets/inventorio/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.lizardofoz.inventorio.Inventorio"
+    ],
+    "modmenu": [
+      "me.lizardofoz.inventorio.client.config.InventorioModMenuApi"
+    ]
+  },
+  "mixins": [
+    "inventorio.mixins.json"
+  ],
+  "accessWidener" : "inventorio.accesswidener",
+  "depends": {
+    "fabricloader": ">=0.8.7",
+    "fabric": "*",
+    "fabric-language-kotlin": "*",
+    "minecraft": "1.16.x"
+  }
+}
