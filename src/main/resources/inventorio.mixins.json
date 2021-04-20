@@ -1,21 +1,22 @@
 {
   "required": true,
-  "package": "me.danetnaverno.inventorio.mixin",
+  "package": "me.lizardofoz.inventorio.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "EnderChestBlockMinix",
     "ExperienceOrbEntityMixin",
     "PlayerEntityMixin",
-    "PlayerInventoryAccessor",
     "PlayerInventoryMixin",
-    "PlayerScreenHandlerAccessor",
     "PlayerScreenHandlerMixin",
-    "ScreenHandlerAccessor",
     "ScreenHandlerMixin",
     "ServerPlayerInteractionManagerMixin",
     "ServerPlayNetworkHandlerMixin",
-    "SimpleInventoryAccessor",
-    "SlotAccessor"
+    "accessor.CraftingScreenHandlerAccessor",
+    "accessor.PlayerInventoryAccessor",
+    "accessor.PlayerScreenHandlerAccessor",
+    "accessor.ScreenHandlerAccessor",
+    "accessor.SimpleInventoryAccessor",
+    "accessor.SlotAccessor"
   ],
   "client": [
     "client.ClientPlayerEntityMixin",
@@ -23,17 +24,17 @@
     "client.ClientPlayNetworkHandlerMixin",
     "client.CreativeInventoryScreenMixin",
     "client.CreativeScreenHandlerMixin",
-    "client.HandledScreenAccessor",
     "client.InGameHudMixin",
     "client.InventoryScreenMixin",
-    "client.MinecraftClientAccessor",
     "client.MinecraftClientMixin",
-    "client.ScreenAccessor",
+    "client.accessor.CreativeInventoryScreenAccessor",
+    "client.accessor.HandledScreenAccessor",
+    "client.accessor.MinecraftClientAccessor",
+    "client.accessor.ScreenAccessor",
     "client.screen.AbstractFurnaceScreenMixin",
     "client.screen.CraftingScreenMixin",
     "client.screen.GrindstoneScreenMixin",
-    "client.screen.HandledScreenMixin",
-    "client.CreativeInventoryScreenAccessor"
+    "client.screen.HandledScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
