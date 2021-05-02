@@ -4,7 +4,7 @@ import me.lizardofoz.inventorio.mixin.accessor.ScreenHandlerAccessor
 import me.lizardofoz.inventorio.mixin.accessor.SlotAccessor
 import me.lizardofoz.inventorio.mixin.client.accessor.CreativeInventoryScreenAccessor
 import me.lizardofoz.inventorio.player.PlayerAddon
-import me.lizardofoz.inventorio.quickbar.QuickBarHandlerWidget
+import me.lizardofoz.inventorio.slot.QuickBarSlot
 import me.lizardofoz.inventorio.util.*
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -19,8 +19,6 @@ import java.awt.Rectangle
 @Environment(EnvType.CLIENT)
 class CreativeScreenHandlerAddon internal constructor(val handler: CreativeInventoryScreen.CreativeScreenHandler) : ScreenHandlerAddon
 {
-    private lateinit var quickBarHandlerWidget: QuickBarHandlerWidget
-
     override fun tryInitialize(slot: Slot): Boolean
     {
         return true
@@ -59,14 +57,7 @@ class CreativeScreenHandlerAddon internal constructor(val handler: CreativeInven
         }
 
         val quickBarRect = Rectangle(9, 112, 12 * INVENTORY_SLOT_SIZE, INVENTORY_SLOT_SIZE)
-        for ((absoluteIndex, relativeIndex) in QUICK_BAR_PHYS_RANGE.withRelativeIndex())
-        {
-            val playerSlot = playerSlots[absoluteIndex]
-            accessor.addASlot(CreativeInventoryScreen.CreativeSlot(playerSlot, playerSlot.id,
-                    quickBarRect.x + (relativeIndex % 12) * INVENTORY_SLOT_SIZE,
-                    quickBarRect.y + (relativeIndex / 12) * INVENTORY_SLOT_SIZE))
-        }
-        for ((absoluteIndex, relativeIndex) in QUICK_BAR_SHORTCUTS_RANGE.withRelativeIndex())
+        for ((absoluteIndex, relativeIndex) in QUICK_BAR_RANGE.withRelativeIndex())
         {
             val playerSlot = playerSlots[absoluteIndex]
             accessor.addASlot(CreativeInventoryScreen.CreativeSlot(playerSlot, playerSlot.id,
@@ -92,8 +83,12 @@ class CreativeScreenHandlerAddon internal constructor(val handler: CreativeInven
                         i + j * INVENTORIO_ROW_LENGTH,
                         9 + i * INVENTORY_SLOT_SIZE, 18 + j * INVENTORY_SLOT_SIZE))
 
-        quickBarHandlerWidget = QuickBarHandlerWidget(playerAddon.inventoryAddon)
-        quickBarHandlerWidget.createQuickBarSlots(handler, 9, 112, QUICK_BAR_PHYS_RANGE)
+        for ((absolute, relative) in QUICK_BAR_RANGE.withRelativeIndex())
+        {
+            accessor.addASlot(QuickBarSlot(playerAddon.inventoryAddon.shortcutQuickBar, relative, playerAddon.inventoryAddon.inventory, absolute,
+                    9 + INVENTORY_SLOT_SIZE * (relative / 4),
+                    112 + INVENTORY_SLOT_SIZE * (relative % 4)))
+        }
         if (deleteItemSlot != null)
         {
             handler.slots.remove(deleteItemSlot)
@@ -103,10 +98,9 @@ class CreativeScreenHandlerAddon internal constructor(val handler: CreativeInven
 
     override fun onSlotClick(slotIndex: Int, clickData: Int, actionType: SlotActionType, player: PlayerEntity): ItemStack?
     {
-        val result = quickBarHandlerWidget.onSlotClick(handler, slotIndex, clickData, actionType, player)
-        //if (result != null)
-        //    player.inventory.cursorStack = ItemStack.EMPTY
-        return result
+        if (slotIndex in QUICK_BAR_RANGE)
+            return (handler.getSlot(slotIndex) as QuickBarSlot).onSlotClick(clickData, actionType, PlayerAddon[player])
+        return null
     }
 
     fun scrollItems(itemList: DefaultedList<ItemStack>, position: Float)

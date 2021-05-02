@@ -3,7 +3,7 @@ package me.lizardofoz.inventorio.screenhandler
 import me.lizardofoz.inventorio.mixin.accessor.ScreenHandlerAccessor
 import me.lizardofoz.inventorio.mixin.accessor.SlotAccessor
 import me.lizardofoz.inventorio.player.PlayerAddon
-import me.lizardofoz.inventorio.quickbar.QuickBarHandlerWidget
+import me.lizardofoz.inventorio.slot.QuickBarSlot
 import me.lizardofoz.inventorio.util.*
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
@@ -14,7 +14,6 @@ import net.minecraft.screen.slot.SlotActionType
 
 class ExternalScreenHandlerAddon internal constructor(val handler: ScreenHandler) : ScreenHandlerAddon
 {
-    private var quickBarHandlerWidget: QuickBarHandlerWidget? = null
     private var initStage = 0
 
     override fun tryInitialize(slot: Slot): Boolean
@@ -56,9 +55,7 @@ class ExternalScreenHandlerAddon internal constructor(val handler: ScreenHandler
     {
         val playerInventory = playerAddon.inventoryAddon.inventory
         val accessor = handler as ScreenHandlerAccessor
-        quickBarHandlerWidget = QuickBarHandlerWidget(playerAddon.inventoryAddon)
 
-        val gui_container_extension_slot_startX = 8
         val expansionSize = playerAddon.getAvailableExtensionSlotsRange()
         val mainStartY = playerAddon.getExtraRows() * INVENTORY_SLOT_SIZE
 
@@ -70,7 +67,7 @@ class ExternalScreenHandlerAddon internal constructor(val handler: ScreenHandler
             val x = i % INVENTORIO_ROW_LENGTH
             val y = i / INVENTORIO_ROW_LENGTH
             accessor.addASlot(Slot(playerInventory, i,
-                    guiOffsetX + gui_container_extension_slot_startX + x * INVENTORY_SLOT_SIZE,
+                    guiOffsetX + 8 + x * INVENTORY_SLOT_SIZE,
                     guiOffsetY + offset + mainStartY + y * INVENTORY_SLOT_SIZE))
         }
 
@@ -80,12 +77,19 @@ class ExternalScreenHandlerAddon internal constructor(val handler: ScreenHandler
             val x = slot.relativeIndex % INVENTORIO_ROW_LENGTH
             val y = slot.relativeIndex / INVENTORIO_ROW_LENGTH
             accessor.addASlot(Slot(playerInventory, slot.absoluteIndex,
-                    guiOffsetX + gui_container_extension_slot_startX + x * INVENTORY_SLOT_SIZE,
+                    guiOffsetX + 8 + x * INVENTORY_SLOT_SIZE,
                     guiOffsetY + y * INVENTORY_SLOT_SIZE))
         }
 
         val normalStart = offset + mainStartY + INVENTORY_SLOT_SIZE * 3 + 4
-        quickBarHandlerWidget?.createQuickBarSlots(handler, guiOffsetX + 8, guiOffsetY + normalStart, QUICK_BAR_PHYS_RANGE)
+        //quickBarHandlerWidget?.createQuickBarSlots(handler, guiOffsetX + 8, guiOffsetY + normalStart, QUICK_BAR_RANGE)
+        //QuickBar
+        for ((absolute, relative) in QUICK_BAR_RANGE.withRelativeIndex())
+        {
+            accessor.addASlot(QuickBarSlot(playerAddon.inventoryAddon.shortcutQuickBar, relative, playerInventory, absolute,
+                    guiOffsetX + 8 + INVENTORY_SLOT_SIZE * (relative / 4),
+                    guiOffsetY + normalStart + INVENTORY_SLOT_SIZE * (relative % 4)))
+        }
     }
 
     fun offsetPlayerSlots(containerSlotOffsetX: Int, containerSlotOffsetY: Int, playerSlotOffsetX: Int, playerSlotOffsetY: Int)
@@ -108,7 +112,9 @@ class ExternalScreenHandlerAddon internal constructor(val handler: ScreenHandler
 
     override fun onSlotClick(slotIndex: Int, clickData: Int, actionType: SlotActionType, player: PlayerEntity): ItemStack?
     {
-        return quickBarHandlerWidget?.onSlotClick(handler, slotIndex, clickData, actionType, player)
+        if (slotIndex in QUICK_BAR_RANGE)
+            return (handler.getSlot(slotIndex) as QuickBarSlot).onSlotClick(clickData, actionType, PlayerAddon[player])
+        return null
     }
 }
 

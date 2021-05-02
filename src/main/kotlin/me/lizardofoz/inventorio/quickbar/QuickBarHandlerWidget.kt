@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.slot.SlotActionType
 
+@Deprecated("Delete Me")
 class QuickBarHandlerWidget(val inventoryAddon: PlayerInventoryAddon)
 {
     fun createQuickBarSlots(handler: ScreenHandler, startX: Int, startY: Int, slotIndicesRange: IntRange)

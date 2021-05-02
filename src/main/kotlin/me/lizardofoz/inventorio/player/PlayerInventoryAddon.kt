@@ -36,11 +36,11 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
     internal val dudOffhand = DefaultedList.ofSize(1, ItemStack.EMPTY)!!
     //Some QuickBar modes allow the player to store some items _physically_ on the QuickBar.
     //Thus, they have to be saved within player's inventory
-    internal val physicalQuickQar = DefaultedList.ofSize(INVENTORIO_ROW_LENGTH, ItemStack.EMPTY)!!
+    internal val physicalQuickBar = DefaultedList.ofSize(INVENTORIO_ROW_LENGTH, ItemStack.EMPTY)!!
     val shortcutQuickBar = QuickBarInventory(this)
 
     //Note: the order of elements is important. Don't change it.
-    val combinedInventory = ImmutableList.of(inventory.main, inventory.armor, dudOffhand, extension, toolBelt, utilityBelt, physicalQuickQar)!!
+    val combinedInventory = ImmutableList.of(inventory.main, inventory.armor, dudOffhand, extension, toolBelt, utilityBelt, physicalQuickBar)!!
 
     private val player = inventory.player!!
     private val playerAddon by lazy { PlayerAddon[player] }
@@ -54,15 +54,15 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
 
     fun size(): Int
     {
-        return inventory.main.size + inventory.armor.size + dudOffhand.size + extension.size + toolBelt.size + utilityBelt.size + physicalQuickQar.size
+        return inventory.main.size + inventory.armor.size + dudOffhand.size + extension.size + toolBelt.size + utilityBelt.size + physicalQuickBar.size
     }
 
     fun getMainHandStack(): ItemStack
     {
         return if (player.handSwinging && mainHandDisplayTool.isNotEmpty)
             mainHandDisplayTool
-        else if (physicalQuickQar[inventory.selectedSlot].isNotEmpty)
-            physicalQuickQar[inventory.selectedSlot]
+        else if (physicalQuickBar[inventory.selectedSlot].isNotEmpty)
+            physicalQuickBar[inventory.selectedSlot]
         else if (player.isCreative || hasAnySimilar(playerAddon.inventoryAddon.shortcutQuickBar.getStack(inventory.selectedSlot)))
             playerAddon.inventoryAddon.shortcutQuickBar.getStack(inventory.selectedSlot)
         else
