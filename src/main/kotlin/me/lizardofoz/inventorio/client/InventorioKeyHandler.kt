@@ -11,13 +11,17 @@ import me.lizardofoz.inventorio.client.InventorioControls.keyUseUtility
 import me.lizardofoz.inventorio.client.config.InventorioConfigData
 import me.lizardofoz.inventorio.client.config.InventorioConfigScreenMenu
 import me.lizardofoz.inventorio.client.config.QuickBarStorage
+import me.lizardofoz.inventorio.mixin.client.accessor.HandledScreenAccessor
 import me.lizardofoz.inventorio.mixin.client.accessor.MinecraftClientAccessor
 import me.lizardofoz.inventorio.player.PlayerAddon
+import me.lizardofoz.inventorio.util.QUICK_BAR_RANGE
 import me.lizardofoz.inventorio.util.QuickBarSimplified
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.gui.screen.ingame.HandledScreen
 import net.minecraft.entity.player.PlayerInventory
+import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.text.Text
 import net.minecraft.world.level.LevelProperties
 
@@ -29,7 +33,7 @@ object InventorioKeyHandler
         return !MinecraftClient.getInstance().options.keyUse.equals(keyUseUtility)
     }
 
-    fun handleInputEvents(inventory: PlayerInventory, selectedSlot: Int)
+    fun handleSlotSelection(inventory: PlayerInventory, selectedSlot: Int)
     {
         if (InventorioConfigData.config().quickBarSimplified != QuickBarSimplified.ON)
         {
@@ -45,6 +49,29 @@ object InventorioKeyHandler
             inventory.selectedSlot = selectedSlot + 4 * PlayerAddon.Client.selectedQuickBarSection
             PlayerAddon.Client.selectedQuickBarSection = -1
         }
+    }
+
+    fun handleHotbarKeyPressInUI(screen: HandledScreen<*>, keyCode: Int, scanCode: Int): Boolean
+    {
+        val client = MinecraftClient.getInstance()!!
+        val player = client.player ?: return false
+        val focusedSlot = (screen as HandledScreenAccessor).focusedSlot
+        if (player.inventory.cursorStack.isEmpty && focusedSlot != null)
+        {
+            for (index in 0..8)
+                if (client.options.keysHotbar[index].matchesKey(keyCode, scanCode))
+                {
+                    screen.doOnMouseClick(focusedSlot, focusedSlot.id, index + QUICK_BAR_RANGE.first, SlotActionType.SWAP)
+                    return true
+                }
+            for (index in 0..2)
+                if (InventorioControls.keysQuickBarExtra[index].matchesKey(keyCode, scanCode))
+                {
+                    screen.doOnMouseClick(focusedSlot, focusedSlot.id, index + 9 + QUICK_BAR_RANGE.first, SlotActionType.SWAP)
+                    return true
+                }
+        }
+        return false
     }
 
     fun tick(client: MinecraftClient)

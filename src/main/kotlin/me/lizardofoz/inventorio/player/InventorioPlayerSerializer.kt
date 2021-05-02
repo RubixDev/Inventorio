@@ -29,7 +29,7 @@ object InventorioPlayerSerializer
         serializeSection(inventoryAddon.extension, extension)
         serializeSection(inventoryAddon.utilityBelt, utilityBelt)
         serializeSection(inventoryAddon.toolBelt, toolBelt)
-        serializeSection(inventoryAddon.physicalQuickQar, physBar)
+        serializeSection(inventoryAddon.physicalQuickBar, physBar)
         serializeSection(inventoryAddon.shortcutQuickBar.stacks, quickBar)
 
         inventorioTag.put("Extension", extension)
@@ -68,7 +68,7 @@ object InventorioPlayerSerializer
         deserializeSection(inventoryAddon.utilityBelt, inventorioTag.getList("UtilityBelt", NbtType.COMPOUND))
         deserializeSection(inventoryAddon.toolBelt, inventorioTag.getList("ToolBelt", NbtType.COMPOUND))
         deserializeSection(inventoryAddon.extension, inventorioTag.getList("Extension", NbtType.COMPOUND))
-        deserializeSection(inventoryAddon.physicalQuickQar, inventorioTag.getList("PhysBar", NbtType.COMPOUND))
+        deserializeSection(inventoryAddon.physicalQuickBar, inventorioTag.getList("PhysBar", NbtType.COMPOUND))
         deserializeSection(inventoryAddon.shortcutQuickBar.stacks, inventorioTag.getList("QuickBar", NbtType.COMPOUND))
     }
 

@@ -1,5 +1,7 @@
 package me.lizardofoz.inventorio.mixin.client.screen;
 
+import me.lizardofoz.inventorio.RobertoGarbagio;
+import me.lizardofoz.inventorio.client.InventorioKeyHandler;
 import me.lizardofoz.inventorio.client.ui.ExternalInventoryUIAddon;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -27,6 +29,18 @@ public class HandledScreenMixin
         HandledScreen thisScreen = (HandledScreen)(Object)this;
         if (!(thisScreen instanceof InventoryScreen) && !(thisScreen instanceof CreativeInventoryScreen))
             ExternalInventoryUIAddon.INSTANCE.drawAddon(thisScreen, matrices, mouseX, mouseY);
+    }
+
+    @Inject(method = "method_30107", at = @At(value = "HEAD"))
+    private void method_30107(int i, CallbackInfo ci)
+    {
+        RobertoGarbagio.LOGGER.info("We've called that weird swap method_30107");
+    }
+
+    @Overwrite
+    public boolean handleHotbarKeyPressed(int keyCode, int scanCode)
+    {
+        return InventorioKeyHandler.INSTANCE.handleHotbarKeyPressInUI((HandledScreen)(Object)this, keyCode, scanCode);
     }
 
     @Overwrite

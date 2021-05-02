@@ -27,7 +27,7 @@ class PlayerAddon private constructor(val player: PlayerEntity)
 
     fun trySetRestrictionModesC2S(quickBarMode: QuickBarMode, utilityBarMode: UtilityBeltMode): Boolean
     {
-        if (inventoryAddon.physicalQuickQar.any { it.isNotEmpty })
+        if (inventoryAddon.physicalQuickBar.any { it.isNotEmpty })
             return false
         this.quickBarMode = quickBarMode
         utilityBeltMode = utilityBarMode
@@ -38,7 +38,7 @@ class PlayerAddon private constructor(val player: PlayerEntity)
 
     fun trySetRestrictionModesS2C(quickBarMode: QuickBarMode, utilityBarMode: UtilityBeltMode): Boolean
     {
-        if (inventoryAddon.physicalQuickQar.any { it.isNotEmpty })
+        if (inventoryAddon.physicalQuickBar.any { it.isNotEmpty })
             return false
         this.quickBarMode = quickBarMode
         utilityBeltMode = utilityBarMode

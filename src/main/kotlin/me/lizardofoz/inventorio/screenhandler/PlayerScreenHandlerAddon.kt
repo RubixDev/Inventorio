@@ -4,7 +4,6 @@ import me.lizardofoz.inventorio.RobertoGarbagio
 import me.lizardofoz.inventorio.mixin.accessor.PlayerScreenHandlerAccessor
 import me.lizardofoz.inventorio.mixin.accessor.SlotAccessor
 import me.lizardofoz.inventorio.player.PlayerAddon
-import me.lizardofoz.inventorio.quickbar.QuickBarHandlerWidget
 import me.lizardofoz.inventorio.slot.*
 import me.lizardofoz.inventorio.util.*
 import net.fabricmc.api.EnvType
@@ -14,6 +13,7 @@ import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.screen.PlayerScreenHandler
+import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.slot.CraftingResultSlot
 import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
@@ -22,7 +22,6 @@ import java.awt.Rectangle
 class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHandler) : ScreenHandlerAddon
 {
     private val playerAddon = PlayerAddon[(handler as PlayerScreenHandlerAccessor).owner]
-    private val quickBarHandlerWidget = QuickBarHandlerWidget(playerAddon.inventoryAddon)
 
     //==============================
     //Injects. These functions are either injected or redirected to by a mixin of a [PlayerInventory] class
@@ -35,20 +34,13 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
 
     override fun initialize(playerAddon: PlayerAddon)
     {
-        initialize(playerAddon, 0, 0, 0, 0)
-    }
-
-    fun initialize(playerAddon: PlayerAddon,
-                   guiOffsetX: Int, guiOffsetY: Int,
-                   slotOffsetX: Int, slotOffsetY: Int)
-    {
         val player = playerAddon.player
         val inventory = playerAddon.player.inventory
         val accessor = handler as PlayerScreenHandlerAccessor
         //todo if we spawn with deep pockets, it bugs out
         val rows = playerAddon.getExtraRows()
 
-        //Because we can't avoid calling a super constructor, we have to delete slots which have been created.
+        //Because we can't avoid calling a constructor of the vanilla PlayerScreenHandler, we have to delete slots which have been created.
         handler.slots.clear()
         accessor.trackedSlots.clear()
 
@@ -87,13 +79,19 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
         //UtilityBar
         for ((absolute, relative) in UTILITY_BELT_RANGE.withRelativeIndex())
         {
-            val rect = SLOTS_PLAYER_INVENTORY_UTILITY_BAR_TOTAL
             accessor.addASlot(UtilityBarSlot(inventory, absolute,
+                    SLOTS_PLAYER_INVENTORY_UTILITY_BAR_TOTAL.x + INVENTORY_SLOT_SIZE * (relative / 4),
+                    SLOTS_PLAYER_INVENTORY_UTILITY_BAR_TOTAL.y + INVENTORY_SLOT_SIZE * (relative % 4)))
+        }
+
+        //QuickBar
+        val rect = SLOTS_PLAYER_INVENTORY_QUICK_BAR(rows)
+        for ((absolute, relative) in QUICK_BAR_RANGE.withRelativeIndex())
+        {
+            accessor.addASlot(QuickBarSlot(playerAddon.inventoryAddon.shortcutQuickBar, relative, inventory, absolute,
                     rect.x + INVENTORY_SLOT_SIZE * (relative / 4),
                     rect.y + INVENTORY_SLOT_SIZE * (relative % 4)))
         }
-
-        quickBarHandlerWidget.createQuickBarSlots(handler, SLOTS_PLAYER_INVENTORY_QUICK_BAR(rows).x, SLOTS_PLAYER_INVENTORY_QUICK_BAR(rows).y, QUICK_BAR_PHYS_RANGE)
 
         accessor.addASlot(CraftingResultSlot(player, accessor.craftingInput, accessor.craftingResult, 0, 188, 28))
         for (x in 0..1) for (y in 0..1)
@@ -102,6 +100,10 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
                     18 + y * 18))
     }
 
+    /**
+     * Returns null if we want to proceed with vanilla slot behaviour.
+     * Returns a value appropriate for vanilla [ScreenHandler.onSlotClick] otherwise
+     */
     override fun onSlotClick(slotIndex: Int, clickData: Int, actionType: SlotActionType, player: PlayerEntity): ItemStack?
     {
         if (slotIndex in ARMOR_RANGE)
@@ -114,7 +116,11 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
             if (playerAddon.inventoryAddon.utilityBelt[playerAddon.inventoryAddon.selectedUtility].isEmpty)
                 playerAddon.inventoryAddon.selectedUtility = slotIndex - UTILITY_BELT_RANGE.first
         }
-        return quickBarHandlerWidget.onSlotClick(handler, slotIndex, clickData, actionType, player)
+        else if (slotIndex in QUICK_BAR_RANGE)
+        {
+            return (handler.getSlot(slotIndex) as QuickBarSlot).onSlotClick(clickData, actionType, playerAddon)
+        }
+        return null
     }
 
     fun transferSlot(player: PlayerEntity, sourceIndex: Int): ItemStack
@@ -215,7 +221,6 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
     @Environment(EnvType.CLIENT)
     fun refreshSlots()
     {
-        val player = playerAddon.player
         val rows = playerAddon.getExtraRows()
         val mainRect = SLOTS_PLAYER_INVENTORY_ENTIRE_MAIN_PART(rows)
 
@@ -231,9 +236,7 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
         }
 
         val quickBarRect = SLOTS_PLAYER_INVENTORY_QUICK_BAR(rows)
-        for ((absolute, relative) in QUICK_BAR_PHYS_RANGE.withRelativeIndex())
-            repositionSlot(handler.getSlot(absolute), quickBarRect, relative)
-        for ((absolute, relative) in QUICK_BAR_SHORTCUTS_RANGE.withRelativeIndex())
+        for ((absolute, relative) in QUICK_BAR_RANGE.withRelativeIndex())
             repositionSlot(handler.getSlot(absolute), quickBarRect, relative)
 
         for (i in playerAddon.getUnavailableExtensionSlotsRange())
