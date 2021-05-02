@@ -98,11 +98,11 @@ object QuickBarHUDRenderer
         {
             val x = scaledWidthHalfed - 90 + i * 20 + 2 + groupOffset * (i / 4) - splitOffset
             val y = scaledHeight - 16 - 3
-            val physicalSlot = handler.getSlot(QUICK_BAR_PHYS_RANGE.first + i)
+            val physicalSlot = handler.getSlot(QUICK_BAR_RANGE.first + i)
             if (physicalSlot.stack.isNotEmpty)
                 renderPhysBarItem(x, y, tickDelta, player, physicalSlot.stack)
             else
-                renderQuickBarItem(x, y, tickDelta, player, handler.getSlot(QUICK_BAR_SHORTCUTS_RANGE.first + i).stack, true)
+                renderQuickBarItem(x, y, tickDelta, player, handler.getSlot(QUICK_BAR_RANGE.first + i).stack, true)
         }
 
         //Draw utility belt

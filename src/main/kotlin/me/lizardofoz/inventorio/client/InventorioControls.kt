@@ -35,6 +35,8 @@ object InventorioControls
             "inventorio.keys.category"
     ))!!
 
+    val keysQuickBarExtra = arrayOf(keyQuickBar10, keyQuickBar11, keyQuickBar12)
+
     val keyUseUtility = KeyBindingHelper.registerKeyBinding(KeyBinding(
             "inventorio.keys.use_utility",
             InputUtil.Type.KEYSYM,
