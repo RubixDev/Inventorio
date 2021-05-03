@@ -2,7 +2,7 @@ package me.lizardofoz.inventorio.util
 
 enum class QuickBarMode
 {
-    DEFAULT, NO_SPECIAL_CASES, HANDLE_SPECIAL_CASES, PHYSICAL_SLOTS, NOT_SELECTED
+    FILTERED, UNFILTERED, PHYSICAL_SLOTS
 }
 
 enum class UtilityBeltMode

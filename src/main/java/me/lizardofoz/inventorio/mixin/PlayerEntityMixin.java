@@ -19,10 +19,7 @@ import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -48,6 +45,12 @@ public abstract class PlayerEntityMixin implements PlayerDuck
         PlayerScreenHandlerAddon screenAddon = new PlayerScreenHandlerAddon(thisPlayer.playerScreenHandler);
         ((HandlerDuck)thisPlayer.playerScreenHandler).setAddon(screenAddon);
         screenAddon.initialize(addon);
+    }
+
+    @Overwrite
+    public boolean dropSelectedItem(boolean dropEntireStack)
+    {
+        return addon.getInventoryAddon().dropSelectedItem(dropEntireStack);
     }
 
     /**

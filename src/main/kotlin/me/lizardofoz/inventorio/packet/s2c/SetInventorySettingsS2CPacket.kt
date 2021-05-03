@@ -1,7 +1,6 @@
 package me.lizardofoz.inventorio.packet.s2c
 
 import me.lizardofoz.inventorio.RobertoGarbagio
-import me.lizardofoz.inventorio.packet.InventorioNetworking
 import me.lizardofoz.inventorio.player.PlayerAddon
 import me.lizardofoz.inventorio.util.QuickBarMode
 import me.lizardofoz.inventorio.util.UtilityBeltMode
@@ -19,14 +18,12 @@ object SetInventorySettingsS2CPacket
         val utilityBeltMode = UtilityBeltMode.values()[buf.readByte().toInt()]
         val selectedUtilitySlot = buf.readByte().toInt()
 
-        if (quickBarMode == QuickBarMode.NOT_SELECTED)
-            InventorioNetworking.C2SSendPlayerSettingsFromDefault()
-        PlayerAddon.Client.local.trySetRestrictionModesS2C(quickBarMode, utilityBeltMode)
+        PlayerAddon.Client.local.setRestrictionModesFromSerialization(quickBarMode, utilityBeltMode)
         PlayerAddon.Client.local.inventoryAddon.selectedUtility = selectedUtilitySlot
         RobertoGarbagio.LOGGER.info("Applying SetInventorySettingsS2CPacket: $quickBarMode $utilityBeltMode $selectedUtilitySlot")
     }
 
-    fun write(buf: PacketByteBuf, quickBarMode: QuickBarMode = QuickBarMode.DEFAULT, utilityBeltMode: UtilityBeltMode = UtilityBeltMode.FILTERED, selectedUtilitySlot: Int = 0)
+    fun write(buf: PacketByteBuf, quickBarMode: QuickBarMode = QuickBarMode.FILTERED, utilityBeltMode: UtilityBeltMode = UtilityBeltMode.FILTERED, selectedUtilitySlot: Int = 0)
     {
         buf.writeByte(quickBarMode.ordinal)
         buf.writeByte(utilityBeltMode.ordinal)

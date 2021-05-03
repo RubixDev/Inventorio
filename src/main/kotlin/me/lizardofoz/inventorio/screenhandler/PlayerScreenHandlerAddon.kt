@@ -88,9 +88,14 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
         val rect = SLOTS_PLAYER_INVENTORY_QUICK_BAR(rows)
         for ((absolute, relative) in QUICK_BAR_RANGE.withRelativeIndex())
         {
-            accessor.addASlot(QuickBarSlot(playerAddon.inventoryAddon.shortcutQuickBar, relative, inventory, absolute,
-                    rect.x + INVENTORY_SLOT_SIZE * (relative / 4),
-                    rect.y + INVENTORY_SLOT_SIZE * (relative % 4)))
+            if (playerAddon.quickBarMode != QuickBarMode.PHYSICAL_SLOTS)
+                accessor.addASlot(QuickBarShortcutSlot(playerAddon.inventoryAddon.shortcutQuickBar, relative,
+                        rect.x + INVENTORY_SLOT_SIZE * (relative / 4),
+                        rect.y + INVENTORY_SLOT_SIZE * (relative % 4)))
+            else
+                accessor.addASlot(QuickBarPhysicalSlot(inventory, absolute,
+                        rect.x + INVENTORY_SLOT_SIZE * (relative / 4),
+                        rect.y + INVENTORY_SLOT_SIZE * (relative % 4)))
         }
 
         accessor.addASlot(CraftingResultSlot(player, accessor.craftingInput, accessor.craftingResult, 0, 188, 28))
@@ -116,11 +121,7 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
             if (playerAddon.inventoryAddon.utilityBelt[playerAddon.inventoryAddon.selectedUtility].isEmpty)
                 playerAddon.inventoryAddon.selectedUtility = slotIndex - UTILITY_BELT_RANGE.first
         }
-        else if (slotIndex in QUICK_BAR_RANGE)
-        {
-            return (handler.getSlot(slotIndex) as QuickBarSlot).onSlotClick(clickData, actionType, playerAddon)
-        }
-        return null
+        return QuickBarShortcutSlot.clickShortCutSlot(handler, slotIndex, clickData, actionType, playerAddon)
     }
 
     fun transferSlot(player: PlayerEntity, sourceIndex: Int): ItemStack

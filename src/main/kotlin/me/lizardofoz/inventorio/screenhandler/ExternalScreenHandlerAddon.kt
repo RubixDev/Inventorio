@@ -3,7 +3,8 @@ package me.lizardofoz.inventorio.screenhandler
 import me.lizardofoz.inventorio.mixin.accessor.ScreenHandlerAccessor
 import me.lizardofoz.inventorio.mixin.accessor.SlotAccessor
 import me.lizardofoz.inventorio.player.PlayerAddon
-import me.lizardofoz.inventorio.slot.QuickBarSlot
+import me.lizardofoz.inventorio.slot.QuickBarPhysicalSlot
+import me.lizardofoz.inventorio.slot.QuickBarShortcutSlot
 import me.lizardofoz.inventorio.util.*
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
@@ -82,13 +83,17 @@ class ExternalScreenHandlerAddon internal constructor(val handler: ScreenHandler
         }
 
         val normalStart = offset + mainStartY + INVENTORY_SLOT_SIZE * 3 + 4
-        //quickBarHandlerWidget?.createQuickBarSlots(handler, guiOffsetX + 8, guiOffsetY + normalStart, QUICK_BAR_RANGE)
         //QuickBar
         for ((absolute, relative) in QUICK_BAR_RANGE.withRelativeIndex())
         {
-            accessor.addASlot(QuickBarSlot(playerAddon.inventoryAddon.shortcutQuickBar, relative, playerInventory, absolute,
-                    guiOffsetX + 8 + INVENTORY_SLOT_SIZE * (relative / 4),
-                    guiOffsetY + normalStart + INVENTORY_SLOT_SIZE * (relative % 4)))
+            if (playerAddon.quickBarMode != QuickBarMode.PHYSICAL_SLOTS)
+                accessor.addASlot(QuickBarShortcutSlot(playerAddon.inventoryAddon.shortcutQuickBar, relative,
+                        guiOffsetX + 8 + INVENTORY_SLOT_SIZE * relative,
+                        guiOffsetY + normalStart))
+            else
+                    accessor.addASlot(QuickBarPhysicalSlot(playerInventory, absolute,
+                        guiOffsetX + 8 + INVENTORY_SLOT_SIZE * relative,
+                        guiOffsetY + normalStart))
         }
     }
 
@@ -112,9 +117,7 @@ class ExternalScreenHandlerAddon internal constructor(val handler: ScreenHandler
 
     override fun onSlotClick(slotIndex: Int, clickData: Int, actionType: SlotActionType, player: PlayerEntity): ItemStack?
     {
-        if (slotIndex in QUICK_BAR_RANGE)
-            return (handler.getSlot(slotIndex) as QuickBarSlot).onSlotClick(clickData, actionType, PlayerAddon[player])
-        return null
+        return QuickBarShortcutSlot.clickShortCutSlot(handler, slotIndex, clickData, actionType, PlayerAddon[player])
     }
 }
 
