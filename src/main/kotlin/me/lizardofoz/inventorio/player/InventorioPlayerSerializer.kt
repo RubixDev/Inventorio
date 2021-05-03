@@ -54,17 +54,20 @@ object InventorioPlayerSerializer
 
     fun deserialize(playerAddon: PlayerAddon, inventorioTag: CompoundTag)
     {
-        val inventoryAddon = playerAddon.inventoryAddon
-
-        inventoryAddon.selectedUtility = inventorioTag.getInt("SelectedUtilitySlot")
-        if (inventorioTag.contains("QuickBarMode"))
-            playerAddon.quickBarMode = QuickBarMode.valueOf(inventorioTag.getString("QuickBarMode"))
+        val quickBarMode = if (inventorioTag.contains("QuickBarMode"))
+            QuickBarMode.valueOf(inventorioTag.getString("QuickBarMode"))
         else
-            playerAddon.quickBarMode = QuickBarMode.NOT_SELECTED
-        if (inventorioTag.contains("UtilityBeltMode"))
-            playerAddon.utilityBeltMode = UtilityBeltMode.valueOf(inventorioTag.getString("UtilityBeltMode"))
+            QuickBarMode.FILTERED
+        val utilityBeltMode = if (inventorioTag.contains("UtilityBeltMode"))
+            UtilityBeltMode.valueOf(inventorioTag.getString("UtilityBeltMode"))
+        else
+            UtilityBeltMode.FILTERED
+        playerAddon.setRestrictionModesFromSerialization(quickBarMode, utilityBeltMode)
 
-        //Inventory
+
+        val inventoryAddon = playerAddon.inventoryAddon
+        inventoryAddon.selectedUtility = inventorioTag.getInt("SelectedUtilitySlot")
+
         deserializeSection(inventoryAddon.utilityBelt, inventorioTag.getList("UtilityBelt", NbtType.COMPOUND))
         deserializeSection(inventoryAddon.toolBelt, inventorioTag.getList("ToolBelt", NbtType.COMPOUND))
         deserializeSection(inventoryAddon.extension, inventorioTag.getList("Extension", NbtType.COMPOUND))

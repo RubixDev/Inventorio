@@ -110,7 +110,8 @@ object ExternalInventoryUIAddon
                 INVENTORIO_ROW_LENGTH,
                 256, 256)
 
-        if (!handledScreen.javaClass.name.startsWith("net.minecraft."))
+        //if (!handledScreen.javaClass.name.startsWith("net.minecraft."))
+        if (true)
         {
             val extRec3 = GUI_EXTERNAL_INVENTORY_INGORE_BUTTON(expansionRows)
             val text = LiteralText("✘")

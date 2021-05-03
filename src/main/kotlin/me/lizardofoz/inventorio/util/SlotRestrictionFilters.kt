@@ -81,11 +81,4 @@ object SlotRestrictionFilters
         this.utilityBeltItems = ImmutableList.copyOf(utilityBarItems + unsuredItems)
         this.toolBelt = ImmutableList.copyOf(toolBeltItems)
     }
-
-    fun canPlayerStoreItemStackPhysicallyInQuickBar(player: PlayerEntity, itemStack: ItemStack): Boolean
-    {
-        val resMode = PlayerAddon[player].quickBarMode
-        return resMode == QuickBarMode.PHYSICAL_SLOTS ||
-                (resMode == QuickBarMode.HANDLE_SPECIAL_CASES && SlotRestrictionFilters.physicalUtilityBar.invoke(itemStack))
-    }
 }

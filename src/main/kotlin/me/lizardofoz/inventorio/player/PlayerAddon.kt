@@ -3,6 +3,7 @@ package me.lizardofoz.inventorio.player
 import me.lizardofoz.inventorio.client.config.InventorioConfigData
 import me.lizardofoz.inventorio.enchantment.DeepPocketsEnchantment
 import me.lizardofoz.inventorio.packet.InventorioNetworking
+import me.lizardofoz.inventorio.screenhandler.PlayerScreenHandlerAddon
 import me.lizardofoz.inventorio.util.*
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -18,31 +19,40 @@ import net.minecraft.util.Hand
 
 class PlayerAddon private constructor(val player: PlayerEntity)
 {
-    var quickBarMode = QuickBarMode.NOT_SELECTED
+    var quickBarMode = QuickBarMode.FILTERED
+        private set
     var utilityBeltMode = UtilityBeltMode.FILTERED
+        private set
     private var ignoredScreenHandlers = listOf<Class<out ScreenHandler>>()
 
     val inventoryAddon get() = (player.inventory as InventoryDuck).addon
-    val handlerAddon get() = (player.playerScreenHandler as HandlerDuck).addon
+    val handlerAddon get() = (player.playerScreenHandler as HandlerDuck).addon as PlayerScreenHandlerAddon
 
-    fun trySetRestrictionModesC2S(quickBarMode: QuickBarMode, utilityBarMode: UtilityBeltMode): Boolean
+    fun setQuickBarMode(quickBarMode: QuickBarMode)
     {
-        if (inventoryAddon.physicalQuickBar.any { it.isNotEmpty })
-            return false
+        if (this.quickBarMode == quickBarMode)
+            return
+        inventoryAddon.clearQuickBars()
         this.quickBarMode = quickBarMode
-        utilityBeltMode = utilityBarMode
         if (player.world.isClient)
-            InventorioNetworking.C2SSendPlayerSettings()
-        return true
+            InventorioNetworking.C2SSendQuickBarMode()
+        handlerAddon.initialize(this)
     }
 
-    fun trySetRestrictionModesS2C(quickBarMode: QuickBarMode, utilityBarMode: UtilityBeltMode): Boolean
+    fun setUtilityBeltMode(utilityBeltMode: UtilityBeltMode)
     {
-        if (inventoryAddon.physicalQuickBar.any { it.isNotEmpty })
-            return false
+        if (this.utilityBeltMode == utilityBeltMode)
+            return
+        this.utilityBeltMode = utilityBeltMode
+        if (player.world.isClient)
+            InventorioNetworking.C2SSendUtilityBeltMode()
+    }
+
+    fun setRestrictionModesFromSerialization(quickBarMode: QuickBarMode, utilityBeltMode: UtilityBeltMode)
+    {
         this.quickBarMode = quickBarMode
-        utilityBeltMode = utilityBarMode
-        return true
+        this.utilityBeltMode = utilityBeltMode
+        handlerAddon.initialize(this)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -120,6 +130,7 @@ class PlayerAddon private constructor(val player: PlayerEntity)
     {
         return getAvailableExtensionSlotsRange().last + 1 .. EXTENSION_RANGE.last
     }
+
 
     @Environment(EnvType.CLIENT)
     object Client

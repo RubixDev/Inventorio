@@ -17,7 +17,7 @@ object InventorioControls
     val keyQuickBar10 = KeyBindingHelper.registerKeyBinding(KeyBinding(
             "inventorio.keys.quickbar_10",
             InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_0,
+            48,
             "inventorio.keys.category"
     ))!!
 

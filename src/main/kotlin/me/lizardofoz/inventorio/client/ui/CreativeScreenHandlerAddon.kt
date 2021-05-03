@@ -4,7 +4,8 @@ import me.lizardofoz.inventorio.mixin.accessor.ScreenHandlerAccessor
 import me.lizardofoz.inventorio.mixin.accessor.SlotAccessor
 import me.lizardofoz.inventorio.mixin.client.accessor.CreativeInventoryScreenAccessor
 import me.lizardofoz.inventorio.player.PlayerAddon
-import me.lizardofoz.inventorio.slot.QuickBarSlot
+import me.lizardofoz.inventorio.slot.QuickBarPhysicalSlot
+import me.lizardofoz.inventorio.slot.QuickBarShortcutSlot
 import me.lizardofoz.inventorio.util.*
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -68,7 +69,7 @@ class CreativeScreenHandlerAddon internal constructor(val handler: CreativeInven
         if (deleteItemSlot != null)
         {
             handler.slots.add(deleteItemSlot)
-            (deleteItemSlot as SlotAccessor).x = quickBarRect.x + quickBarRect.width + 2;
+            (deleteItemSlot as SlotAccessor).x = quickBarRect.x + quickBarRect.width + 2
         }
     }
 
@@ -85,9 +86,14 @@ class CreativeScreenHandlerAddon internal constructor(val handler: CreativeInven
 
         for ((absolute, relative) in QUICK_BAR_RANGE.withRelativeIndex())
         {
-            accessor.addASlot(QuickBarSlot(playerAddon.inventoryAddon.shortcutQuickBar, relative, playerAddon.inventoryAddon.inventory, absolute,
-                    9 + INVENTORY_SLOT_SIZE * (relative / 4),
-                    112 + INVENTORY_SLOT_SIZE * (relative % 4)))
+            if (playerAddon.quickBarMode != QuickBarMode.PHYSICAL_SLOTS)
+                accessor.addASlot(QuickBarShortcutSlot(playerAddon.inventoryAddon.shortcutQuickBar, relative,
+                        9 + INVENTORY_SLOT_SIZE * (relative / 4),
+                        112 + INVENTORY_SLOT_SIZE * (relative % 4)))
+            else
+                accessor.addASlot(QuickBarPhysicalSlot(playerAddon.inventoryAddon.inventory, absolute,
+                        9 + INVENTORY_SLOT_SIZE * (relative / 4),
+                        112 + INVENTORY_SLOT_SIZE * (relative % 4)))
         }
         if (deleteItemSlot != null)
         {
@@ -98,9 +104,7 @@ class CreativeScreenHandlerAddon internal constructor(val handler: CreativeInven
 
     override fun onSlotClick(slotIndex: Int, clickData: Int, actionType: SlotActionType, player: PlayerEntity): ItemStack?
     {
-        if (slotIndex in QUICK_BAR_RANGE)
-            return (handler.getSlot(slotIndex) as QuickBarSlot).onSlotClick(clickData, actionType, PlayerAddon[player])
-        return null
+        return QuickBarShortcutSlot.clickShortCutSlot(handler, slotIndex, clickData, actionType, PlayerAddon[player])
     }
 
     fun scrollItems(itemList: DefaultedList<ItemStack>, position: Float)
