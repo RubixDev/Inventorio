@@ -21,10 +21,11 @@ object InventorioNetworking
         ServerSidePacketRegistry.INSTANCE.register(FireBoostRocketC2SPacket.identifier, FireBoostRocketC2SPacket::consume)
         ServerSidePacketRegistry.INSTANCE.register(SelectUtilitySlotC2SPacket.identifier, SelectUtilitySlotC2SPacket::consume)
         ServerSidePacketRegistry.INSTANCE.register(SetIgnoredScreenHandlersC2SPacket.identifier, SetIgnoredScreenHandlersC2SPacket::consume)
-        ServerSidePacketRegistry.INSTANCE.register(SetInventorySettingsC2SPacket.identifier, SetInventorySettingsC2SPacket::consume)
+        ServerSidePacketRegistry.INSTANCE.register(SetQuickBarModeC2SPacket.identifier, SetQuickBarModeC2SPacket::consume)
+        ServerSidePacketRegistry.INSTANCE.register(SetUtilityBeltModeC2SPacket.identifier, SetUtilityBeltModeC2SPacket::consume)
         ServerSidePacketRegistry.INSTANCE.register(SetNewQuickBarC2SPacket.identifier, SetNewQuickBarC2SPacket::consume)
 
-        ServerSidePacketRegistry.INSTANCE.register(SetInventorySettingsS2CPacket.identifier, SetInventorySettingsS2CPacket::consume)
+        ClientSidePacketRegistry.INSTANCE.register(SetInventorySettingsS2CPacket.identifier, SetInventorySettingsS2CPacket::consume)
     }
 
     @Environment(EnvType.CLIENT)
@@ -36,18 +37,18 @@ object InventorioNetworking
     }
 
     @Environment(EnvType.CLIENT)
-    fun C2SSendPlayerSettings(playerAddon: PlayerAddon = PlayerAddon.Client.local)
+    fun C2SSendQuickBarMode(playerAddon: PlayerAddon = PlayerAddon.Client.local)
     {
-        sendC2S(SetInventorySettingsC2SPacket.identifier) {
-            SetInventorySettingsC2SPacket.write(it, playerAddon.quickBarMode, playerAddon.utilityBeltMode)
+        sendC2S(SetQuickBarModeC2SPacket.identifier) {
+            SetQuickBarModeC2SPacket.write(it, playerAddon.quickBarMode)
         }
     }
 
     @Environment(EnvType.CLIENT)
-    fun C2SSendPlayerSettingsFromDefault()
+    fun C2SSendUtilityBeltMode(playerAddon: PlayerAddon = PlayerAddon.Client.local)
     {
-        sendC2S(SetInventorySettingsC2SPacket.identifier) {
-            SetInventorySettingsC2SPacket.write(it, InventorioConfigData.config().quickBarModeDefault, InventorioConfigData.config().utilityBeltModeDefault)
+        sendC2S(SetQuickBarModeC2SPacket.identifier) {
+            SetUtilityBeltModeC2SPacket.write(it, playerAddon.utilityBeltMode)
         }
     }
 

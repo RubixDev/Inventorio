@@ -43,36 +43,6 @@ object InventorioConfigScreenMenu
                 }
                 .build())
 
-        category.addEntry(entryBuilder
-                .startEnumSelector(
-                        TranslatableText("inventorio.config.quick_bar_mode_default"),
-                        QuickBarMode::class.java,
-                        config.quickBarModeDefault
-                )
-                .setEnumNameProvider { TranslatableText("inventorio.config.quick_bar_mode."+it.name) }
-                .setTooltip(TranslatableText("inventorio.config.quick_bar_mode_default.tooltip"))
-                .setDefaultValue(QuickBarMode.DEFAULT)
-                .setSaveConsumer {
-                    config.quickBarModeDefault = it
-                    configHolder.save()
-                }
-                .build())
-
-        category.addEntry(entryBuilder
-                .startEnumSelector(
-                        TranslatableText("inventorio.config.utility_belt_mode_default"),
-                        UtilityBeltMode::class.java,
-                        config.utilityBeltModeDefault
-                )
-                .setEnumNameProvider { TranslatableText("inventorio.config.utility_belt_mode."+it.name) }
-                .setTooltip(TranslatableText("inventorio.config.utility_belt_mode_default.tooltip"))
-                .setDefaultValue(UtilityBeltMode.FILTERED)
-                .setSaveConsumer {
-                    config.utilityBeltModeDefault = it
-                    configHolder.save()
-                }
-                .build())
-
         category.addEntry(entryBuilder.startTextDescription(TranslatableText("inventorio.config.category_world")).build())
 
         if (MinecraftClient.getInstance().player != null)
@@ -87,8 +57,8 @@ object InventorioConfigScreenMenu
                     )
                     .setEnumNameProvider { TranslatableText("inventorio.config.quick_bar_mode."+it.name) }
                     .setTooltip(TranslatableText("inventorio.config.quick_bar_mode_world.tooltip"))
-                    .setDefaultValue(QuickBarMode.DEFAULT)
-                    .setSaveConsumer { playerAddon.trySetRestrictionModesC2S(it, playerAddon.utilityBeltMode) }
+                    .setDefaultValue(QuickBarMode.FILTERED)
+                    .setSaveConsumer { playerAddon.setQuickBarMode(it) }
                     .build())
 
             category.addEntry(entryBuilder
@@ -100,7 +70,7 @@ object InventorioConfigScreenMenu
                     .setEnumNameProvider { TranslatableText("inventorio.config.utility_belt_mode."+it.name) }
                     .setTooltip(TranslatableText("inventorio.config.utility_belt_mode_world.tooltip"))
                     .setDefaultValue(UtilityBeltMode.FILTERED)
-                    .setSaveConsumer { playerAddon.trySetRestrictionModesC2S(playerAddon.quickBarMode, it) }
+                    .setSaveConsumer { playerAddon.setUtilityBeltMode(it) }
                     .build())
         }
         else

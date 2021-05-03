@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem
 import me.lizardofoz.inventorio.client.config.InventorioConfigData
 import me.lizardofoz.inventorio.player.PlayerAddon
 import me.lizardofoz.inventorio.player.PlayerAddon.Client.selectedQuickBarSection
+import me.lizardofoz.inventorio.slot.QuickBarShortcutSlot
 import me.lizardofoz.inventorio.util.*
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -93,16 +94,18 @@ object QuickBarHUDRenderer
         RenderSystem.defaultBlendFunc()
 
         val handler = player.playerScreenHandler
+        if (handler.slots.size < 85)
+            return
         //Draw quickbar items
         for(i in 0 until 12)
         {
             val x = scaledWidthHalfed - 90 + i * 20 + 2 + groupOffset * (i / 4) - splitOffset
             val y = scaledHeight - 16 - 3
-            val physicalSlot = handler.getSlot(QUICK_BAR_RANGE.first + i)
-            if (physicalSlot.stack.isNotEmpty)
-                renderPhysBarItem(x, y, tickDelta, player, physicalSlot.stack)
+            val slot = handler.getSlot(QUICK_BAR_RANGE.first + i)
+            if (slot !is QuickBarShortcutSlot)
+                renderPhysBarItem(x, y, tickDelta, player, slot.stack)
             else
-                renderQuickBarItem(x, y, tickDelta, player, handler.getSlot(QUICK_BAR_RANGE.first + i).stack, true)
+                renderQuickBarItem(x, y, tickDelta, player, slot.stack, true)
         }
 
         //Draw utility belt
@@ -196,12 +199,9 @@ object QuickBarHUDRenderer
         if (stack.isNotEmpty)
         {
             client.itemRenderer.renderInGuiWithOverrides(player, stack, x, y)
-            if (!SlotRestrictionFilters.canPlayerStoreItemStackPhysicallyInQuickBar(player, stack))
-            {
-                RenderSystem.enableBlend()
-                renderGuiItemOverlay(player, client.textRenderer, stack, x, y, sumTotalAmount)
-                RenderSystem.disableBlend()
-            }
+            RenderSystem.enableBlend()
+            renderGuiItemOverlay(player, client.textRenderer, stack, x, y, sumTotalAmount)
+            RenderSystem.disableBlend()
         }
     }
 

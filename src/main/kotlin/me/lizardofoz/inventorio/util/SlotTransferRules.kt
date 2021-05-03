@@ -96,6 +96,8 @@ object SlotTransferRules
 
     fun transferSlot(screenHandler: ScreenHandler, player: PlayerEntity, sourceIndex: Int): ItemStack
     {
+        //if (PlayerAddon[player].isScreenHandlerIgnored(screenHandler))
+        //    return screenHandler.transferSlot(player, sourceIndex)
         if (sourceIndex !in screenHandler.slots.indices)
             return ItemStack.EMPTY
         val slot = screenHandler.getSlot(sourceIndex)
@@ -122,6 +124,8 @@ object SlotTransferRules
                     || screenHandler is MerchantScreenHandler)
             {
                 val itemStack3 = slot.onTakeItem(player, item)
+                if (itemStack3.isEmpty)
+                    slot.stack = ItemStack.EMPTY
                 player.dropItem(itemStack3, false)
             }
             return itemBefore

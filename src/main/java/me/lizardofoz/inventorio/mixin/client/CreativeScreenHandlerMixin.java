@@ -28,7 +28,7 @@ public class CreativeScreenHandlerMixin implements HandlerDuck
     {
         PlayerAddon playerAddon = PlayerAddon.get(playerEntity);
         addon = new CreativeScreenHandlerAddon((CreativeInventoryScreen.CreativeScreenHandler) (Object) this);
-        addon.  initialize(playerAddon);
+        addon.initialize(playerAddon);
     }
 
     @Overwrite

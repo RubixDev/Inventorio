@@ -137,6 +137,34 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
         return amount
     }
 
+    fun dropSelectedItem(dropEntireStack: Boolean): Boolean
+    {
+        if (playerAddon.quickBarMode == QuickBarMode.PHYSICAL_SLOTS)
+        {
+            val modifierIndex = inventory.selectedSlot + QUICK_BAR_RANGE.first
+            return player.dropItem(this.inventory.removeStack(modifierIndex, if (dropEntireStack && !this.inventory.mainHandStack.isEmpty) this.inventory.mainHandStack.count else 1), false, true) != null
+        }
+        else
+        {
+            val stack = shortcutQuickBar.getStack(inventory.selectedSlot)
+            if (stack.isEmpty)
+                return false
+
+            for (section in combinedInventory)
+                for (itStack in section)
+                    if (areItemsSimilar(stack, itStack))
+                    {
+                        val stackToDrop = itStack.copy()
+                        if (!dropEntireStack)
+                            stackToDrop.count = 1
+                        player.dropItem(stackToDrop, false, true)
+                        itStack.decrement(stackToDrop.count)
+                        return true
+                    }
+        }
+        return false
+    }
+
     //==============================
     //Additional functionality
     //==============================
@@ -199,8 +227,6 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
 
     fun getTotalAmount(stack: ItemStack): Int
     {
-        if (SlotRestrictionFilters.canPlayerStoreItemStackPhysicallyInQuickBar(player, stack))
-            throw IllegalStateException("A physical item is stored in a shortcut quickbar")
         var result = 0
 
         for (section in combinedInventory)
@@ -235,6 +261,20 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
         return !existingStack.isEmpty && areItemsSimilar(existingStack, stack) && existingStack.isStackable && existingStack.count < existingStack.maxCount && existingStack.count < 64
     }
 
+    fun clearQuickBars()
+    {
+        for ((index, item) in physicalQuickBar.withIndex())
+        {
+            if (item.isNotEmpty)
+            {
+                player.dropItem(item, false, true)
+                physicalQuickBar[index] = ItemStack.EMPTY
+            }
+        }
+        for (index in shortcutQuickBar.stacks.indices)
+            shortcutQuickBar.setStack(index, ItemStack.EMPTY)
+    }
+
     /**
      * Checks if two item stacks are similar AND non-empty.
      *
@@ -244,6 +284,7 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
     {
         return stack1.isNotEmpty && stack1.item === stack2.item && ItemStack.areTagsEqual(stack1, stack2)
     }
+
 
     companion object
     {
