@@ -11,30 +11,21 @@
     "ScreenHandlerMixin",
     "ServerPlayerInteractionManagerMixin",
     "ServerPlayNetworkHandlerMixin",
-    "accessor.CraftingScreenHandlerAccessor",
     "accessor.PlayerInventoryAccessor",
     "accessor.PlayerScreenHandlerAccessor",
     "accessor.ScreenHandlerAccessor",
     "accessor.SimpleInventoryAccessor",
-    "accessor.SlotAccessor"
+    "accessor.SlotAccessor",
+    "client.accessor.InGameHudAccessor"
   ],
   "client": [
-    "client.ClientPlayerEntityMixin",
     "client.ClientPlayerInteractionManagerMixin",
-    "client.ClientPlayNetworkHandlerMixin",
-    "client.CreativeInventoryScreenMixin",
-    "client.CreativeScreenHandlerMixin",
-    "client.InGameHudMixin",
+    "client.InGameHudMixin1",
+    "client.InGameHudMixin2",
     "client.InventoryScreenMixin",
     "client.MinecraftClientMixin",
-    "client.accessor.CreativeInventoryScreenAccessor",
     "client.accessor.HandledScreenAccessor",
-    "client.accessor.MinecraftClientAccessor",
-    "client.accessor.ScreenAccessor",
-    "client.screen.AbstractFurnaceScreenMixin",
-    "client.screen.CraftingScreenMixin",
-    "client.screen.GrindstoneScreenMixin",
-    "client.screen.HandledScreenMixin"
+    "client.accessor.MinecraftClientAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -14,29 +14,6 @@ object InventorioControls
     {
     }
 
-    val keyQuickBar10 = KeyBindingHelper.registerKeyBinding(KeyBinding(
-            "inventorio.keys.quickbar_10",
-            InputUtil.Type.KEYSYM,
-            48,
-            "inventorio.keys.category"
-    ))!!
-
-    val keyQuickBar11 = KeyBindingHelper.registerKeyBinding(KeyBinding(
-            "inventorio.keys.quickbar_11",
-            InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_MINUS,
-            "inventorio.keys.category"
-    ))!!
-
-    val keyQuickBar12 = KeyBindingHelper.registerKeyBinding(KeyBinding(
-            "inventorio.keys.quickbar_12",
-            InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_EQUAL,
-            "inventorio.keys.category"
-    ))!!
-
-    val keysQuickBarExtra = arrayOf(keyQuickBar10, keyQuickBar11, keyQuickBar12)
-
     val keyUseUtility = KeyBindingHelper.registerKeyBinding(KeyBinding(
             "inventorio.keys.use_utility",
             InputUtil.Type.KEYSYM,

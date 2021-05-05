@@ -2,13 +2,7 @@ package me.lizardofoz.inventorio.mixin;
 
 import me.lizardofoz.inventorio.mixin.accessor.PlayerInventoryAccessor;
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
-import me.lizardofoz.inventorio.util.GeneralConstantsKt;
 import me.lizardofoz.inventorio.util.InventoryDuck;
-import me.lizardofoz.inventorio.mixin.accessor.PlayerInventoryAccessor;
-import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
-import me.lizardofoz.inventorio.util.InventoryDuck;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -68,25 +62,6 @@ public class PlayerInventoryMixin implements InventoryDuck
     public float getBlockBreakingSpeed(BlockState block)
     {
         return addon.getBlockBreakingSpeed(block);
-    }
-
-    @Overwrite
-    @Environment(EnvType.CLIENT)
-    public void scrollInHotbar(double scrollAmount)
-    {
-        addon.scrollInHotbar(scrollAmount);
-    }
-
-    @Overwrite
-    public static boolean isValidHotbarIndex(int slot)
-    {
-        return slot >= 0 && slot < GeneralConstantsKt.INVENTORIO_ROW_LENGTH;
-    }
-
-    @Overwrite
-    public static int getHotbarSize()
-    {
-        return GeneralConstantsKt.INVENTORIO_ROW_LENGTH;
     }
 
     @Override

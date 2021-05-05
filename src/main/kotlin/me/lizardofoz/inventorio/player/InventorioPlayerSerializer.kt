@@ -1,7 +1,5 @@
 package me.lizardofoz.inventorio.player
 
-import me.lizardofoz.inventorio.util.QuickBarMode
-import me.lizardofoz.inventorio.util.UtilityBeltMode
 import me.lizardofoz.inventorio.util.isNotEmpty
 import net.fabricmc.fabric.api.util.NbtType
 import net.minecraft.item.ItemStack
@@ -15,28 +13,18 @@ object InventorioPlayerSerializer
     {
         val inventoryAddon = playerAddon.inventoryAddon
 
-        inventorioTag.putInt("SelectedUtilitySlot", inventoryAddon.selectedUtility)
-        inventorioTag.putString("QuickBarMode", playerAddon.quickBarMode.toString())
-        inventorioTag.putString("UtilityBeltMode", playerAddon.utilityBeltMode.toString())
-
-        //Inventory
         val extension = ListTag()
         val utilityBelt = ListTag()
         val toolBelt = ListTag()
-        val physBar = ListTag()
-        val quickBar = ListTag()
 
         serializeSection(inventoryAddon.extension, extension)
         serializeSection(inventoryAddon.utilityBelt, utilityBelt)
         serializeSection(inventoryAddon.toolBelt, toolBelt)
-        serializeSection(inventoryAddon.physicalQuickBar, physBar)
-        serializeSection(inventoryAddon.shortcutQuickBar.stacks, quickBar)
 
+        inventorioTag.putInt("SelectedUtilitySlot", inventoryAddon.selectedUtility)
         inventorioTag.put("Extension", extension)
         inventorioTag.put("UtilityBelt", utilityBelt)
         inventorioTag.put("ToolBelt", toolBelt)
-        inventorioTag.put("PhysBar", physBar)
-        inventorioTag.put("QuickBar", quickBar) //todo
     }
 
     private fun serializeSection(section: DefaultedList<ItemStack>, tag: ListTag)
@@ -54,25 +42,12 @@ object InventorioPlayerSerializer
 
     fun deserialize(playerAddon: PlayerAddon, inventorioTag: CompoundTag)
     {
-        val quickBarMode = if (inventorioTag.contains("QuickBarMode"))
-            QuickBarMode.valueOf(inventorioTag.getString("QuickBarMode"))
-        else
-            QuickBarMode.FILTERED
-        val utilityBeltMode = if (inventorioTag.contains("UtilityBeltMode"))
-            UtilityBeltMode.valueOf(inventorioTag.getString("UtilityBeltMode"))
-        else
-            UtilityBeltMode.FILTERED
-        playerAddon.setRestrictionModesFromSerialization(quickBarMode, utilityBeltMode)
-
-
         val inventoryAddon = playerAddon.inventoryAddon
         inventoryAddon.selectedUtility = inventorioTag.getInt("SelectedUtilitySlot")
 
         deserializeSection(inventoryAddon.utilityBelt, inventorioTag.getList("UtilityBelt", NbtType.COMPOUND))
         deserializeSection(inventoryAddon.toolBelt, inventorioTag.getList("ToolBelt", NbtType.COMPOUND))
         deserializeSection(inventoryAddon.extension, inventorioTag.getList("Extension", NbtType.COMPOUND))
-        deserializeSection(inventoryAddon.physicalQuickBar, inventorioTag.getList("PhysBar", NbtType.COMPOUND))
-        deserializeSection(inventoryAddon.shortcutQuickBar.stacks, inventorioTag.getList("QuickBar", NbtType.COMPOUND))
     }
 
     private fun deserializeSection(section: DefaultedList<ItemStack>, tag: ListTag)

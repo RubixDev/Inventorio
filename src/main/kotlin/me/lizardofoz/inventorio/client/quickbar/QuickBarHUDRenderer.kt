@@ -2,28 +2,19 @@ package me.lizardofoz.inventorio.client.quickbar
 
 import com.mojang.blaze3d.systems.RenderSystem
 import me.lizardofoz.inventorio.client.config.InventorioConfigData
+import me.lizardofoz.inventorio.mixin.client.accessor.InGameHudAccessor
 import me.lizardofoz.inventorio.player.PlayerAddon
-import me.lizardofoz.inventorio.player.PlayerAddon.Client.selectedQuickBarSection
-import me.lizardofoz.inventorio.slot.QuickBarShortcutSlot
 import me.lizardofoz.inventorio.util.*
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gui.DrawableHelper
-import net.minecraft.client.gui.hud.BackgroundHelper
 import net.minecraft.client.gui.hud.InGameHud
-import net.minecraft.client.options.AttackIndicator
-import net.minecraft.client.render.Tessellator
-import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
-import net.minecraft.util.Arm
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.MathHelper
-import kotlin.math.max
-import kotlin.math.pow
 
 @Environment(EnvType.CLIENT)
 object QuickBarHUDRenderer
@@ -31,7 +22,98 @@ object QuickBarHUDRenderer
     private val WIDGETS_TEXTURE = Identifier("inventorio", "textures/gui/widgets.png")
     private val client = MinecraftClient.getInstance()!!
 
-    fun renderQuickBar(hud: InGameHud, tickDelta: Float, matrices: MatrixStack)
+    fun renderHotbarItself(hud: InGameHud, tickDelta: Float, matrices: MatrixStack)
+    {
+        if (InventorioConfigData.config().quickBarSimplified == QuickBarSimplified.OFF)
+        {
+            (hud as InGameHudAccessor).renderHotBar(tickDelta, matrices)
+            return
+        }
+    }
+
+    fun renderHotbarAddons(hud: InGameHud, tickDelta: Float, matrices: MatrixStack)
+    {
+        val playerAddon = PlayerAddon.Client.local
+        val player = playerAddon.player
+
+        val utilBelt = playerAddon.inventoryAddon.getDisplayedUtilities()
+        val activeTool = playerAddon.inventoryAddon.mainHandDisplayTool
+        val selectedItem = player.inventory.getStack(player.inventory.selectedSlot)
+
+        val scaledWidthHalved = client.window.scaledWidth / 2 - 30
+        val scaledHeight = client.window.scaledHeight
+
+        val simplifiedQuickBarMode = InventorioConfigData.config().quickBarSimplified != QuickBarSimplified.OFF
+        val simplifiedModeOffset = if (simplifiedQuickBarMode) 6 else 0
+
+        client.textureManager.bindTexture(WIDGETS_TEXTURE)
+
+        //Draw the active tool frame
+        if (player.handSwinging && activeTool.isNotEmpty && activeTool != selectedItem)
+        {
+            DrawableHelper.drawTexture(matrices,
+                    scaledWidthHalved + HUD_ACTIVE_TOOL_FRAME.x + simplifiedModeOffset, scaledHeight - HUD_ACTIVE_TOOL_FRAME.y,
+                    CANVAS_ACTIVE_TOOL_FRAME.x, CANVAS_ACTIVE_TOOL_FRAME.y,
+                    HUD_ACTIVE_TOOL_FRAME.width, HUD_ACTIVE_TOOL_FRAME.height,
+                    256, 64)
+        }
+
+        //Draw utility belt
+        if (utilBelt.any { it.isNotEmpty })
+        {
+            DrawableHelper.drawTexture(matrices,
+                    scaledWidthHalved - HUD_UTILITY_BELT.x - simplifiedModeOffset, scaledHeight - HUD_UTILITY_BELT.y,
+                    CANVAS_UTILITY_BELT_BCG.x, CANVAS_UTILITY_BELT_BCG.y,
+                    HUD_UTILITY_BELT.width, HUD_UTILITY_BELT.height,
+                    256, 64)
+
+            RenderSystem.pushMatrix()
+            RenderSystem.scalef(0.8f, 0.8f, 0.8f)
+
+            //Draw next and prev items
+            client.itemRenderer.renderInGuiWithOverrides(player,
+                    utilBelt[0],
+                    (scaledWidthHalved - simplifiedModeOffset) * 10 / 8 - SLOT_UTILITY_BELT_1.x,
+                    MathHelper.ceil((scaledHeight - SLOT_UTILITY_BELT_1.y) / 0.8))
+
+            client.itemRenderer.renderInGuiWithOverrides(player,
+                    utilBelt[2],
+                    (scaledWidthHalved - simplifiedModeOffset) * 10 / 8 - SLOT_UTILITY_BELT_2.x,
+                    MathHelper.ceil((scaledHeight - SLOT_UTILITY_BELT_2.y) / 0.8))
+
+            RenderSystem.popMatrix()
+            RenderSystem.disableDepthTest()
+            RenderSystem.enableBlend()
+
+            client.textureManager.bindTexture(WIDGETS_TEXTURE)
+            DrawableHelper.drawTexture(matrices,
+                    scaledWidthHalved - HUD_UTILITY_BELT.x - simplifiedModeOffset, scaledHeight - HUD_UTILITY_BELT.y,
+                    CANVAS_UTILITY_BELT.x, CANVAS_UTILITY_BELT.y,
+                    HUD_UTILITY_BELT.width, HUD_UTILITY_BELT.height,
+                    256, 64)
+
+            //Draw the active utility item
+            renderOffHandItem(player,
+                    utilBelt[1],
+                    scaledWidthHalved - SLOT_UTILITY_BELT_3.x - simplifiedModeOffset,
+                    scaledHeight - SLOT_UTILITY_BELT_3.y)
+
+        }
+
+        //Draw the active tool
+        if (player.handSwinging && activeTool.isNotEmpty && activeTool != selectedItem)
+        {
+            renderOffHandItem(
+                    player,
+                    activeTool,
+                    scaledWidthHalved + SLOT_ACTIVE_TOOL_FRAME.x + simplifiedModeOffset,
+                    scaledHeight - SLOT_ACTIVE_TOOL_FRAME.y,
+            )
+        }
+        RenderSystem.enableBlend()
+    }
+
+    /*fun renderHotbar(hud: InGameHud, tickDelta: Float, matrices: MatrixStack)
     {
         val playerAddon = PlayerAddon.Client.local
         val player = playerAddon.player
@@ -55,29 +137,30 @@ object QuickBarHUDRenderer
 
         //Draw the quickbar itself
         if (!simplifiedQuickBarMode)
-            hud.drawTexture(matrices,
+            DrawableHelper.drawTexture(matrices,
                     scaledWidthHalfed - 91, scaledHeight - 22,
                     CANVAS_QUICK_BAR_START_X, CANVAS_QUICK_BAR_START_Y,
                     CANVAS_QUICK_BAR_WIDTH, 22)
         else
-            hud.drawTexture(matrices,
+            DrawableHelper.drawTexture(matrices,
                     scaledWidthHalfed - 97, scaledHeight - 22,
                     CANVAS_QUICK_BAR_SPLIT_START_X, CANVAS_QUICK_BAR_SPLIT_START_Y,
                     CANVAS_QUICK_BAR_SPLIT_WIDTH, 22)
 
         //Draw the selected slot frame (or selected section in a simplified mode)
         if (selectedQuickBarSection == -1)
-            hud.drawTexture(matrices,
+            DrawableHelper.drawTexture(matrices,
                     scaledWidthHalfed - 92 - splitOffset + player.inventory.selectedSlot * 20 + groupOffset * (player.inventory.selectedSlot / 4),
                     scaledHeight - 23,
                     0, 22,
                     24, 24)
         else
-            hud.drawTexture(matrices,
+            DrawableHelper.drawTexture(matrices,
                     scaledWidthHalfed - 92 - splitOffset + 28 * selectedQuickBarSection * 3,
                     scaledHeight - 23,
                     CANVAS_QUICK_BAR_SECSEL_X, CANVAS_QUICK_BAR_SECSEL_Y,
-                    CANVAS_QUICK_BAR_SECSEL_W, CANVAS_QUICK_BAR_SECSEL_H)
+                    CANVAS_QUICK_BAR_SECSEL_W, CANVAS_QUICK_BAR_SECSEL_H,
+            256, 64)
 
         //Draw the frame for an active tool
         if (player.handSwinging && activeTool.isNotEmpty)
@@ -97,15 +180,12 @@ object QuickBarHUDRenderer
         if (handler.slots.size < 85)
             return
         //Draw quickbar items
-        for(i in 0 until 12)
+        for (i in 0 until VANILLA_ROW_LENGTH)
         {
             val x = scaledWidthHalfed - 90 + i * 20 + 2 + groupOffset * (i / 4) - splitOffset
             val y = scaledHeight - 16 - 3
-            val slot = handler.getSlot(QUICK_BAR_RANGE.first + i)
-            if (slot !is QuickBarShortcutSlot)
-                renderPhysBarItem(x, y, tickDelta, player, slot.stack)
-            else
-                renderQuickBarItem(x, y, tickDelta, player, slot.stack, true)
+            val slot = handler.getSlot(i)
+            renderPhysBarItem(x, y, tickDelta, player, slot.stack)
         }
 
         //Draw utility belt
@@ -130,9 +210,9 @@ object QuickBarHUDRenderer
                 client.textureManager.bindTexture(WIDGETS_TEXTURE)
                 hud.zOffset = 210
                 if (arm == Arm.LEFT)
-                    hud.drawTexture(matrices, scaledWidthHalfed - 91 - 29 - 25 - splitOffset, scaledHeight - 22, 0, 68, 48, 22)
+                    DrawableHelper.drawTexture(matrices, scaledWidthHalfed - 91 - 29 - 25 - splitOffset, scaledHeight - 22, 0f, 68f, 48, 22,256,64)
                 else
-                    hud.drawTexture(matrices, scaledWidthHalfed + 151 + splitOffset, scaledHeight - 23, 53, 22, 29, 24)
+                    DrawableHelper.drawTexture(matrices, scaledWidthHalfed + 151 + splitOffset, scaledHeight - 23, 53f, 22f, 29, 24,256,64)
                 hud.zOffset = -90
 
                 //Draw the active utility item
@@ -175,16 +255,14 @@ object QuickBarHUDRenderer
 
         RenderSystem.disableRescaleNormal()
         RenderSystem.disableBlend()
-    }
+    }*/
 
-    fun renderOffHandItem(x: Int, y: Int, tickDelta: Float, player: PlayerEntity, stack: ItemStack)
+    fun renderOffHandItem(player: PlayerEntity, stack: ItemStack, x: Int, y: Int)
     {
         if (stack.isNotEmpty)
         {
             client.itemRenderer.renderInGuiWithOverrides(player, stack, x, y)
-            RenderSystem.enableBlend()
             client.itemRenderer.renderGuiItemOverlay(client.textRenderer, stack, x, y)
-            RenderSystem.disableBlend()
         }
     }
 
@@ -192,57 +270,5 @@ object QuickBarHUDRenderer
     {
         client.itemRenderer.renderInGuiWithOverrides(player, stack, x, y)
         client.itemRenderer.renderGuiItemOverlay(client.textRenderer, stack, x, y)
-    }
-
-    fun renderQuickBarItem(x: Int, y: Int, tickDelta: Float, player: PlayerEntity, stack: ItemStack, sumTotalAmount: Boolean)
-    {
-        if (stack.isNotEmpty)
-        {
-            client.itemRenderer.renderInGuiWithOverrides(player, stack, x, y)
-            RenderSystem.enableBlend()
-            renderGuiItemOverlay(player, client.textRenderer, stack, x, y, sumTotalAmount)
-            RenderSystem.disableBlend()
-        }
-    }
-
-    fun renderGuiItemOverlay(player: PlayerEntity, renderer: TextRenderer, stack: ItemStack, x: Int, y: Int, sumTotalAmount: Boolean)
-    {
-        val totalAmount = if (sumTotalAmount)
-            PlayerAddon.Client.local.inventoryAddon.getTotalAmount(stack)
-        else
-            stack.count
-
-        val matrixStack = MatrixStack()
-        matrixStack.push()
-        if (totalAmount != 0)
-        {
-            val string = totalAmount.toString()
-
-            val scaleFactor = 1.0f - (((max(2, string.length) - 2.0) / string.length).pow(1.8)).toFloat()
-            matrixStack.translate((x + 19 - 2 - renderer.getWidth(string) * scaleFactor).toDouble(), (y + 6 + 3 / scaleFactor).toDouble(), 200.0)
-            matrixStack.scale(scaleFactor, scaleFactor, scaleFactor)
-
-            val color =
-                    if (totalAmount == 0)
-                        BackgroundHelper.ColorMixer.getArgb(255, 255, 0, 0)
-                    else
-                        16777215
-
-            val immediate = VertexConsumerProvider.immediate(Tessellator.getInstance().buffer)
-            renderer.draw(string, 0f, 0f, color, true, matrixStack.peek().model, immediate, false, 0, 15728880)
-            immediate.draw()
-        }
-        else if (!player.isCreative)
-        {
-            matrixStack.translate(0.0, 0.0, 200.0)
-            DrawableHelper.fill(matrixStack, x, y, x + 16, y + 16, BackgroundHelper.ColorMixer.getArgb(140, 64, 64, 64))
-        }
-
-        val cooldown = player.itemCooldownManager.getCooldownProgress(stack.item, MinecraftClient.getInstance().tickDelta)
-        if (cooldown > 0.0f)
-        {
-            matrixStack.pop()
-            DrawableHelper.fill(matrixStack, x, y + 16, x + 16, y + 16 - MathHelper.ceil(16.0f * cooldown), BackgroundHelper.ColorMixer.getArgb(127, 255, 255, 255))
-        }
     }
 }
