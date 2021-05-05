@@ -4,14 +4,15 @@ import com.google.common.collect.ImmutableList
 import me.lizardofoz.inventorio.client.ui.PlayerInventoryUIAddon
 import me.lizardofoz.inventorio.mixin.client.accessor.MinecraftClientAccessor
 import me.lizardofoz.inventorio.packet.InventorioNetworking
-import me.lizardofoz.inventorio.quickbar.QuickBarInventory
 import me.lizardofoz.inventorio.screenhandler.PlayerScreenHandlerAddon
-import me.lizardofoz.inventorio.slot.QuickBarItemStack
 import me.lizardofoz.inventorio.util.*
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.block.BlockState
+import net.minecraft.block.Material
 import net.minecraft.client.MinecraftClient
+import net.minecraft.enchantment.EnchantmentHelper
+import net.minecraft.enchantment.Enchantments
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.player.PlayerInventory
@@ -26,7 +27,7 @@ import kotlin.math.sign
  * while [PlayerInventoryUIAddon] is responsible for the visuals of the UI
  * and [PlayerScreenHandlerAddon] is responsible for the slots and player interaction with them
  */
-class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
+class PlayerInventoryAddon internal constructor(private val inventory: PlayerInventory)
 {
     internal val extension = DefaultedList.ofSize(EXTENSION_SIZE, ItemStack.EMPTY)!!
     internal val toolBelt = DefaultedList.ofSize(TOOL_BELT_SIZE, ItemStack.EMPTY)!!
@@ -34,13 +35,9 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
     //Minecraft has hardcoded slot indexes (40 for inventory and 45 for screen handlers) for the offhand.
     //This is a hack to counter-act any potential unaccounted Mojang hardcoding
     internal val dudOffhand = DefaultedList.ofSize(1, ItemStack.EMPTY)!!
-    //Some QuickBar modes allow the player to store some items _physically_ on the QuickBar.
-    //Thus, they have to be saved within player's inventory
-    internal val physicalQuickBar = DefaultedList.ofSize(INVENTORIO_ROW_LENGTH, ItemStack.EMPTY)!!
-    val shortcutQuickBar = QuickBarInventory(this)
 
     //Note: the order of elements is important. Don't change it.
-    val combinedInventory = ImmutableList.of(inventory.main, inventory.armor, dudOffhand, extension, toolBelt, utilityBelt, physicalQuickBar)!!
+    val combinedInventory = ImmutableList.of(inventory.main, inventory.armor, dudOffhand, extension, toolBelt, utilityBelt)!!
 
     private val player = inventory.player!!
     private val playerAddon by lazy { PlayerAddon[player] }
@@ -54,19 +51,15 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
 
     fun size(): Int
     {
-        return inventory.main.size + inventory.armor.size + dudOffhand.size + extension.size + toolBelt.size + utilityBelt.size + physicalQuickBar.size
+        return inventory.main.size + inventory.armor.size + dudOffhand.size + extension.size + toolBelt.size + utilityBelt.size
     }
 
     fun getMainHandStack(): ItemStack
     {
         return if (player.handSwinging && mainHandDisplayTool.isNotEmpty)
             mainHandDisplayTool
-        else if (physicalQuickBar[inventory.selectedSlot].isNotEmpty)
-            physicalQuickBar[inventory.selectedSlot]
-        else if (player.isCreative || hasAnySimilar(playerAddon.inventoryAddon.shortcutQuickBar.getStack(inventory.selectedSlot)))
-            playerAddon.inventoryAddon.shortcutQuickBar.getStack(inventory.selectedSlot)
         else
-            ItemStack.EMPTY
+            inventory.main[inventory.selectedSlot]
     }
 
     fun getEmptyExtensionSlot(): Int
@@ -113,16 +106,6 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
         player.attributes.removeModifiers(mainHandDisplayTool.getAttributeModifiers(EquipmentSlot.MAINHAND))
     }
 
-    @Environment(EnvType.CLIENT)
-    fun scrollInHotbar(scrollAmount: Double)
-    {
-        inventory.selectedSlot -= scrollAmount.sign.toInt()
-        while (inventory.selectedSlot < 0)
-            inventory.selectedSlot += INVENTORIO_ROW_LENGTH
-        while (inventory.selectedSlot >= INVENTORIO_ROW_LENGTH)
-            inventory.selectedSlot -= INVENTORIO_ROW_LENGTH
-    }
-
     fun mendToolBeltItems(experience: Int): Int
     {
         var amount = experience
@@ -135,34 +118,6 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
                 return amount
             }
         return amount
-    }
-
-    fun dropSelectedItem(dropEntireStack: Boolean): Boolean
-    {
-        if (playerAddon.quickBarMode == QuickBarMode.PHYSICAL_SLOTS)
-        {
-            val modifierIndex = inventory.selectedSlot + QUICK_BAR_RANGE.first
-            return player.dropItem(this.inventory.removeStack(modifierIndex, if (dropEntireStack && !this.inventory.mainHandStack.isEmpty) this.inventory.mainHandStack.count else 1), false, true) != null
-        }
-        else
-        {
-            val stack = shortcutQuickBar.getStack(inventory.selectedSlot)
-            if (stack.isEmpty)
-                return false
-
-            for (section in combinedInventory)
-                for (itStack in section)
-                    if (areItemsSimilar(stack, itStack))
-                    {
-                        val stackToDrop = itStack.copy()
-                        if (!dropEntireStack)
-                            stackToDrop.count = 1
-                        player.dropItem(stackToDrop, false, true)
-                        itStack.decrement(stackToDrop.count)
-                        return true
-                    }
-        }
-        return false
     }
 
     //==============================
@@ -202,51 +157,20 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
         return Pair(ItemStack.EMPTY, -1)
     }
 
-    fun decrementFromQuickBar(stack: QuickBarItemStack, amount: Int)
-    {
-        for (section in combinedInventory)
-        {
-            val item = section.firstOrNull { areItemsSimilar(stack, it) }
-            if (item != null)
-            {
-                item.decrement(amount)
-                return
-            }
-        }
-    }
-
     //==============================
     //Utility methods
     //==============================
 
-    fun hasAnySimilar(stack: ItemStack): Boolean
-    {
-        return combinedInventory.any { inv -> inv.any { item -> areItemsSimilar(stack, item) }}
-                || areItemsSimilar(inventory.cursorStack, stack)
-    }
-
-    fun getTotalAmount(stack: ItemStack): Int
-    {
-        var result = 0
-
-        for (section in combinedInventory)
-            for (itStack in section)
-                if (areItemsSimilar(stack, itStack))
-                    result += itStack.count
-
-        if (areItemsSimilar(stack, inventory.cursorStack))
-            result += inventory.cursorStack.count
-
-        return result
-    }
-
     fun getMostEffectiveTool(block: BlockState): ItemStack
     {
-        if (player.mainHandStack.item is ToolItem)
-            return player.mainHandStack
+        val selectedItem = player.inventory.getStack(player.inventory.selectedSlot)
+        if (selectedItem.item is ToolItem)
+            return selectedItem
         val result = toolBelt.maxByOrNull { it.getMiningSpeedMultiplier(block) } ?: ItemStack.EMPTY
         return if (result.getMiningSpeedMultiplier(block) > 1.0f)
             result
+        else if (block.material == Material.GLASS && EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, toolBelt[SLOT_INDEX_PICKAXE]) > 0)
+            toolBelt[SLOT_INDEX_PICKAXE] //Here we apply a silk touch pickaxe (if present) as a tool to mine glass-alike blocks
         else
             ItemStack.EMPTY
     }
@@ -261,20 +185,6 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
         return !existingStack.isEmpty && areItemsSimilar(existingStack, stack) && existingStack.isStackable && existingStack.count < existingStack.maxCount && existingStack.count < 64
     }
 
-    fun clearQuickBars()
-    {
-        for ((index, item) in physicalQuickBar.withIndex())
-        {
-            if (item.isNotEmpty)
-            {
-                player.dropItem(item, false, true)
-                physicalQuickBar[index] = ItemStack.EMPTY
-            }
-        }
-        for (index in shortcutQuickBar.stacks.indices)
-            shortcutQuickBar.setStack(index, ItemStack.EMPTY)
-    }
-
     /**
      * Checks if two item stacks are similar AND non-empty.
      *
@@ -284,7 +194,6 @@ class PlayerInventoryAddon internal constructor(val inventory: PlayerInventory)
     {
         return stack1.isNotEmpty && stack1.item === stack2.item && ItemStack.areTagsEqual(stack1, stack2)
     }
-
 
     companion object
     {

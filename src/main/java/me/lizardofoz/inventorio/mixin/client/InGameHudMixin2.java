@@ -7,27 +7,21 @@ import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
-/**
- * This mixin overwrites the Quickbar rendering on the HUD
- */
-@Mixin(value = InGameHud.class, priority = 9000)
+@Mixin(value = InGameHud.class, priority = 500)
 @Environment(EnvType.CLIENT)
-public abstract class InGameHudMixin
+public abstract class InGameHudMixin2
 {
     @Shadow protected abstract PlayerEntity getCameraPlayer();
 
-    /**
-     * @reason Redirect to our renderer
-     * @author LizardOfOz
-     */
-    @Overwrite
-    public void renderHotbar(float tickDelta, MatrixStack matrices)
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbar(FLnet/minecraft/client/util/math/MatrixStack;)V"))
+    public void renderHotbarRedirect(InGameHud inGameHud, float tickDelta, MatrixStack matrices)
     {
         PlayerEntity playerEntity = getCameraPlayer();
         if (playerEntity != null && playerEntity.isAlive() && playerEntity.playerScreenHandler != null)
-            QuickBarHUDRenderer.INSTANCE.renderQuickBar((InGameHud)(Object)this, tickDelta, matrices);
+            QuickBarHUDRenderer.INSTANCE.renderHotbarItself((InGameHud)(Object)this, tickDelta, matrices);
     }
 }

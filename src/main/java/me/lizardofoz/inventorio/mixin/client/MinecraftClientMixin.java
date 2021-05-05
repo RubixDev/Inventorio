@@ -5,14 +5,9 @@ import me.lizardofoz.inventorio.player.PlayerAddon;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.options.GameOptions;
-import net.minecraft.client.options.KeyBinding;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.Hand;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
@@ -20,9 +15,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Environment(EnvType.CLIENT)
 public class MinecraftClientMixin
 {
-    private static KeyBinding dudKeyBinding = new KeyBinding("inventorio.dud", 0, "inventorio.dud");
-
-    @Shadow @Nullable public ClientPlayerEntity player;
     /**
      * This redirect replaced vanilla QuickBar slot selection with ours (in case if Simplified QuickBar is enabled)
      */
@@ -35,11 +27,11 @@ public class MinecraftClientMixin
     /**
      * This redirect removes the offhand swap hotkey, because we effectively don't have an offhand slot anymore.
      */
-    @Redirect(method = "handleInputEvents", at = @At(value = "FIELD", target = "Lnet/minecraft/client/options/GameOptions;keySwapHands:Lnet/minecraft/client/options/KeyBinding;"))
+    /*@Redirect(method = "handleInputEvents", at = @At(value = "FIELD", target = "Lnet/minecraft/client/options/GameOptions;keySwapHands:Lnet/minecraft/client/options/KeyBinding;"))
     private KeyBinding removeOffhandSwap(GameOptions gameOptions)
     {
         return dudKeyBinding;
-    }
+    }*/ //todo
 
     /**
      * This redirect enables the ability to bind the Offhand/Utility to a separate button.
