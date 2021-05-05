@@ -6,12 +6,11 @@ import me.lizardofoz.inventorio.player.InventorioPlayerSerializer;
 import me.lizardofoz.inventorio.player.PlayerAddon;
 import me.lizardofoz.inventorio.screenhandler.PlayerScreenHandlerAddon;
 import me.lizardofoz.inventorio.util.GeneralConstantsKt;
-import me.lizardofoz.inventorio.util.HandlerDuck;
+import me.lizardofoz.inventorio.util.ScreenHandlerDuck;
 import me.lizardofoz.inventorio.util.PlayerDuck;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.EnderChestInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -19,7 +18,10 @@ import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -30,8 +32,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class PlayerEntityMixin implements PlayerDuck
 {
     @Unique public PlayerAddon addon;
-    @Shadow @Final public PlayerInventory inventory;
     @Shadow public abstract EnderChestInventory getEnderChestInventory();
+    @Shadow @Final public PlayerScreenHandler playerScreenHandler;
 
     /**
      * This inject attaches a {@link PlayerAddon} to a {@link PlayerEntity}
@@ -43,14 +45,8 @@ public abstract class PlayerEntityMixin implements PlayerDuck
         PlayerEntity thisPlayer = (PlayerEntity)(Object)this;
         addon = PlayerAddon.Companion.create(thisPlayer);
         PlayerScreenHandlerAddon screenAddon = new PlayerScreenHandlerAddon(thisPlayer.playerScreenHandler);
-        ((HandlerDuck)thisPlayer.playerScreenHandler).setAddon(screenAddon);
+        ((ScreenHandlerDuck)thisPlayer.playerScreenHandler).setAddon(screenAddon);
         screenAddon.initialize(addon);
-    }
-
-    @Overwrite
-    public boolean dropSelectedItem(boolean dropEntireStack)
-    {
-        return addon.getInventoryAddon().dropSelectedItem(dropEntireStack);
     }
 
     /**
@@ -65,18 +61,6 @@ public abstract class PlayerEntityMixin implements PlayerDuck
     }
 
     /**
-     * This inject causes the selected QuickBar item to be displayed in the main hand
-     */
-    @Inject(method = "equipStack", at = @At(value = "JUMP"), cancellable = true)
-    private void makeMainHandWorkWithQuickBar(EquipmentSlot slot, ItemStack stack, CallbackInfo ci)
-    {
-        if (slot == EquipmentSlot.MAINHAND)
-            addon.getInventoryAddon().getShortcutQuickBar().setStack(inventory.selectedSlot, stack);
-        else if (slot == EquipmentSlot.OFFHAND)
-            ci.cancel();
-    }
-
-    /**
      * This inject causes the selected UtilityBelt item to be displayed in the offhand
      */
     @Inject(method = "getEquippedStack", at = @At(value = "HEAD"), cancellable = true)
@@ -84,8 +68,10 @@ public abstract class PlayerEntityMixin implements PlayerDuck
     {
         if (slot == EquipmentSlot.OFFHAND)
         {
-            int index = GeneralConstantsKt.getUTILITY_BELT_RANGE().getFirst() + addon.getInventoryAddon().getSelectedUtility();
-            ItemStack stack = inventory.getStack(index);
+            int index = GeneralConstantsKt.getUTILITY_BELT_RANGE().getFirst()
+                    + addon.getInventoryAddon().getSelectedUtility();
+
+            ItemStack stack = this.playerScreenHandler.getSlot(index).getStack();
             cir.setReturnValue(stack);
         }
     }

@@ -18,7 +18,4 @@ public interface SlotAccessor
 
     @Accessor("y")
     void setY(int y);
-
-    @Accessor("index")
-    int getIndex();
 }

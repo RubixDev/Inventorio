@@ -12,8 +12,5 @@ import java.util.List;
 public interface PlayerInventoryAccessor
 {
     @Accessor("combinedInventory")
-    List<DefaultedList<ItemStack>> getCombinedInventory();
-
-    @Accessor("combinedInventory")
     void setCombinedInventory(List<DefaultedList<ItemStack>> combinedInventory);
 }

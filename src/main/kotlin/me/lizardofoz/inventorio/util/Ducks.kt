@@ -2,12 +2,13 @@ package me.lizardofoz.inventorio.util
 
 import me.lizardofoz.inventorio.player.PlayerAddon
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon
+import me.lizardofoz.inventorio.screenhandler.PlayerScreenHandlerAddon
 
 //Named after "duck typing"
 
-interface HandlerDuck
+interface ScreenHandlerDuck
 {
-    var addon: ScreenHandlerAddon
+    var addon: PlayerScreenHandlerAddon
 }
 
 interface InventoryDuck

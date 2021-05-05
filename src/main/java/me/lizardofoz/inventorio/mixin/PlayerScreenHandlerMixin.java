@@ -1,8 +1,7 @@
 package me.lizardofoz.inventorio.mixin;
 
-import me.lizardofoz.inventorio.util.HandlerDuck;
 import me.lizardofoz.inventorio.screenhandler.PlayerScreenHandlerAddon;
-import me.lizardofoz.inventorio.util.ScreenHandlerAddon;
+import me.lizardofoz.inventorio.util.ScreenHandlerDuck;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.PlayerScreenHandler;
@@ -14,15 +13,15 @@ import org.spongepowered.asm.mixin.Unique;
  * This mixin fixes shift-clicks and other inventory shortcuts for Player's inventory
  */
 @Mixin(PlayerScreenHandler.class)
-public class PlayerScreenHandlerMixin implements HandlerDuck
+public class PlayerScreenHandlerMixin implements ScreenHandlerDuck
 {
     @Unique public PlayerScreenHandlerAddon addon;
 
-    /*@Overwrite
+    @Overwrite
     public ItemStack transferSlot(PlayerEntity player, int index)
     {
         return addon.transferSlot(player, index);
-    }*/
+    }
 
     @Override
     public PlayerScreenHandlerAddon getAddon()
@@ -31,8 +30,8 @@ public class PlayerScreenHandlerMixin implements HandlerDuck
     }
 
     @Override
-    public void setAddon(ScreenHandlerAddon addon)
+    public void setAddon(PlayerScreenHandlerAddon addon)
     {
-        this.addon = (PlayerScreenHandlerAddon) addon;
+        this.addon = addon;
     }
 }

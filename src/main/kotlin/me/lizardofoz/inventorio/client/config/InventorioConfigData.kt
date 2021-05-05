@@ -14,8 +14,6 @@ class InventorioConfigData : ConfigData
 {
     //Global
     var quickBarSimplified = QuickBarSimplified.OFF
-    var ignoredScreens = listOf<String>()
-    var inventoryTextOffsets = listOf<String>()
 
     companion object
     {

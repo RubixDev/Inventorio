@@ -4,7 +4,10 @@ import me.lizardofoz.inventorio.RobertoGarbagio
 import me.lizardofoz.inventorio.mixin.accessor.PlayerScreenHandlerAccessor
 import me.lizardofoz.inventorio.mixin.accessor.SlotAccessor
 import me.lizardofoz.inventorio.player.PlayerAddon
-import me.lizardofoz.inventorio.slot.*
+import me.lizardofoz.inventorio.slot.DudOffhandSlot
+import me.lizardofoz.inventorio.slot.ExtensionSlot
+import me.lizardofoz.inventorio.slot.ToolBeltSlot
+import me.lizardofoz.inventorio.slot.UtilityBeltSlot
 import me.lizardofoz.inventorio.util.*
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -14,102 +17,56 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.screen.PlayerScreenHandler
 import net.minecraft.screen.ScreenHandler
-import net.minecraft.screen.slot.CraftingResultSlot
-import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
-import java.awt.Rectangle
 
-class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHandler) : ScreenHandlerAddon
+class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScreenHandler)
 {
-    private val playerAddon = PlayerAddon[(handler as PlayerScreenHandlerAccessor).owner]
+    private val playerAddon = PlayerAddon[(screenHandler as PlayerScreenHandlerAccessor).owner]
 
     //==============================
     //Injects. These functions are either injected or redirected to by a mixin of a [PlayerInventory] class
     //==============================
 
-    override fun tryInitialize(slot: Slot): Boolean
+    fun initialize(playerAddon: PlayerAddon)
     {
-        return true
-    }
-
-    override fun initialize(playerAddon: PlayerAddon)
-    {
-        val player = playerAddon.player
         val inventory = playerAddon.player.inventory
-        val accessor = handler as PlayerScreenHandlerAccessor
-        //todo if we spawn with deep pockets, it bugs out
-        val rows = playerAddon.getExtraRows()
+        val accessor = screenHandler as PlayerScreenHandlerAccessor
 
-        //Because we can't avoid calling a constructor of the vanilla PlayerScreenHandler, we have to delete slots which have been created.
-        handler.slots.clear()
-        accessor.trackedSlots.clear()
+        //Shofting the 2x2 Crafting Grid to its new position
+        for (i in CRAFTING_GRID_RANGE)
+        {
+            val craftingSlot = screenHandler.slots[i] as SlotAccessor
+            craftingSlot.x += CRAFTING_GRID_OFFSET_X
+        }
 
-        for (i in MAIN_INVENTORY_RANGE)
-            accessor.addASlot(Slot(inventory, i,
-                    SLOTS_PLAYER_INVENTORY_ENTIRE_MAIN_PART(rows).x + (i % INVENTORIO_ROW_LENGTH) * INVENTORY_SLOT_SIZE,
-                    SLOTS_PLAYER_INVENTORY_ENTIRE_MAIN_PART(rows).y + (i / INVENTORIO_ROW_LENGTH) * INVENTORY_SLOT_SIZE))
+        //We can't just REMOVE the offhand slot, but we can replace it with a dud slot that doesn't accept any items
+        accessor.trackedSlots[VANILLA_OFFHAND_SLOT_INDEX] = ItemStack.EMPTY
+        screenHandler.slots[VANILLA_OFFHAND_SLOT_INDEX] = DudOffhandSlot(inventory, DUD_OFFHAND_RANGE.first, -1000, -1000)
 
-        //todo constants
-        accessor.addASlot(ArmorSlot(inventory, EquipmentSlot.HEAD, ARMOR_RANGE.first + 3, 8, 8 + 0 * 18))
-        accessor.addASlot(ArmorSlot(inventory, EquipmentSlot.CHEST, ARMOR_RANGE.first + 2, 8, 8 + 1 * 18))
-        accessor.addASlot(ArmorSlot(inventory, EquipmentSlot.LEGS, ARMOR_RANGE.first + 1, 8, 8 + 2 * 18))
-        accessor.addASlot(ArmorSlot(inventory, EquipmentSlot.FEET, ARMOR_RANGE.first + 0, 8, 8 + 3 * 18))
+        //Extended Inventory Section (Deep Pockets Enchantment)
+        for ((absolute, relative) in EXTENSION_RANGE.withRelativeIndex())
+            accessor.addASlot(ExtensionSlot(inventory, absolute - HANDLER_TO_INVENTORY_OFFSET,
+                    SLOT_INVENTORY_EXTENSION.x + (relative % VANILLA_ROW_LENGTH) * INVENTORY_SLOT_SIZE,
+                    SLOT_INVENTORY_EXTENSION.y + (relative / VANILLA_ROW_LENGTH) * INVENTORY_SLOT_SIZE))
 
-        //Minecraft has hardcoded slot indexes (40 for inventory and 45 for screen handlers) for the offhand.
-        //This is a hack to counter-act any potential unaccounted Mojang hardcoding related to the offhand
-        accessor.addASlot(DudOffhandSlot(inventory, DUD_OFFHAND_RANGE.first,
-                -1000,
-                -1000))
-
-        //Extended Section (Deep Pockets Enchantment)
-        for (i in EXTENSION_RANGE)
-            accessor.addASlot(ExtensionSlot(inventory, i,
-                    SLOTS_PLAYER_INVENTORY_EXTENSION_PART(rows).x + (i % INVENTORIO_ROW_LENGTH) * INVENTORY_SLOT_SIZE,
-                    SLOTS_PLAYER_INVENTORY_EXTENSION_PART(rows).y + (i / INVENTORIO_ROW_LENGTH) * INVENTORY_SLOT_SIZE))
-
-        //ToolBelt
+        //Tool Belt
         for ((absolute, relative) in TOOL_BELT_RANGE.withRelativeIndex())
-        {
-            val rect = SLOTS_PLAYER_INVENTORY_TOOL_BELT_SLOT(relative)
-            accessor.addASlot(ToolBeltSlot(inventory, SlotRestrictionFilters.toolBelt[relative], absolute,
-                    rect.x,
-                    rect.y))
-        }
+            accessor.addASlot(ToolBeltSlot(inventory, SlotRestrictionFilters.toolBelt[relative], absolute - HANDLER_TO_INVENTORY_OFFSET,
+                    SLOT_TOOL_BELT.x,
+                    SLOT_TOOL_BELT.y +INVENTORY_SLOT_SIZE * relative))
 
-        //UtilityBar
+        //Utility Belt
         for ((absolute, relative) in UTILITY_BELT_RANGE.withRelativeIndex())
-        {
-            accessor.addASlot(UtilityBarSlot(inventory, absolute,
-                    SLOTS_PLAYER_INVENTORY_UTILITY_BAR_TOTAL.x + INVENTORY_SLOT_SIZE * (relative / 4),
-                    SLOTS_PLAYER_INVENTORY_UTILITY_BAR_TOTAL.y + INVENTORY_SLOT_SIZE * (relative % 4)))
-        }
-
-        //QuickBar
-        val rect = SLOTS_PLAYER_INVENTORY_QUICK_BAR(rows)
-        for ((absolute, relative) in QUICK_BAR_RANGE.withRelativeIndex())
-        {
-            if (playerAddon.quickBarMode != QuickBarMode.PHYSICAL_SLOTS)
-                accessor.addASlot(QuickBarShortcutSlot(playerAddon.inventoryAddon.shortcutQuickBar, relative,
-                        rect.x + INVENTORY_SLOT_SIZE * (relative / 4),
-                        rect.y + INVENTORY_SLOT_SIZE * (relative % 4)))
-            else
-                accessor.addASlot(QuickBarPhysicalSlot(inventory, absolute,
-                        rect.x + INVENTORY_SLOT_SIZE * (relative / 4),
-                        rect.y + INVENTORY_SLOT_SIZE * (relative % 4)))
-        }
-
-        accessor.addASlot(CraftingResultSlot(player, accessor.craftingInput, accessor.craftingResult, 0, 188, 28))
-        for (x in 0..1) for (y in 0..1)
-            accessor.addASlot(Slot(accessor.craftingInput, x + y * 2,
-                    134 + x * 18,
-                    18 + y * 18))
+            accessor.addASlot(UtilityBeltSlot(inventory, absolute - HANDLER_TO_INVENTORY_OFFSET,
+                    SLOT_UTILITY_BELT_COLUMN_1.x + INVENTORY_SLOT_SIZE * (relative / 4),
+                    SLOT_UTILITY_BELT_COLUMN_1.y + INVENTORY_SLOT_SIZE * (relative % 4)))
     }
 
     /**
      * Returns null if we want to proceed with vanilla slot behaviour.
      * Returns a value appropriate for vanilla [ScreenHandler.onSlotClick] otherwise
      */
-    override fun onSlotClick(slotIndex: Int, clickData: Int, actionType: SlotActionType, player: PlayerEntity): ItemStack?
+    fun onSlotClick(slotIndex: Int, clickData: Int, actionType: SlotActionType, player: PlayerEntity): ItemStack?
     {
         if (slotIndex in ARMOR_RANGE)
         {
@@ -121,18 +78,19 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
             if (playerAddon.inventoryAddon.utilityBelt[playerAddon.inventoryAddon.selectedUtility].isEmpty)
                 playerAddon.inventoryAddon.selectedUtility = slotIndex - UTILITY_BELT_RANGE.first
         }
-        return QuickBarShortcutSlot.clickShortCutSlot(handler, slotIndex, clickData, actionType, playerAddon)
+        return null
     }
 
+    //todo mod compatibility
     fun transferSlot(player: PlayerEntity, sourceIndex: Int): ItemStack
     {
-        val slot = handler.slots[sourceIndex]
+        val slot = screenHandler.slots[sourceIndex]
 
         val itemStack = slot.stack
         val itemBefore = itemStack.copy()
         val equipmentSlot = MobEntity.getPreferredEquipmentSlot(itemBefore)
         val expansionSlots = playerAddon.getAvailableExtensionSlotsRange()
-        val accessor = handler as PlayerScreenHandlerAccessor
+        val accessor = screenHandler as PlayerScreenHandlerAccessor
 
         if (sourceIndex in MAIN_INVENTORY_RANGE || sourceIndex in expansionSlots)
         {
@@ -141,8 +99,6 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
                 checkCapacity()
                 return itemBefore
             }
-            if (SlotRestrictionFilters.utilityBelt.invoke(itemStack) && accessor.insertAnItem(itemStack, UTILITY_BELT_RANGE.first, UTILITY_BELT_RANGE.last, false))
-                return itemBefore
             for ((index, function) in SlotRestrictionFilters.toolBelt.withIndex())
             {
                 val absoluteIndex = TOOL_BELT_RANGE.first + index
@@ -180,24 +136,18 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
     //Additional functionality
     //==============================
 
-    fun considerCheckingCapacity(slotIndex: Int)
-    {
-        if (slotIndex in ARMOR_RANGE)
-            checkCapacity()
-    }
-
     fun checkCapacity()
     {
         val player = playerAddon.player
-        val range = playerAddon.getAvailableExtensionSlotsRange()
-        for (i in range)
+        val extensionRange = playerAddon.getAvailableExtensionSlotsRange()
+        for (i in extensionRange)
         {
-            val slot = handler.getSlot(i) as ExtensionSlot
+            val slot = screenHandler.getSlot(i) as ExtensionSlot
             slot.canTakeItems = true
         }
         for (i in playerAddon.getUnavailableExtensionSlotsRange())
         {
-            val slot = handler.getSlot(i) as ExtensionSlot
+            val slot = screenHandler.getSlot(i) as ExtensionSlot
             RobertoGarbagio.LOGGER.info("drop ${slot.stack}")
             player.dropItem(slot.stack, false, true)?.setPickupDelay(0)
             slot.stack = ItemStack.EMPTY
@@ -205,8 +155,8 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
         }
         for (i in UTILITY_BELT_EXTENSION_RANGE)
         {
-            val slot = handler.getSlot(i) as ExtensionSlot
-            if (range.isEmpty())
+            val slot = screenHandler.getSlot(i) as ExtensionSlot
+            if (extensionRange.isEmpty())
             {
                 player.dropItem(slot.stack, false, true)?.setPickupDelay(0)
                 slot.stack = ItemStack.EMPTY
@@ -215,42 +165,39 @@ class PlayerScreenHandlerAddon internal constructor(val handler: PlayerScreenHan
             else
                 slot.canTakeItems = true
         }
-        if (!handler.onServer)
+        if (!screenHandler.onServer)
             refreshSlots()
     }
 
     @Environment(EnvType.CLIENT)
     fun refreshSlots()
     {
-        val rows = playerAddon.getExtraRows()
-        val mainRect = SLOTS_PLAYER_INVENTORY_ENTIRE_MAIN_PART(rows)
+        val rows = playerAddon.getExtensionRows()
 
-        for ((absolute, relative) in MAIN_INVENTORY_RANGE.withRelativeIndex())
-            repositionSlot(handler.getSlot(absolute), mainRect, relative)
-
-        val extensionRect = SLOTS_PLAYER_INVENTORY_EXTENSION_PART(rows)
-        for ((absolute, relative) in playerAddon.getAvailableExtensionSlotsRange().withRelativeIndex())
+        for ((absolute, relative) in MAIN_INVENTORY_NO_HOTBAR_RANGE.withRelativeIndex())
         {
-            val slot = handler.getSlot(absolute)
-            repositionSlot(slot, extensionRect, relative)
-            (slot as ExtensionSlot).canTakeItems = true
+            val slot = screenHandler.getSlot(absolute) as SlotAccessor
+            slot.x = SLOTS_INVENTORY_MAIN(rows).x + INVENTORY_SLOT_SIZE * (relative % VANILLA_ROW_LENGTH)
+            slot.y = SLOTS_INVENTORY_MAIN(rows).y + INVENTORY_SLOT_SIZE * (relative / VANILLA_ROW_LENGTH)
+        }
+        for ((absolute, relative) in HOTBAR_INVENTORY_RANGE.withRelativeIndex())
+        {
+            val slot = screenHandler.getSlot(absolute) as SlotAccessor
+            slot.x = SLOTS_INVENTORY_HOTBAR(rows).x + INVENTORY_SLOT_SIZE * relative
+            slot.y = SLOTS_INVENTORY_HOTBAR(rows).y
         }
 
-        val quickBarRect = SLOTS_PLAYER_INVENTORY_QUICK_BAR(rows)
-        for ((absolute, relative) in QUICK_BAR_RANGE.withRelativeIndex())
-            repositionSlot(handler.getSlot(absolute), quickBarRect, relative)
+        for (i in playerAddon.getAvailableExtensionSlotsRange())
+        {
+            val slot = screenHandler.getSlot(i) as ExtensionSlot
+            slot.canTakeItems = true
+        }
 
         for (i in playerAddon.getUnavailableExtensionSlotsRange())
         {
-            val slot = handler.getSlot(i) as ExtensionSlot
+            val slot = screenHandler.getSlot(i) as ExtensionSlot
             slot.canTakeItems = false
         }
     }
 
-    private fun repositionSlot(slot: Slot, rect: Rectangle, index: Int)
-    {
-        val accessor = slot as SlotAccessor
-        accessor.x = rect.x + INVENTORY_SLOT_SIZE * (index % INVENTORIO_ROW_LENGTH)
-        accessor.y = rect.y + INVENTORY_SLOT_SIZE * (index / INVENTORIO_ROW_LENGTH)
-    }
 }
