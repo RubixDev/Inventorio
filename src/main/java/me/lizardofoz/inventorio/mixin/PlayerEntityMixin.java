@@ -4,7 +4,7 @@ import com.mojang.authlib.GameProfile;
 import me.lizardofoz.inventorio.mixin.accessor.SimpleInventoryAccessor;
 import me.lizardofoz.inventorio.player.InventorioPlayerSerializer;
 import me.lizardofoz.inventorio.player.PlayerAddon;
-import me.lizardofoz.inventorio.screenhandler.PlayerScreenHandlerAddon;
+import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon;
 import me.lizardofoz.inventorio.util.GeneralConstantsKt;
 import me.lizardofoz.inventorio.util.ScreenHandlerDuck;
 import me.lizardofoz.inventorio.util.PlayerDuck;
@@ -67,13 +67,7 @@ public abstract class PlayerEntityMixin implements PlayerDuck
     private void displayUtilityInOffhand(EquipmentSlot slot, CallbackInfoReturnable<ItemStack> cir)
     {
         if (slot == EquipmentSlot.OFFHAND)
-        {
-            int index = GeneralConstantsKt.getUTILITY_BELT_RANGE().getFirst()
-                    + addon.getInventoryAddon().getSelectedUtility();
-
-            ItemStack stack = this.playerScreenHandler.getSlot(index).getStack();
-            cir.setReturnValue(stack);
-        }
+            cir.setReturnValue(addon.getInventoryAddon().getOffHandStack());
     }
 
     @Redirect(method = "getBlockBreakingSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isEmpty()Z", ordinal = 0))

@@ -1,6 +1,5 @@
 package me.lizardofoz.inventorio.client
 
-import me.lizardofoz.inventorio.RobertoGarbagio
 import me.lizardofoz.inventorio.client.InventorioControls.keyNextUtility
 import me.lizardofoz.inventorio.client.InventorioControls.keyOpenConfig
 import me.lizardofoz.inventorio.client.InventorioControls.keyPrevUtility
@@ -14,7 +13,6 @@ import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.player.PlayerInventory
-import net.minecraft.world.level.LevelProperties
 
 @Environment(EnvType.CLIENT)
 object InventorioKeyHandler
@@ -49,13 +47,7 @@ object InventorioKeyHandler
 
         if (keyOpenConfig.wasPressed())
         {
-            val name = if (client.server != null)
-                (client.server!!.worlds.first().levelProperties as LevelProperties).levelName
-            else
-                client.networkHandler?.connection?.address
-            RobertoGarbagio.LOGGER.info("name=$name")
             client.openScreen(InventorioConfigScreenMenu.get(null))
-            InventoryOffsets.init()
         }
 
         if (keyNextUtility.wasPressed())

@@ -1,6 +1,6 @@
 package me.lizardofoz.inventorio.mixin;
 
-import me.lizardofoz.inventorio.screenhandler.PlayerScreenHandlerAddon;
+import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon;
 import me.lizardofoz.inventorio.util.ScreenHandlerDuck;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
