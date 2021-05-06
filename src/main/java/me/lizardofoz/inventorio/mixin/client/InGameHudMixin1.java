@@ -1,6 +1,6 @@
 package me.lizardofoz.inventorio.mixin.client;
 
-import me.lizardofoz.inventorio.client.quickbar.QuickBarHUDRenderer;
+import me.lizardofoz.inventorio.client.ui.HotbarHUDRenderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -25,7 +25,7 @@ public abstract class InGameHudMixin1
     {
         PlayerEntity playerEntity = getCameraPlayer();
         if (playerEntity != null && playerEntity.isAlive() && playerEntity.playerScreenHandler != null)
-            QuickBarHUDRenderer.INSTANCE.renderHotbarAddons((InGameHud)(Object)this, tickDelta, matrices);
+            HotbarHUDRenderer.INSTANCE.renderHotbarAddons((InGameHud)(Object)this, tickDelta, matrices);
     }
 
     @Redirect(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getOffHandStack()Lnet/minecraft/item/ItemStack;"))

@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList
 import me.lizardofoz.inventorio.client.ui.PlayerInventoryUIAddon
 import me.lizardofoz.inventorio.mixin.client.accessor.MinecraftClientAccessor
 import me.lizardofoz.inventorio.packet.InventorioNetworking
-import me.lizardofoz.inventorio.screenhandler.PlayerScreenHandlerAddon
 import me.lizardofoz.inventorio.util.*
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -54,12 +53,17 @@ class PlayerInventoryAddon internal constructor(private val inventory: PlayerInv
         return inventory.main.size + inventory.armor.size + dudOffhand.size + extension.size + toolBelt.size + utilityBelt.size
     }
 
-    fun getMainHandStack(): ItemStack
+    fun getMainHandStack(): ItemStack?
     {
         return if (player.handSwinging && mainHandDisplayTool.isNotEmpty)
             mainHandDisplayTool
         else
-            inventory.main[inventory.selectedSlot]
+            null
+    }
+
+    fun getOffHandStack(): ItemStack
+    {
+        return utilityBelt[selectedUtility]
     }
 
     fun getEmptyExtensionSlot(): Int

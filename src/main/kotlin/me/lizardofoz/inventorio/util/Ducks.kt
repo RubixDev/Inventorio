@@ -2,7 +2,7 @@ package me.lizardofoz.inventorio.util
 
 import me.lizardofoz.inventorio.player.PlayerAddon
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon
-import me.lizardofoz.inventorio.screenhandler.PlayerScreenHandlerAddon
+import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon
 
 //Named after "duck typing"
 
