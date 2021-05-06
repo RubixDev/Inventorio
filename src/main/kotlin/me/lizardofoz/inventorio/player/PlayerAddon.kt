@@ -2,7 +2,6 @@ package me.lizardofoz.inventorio.player
 
 import me.lizardofoz.inventorio.enchantment.DeepPocketsEnchantment
 import me.lizardofoz.inventorio.packet.InventorioNetworking
-import me.lizardofoz.inventorio.screenhandler.PlayerScreenHandlerAddon
 import me.lizardofoz.inventorio.util.*
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment

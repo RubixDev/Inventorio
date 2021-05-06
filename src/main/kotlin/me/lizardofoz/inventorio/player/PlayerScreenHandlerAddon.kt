@@ -1,9 +1,8 @@
-package me.lizardofoz.inventorio.screenhandler
+package me.lizardofoz.inventorio.player
 
 import me.lizardofoz.inventorio.RobertoGarbagio
 import me.lizardofoz.inventorio.mixin.accessor.PlayerScreenHandlerAccessor
 import me.lizardofoz.inventorio.mixin.accessor.SlotAccessor
-import me.lizardofoz.inventorio.player.PlayerAddon
 import me.lizardofoz.inventorio.slot.DudOffhandSlot
 import me.lizardofoz.inventorio.slot.ExtensionSlot
 import me.lizardofoz.inventorio.slot.ToolBeltSlot

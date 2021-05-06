@@ -1,4 +1,4 @@
-package me.lizardofoz.inventorio.client.quickbar
+package me.lizardofoz.inventorio.client.ui
 
 import com.mojang.blaze3d.systems.RenderSystem
 import me.lizardofoz.inventorio.client.config.InventorioConfigData
@@ -17,7 +17,7 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.math.MathHelper
 
 @Environment(EnvType.CLIENT)
-object QuickBarHUDRenderer
+object HotbarHUDRenderer
 {
     private val WIDGETS_TEXTURE = Identifier("inventorio", "textures/gui/widgets.png")
     private val client = MinecraftClient.getInstance()!!
