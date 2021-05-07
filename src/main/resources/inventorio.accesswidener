@@ -1,4 +1,0 @@
-accessWidener v1 named
-extendable class net/minecraft/item/ItemStack
-accessible class net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen$LockableSlot
-accessible class net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen$CreativeSlot

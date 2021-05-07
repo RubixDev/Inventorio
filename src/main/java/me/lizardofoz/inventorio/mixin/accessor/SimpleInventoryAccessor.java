@@ -14,4 +14,7 @@ public interface SimpleInventoryAccessor
 
     @Accessor("stacks")
     void setStacks(DefaultedList<ItemStack> stacks);
+
+    @Accessor("stacks")
+    DefaultedList<ItemStack> getStacks();
 }

@@ -1,11 +1,9 @@
 package me.lizardofoz.inventorio
 
+import me.lizardofoz.inventorio.client.InventorioConfigData
 import me.lizardofoz.inventorio.client.InventorioControls
 import me.lizardofoz.inventorio.client.InventorioKeyHandler
-import me.lizardofoz.inventorio.client.config.InventorioConfigData
 import me.lizardofoz.inventorio.enchantment.DeepPocketsEnchantment
-import me.shedaniel.autoconfig.AutoConfig
-import me.shedaniel.autoconfig.serializer.GsonConfigSerializer
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
@@ -28,7 +26,7 @@ open class Inventorio : ModInitializer
     {
         InventorioControls.initialize()
         ClientTickEvents.START_CLIENT_TICK.register(ClientTickEvents.StartTick { InventorioKeyHandler.tick(it) })
-        AutoConfig.register(InventorioConfigData::class.java) { definition, configClass -> GsonConfigSerializer(definition, configClass) }
+        InventorioConfigData.load()
     }
 
     companion object

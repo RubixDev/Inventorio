@@ -4,8 +4,14 @@ import me.lizardofoz.inventorio.client.ui.PlayerInventoryUIAddon;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
+import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -18,6 +24,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Environment(EnvType.CLIENT)
 public class InventoryScreenMixin
 {
+    @Shadow @Final private RecipeBookWidget recipeBook;
+
+    @Shadow private boolean narrow;
+
     @Inject(method = "init", at = @At(value = "HEAD"))
     private void initScreenAddon(CallbackInfo ci)
     {
@@ -28,6 +38,15 @@ public class InventoryScreenMixin
     private void postInitScreenAddon(CallbackInfo ci)
     {
         PlayerInventoryUIAddon.INSTANCE.postInit();
+    }
+
+    /**
+     * This mixin redirects the creation of a recipe book widget button
+     */
+    @Redirect(method = "init", at = @At(value = "NEW", target = "net/minecraft/client/gui/widget/TexturedButtonWidget"))
+    public TexturedButtonWidget redirectAddButton(int x, int y, int width, int height, int u, int v, int hoveredVOffset, Identifier texture, ButtonWidget.PressAction pressAction)
+    {
+        return PlayerInventoryUIAddon.INSTANCE.makeWidgetButton((InventoryScreen)(Object)this, this.recipeBook, this.narrow);
     }
 
     @Redirect(method = "drawBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V"))

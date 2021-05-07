@@ -16,20 +16,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = InGameHud.class, priority = 1500)
 @Environment(EnvType.CLIENT)
-public abstract class InGameHudMixin1
+public abstract class InGameHudMixinHP
 {
     @Shadow protected abstract PlayerEntity getCameraPlayer();
 
+    /**
+     * This mixin calls the hotbar addon rendering
+     */
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbar(FLnet/minecraft/client/util/math/MatrixStack;)V"))
     public void renderHotbarAddons(MatrixStack matrices, float tickDelta, CallbackInfo ci)
     {
         PlayerEntity playerEntity = getCameraPlayer();
         if (playerEntity != null && playerEntity.isAlive() && playerEntity.playerScreenHandler != null)
-            HotbarHUDRenderer.INSTANCE.renderHotbarAddons((InGameHud)(Object)this, tickDelta, matrices);
+            HotbarHUDRenderer.INSTANCE.renderHotbarAddons(matrices);
     }
 
+    /**
+     * This mixin removes the vanilla hotbar display (both the frame and the item)
+     */
     @Redirect(method = "renderHotbar", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;getOffHandStack()Lnet/minecraft/item/ItemStack;"))
-    public ItemStack removeOffhandDisplay(PlayerEntity playerEntity)
+    public ItemStack removeOffhandDisplayFromHotbar(PlayerEntity playerEntity)
     {
         return ItemStack.EMPTY;
     }

@@ -17,6 +17,9 @@ public interface HandledScreenAccessor
     void setBackgroundHeight(int value);
 
     @Accessor("backgroundWidth")
+    int getBackgroundWidth();
+
+    @Accessor("backgroundWidth")
     void setBackgroundWidth(int value);
 
     @Accessor("x")

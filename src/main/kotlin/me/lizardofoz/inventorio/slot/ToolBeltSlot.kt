@@ -8,6 +8,6 @@ class ToolBeltSlot(inventory: Inventory, private val predicate: (ItemStack) -> B
 {
     override fun canInsert(stack: ItemStack): Boolean
     {
-        return predicate.invoke(stack)
+        return predicate(stack)
     }
 }
