@@ -13,15 +13,18 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(value = InGameHud.class, priority = 500)
 @Environment(EnvType.CLIENT)
-public abstract class InGameHudMixin2
+public abstract class InGameHudMixinLP
 {
     @Shadow protected abstract PlayerEntity getCameraPlayer();
 
+    /**
+     * This mixin redirects rendering the hotbar itself in case if Simplified Hotbar is selected.
+     */
     @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbar(FLnet/minecraft/client/util/math/MatrixStack;)V"))
     public void renderHotbarRedirect(InGameHud inGameHud, float tickDelta, MatrixStack matrices)
     {
         PlayerEntity playerEntity = getCameraPlayer();
         if (playerEntity != null && playerEntity.isAlive() && playerEntity.playerScreenHandler != null)
-            HotbarHUDRenderer.INSTANCE.renderHotbarItself((InGameHud)(Object)this, tickDelta, matrices);
+            HotbarHUDRenderer.INSTANCE.renderHotbarItself(inGameHud, tickDelta, matrices);
     }
 }

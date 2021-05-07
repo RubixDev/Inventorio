@@ -4,7 +4,7 @@
   "version": "in-dev",
 
   "name": "Inventorio",
-  "description": "My vision of the Inventory Update. Includes a shortcut-based quickbar, bigger inventory, Deep Pockets enchantment and more.",
+  "description": "My vision of the Inventory Update. Includes Deep Pockets Enchantment, Tool Belt, Utility Belt and more.",
   "authors": [
     "Lizard Of Oz"
   ],
@@ -19,15 +19,11 @@
   "entrypoints": {
     "main": [
       "me.lizardofoz.inventorio.Inventorio"
-    ],
-    "modmenu": [
-      "me.lizardofoz.inventorio.client.config.InventorioModMenuApi"
     ]
   },
   "mixins": [
     "inventorio.mixins.json"
   ],
-  "accessWidener" : "inventorio.accesswidener",
   "depends": {
     "fabricloader": ">=0.8.7",
     "fabric": "*",

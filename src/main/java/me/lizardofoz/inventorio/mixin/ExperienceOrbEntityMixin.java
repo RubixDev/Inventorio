@@ -1,6 +1,6 @@
 package me.lizardofoz.inventorio.mixin;
 
-import me.lizardofoz.inventorio.player.PlayerAddon;
+import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
 import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,7 +16,7 @@ public abstract class ExperienceOrbEntityMixin
     @Redirect(method = "onPlayerCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;addExperience(I)V"))
     public void mendToolBeltItems(PlayerEntity playerEntity, int experience)
     {
-        int xpLeft = PlayerAddon.get(playerEntity).getInventoryAddon().mendToolBeltItems(experience);
+        int xpLeft = PlayerInventoryAddon.getInventoryAddon(playerEntity).mendToolBeltItems(experience);
         if (xpLeft > 0)
             playerEntity.addExperience(xpLeft);
     }

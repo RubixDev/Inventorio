@@ -1,18 +1,18 @@
 package me.lizardofoz.inventorio.client
 
 import me.lizardofoz.inventorio.client.InventorioControls.keyNextUtility
-import me.lizardofoz.inventorio.client.InventorioControls.keyOpenConfig
 import me.lizardofoz.inventorio.client.InventorioControls.keyPrevUtility
+import me.lizardofoz.inventorio.client.InventorioControls.keyScrollSimplifiedMode
 import me.lizardofoz.inventorio.client.InventorioControls.keyUseUtility
-import me.lizardofoz.inventorio.client.config.InventorioConfigData
-import me.lizardofoz.inventorio.client.config.InventorioConfigScreenMenu
 import me.lizardofoz.inventorio.mixin.client.accessor.MinecraftClientAccessor
-import me.lizardofoz.inventorio.player.PlayerAddon
-import me.lizardofoz.inventorio.util.QuickBarSimplified
+import me.lizardofoz.inventorio.player.PlayerInventoryAddon
+import me.lizardofoz.inventorio.player.PlayerInventoryAddon.Companion.inventoryAddon
+import me.lizardofoz.inventorio.util.HotBarSimplified
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.player.PlayerInventory
+import net.minecraft.text.TranslatableText
 
 @Environment(EnvType.CLIENT)
 object InventorioKeyHandler
@@ -24,19 +24,19 @@ object InventorioKeyHandler
 
     fun handleSlotSelection(inventory: PlayerInventory, selectedSlot: Int)
     {
-        if (InventorioConfigData.config().quickBarSimplified != QuickBarSimplified.ON)
+        if (InventorioConfigData.simplifiedHotBar != HotBarSimplified.ON)
         {
             inventory.selectedSlot = selectedSlot
         }
-        else if (PlayerAddon.Client.selectedQuickBarSection == -1)
+        else if (PlayerInventoryAddon.Client.selectedHotBarSection == -1)
         {
             if (selectedSlot in 0..2)
-                PlayerAddon.Client.selectedQuickBarSection = selectedSlot
+                PlayerInventoryAddon.Client.selectedHotBarSection = selectedSlot
         }
-        else if (selectedSlot in 0..3)
+        else if (selectedSlot in 0..2)
         {
-            inventory.selectedSlot = selectedSlot + 4 * PlayerAddon.Client.selectedQuickBarSection
-            PlayerAddon.Client.selectedQuickBarSection = -1
+            inventory.selectedSlot = selectedSlot + 3 * PlayerInventoryAddon.Client.selectedHotBarSection
+            PlayerInventoryAddon.Client.selectedHotBarSection = -1
         }
     }
 
@@ -45,20 +45,18 @@ object InventorioKeyHandler
         val options = client.options ?: return
         val player = client.player ?: return
 
-        if (keyOpenConfig.wasPressed())
-        {
-            client.openScreen(InventorioConfigScreenMenu.get(null))
-        }
+        if (keyScrollSimplifiedMode.wasPressed())
+            player.sendMessage(TranslatableText("inventorio.simplified_hotbar."+ InventorioConfigData.scrollSimplifiedHotBar().name),true)
 
         if (keyNextUtility.wasPressed())
-            PlayerAddon[player].inventoryAddon.switchToNextUtility(1)
+            player.inventoryAddon.switchToNextUtility(1)
         if (keyPrevUtility.wasPressed())
-            PlayerAddon[player].inventoryAddon.switchToNextUtility(-1)
+            player.inventoryAddon.switchToNextUtility(-1)
         if (hasDedicatedUseUtilityButton() && keyUseUtility.isPressed && (client as MinecraftClientAccessor).itemUseCooldown <= 0)
-            PlayerAddon[player].inventoryAddon.activateSelectedUtility()
+            player.inventoryAddon.activateSelectedUtility()
 
         //Shoot fireworks with Jump button
         if (options.keyJump.wasPressed() && player.isFallFlying)
-            PlayerAddon[player].fireRocketFromInventory()
+            player.inventoryAddon.fireRocketFromInventory()
     }
 }

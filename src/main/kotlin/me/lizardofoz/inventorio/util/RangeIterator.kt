@@ -23,3 +23,9 @@ class IntProgressionIterator(intProgression: IntProgression) : Iterator<IntProgr
 }
 
 data class IntProgressionIndices(val absoluteIndex: Int, val relativeIndex: Int)
+
+infix fun Int.expandBy(addition: Int): IntRange
+{
+    if (addition < 0) return IntRange.EMPTY
+    return this..(this + addition - 1)
+}

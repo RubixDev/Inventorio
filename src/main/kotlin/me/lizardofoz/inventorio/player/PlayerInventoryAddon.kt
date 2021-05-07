@@ -1,7 +1,8 @@
 package me.lizardofoz.inventorio.player
 
-import com.google.common.collect.ImmutableList
 import me.lizardofoz.inventorio.client.ui.PlayerInventoryUIAddon
+import me.lizardofoz.inventorio.enchantment.DeepPocketsEnchantment
+import me.lizardofoz.inventorio.mixin.accessor.SimpleInventoryAccessor
 import me.lizardofoz.inventorio.mixin.client.accessor.MinecraftClientAccessor
 import me.lizardofoz.inventorio.packet.InventorioNetworking
 import me.lizardofoz.inventorio.util.*
@@ -12,46 +13,46 @@ import net.minecraft.block.Material
 import net.minecraft.client.MinecraftClient
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.enchantment.Enchantments
-import net.minecraft.entity.Entity
 import net.minecraft.entity.EquipmentSlot
-import net.minecraft.entity.player.PlayerInventory
+import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.entity.projectile.FireworkRocketEntity
+import net.minecraft.inventory.SimpleInventory
+import net.minecraft.item.FireworkItem
 import net.minecraft.item.ItemStack
 import net.minecraft.item.ToolItem
-import net.minecraft.util.collection.DefaultedList
+import net.minecraft.util.Hand
 import kotlin.math.max
 import kotlin.math.sign
 
 /**
- * This class is responsible for the inventory itself,
- * while [PlayerInventoryUIAddon] is responsible for the visuals of the UI
+ * This class is responsible for the inventory addon itself,
+ * while [PlayerInventoryUIAddon] is responsible for the visuals of the Player Screen UI
  * and [PlayerScreenHandlerAddon] is responsible for the slots and player interaction with them
  */
-class PlayerInventoryAddon internal constructor(private val inventory: PlayerInventory)
+class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : SimpleInventory(DEEP_POCKETS_MAX_SIZE + TOOL_BELT_SIZE + UTILITY_BELT_SIZE)
 {
-    internal val extension = DefaultedList.ofSize(EXTENSION_SIZE, ItemStack.EMPTY)!!
-    internal val toolBelt = DefaultedList.ofSize(TOOL_BELT_SIZE, ItemStack.EMPTY)!!
-    internal val utilityBelt = DefaultedList.ofSize(UTILITY_BELT_SIZE, ItemStack.EMPTY)!!
-    //Minecraft has hardcoded slot indexes (40 for inventory and 45 for screen handlers) for the offhand.
-    //This is a hack to counter-act any potential unaccounted Mojang hardcoding
-    internal val dudOffhand = DefaultedList.ofSize(1, ItemStack.EMPTY)!!
+    @Suppress("CAST_NEVER_SUCCEEDS")
+    private val accessor = this as SimpleInventoryAccessor
 
-    //Note: the order of elements is important. Don't change it.
-    val combinedInventory = ImmutableList.of(inventory.main, inventory.armor, dudOffhand, extension, toolBelt, utilityBelt)!!
-
-    private val player = inventory.player!!
-    private val playerAddon by lazy { PlayerAddon[player] }
+    val stacks : MutableList<ItemStack>
+    val deepPockets: MutableList<ItemStack>
+    val toolBelt: MutableList<ItemStack>
+    val utilityBelt: MutableList<ItemStack>
 
     var selectedUtility = 0
     var mainHandDisplayTool = ItemStack.EMPTY!!
 
+    init
+    {
+        stacks = accessor.stacks!!
+        deepPockets = stacks.subList(INVENTORY_ADDON_DEEP_POCKETS_RANGE.first, INVENTORY_ADDON_DEEP_POCKETS_RANGE.last + 1)
+        toolBelt = stacks.subList(INVENTORY_ADDON_TOOL_BELT_RANGE.first, INVENTORY_ADDON_TOOL_BELT_RANGE.last + 1)
+        utilityBelt = stacks.subList(INVENTORY_ADDON_UTILITY_BELT_RANGE.first, INVENTORY_ADDON_UTILITY_BELT_RANGE.last + 1)
+    }
+
     //==============================
     //Injects. These functions are either injected or redirected to by a mixin of a [PlayerInventory] class
     //==============================
-
-    fun size(): Int
-    {
-        return inventory.main.size + inventory.armor.size + dudOffhand.size + extension.size + toolBelt.size + utilityBelt.size
-    }
 
     fun getMainHandStack(): ItemStack?
     {
@@ -63,15 +64,14 @@ class PlayerInventoryAddon internal constructor(private val inventory: PlayerInv
 
     fun getOffHandStack(): ItemStack
     {
-        return utilityBelt[selectedUtility]
+        return getSelectedUtilityStack()
     }
 
     fun getEmptyExtensionSlot(): Int
     {
-        val offset = EXTENSION_RANGE.first
-        for (i in playerAddon.getAvailableExtensionSlotsRange())
+        for (i in getAvailableDeepPocketsRange())
         {
-            if (extension[i - offset].isEmpty)
+            if (deepPockets[i].isEmpty)
                 return i
         }
         return -1
@@ -79,10 +79,9 @@ class PlayerInventoryAddon internal constructor(private val inventory: PlayerInv
 
     fun getOccupiedExtensionSlotWithRoomForStack(stack: ItemStack): Int
     {
-        val offset = EXTENSION_RANGE.first
-        for (i in playerAddon.getAvailableExtensionSlotsRange())
+        for (i in getAvailableDeepPocketsRange())
         {
-            if (canStackAddMore(extension[i - offset], stack))
+            if (canStackAddMore(deepPockets[i], stack))
                 return i
         }
         return -1
@@ -95,7 +94,7 @@ class PlayerInventoryAddon internal constructor(private val inventory: PlayerInv
         return max(1f, tool.getMiningSpeedMultiplier(block))
     }
 
-    fun prePlayerAttack(target: Entity)
+    fun prePlayerAttack()
     {
         player.handSwinging = true
         mainHandDisplayTool = if (!toolBelt[SLOT_INDEX_SWORD].isEmpty)
@@ -105,7 +104,7 @@ class PlayerInventoryAddon internal constructor(private val inventory: PlayerInv
         player.attributes.addTemporaryModifiers(mainHandDisplayTool.getAttributeModifiers(EquipmentSlot.MAINHAND))
     }
 
-    fun postPlayerAttack(target: Entity)
+    fun postPlayerAttack()
     {
         player.attributes.removeModifiers(mainHandDisplayTool.getAttributeModifiers(EquipmentSlot.MAINHAND))
     }
@@ -142,9 +141,9 @@ class PlayerInventoryAddon internal constructor(private val inventory: PlayerInv
     @Environment(EnvType.CLIENT)
     fun activateSelectedUtility()
     {
-        PlayerAddon.Client.triesToUseUtility = true
+        Client.triesToUseUtility = true
         (MinecraftClient.getInstance() as MinecraftClientAccessor).invokeDoItemUse()
-        PlayerAddon.Client.triesToUseUtility = false
+        Client.triesToUseUtility = false
     }
 
     fun findNextUtility(direction: Int): Pair<ItemStack, Int>
@@ -159,6 +158,34 @@ class PlayerInventoryAddon internal constructor(private val inventory: PlayerInv
                 return Pair(utilityBelt[i], i)
 
         return Pair(ItemStack.EMPTY, -1)
+    }
+
+    fun fireRocketFromInventory()
+    {
+        if (!player.isFallFlying)
+            return
+        for (itemStack in player.inventory.main)
+            tryFireRocket(itemStack)
+        for (itemStack in deepPockets)
+            tryFireRocket(itemStack)
+        for (itemStack in utilityBelt)
+            tryFireRocket(itemStack)
+    }
+
+    private fun tryFireRocket(itemStack: ItemStack)
+    {
+        //todo exclude explosive rockets
+        if (itemStack.item is FireworkItem)
+        {
+            if (player.world.isClient)
+                InventorioNetworking.C2SUseBoostRocket()
+            else
+                player.world.spawnEntity(FireworkRocketEntity(player.world, itemStack, player))
+            player.swingHand(Hand.MAIN_HAND)
+            itemStack.decrement(1)
+            mainHandDisplayTool = itemStack
+            return
+        }
     }
 
     //==============================
@@ -181,22 +208,49 @@ class PlayerInventoryAddon internal constructor(private val inventory: PlayerInv
 
     fun getDisplayedUtilities(): Array<ItemStack>
     {
-        return arrayOf(findNextUtility(-1).first, utilityBelt[selectedUtility], findNextUtility(1).first)
+        return arrayOf(findNextUtility(-1).first, getSelectedUtilityStack(), findNextUtility(1).first)
+    }
+
+    fun getSelectedUtilityStack(): ItemStack
+    {
+        return utilityBelt[selectedUtility]
+    }
+
+    fun getAvailableDeepPocketsRange(): IntRange
+    {
+        return INVENTORY_ADDON_DEEP_POCKETS_RANGE.first until
+                INVENTORY_ADDON_DEEP_POCKETS_RANGE.first + getExtensionRows() * VANILLA_ROW_LENGTH
+    }
+
+    fun getUnavailableDeepPocketsRange(): IntRange
+    {
+        return getAvailableDeepPocketsRange().last + 1 .. INVENTORY_ADDON_DEEP_POCKETS_RANGE.last
+    }
+
+    fun getExtensionRows(): Int
+    {
+        return EnchantmentHelper.getEquipmentLevel(DeepPocketsEnchantment, player)
     }
 
     private fun canStackAddMore(existingStack: ItemStack, stack: ItemStack): Boolean
     {
-        return !existingStack.isEmpty && areItemsSimilar(existingStack, stack) && existingStack.isStackable && existingStack.count < existingStack.maxCount && existingStack.count < 64
+        return !existingStack.isEmpty && areItemsSimilar(existingStack, stack)
+                && existingStack.isStackable
+                && existingStack.count < existingStack.maxCount
+                && existingStack.count < 64
     }
 
-    /**
-     * Checks if two item stacks are similar AND non-empty.
-     *
-     * ItemStack counts are not considered.
-     */
     private fun areItemsSimilar(stack1: ItemStack, stack2: ItemStack): Boolean
     {
         return stack1.isNotEmpty && stack1.item === stack2.item && ItemStack.areTagsEqual(stack1, stack2)
+    }
+
+    @Environment(EnvType.CLIENT)
+    object Client
+    {
+        val local get() = MinecraftClient.getInstance().player!!.inventoryAddon
+        var selectedHotBarSection = -1
+        @JvmField var triesToUseUtility = false
     }
 
     companion object
@@ -206,5 +260,9 @@ class PlayerInventoryAddon internal constructor(private val inventory: PlayerInv
         const val SLOT_INDEX_AXE = 2
         const val SLOT_INDEX_SHOVEL = 3
         const val SLOT_INDEX_HOE = 4
+
+        @JvmStatic
+        val PlayerEntity.inventoryAddon: PlayerInventoryAddon
+            get() = (this.inventory as InventoryDuck).addon
     }
 }

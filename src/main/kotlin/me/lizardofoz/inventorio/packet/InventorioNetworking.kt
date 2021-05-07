@@ -1,10 +1,7 @@
 package me.lizardofoz.inventorio.packet
 
 import io.netty.buffer.PooledByteBufAllocator
-import me.lizardofoz.inventorio.packet.c2s.FireBoostRocketC2SPacket
-import me.lizardofoz.inventorio.packet.c2s.SelectUtilitySlotC2SPacket
-import me.lizardofoz.inventorio.packet.s2c.SetInventorySettingsS2CPacket
-import me.lizardofoz.inventorio.player.PlayerAddon
+import me.lizardofoz.inventorio.player.PlayerInventoryAddon.Companion.inventoryAddon
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry
@@ -17,10 +14,9 @@ object InventorioNetworking
 {
     init
     {
-        ServerSidePacketRegistry.INSTANCE.register(FireBoostRocketC2SPacket.identifier, FireBoostRocketC2SPacket::consume)
+        ServerSidePacketRegistry.INSTANCE.register(UseBoostRocketC2SPacket.identifier, UseBoostRocketC2SPacket::consume)
         ServerSidePacketRegistry.INSTANCE.register(SelectUtilitySlotC2SPacket.identifier, SelectUtilitySlotC2SPacket::consume)
-
-        ClientSidePacketRegistry.INSTANCE.register(SetInventorySettingsS2CPacket.identifier, SetInventorySettingsS2CPacket::consume)
+        ClientSidePacketRegistry.INSTANCE.register(SelectUtilitySlotS2CPacket.identifier, SelectUtilitySlotS2CPacket::consume)
     }
 
     @Environment(EnvType.CLIENT)
@@ -32,17 +28,16 @@ object InventorioNetworking
     }
 
     @Environment(EnvType.CLIENT)
-    fun C2SFireRocket()
+    fun C2SUseBoostRocket()
     {
-        sendC2S(FireBoostRocketC2SPacket.identifier) { }
+        sendC2S(UseBoostRocketC2SPacket.identifier) { }
     }
 
-    fun S2CSendPlayerSettings(player: PlayerEntity)
+    fun S2CSendSelectedUtilitySlot(player: PlayerEntity)
     {
-        val addon = PlayerAddon[player]
         val buf = PacketByteBuf(PooledByteBufAllocator.DEFAULT.buffer())
-        SetInventorySettingsS2CPacket.write(buf, addon.inventoryAddon.selectedUtility)
-        ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, SetInventorySettingsS2CPacket.identifier, buf)
+        SelectUtilitySlotS2CPacket.write(buf, player.inventoryAddon.selectedUtility)
+        ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, SelectUtilitySlotS2CPacket.identifier, buf)
     }
 
     private fun sendC2S(id: Identifier, func: (PacketByteBuf) -> Unit)

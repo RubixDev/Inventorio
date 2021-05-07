@@ -1,9 +1,9 @@
 package me.lizardofoz.inventorio.client.ui
 
 import com.mojang.blaze3d.systems.RenderSystem
-import me.lizardofoz.inventorio.client.config.InventorioConfigData
+import me.lizardofoz.inventorio.client.InventorioConfigData
 import me.lizardofoz.inventorio.mixin.client.accessor.InGameHudAccessor
-import me.lizardofoz.inventorio.player.PlayerAddon
+import me.lizardofoz.inventorio.player.PlayerInventoryAddon
 import me.lizardofoz.inventorio.util.*
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -24,27 +24,65 @@ object HotbarHUDRenderer
 
     fun renderHotbarItself(hud: InGameHud, tickDelta: Float, matrices: MatrixStack)
     {
-        if (InventorioConfigData.config().quickBarSimplified == QuickBarSimplified.OFF)
+        if (InventorioConfigData.simplifiedHotBar == HotBarSimplified.OFF)
         {
             (hud as InGameHudAccessor).renderHotBar(tickDelta, matrices)
             return
         }
+
+        val scaledWidthHalved = client.window.scaledWidth / 2 - 30
+        val scaledHeight = client.window.scaledHeight
+
+        client.textureManager.bindTexture(WIDGETS_TEXTURE)
+        DrawableHelper.drawTexture(matrices,
+                scaledWidthHalved - 65, scaledHeight - 22,
+                CANVAS_SIMPLIFIED_HOTBAR.x, CANVAS_SIMPLIFIED_HOTBAR.y,
+                HUD_SIMPLIFIED_HOTBAR.width, HUD_SIMPLIFIED_HOTBAR.height,
+                256, 64)
+
+        val inventory = client.player!!.inventory
+        val splitOffset = 4
+        val groupOffset = 4
+
+        val selectedSection = PlayerInventoryAddon.Client.selectedHotBarSection
+        if (selectedSection == -1)
+            DrawableHelper.drawTexture(matrices,
+                    scaledWidthHalved - 62 - splitOffset + inventory.selectedSlot * 20 + groupOffset * (inventory.selectedSlot / 3),
+                    scaledHeight - 23,
+                    188f, 0f,
+                    24, 24,
+                    256, 64)
+        else
+            DrawableHelper.drawTexture(matrices,
+                    scaledWidthHalved - 62 - splitOffset + 64 * selectedSection,
+                    scaledHeight - 23,
+                    CANVAS_SECTION_SELECTION.x, CANVAS_SECTION_SELECTION.y,
+                    HUD_SECTION_SELECTION.width, HUD_SECTION_SELECTION.height,
+                    256, 64)
+
+        for (i in 0 until VANILLA_ROW_LENGTH)
+        {
+            val x = scaledWidthHalved - 62 + i * 20 + groupOffset * (i / 3)
+            val y = scaledHeight - 16 - 3
+            renderHotbarItem(x, y, client.player!!, inventory.getStack(i))
+        }
     }
 
-    fun renderHotbarAddons(hud: InGameHud, tickDelta: Float, matrices: MatrixStack)
+    @Suppress("DEPRECATION")
+    fun renderHotbarAddons(matrices: MatrixStack)
     {
-        val playerAddon = PlayerAddon.Client.local
-        val player = playerAddon.player
+        val inventoryAddon = PlayerInventoryAddon.Client.local
+        val player = inventoryAddon.player
 
-        val utilBelt = playerAddon.inventoryAddon.getDisplayedUtilities()
-        val activeTool = playerAddon.inventoryAddon.mainHandDisplayTool
+        val utilBelt = inventoryAddon.getDisplayedUtilities()
+        val activeTool = inventoryAddon.mainHandDisplayTool
         val selectedItem = player.inventory.getStack(player.inventory.selectedSlot)
 
         val scaledWidthHalved = client.window.scaledWidth / 2 - 30
         val scaledHeight = client.window.scaledHeight
 
-        val simplifiedQuickBarMode = InventorioConfigData.config().quickBarSimplified != QuickBarSimplified.OFF
-        val simplifiedModeOffset = if (simplifiedQuickBarMode) 6 else 0
+        val simplifiedQuickBarMode = InventorioConfigData.simplifiedHotBar != HotBarSimplified.OFF
+        val simplifiedModeOffset = if (simplifiedQuickBarMode) 4 else 0
 
         client.textureManager.bindTexture(WIDGETS_TEXTURE)
 
@@ -266,7 +304,7 @@ object HotbarHUDRenderer
         }
     }
 
-    fun renderPhysBarItem(x: Int, y: Int, tickDelta: Float, player: PlayerEntity, stack: ItemStack)
+    fun renderHotbarItem(x: Int, y: Int, player: PlayerEntity, stack: ItemStack)
     {
         client.itemRenderer.renderInGuiWithOverrides(player, stack, x, y)
         client.itemRenderer.renderGuiItemOverlay(client.textRenderer, stack, x, y)
