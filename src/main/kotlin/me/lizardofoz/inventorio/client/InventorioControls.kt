@@ -23,22 +23,22 @@ object InventorioControls
 
     val keyNextUtility = KeyBindingHelper.registerKeyBinding(KeyBinding(
             "inventorio.keys.next_utility",
-            InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_M,
+            InputUtil.Type.MOUSE,
+            GLFW.GLFW_MOUSE_BUTTON_4,
             "inventorio.keys.category"
     ))!!
 
     val keyPrevUtility = KeyBindingHelper.registerKeyBinding(KeyBinding(
             "inventorio.keys.prev_utility",
-            InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_N,
+            InputUtil.Type.MOUSE,
+            GLFW.GLFW_MOUSE_BUTTON_5,
             "inventorio.keys.category"
     ))!!
 
-    val keyOpenConfig = KeyBindingHelper.registerKeyBinding(KeyBinding(
-            "inventorio.keys.open_config",
-            InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_I,
-            "inventorio.keys.category"
+    val keyScrollSimplifiedMode = KeyBindingHelper.registerKeyBinding(KeyBinding(
+        "inventorio.keys.scroll_simplified_hotbar",
+        InputUtil.Type.KEYSYM,
+        GLFW.GLFW_KEY_I,
+        "inventorio.keys.category"
     ))!!
 }

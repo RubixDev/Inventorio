@@ -16,11 +16,11 @@ public class ServerPlayNetworkHandlerMixin
     @Shadow public ServerPlayerEntity player;
 
     /**
-     * This inject sends gameplay-impacting Player's settings (QuickBar Mode and UtilityBelt Mode) from the server to the player
+     * This inject sends the last utility slot, saved by the server, from the server to the client
      */
     @Inject(method = "onClientSettings", at = @At(value = "RETURN"))
     private void setPlayerSettingsBack(ClientSettingsC2SPacket packet, CallbackInfo ci)
     {
-        InventorioNetworking.INSTANCE.S2CSendPlayerSettings(this.player);
+        InventorioNetworking.INSTANCE.S2CSendSelectedUtilitySlot(this.player);
     }
 }

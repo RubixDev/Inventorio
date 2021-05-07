@@ -7,7 +7,7 @@ import java.awt.geom.Point2D
 val TBD = 0
 
 val CANVAS_SECTION_SELECTION = Point2D.Float(0f, 0f)
-val HUD_SECTION_SELECTION = Rectangle(TBD, TBD, 84, 24)
+val HUD_SECTION_SELECTION = Rectangle(TBD, TBD, 64, 24)
 
 val CANVAS_ACTIVE_TOOL_FRAME = Point2D.Float(234f, 0f)
 val HUD_ACTIVE_TOOL_FRAME = Rectangle(133, 22, 22, 22)

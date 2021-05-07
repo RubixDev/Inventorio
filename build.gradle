@@ -22,10 +22,6 @@ repositories {
     maven { url "https://maven.shedaniel.me/" }
 }
 
-loom {
-    accessWidener "src/main/resources/inventorio.accesswidener"
-}
-
 dependencies {
     //to change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -38,9 +34,6 @@ dependencies {
     modImplementation "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
 
     modImplementation "io.github.prospector:modmenu:1.14.13+build.22"
-    modApi("me.shedaniel.cloth:cloth-config-fabric:4.11.14") {
-        exclude(group: "net.fabricmc.fabric-api")
-    }
 }
 
 processResources {

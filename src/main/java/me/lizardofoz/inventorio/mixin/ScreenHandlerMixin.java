@@ -29,9 +29,9 @@ public class ScreenHandlerMixin
     @Inject(method = "onSlotClick", at = @At(value = "RETURN"))
     private void postSlotClick(int slotIndex, int clickData, SlotActionType actionType, PlayerEntity playerEntity, CallbackInfoReturnable<ItemStack> cir)
     {
-        if (slotIndex >= GeneralConstantsKt.getARMOR_RANGE().getFirst()
-                && slotIndex <= GeneralConstantsKt.getARMOR_RANGE().getLast()
+        if (slotIndex >= GeneralConstantsKt.getHANDLER_ARMOR_RANGE().getFirst()
+                && slotIndex <= GeneralConstantsKt.getHANDLER_ARMOR_RANGE().getLast()
                 && (Object) this instanceof PlayerScreenHandler)
-            ((ScreenHandlerDuck)this).getAddon().checkCapacity();
+            ((ScreenHandlerDuck)this).getAddon().checkDeepPocketsCapacity();
     }
 }

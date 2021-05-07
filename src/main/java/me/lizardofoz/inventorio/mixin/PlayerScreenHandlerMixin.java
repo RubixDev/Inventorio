@@ -6,21 +6,25 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.PlayerScreenHandler;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * This mixin fixes shift-clicks and other inventory shortcuts for Player's inventory
  */
-@Mixin(PlayerScreenHandler.class)
+@Mixin(value = PlayerScreenHandler.class, priority = 9999)
 public class PlayerScreenHandlerMixin implements ScreenHandlerDuck
 {
     @Unique public PlayerScreenHandlerAddon addon;
 
-    @Overwrite
-    public ItemStack transferSlot(PlayerEntity player, int index)
+    @Inject(method = "transferSlot", at = @At("HEAD"), cancellable = true)
+    public void transferSlot(PlayerEntity player, int index, CallbackInfoReturnable<ItemStack> cir)
     {
-        return addon.transferSlot(player, index);
+        ItemStack result = addon.transferSlot(index);
+        if (result != null)
+            cir.setReturnValue(result);
     }
 
     @Override

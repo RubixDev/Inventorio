@@ -5,19 +5,16 @@ import net.fabricmc.fabric.api.util.NbtType
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
-import net.minecraft.util.collection.DefaultedList
 
 object InventorioPlayerSerializer
 {
-    fun serialize(playerAddon: PlayerAddon, inventorioTag: CompoundTag)
+    fun serialize(inventoryAddon: PlayerInventoryAddon, inventorioTag: CompoundTag)
     {
-        val inventoryAddon = playerAddon.inventoryAddon
-
         val extension = ListTag()
         val utilityBelt = ListTag()
         val toolBelt = ListTag()
 
-        serializeSection(inventoryAddon.extension, extension)
+        serializeSection(inventoryAddon.deepPockets, extension)
         serializeSection(inventoryAddon.utilityBelt, utilityBelt)
         serializeSection(inventoryAddon.toolBelt, toolBelt)
 
@@ -27,7 +24,7 @@ object InventorioPlayerSerializer
         inventorioTag.put("ToolBelt", toolBelt)
     }
 
-    private fun serializeSection(section: DefaultedList<ItemStack>, tag: ListTag)
+    private fun serializeSection(section: List<ItemStack>, tag: ListTag)
     {
         for ((i, itemStack) in section.withIndex())
         {
@@ -40,19 +37,20 @@ object InventorioPlayerSerializer
         }
     }
 
-    fun deserialize(playerAddon: PlayerAddon, inventorioTag: CompoundTag)
+    fun deserialize(inventoryAddon: PlayerInventoryAddon, inventorioTag: CompoundTag)
     {
-        val inventoryAddon = playerAddon.inventoryAddon
         inventoryAddon.selectedUtility = inventorioTag.getInt("SelectedUtilitySlot")
 
         deserializeSection(inventoryAddon.utilityBelt, inventorioTag.getList("UtilityBelt", NbtType.COMPOUND))
         deserializeSection(inventoryAddon.toolBelt, inventorioTag.getList("ToolBelt", NbtType.COMPOUND))
-        deserializeSection(inventoryAddon.extension, inventorioTag.getList("Extension", NbtType.COMPOUND))
+        deserializeSection(inventoryAddon.deepPockets, inventorioTag.getList("Extension", NbtType.COMPOUND))
     }
 
-    private fun deserializeSection(section: DefaultedList<ItemStack>, tag: ListTag)
+    private fun deserializeSection(section: MutableList<ItemStack>, tag: ListTag)
     {
-        section.clear()
+        for(i in section.indices)
+            section[i] = ItemStack.EMPTY
+
         for (itemTag in tag)
         {
             val compoundTag = itemTag as CompoundTag

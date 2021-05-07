@@ -1,8 +1,7 @@
-package me.lizardofoz.inventorio.packet.c2s
+package me.lizardofoz.inventorio.packet
 
 import com.mojang.datafixers.util.Pair
-import me.lizardofoz.inventorio.RobertoGarbagio
-import me.lizardofoz.inventorio.player.PlayerAddon
+import me.lizardofoz.inventorio.player.PlayerInventoryAddon.Companion.inventoryAddon
 import net.fabricmc.fabric.api.network.PacketContext
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.network.PacketByteBuf
@@ -18,13 +17,11 @@ object SelectUtilitySlotC2SPacket
     {
         val slot = buf.readByte().toInt()
         val player = context.player
-        PlayerAddon[player].inventoryAddon.selectedUtility = slot
+        player.inventoryAddon.selectedUtility = slot
 
         //Resending the current offhand item (aka a selected utility belt item) of this player to other players
         val broadcastPacket = EntityEquipmentUpdateS2CPacket(player.entityId, listOf(Pair(EquipmentSlot.OFFHAND, player.offHandStack)))
         (player.world as ServerWorld).chunkManager.sendToOtherNearbyPlayers(player, broadcastPacket)
-
-        RobertoGarbagio.LOGGER.info("Applying SelectUtilitySlotC2SPacket: $slot")
     }
 
     fun write(buf: PacketByteBuf, slot: Int = 0)
