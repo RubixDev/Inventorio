@@ -12,6 +12,8 @@ object UseBoostRocketC2SPacket
 
     fun consume(context: PacketContext, buf: PacketByteBuf)
     {
-        context.player.inventoryAddon.fireRocketFromInventory()
+        context.taskQueue.execute {
+            context.player.inventoryAddon.fireRocketFromInventory()
+        }
     }
 }

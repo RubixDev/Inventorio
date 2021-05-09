@@ -15,13 +15,15 @@ object SelectUtilitySlotC2SPacket
 
     fun consume(context: PacketContext, buf: PacketByteBuf)
     {
-        val slot = buf.readByte().toInt()
-        val player = context.player
-        player.inventoryAddon.selectedUtility = slot
+        val utilitySlot = buf.readByte().toInt()
+        context.taskQueue.execute {
+            val player = context.player
+            player.inventoryAddon.selectedUtility = utilitySlot
 
-        //Resending the current offhand item (aka a selected utility belt item) of this player to other players
-        val broadcastPacket = EntityEquipmentUpdateS2CPacket(player.entityId, listOf(Pair(EquipmentSlot.OFFHAND, player.offHandStack)))
-        (player.world as ServerWorld).chunkManager.sendToOtherNearbyPlayers(player, broadcastPacket)
+            //Resending the current offhand item (aka a selected utility belt item) of this player to other players
+            val broadcastPacket = EntityEquipmentUpdateS2CPacket(player.entityId, listOf(Pair(EquipmentSlot.OFFHAND, player.offHandStack)))
+            (player.world as ServerWorld).chunkManager.sendToOtherNearbyPlayers(player, broadcastPacket)
+        }
     }
 
     fun write(buf: PacketByteBuf, slot: Int = 0)

@@ -5,6 +5,10 @@ import me.lizardofoz.inventorio.player.PlayerInventoryAddon
 import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon
 import net.minecraft.item.*
 
+class Point2I(val x: Int, val y: Int)
+class Point2F(val x: Float, val y: Float)
+class Rectangle(val x: Int, val y: Int, val width: Int, val height: Int)
+
 enum class SegmentedHotbar
 {
     OFF, ONLY_VISUAL, ON
@@ -12,12 +16,12 @@ enum class SegmentedHotbar
 
 interface ScreenHandlerDuck
 {
-    var addon: PlayerScreenHandlerAddon
+    var screenHandlerAddon: PlayerScreenHandlerAddon
 }
 
 interface InventoryDuck
 {
-    val addon: PlayerInventoryAddon
+    val inventorioAddon: PlayerInventoryAddon
 }
 
 val ItemStack.isNotEmpty: Boolean

@@ -17,25 +17,25 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(value = PlayerScreenHandler.class, priority = 9999)
 public class PlayerScreenHandlerMixin implements ScreenHandlerDuck
 {
-    @Unique public PlayerScreenHandlerAddon addon;
+    @Unique public PlayerScreenHandlerAddon inventorioAddon;
 
     @Inject(method = "transferSlot", at = @At("HEAD"), cancellable = true)
     public void transferSlot(PlayerEntity player, int index, CallbackInfoReturnable<ItemStack> cir)
     {
-        ItemStack result = addon.transferSlot(index);
+        ItemStack result = inventorioAddon.transferSlot(index);
         if (result != null)
             cir.setReturnValue(result);
     }
 
     @Override
-    public PlayerScreenHandlerAddon getAddon()
+    public PlayerScreenHandlerAddon getScreenHandlerAddon()
     {
-        return addon;
+        return inventorioAddon;
     }
 
     @Override
-    public void setAddon(PlayerScreenHandlerAddon addon)
+    public void setScreenHandlerAddon(PlayerScreenHandlerAddon addon)
     {
-        this.addon = addon;
+        this.inventorioAddon = addon;
     }
 }

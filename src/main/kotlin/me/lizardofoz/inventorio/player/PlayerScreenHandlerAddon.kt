@@ -226,6 +226,6 @@ class PlayerScreenHandlerAddon internal constructor(private val screenHandler: P
     companion object
     {
         val PlayerEntity.screenHandlerAddon: PlayerScreenHandlerAddon
-            get() = (this.playerScreenHandler as ScreenHandlerDuck).addon
+            get() = (this.playerScreenHandler as ScreenHandlerDuck).screenHandlerAddon
     }
 }

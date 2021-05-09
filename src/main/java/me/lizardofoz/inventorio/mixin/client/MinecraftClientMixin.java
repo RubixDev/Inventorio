@@ -6,24 +6,32 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.network.Packet;
 import net.minecraft.util.Hand;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MinecraftClient.class)
 @Environment(EnvType.CLIENT)
 public class MinecraftClientMixin
 {
+    @Shadow public ClientPlayerEntity player;
+
     /**
-     * This redirect replaced vanilla Hotbar slot selection with ours (in case if Segmented Hotbar is enabled)
+     * This inject replaces vanilla Hotbar slot selection with ours (Segmented Hotbar)
      */
-    @Redirect(method = "handleInputEvents", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerInventory;selectedSlot:I"))
-    private void handleHotbarSlotSelection(PlayerInventory inventory, int selectedSlot)
+    @Inject(method = "handleInputEvents",
+            at = @At(value = "FIELD",
+                    shift = At.Shift.AFTER,
+                    target = "Lnet/minecraft/entity/player/PlayerInventory;selectedSlot:I"))
+    private void handleHotbarSlotSelection(CallbackInfo ci)
     {
-        InventorioKeyHandler.INSTANCE.handleHotbarSlotSelection(inventory, selectedSlot);
+        InventorioKeyHandler.INSTANCE.handleSegmentedHotbarSlotSelection(player.inventory, player.inventory.selectedSlot);
     }
 
     /**
@@ -32,7 +40,10 @@ public class MinecraftClientMixin
      * If option is enabled, a regular RightClick won't attempt to use an Offhand item,
      * but a dedicated key will attempt to use ONLY an Offhand item.
      */
-    @Redirect(method = "doItemUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Hand;values()[Lnet/minecraft/util/Hand;"))
+    @Redirect(method = "doItemUse",
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/util/Hand;values()[Lnet/minecraft/util/Hand;"),
+            require = 1)
     private Hand[] doItemUse()
     {
         if (!InventorioKeyHandler.INSTANCE.hasDedicatedUseUtilityButton())
@@ -43,9 +54,12 @@ public class MinecraftClientMixin
     }
 
     /**
-     * This is one of several redirects to remove the offhand swap hotkey
+     * This is one of several injects to remove the offhand swap hotkey
      */
-    @Redirect(method = "handleInputEvents", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V"))
+    @Redirect(method = "handleInputEvents",
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V"),
+            require = 1)
     private void removeOffhandSwap(ClientPlayNetworkHandler clientPlayNetworkHandler, Packet<?> packet)
     {
     }
