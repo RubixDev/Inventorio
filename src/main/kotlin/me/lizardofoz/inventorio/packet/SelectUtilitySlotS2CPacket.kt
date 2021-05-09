@@ -12,7 +12,10 @@ object SelectUtilitySlotS2CPacket
 
     fun consume(context: PacketContext, buf: PacketByteBuf)
     {
-        PlayerInventoryAddon.Client.local.selectedUtility = buf.readByte().toInt()
+        val utilitySlot = buf.readByte().toInt()
+        context.taskQueue.execute {
+            PlayerInventoryAddon.Client.local.selectedUtility = utilitySlot
+        }
     }
 
     fun write(buf: PacketByteBuf, selectedUtilitySlot: Int = 0)

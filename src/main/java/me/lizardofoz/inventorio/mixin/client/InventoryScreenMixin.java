@@ -42,14 +42,22 @@ public class InventoryScreenMixin
     /**
      * This mixin redirects the creation of a recipe book widget button
      */
-    @Redirect(method = "init", at = @At(value = "NEW", target = "net/minecraft/client/gui/widget/TexturedButtonWidget"))
+    @Redirect(method = "init",
+            at = @At(value = "NEW",
+                    target = "net/minecraft/client/gui/widget/TexturedButtonWidget"),
+            require = 0)
     public TexturedButtonWidget redirectAddButton(int x, int y, int width, int height, int u, int v, int hoveredVOffset, Identifier texture, ButtonWidget.PressAction pressAction)
     {
         return PlayerInventoryUIAddon.INSTANCE.makeWidgetButton((InventoryScreen) (Object) this, this.recipeBook, this.narrow);
     }
 
-    @Redirect(method = "drawBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V"))
-    public void drawScreenAddon(InventoryScreen inventoryScreen, MatrixStack matrices, int x, int y, int u, int v, int width, int height)
+    /**
+     * This inject draws the modified player interface. We use an @Inject instead of @Redirect for the mod compatibility sake.
+     */
+    @Inject(method = "drawBackground",
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawEntity(IIIFFLnet/minecraft/entity/LivingEntity;)V"))
+    public void drawScreenAddon(MatrixStack matrices, float delta, int mouseX, int mouseY, CallbackInfo ci)
     {
         PlayerInventoryUIAddon.INSTANCE.drawAddon(matrices);
     }

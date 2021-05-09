@@ -20,18 +20,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class PlayerInventoryMixin implements InventoryDuck
 {
     @Shadow @Final public PlayerEntity player;
-    @Unique public PlayerInventoryAddon addon;
+    @Unique public PlayerInventoryAddon inventorioAddon;
 
     @Inject(method = "<init>", at = @At(value = "RETURN"))
     private <E> void createInventoryAddon(PlayerEntity player, CallbackInfo ci)
     {
-        addon = new PlayerInventoryAddon(this.player);
+        inventorioAddon = new PlayerInventoryAddon(this.player);
     }
 
     @Inject(method = "getMainHandStack", at = @At(value = "RETURN"), cancellable = true)
     public void getMainHandStack(CallbackInfoReturnable<ItemStack> cir)
     {
-        ItemStack displayTool = getAddon().getMainHandStack();
+        ItemStack displayTool = getInventorioAddon().getMainHandStack();
         if (displayTool != null)
             cir.setReturnValue(displayTool);
     }
@@ -41,7 +41,7 @@ public abstract class PlayerInventoryMixin implements InventoryDuck
     {
         //If no free slot is found in the main inventory, look in the Deep Pockets' extension
         if (cir.getReturnValue() == 40 || cir.getReturnValue() == -1)
-            cir.setReturnValue(getAddon().getFirstEmptyAddonSlot());
+            cir.setReturnValue(getInventorioAddon().getFirstEmptyAddonSlot());
     }
 
     @Inject(method = "getOccupiedSlotWithRoomForStack", at = @At(value = "RETURN"), cancellable = true)
@@ -49,13 +49,13 @@ public abstract class PlayerInventoryMixin implements InventoryDuck
     {
         //If no fitting slot is found in the main inventory, look in the Deep Pockets' extension
         if (cir.getReturnValue() == 40 || cir.getReturnValue() == -1)
-            cir.setReturnValue(getAddon().getFirstOccupiedAddonSlotWithRoomForStack(stack));
+            cir.setReturnValue(getInventorioAddon().getFirstOccupiedAddonSlotWithRoomForStack(stack));
     }
 
     @Inject(method = "getBlockBreakingSpeed", at = @At(value = "RETURN"), cancellable = true)
     public void getBlockBreakingSpeed(BlockState block, CallbackInfoReturnable<Float> cir)
     {
-        float addonValue = getAddon().getMiningSpeedMultiplier(block);
+        float addonValue = getInventorioAddon().getMiningSpeedMultiplier(block);
         if (cir.getReturnValue() < addonValue)
             cir.setReturnValue(addonValue);
     }
@@ -78,8 +78,8 @@ public abstract class PlayerInventoryMixin implements InventoryDuck
     }
 
     @Override
-    public PlayerInventoryAddon getAddon()
+    public PlayerInventoryAddon getInventorioAddon()
     {
-        return addon;
+        return inventorioAddon;
     }
 }

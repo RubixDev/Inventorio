@@ -17,6 +17,6 @@ public class ScreenHandlerMixin
     private void postSlotClick(int slotIndex, int clickData, SlotActionType actionType, PlayerEntity playerEntity, CallbackInfoReturnable<ItemStack> cir)
     {
         if (this instanceof ScreenHandlerDuck)
-            ((ScreenHandlerDuck)this).getAddon().postSlotClick(slotIndex);
+            ((ScreenHandlerDuck)this).getScreenHandlerAddon().postSlotClick(slotIndex);
     }
 }
