@@ -5,9 +5,10 @@ import net.fabricmc.fabric.api.network.PacketContext
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.util.Identifier
 
+@Suppress("UNUSED_PARAMETER")
 object UseBoostRocketC2SPacket
 {
-    val identifier = Identifier("inventorio","fire_boost_rocket_c2s")
+    val identifier = Identifier("inventorio", "fire_boost_rocket_c2s")
 
     fun consume(context: PacketContext, buf: PacketByteBuf)
     {

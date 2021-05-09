@@ -25,13 +25,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class InventoryScreenMixin
 {
     @Shadow @Final private RecipeBookWidget recipeBook;
-
     @Shadow private boolean narrow;
 
     @Inject(method = "init", at = @At(value = "HEAD"))
     private void initScreenAddon(CallbackInfo ci)
     {
-        PlayerInventoryUIAddon.INSTANCE.init((InventoryScreen)(Object)this);
+        PlayerInventoryUIAddon.INSTANCE.init((InventoryScreen) (Object) this);
     }
 
     @Inject(method = "init", at = @At(value = "RETURN"))
@@ -46,7 +45,7 @@ public class InventoryScreenMixin
     @Redirect(method = "init", at = @At(value = "NEW", target = "net/minecraft/client/gui/widget/TexturedButtonWidget"))
     public TexturedButtonWidget redirectAddButton(int x, int y, int width, int height, int u, int v, int hoveredVOffset, Identifier texture, ButtonWidget.PressAction pressAction)
     {
-        return PlayerInventoryUIAddon.INSTANCE.makeWidgetButton((InventoryScreen)(Object)this, this.recipeBook, this.narrow);
+        return PlayerInventoryUIAddon.INSTANCE.makeWidgetButton((InventoryScreen) (Object) this, this.recipeBook, this.narrow);
     }
 
     @Redirect(method = "drawBackground", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V"))

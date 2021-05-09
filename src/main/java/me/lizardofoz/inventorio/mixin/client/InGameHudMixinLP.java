@@ -18,13 +18,13 @@ public abstract class InGameHudMixinLP
     @Shadow protected abstract PlayerEntity getCameraPlayer();
 
     /**
-     * This mixin redirects rendering the hotbar itself in case if Simplified Hotbar is selected.
+     * This mixin redirects rendering the hotbar itself in case if Segmented Hotbar is selected.
      */
     @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbar(FLnet/minecraft/client/util/math/MatrixStack;)V"))
     public void renderHotbarRedirect(InGameHud inGameHud, float tickDelta, MatrixStack matrices)
     {
         PlayerEntity playerEntity = getCameraPlayer();
         if (playerEntity != null && playerEntity.isAlive() && playerEntity.playerScreenHandler != null)
-            HotbarHUDRenderer.INSTANCE.renderHotbarItself(inGameHud, tickDelta, matrices);
+            HotbarHUDRenderer.INSTANCE.renderHotbarItself(playerEntity, inGameHud, tickDelta, matrices);
     }
 }

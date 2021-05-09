@@ -11,7 +11,7 @@ import net.minecraft.util.Identifier
 
 object SelectUtilitySlotC2SPacket
 {
-    val identifier = Identifier("inventorio","select_utility_c2s")
+    val identifier = Identifier("inventorio", "select_utility_c2s")
 
     fun consume(context: PacketContext, buf: PacketByteBuf)
     {

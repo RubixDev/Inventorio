@@ -13,8 +13,10 @@ import net.minecraft.client.gui.hud.InGameHud
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
+import net.minecraft.util.Arm
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.MathHelper
+import org.jetbrains.annotations.NotNull
 
 @Environment(EnvType.CLIENT)
 object HotbarHUDRenderer
@@ -22,49 +24,60 @@ object HotbarHUDRenderer
     private val WIDGETS_TEXTURE = Identifier("inventorio", "textures/gui/widgets.png")
     private val client = MinecraftClient.getInstance()!!
 
-    fun renderHotbarItself(hud: InGameHud, tickDelta: Float, matrices: MatrixStack)
+    fun renderHotbarItself(playerEntity: PlayerEntity, hud: @NotNull InGameHud, tickDelta: Float, matrices: @NotNull MatrixStack)
     {
-        if (InventorioConfigData.simplifiedHotBar == HotBarSimplified.OFF)
+        if (InventorioConfigData.segmentedHotbar == SegmentedHotbar.OFF)
         {
-            (hud as InGameHudAccessor).renderHotBar(tickDelta, matrices)
+            (hud as InGameHudAccessor).renderAHotbar(tickDelta, matrices)
             return
         }
+        //If we're here, we've been asked to render the Segmented Hotbar
 
+        val inventory = playerEntity.inventory
         val scaledWidthHalved = client.window.scaledWidth / 2 - 30
         val scaledHeight = client.window.scaledHeight
 
         client.textureManager.bindTexture(WIDGETS_TEXTURE)
+        //Draw the hotbar itself
         DrawableHelper.drawTexture(matrices,
-                scaledWidthHalved - 65, scaledHeight - 22,
-                CANVAS_SIMPLIFIED_HOTBAR.x, CANVAS_SIMPLIFIED_HOTBAR.y,
-                HUD_SIMPLIFIED_HOTBAR.width, HUD_SIMPLIFIED_HOTBAR.height,
-                256, 64)
+                scaledWidthHalved - HUD_SEGMENTED_HOTBAR.x,
+                scaledHeight - HUD_SEGMENTED_HOTBAR.y,
+                CANVAS_SEGMENTED_HOTBAR.x,
+                CANVAS_SEGMENTED_HOTBAR.y,
+                HUD_SEGMENTED_HOTBAR.width,
+                HUD_SEGMENTED_HOTBAR.height,
+                CANVAS_WIDGETS_TEXTURE_SIZE.x, CANVAS_WIDGETS_TEXTURE_SIZE.y)
 
-        val inventory = client.player!!.inventory
-        val splitOffset = 4
-        val groupOffset = 4
-
-        val selectedSection = PlayerInventoryAddon.Client.selectedHotBarSection
-        if (selectedSection == -1)
+        val selectedSection = PlayerInventoryAddon.Client.selectedHotbarSection
+        if (selectedSection == -1) //Draw the regular vanilla selection box
             DrawableHelper.drawTexture(matrices,
-                    scaledWidthHalved - 62 - splitOffset + inventory.selectedSlot * 20 + groupOffset * (inventory.selectedSlot / 3),
-                    scaledHeight - 23,
-                    188f, 0f,
-                    24, 24,
-                    256, 64)
-        else
+                    scaledWidthHalved - HUD_SECTION_SELECTION.x - HUD_SEGMENTED_HOTBAR_GAP
+                            + (inventory.selectedSlot * SLOT_HOTBAR_SIZE.width) + (HUD_SEGMENTED_HOTBAR_GAP * (inventory.selectedSlot / 3)),
+                    scaledHeight - HUD_SECTION_SELECTION.y,
+                    CANVAS_VANILLA_SELECTION_FRAME_POS.x,
+                    CANVAS_VANILLA_SELECTION_FRAME_POS.y,
+                    CANVAS_VANILLA_SELECTION_FRAME_SIZE.width,
+                    CANVAS_VANILLA_SELECTION_FRAME_SIZE.height,
+                    CANVAS_WIDGETS_TEXTURE_SIZE.x, CANVAS_WIDGETS_TEXTURE_SIZE.y)
+        else //Draw the section-wide selection box
             DrawableHelper.drawTexture(matrices,
-                    scaledWidthHalved - 62 - splitOffset + 64 * selectedSection,
-                    scaledHeight - 23,
-                    CANVAS_SECTION_SELECTION.x, CANVAS_SECTION_SELECTION.y,
-                    HUD_SECTION_SELECTION.width, HUD_SECTION_SELECTION.height,
-                    256, 64)
+                    scaledWidthHalved - HUD_SECTION_SELECTION.x - HUD_SEGMENTED_HOTBAR_GAP
+                            + (HUD_SECTION_SELECTION.width * selectedSection),
+                    scaledHeight - HUD_SECTION_SELECTION.y,
+                    CANVAS_SECTION_SELECTION_FRAME.x,
+                    CANVAS_SECTION_SELECTION_FRAME.y,
+                    HUD_SECTION_SELECTION.width,
+                    HUD_SECTION_SELECTION.height,
+                    CANVAS_WIDGETS_TEXTURE_SIZE.x, CANVAS_WIDGETS_TEXTURE_SIZE.y)
 
-        for (i in 0 until VANILLA_ROW_LENGTH)
+        //Draw hotbar items
+        for (slotNum in 0 until VANILLA_ROW_LENGTH)
         {
-            val x = scaledWidthHalved - 62 + i * 20 + groupOffset * (i / 3)
-            val y = scaledHeight - 16 - 3
-            renderHotbarItem(x, y, client.player!!, inventory.getStack(i))
+            val x = scaledWidthHalved - HUD_SECTION_SELECTION.x + (slotNum * SLOT_HOTBAR_SIZE.width) + (HUD_SEGMENTED_HOTBAR_GAP * (slotNum / 3))
+            val y = scaledHeight - SLOT_HOTBAR_SIZE.height
+            val itemStack = inventory.getStack(slotNum)
+            client.itemRenderer.renderInGuiWithOverrides(playerEntity, itemStack, x, y)
+            client.itemRenderer.renderGuiItemOverlay(client.textRenderer, itemStack, x, y)
         }
     }
 
@@ -74,239 +87,106 @@ object HotbarHUDRenderer
         val inventoryAddon = PlayerInventoryAddon.Client.local
         val player = inventoryAddon.player
 
-        val utilBelt = inventoryAddon.getDisplayedUtilities()
-        val activeTool = inventoryAddon.mainHandDisplayTool
+        val utilBeltDisplay = inventoryAddon.getDisplayedUtilities()
+        val activeDisplayTool = inventoryAddon.mainHandDisplayTool
         val selectedItem = player.inventory.getStack(player.inventory.selectedSlot)
 
         val scaledWidthHalved = client.window.scaledWidth / 2 - 30
         val scaledHeight = client.window.scaledHeight
 
-        val simplifiedQuickBarMode = InventorioConfigData.simplifiedHotBar != HotBarSimplified.OFF
-        val simplifiedModeOffset = if (simplifiedQuickBarMode) 4 else 0
+        val segmentedHotbarMode = InventorioConfigData.segmentedHotbar != SegmentedHotbar.OFF
+        val segmentedModeOffset = if (segmentedHotbarMode) HUD_SEGMENTED_HOTBAR_GAP else 0
+
+        val rightHanded = player.mainArm == Arm.RIGHT
+        val leftHandedUtilityBeltOffset = if (rightHanded) 0 else (LEFT_HANDED_UTILITY_BELT_OFFSET + segmentedModeOffset * 2)
+        val leftHandedDisplayToolOffset = if (rightHanded) 0 else (LEFT_HANDED_DISPLAY_TOOL_OFFSET - segmentedModeOffset * 2)
 
         client.textureManager.bindTexture(WIDGETS_TEXTURE)
-
-        //Draw the active tool frame
-        if (player.handSwinging && activeTool.isNotEmpty && activeTool != selectedItem)
+        //Draw the frame of a tool currently in use (one on the opposite side from the offhand)
+        if (player.handSwinging && activeDisplayTool.isNotEmpty && activeDisplayTool != selectedItem)
         {
             DrawableHelper.drawTexture(matrices,
-                    scaledWidthHalved + HUD_ACTIVE_TOOL_FRAME.x + simplifiedModeOffset, scaledHeight - HUD_ACTIVE_TOOL_FRAME.y,
-                    CANVAS_ACTIVE_TOOL_FRAME.x, CANVAS_ACTIVE_TOOL_FRAME.y,
-                    HUD_ACTIVE_TOOL_FRAME.width, HUD_ACTIVE_TOOL_FRAME.height,
-                    256, 64)
+                    scaledWidthHalved + leftHandedDisplayToolOffset + HUD_ACTIVE_TOOL_FRAME.x + segmentedModeOffset,
+                    scaledHeight - HUD_ACTIVE_TOOL_FRAME.y,
+                    CANVAS_ACTIVE_TOOL_FRAME.x,
+                    CANVAS_ACTIVE_TOOL_FRAME.y,
+                    HUD_ACTIVE_TOOL_FRAME.width,
+                    HUD_ACTIVE_TOOL_FRAME.height,
+                    CANVAS_WIDGETS_TEXTURE_SIZE.x, CANVAS_WIDGETS_TEXTURE_SIZE.y)
         }
 
-        //Draw utility belt
-        if (utilBelt.any { it.isNotEmpty })
+        //Draw utility belt (both the frame and the items)
+        if (utilBeltDisplay.any { it.isNotEmpty })
         {
+            //Draw the semi-transparent background (needed to paint next and prev utility belt items dimmed,
+            //   while keeping the resulting slot opacity akin to other hotbar slots)
             DrawableHelper.drawTexture(matrices,
-                    scaledWidthHalved - HUD_UTILITY_BELT.x - simplifiedModeOffset, scaledHeight - HUD_UTILITY_BELT.y,
-                    CANVAS_UTILITY_BELT_BCG.x, CANVAS_UTILITY_BELT_BCG.y,
-                    HUD_UTILITY_BELT.width, HUD_UTILITY_BELT.height,
-                    256, 64)
+                    scaledWidthHalved + leftHandedUtilityBeltOffset - HUD_UTILITY_BELT.x - segmentedModeOffset,
+                    scaledHeight - HUD_UTILITY_BELT.y,
+                    CANVAS_UTILITY_BELT_BCG.x,
+                    CANVAS_UTILITY_BELT_BCG.y,
+                    HUD_UTILITY_BELT.width,
+                    HUD_UTILITY_BELT.height,
+                    CANVAS_WIDGETS_TEXTURE_SIZE.x, CANVAS_WIDGETS_TEXTURE_SIZE.y)
 
+            //Next and prev items are drawn at 80% scale.
+            //This isn't how Minecraft usually does things, but what's possible to do within a mod is limited
             RenderSystem.pushMatrix()
             RenderSystem.scalef(0.8f, 0.8f, 0.8f)
 
-            //Draw next and prev items
+            //Draw next and prev utility belt items
             client.itemRenderer.renderInGuiWithOverrides(player,
-                    utilBelt[0],
-                    (scaledWidthHalved - simplifiedModeOffset) * 10 / 8 - SLOT_UTILITY_BELT_1.x,
+                    utilBeltDisplay[0],
+                    (scaledWidthHalved + leftHandedUtilityBeltOffset - segmentedModeOffset) * 10 / 8 - SLOT_UTILITY_BELT_1.x,
                     MathHelper.ceil((scaledHeight - SLOT_UTILITY_BELT_1.y) / 0.8))
 
             client.itemRenderer.renderInGuiWithOverrides(player,
-                    utilBelt[2],
-                    (scaledWidthHalved - simplifiedModeOffset) * 10 / 8 - SLOT_UTILITY_BELT_2.x,
+                    utilBeltDisplay[2],
+                    (scaledWidthHalved + leftHandedUtilityBeltOffset - segmentedModeOffset) * 10 / 8 - SLOT_UTILITY_BELT_2.x,
                     MathHelper.ceil((scaledHeight - SLOT_UTILITY_BELT_2.y) / 0.8))
 
+            //Reverse the scaling. Also, rendering an item disables the blending for some reason and changes the binded texture
             RenderSystem.popMatrix()
             RenderSystem.disableDepthTest()
             RenderSystem.enableBlend()
-
             client.textureManager.bindTexture(WIDGETS_TEXTURE)
+
+            //Draw the utility belt frame
             DrawableHelper.drawTexture(matrices,
-                    scaledWidthHalved - HUD_UTILITY_BELT.x - simplifiedModeOffset, scaledHeight - HUD_UTILITY_BELT.y,
-                    CANVAS_UTILITY_BELT.x, CANVAS_UTILITY_BELT.y,
-                    HUD_UTILITY_BELT.width, HUD_UTILITY_BELT.height,
-                    256, 64)
+                    scaledWidthHalved + leftHandedUtilityBeltOffset - HUD_UTILITY_BELT.x - segmentedModeOffset,
+                    scaledHeight - HUD_UTILITY_BELT.y,
+                    CANVAS_UTILITY_BELT.x,
+                    CANVAS_UTILITY_BELT.y,
+                    HUD_UTILITY_BELT.width,
+                    HUD_UTILITY_BELT.height,
+                    CANVAS_WIDGETS_TEXTURE_SIZE.x, CANVAS_WIDGETS_TEXTURE_SIZE.y)
 
             //Draw the active utility item
-            renderOffHandItem(player,
-                    utilBelt[1],
-                    scaledWidthHalved - SLOT_UTILITY_BELT_3.x - simplifiedModeOffset,
+            renderItem(player,
+                    utilBeltDisplay[1],
+                    scaledWidthHalved + leftHandedUtilityBeltOffset - SLOT_UTILITY_BELT_3.x - segmentedModeOffset,
                     scaledHeight - SLOT_UTILITY_BELT_3.y)
-
         }
 
-        //Draw the active tool
-        if (player.handSwinging && activeTool.isNotEmpty && activeTool != selectedItem)
+        //Draw the active tool item itself
+        if (player.handSwinging && activeDisplayTool.isNotEmpty && activeDisplayTool != selectedItem)
         {
-            renderOffHandItem(
+            renderItem(
                     player,
-                    activeTool,
-                    scaledWidthHalved + SLOT_ACTIVE_TOOL_FRAME.x + simplifiedModeOffset,
+                    activeDisplayTool,
+                    scaledWidthHalved + leftHandedDisplayToolOffset + SLOT_ACTIVE_TOOL_FRAME.x + segmentedModeOffset,
                     scaledHeight - SLOT_ACTIVE_TOOL_FRAME.y,
             )
         }
         RenderSystem.enableBlend()
     }
 
-    /*fun renderHotbar(hud: InGameHud, tickDelta: Float, matrices: MatrixStack)
-    {
-        val playerAddon = PlayerAddon.Client.local
-        val player = playerAddon.player
-
-        val simplifiedQuickBarMode = InventorioConfigData.config().quickBarSimplified != QuickBarSimplified.OFF
-        val utilBelt = playerAddon.inventoryAddon.getDisplayedUtilities()
-        val activeTool = playerAddon.inventoryAddon.mainHandDisplayTool
-
-        val arm = player.mainArm.opposite
-        val scaledWidthHalfed = client.window.scaledWidth / 2 - 30
-        val scaledHeight = client.window.scaledHeight
-
-        val storedZOffset = hud.zOffset
-        hud.zOffset = -90
-
-        val splitOffset = if (simplifiedQuickBarMode) 6 else 0
-        val groupOffset = if (simplifiedQuickBarMode) 4 else 0
-
-        RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f)
-        client.textureManager.bindTexture(WIDGETS_TEXTURE)
-
-        //Draw the quickbar itself
-        if (!simplifiedQuickBarMode)
-            DrawableHelper.drawTexture(matrices,
-                    scaledWidthHalfed - 91, scaledHeight - 22,
-                    CANVAS_QUICK_BAR_START_X, CANVAS_QUICK_BAR_START_Y,
-                    CANVAS_QUICK_BAR_WIDTH, 22)
-        else
-            DrawableHelper.drawTexture(matrices,
-                    scaledWidthHalfed - 97, scaledHeight - 22,
-                    CANVAS_QUICK_BAR_SPLIT_START_X, CANVAS_QUICK_BAR_SPLIT_START_Y,
-                    CANVAS_QUICK_BAR_SPLIT_WIDTH, 22)
-
-        //Draw the selected slot frame (or selected section in a simplified mode)
-        if (selectedQuickBarSection == -1)
-            DrawableHelper.drawTexture(matrices,
-                    scaledWidthHalfed - 92 - splitOffset + player.inventory.selectedSlot * 20 + groupOffset * (player.inventory.selectedSlot / 4),
-                    scaledHeight - 23,
-                    0, 22,
-                    24, 24)
-        else
-            DrawableHelper.drawTexture(matrices,
-                    scaledWidthHalfed - 92 - splitOffset + 28 * selectedQuickBarSection * 3,
-                    scaledHeight - 23,
-                    CANVAS_QUICK_BAR_SECSEL_X, CANVAS_QUICK_BAR_SECSEL_Y,
-                    CANVAS_QUICK_BAR_SECSEL_W, CANVAS_QUICK_BAR_SECSEL_H,
-            256, 64)
-
-        //Draw the frame for an active tool
-        if (player.handSwinging && activeTool.isNotEmpty)
-        {
-            if (arm == Arm.LEFT)
-                hud.drawTexture(matrices, scaledWidthHalfed + 151 + splitOffset, scaledHeight - 23, 53, 22, 29, 24)
-            else
-                hud.drawTexture(matrices, scaledWidthHalfed - 91 - 29 - splitOffset, scaledHeight - 23, 24, 22, 29, 24)
-        }
-
-        hud.zOffset = storedZOffset
-        RenderSystem.enableRescaleNormal()
-        RenderSystem.enableBlend()
-        RenderSystem.defaultBlendFunc()
-
-        val handler = player.playerScreenHandler
-        if (handler.slots.size < 85)
-            return
-        //Draw quickbar items
-        for (i in 0 until VANILLA_ROW_LENGTH)
-        {
-            val x = scaledWidthHalfed - 90 + i * 20 + 2 + groupOffset * (i / 4) - splitOffset
-            val y = scaledHeight - 16 - 3
-            val slot = handler.getSlot(i)
-            renderPhysBarItem(x, y, tickDelta, player, slot.stack)
-        }
-
-        //Draw utility belt
-        if (utilBelt.any { it.isNotEmpty })
-        {
-            val p = scaledHeight - 16 - 3
-            val p2 = MathHelper.ceil((scaledHeight - 18) / 0.8)
-            if (arm == Arm.LEFT)
-            {
-                RenderSystem.pushMatrix()
-                RenderSystem.scalef(0.8f, 0.8f, 0.8f)
-
-                //Draw next and prev items
-                client.itemRenderer.renderInGuiWithOverrides(player, utilBelt[0], (scaledWidthHalfed - splitOffset) * 10 / 8 - 177, p2)
-                client.itemRenderer.renderInGuiWithOverrides(player, utilBelt[2], (scaledWidthHalfed - splitOffset) * 10 / 8 - 141, p2)
-
-                RenderSystem.popMatrix()
-                RenderSystem.enableBlend()
-                RenderSystem.enableDepthTest()
-
-                //Draw the frame of the utility hand
-                client.textureManager.bindTexture(WIDGETS_TEXTURE)
-                hud.zOffset = 210
-                if (arm == Arm.LEFT)
-                    DrawableHelper.drawTexture(matrices, scaledWidthHalfed - 91 - 29 - 25 - splitOffset, scaledHeight - 22, 0f, 68f, 48, 22,256,64)
-                else
-                    DrawableHelper.drawTexture(matrices, scaledWidthHalfed + 151 + splitOffset, scaledHeight - 23, 53f, 22f, 29, 24,256,64)
-                hud.zOffset = -90
-
-                //Draw the active utility item
-                client.itemRenderer.zOffset += 90f
-                renderOffHandItem(scaledWidthHalfed - 91 - 38 - splitOffset, p, tickDelta, player, utilBelt[1])
-                client.itemRenderer.zOffset -= 90f
-            }
-            else //todo
-                renderOffHandItem(scaledWidthHalfed + 91 + 10 + splitOffset, p, tickDelta, player, utilBelt[1])
-        }
-
-        //Draw the active tool
-        if (player.handSwinging && activeTool.isNotEmpty)
-        {
-            val p = scaledHeight - 16 - 3
-            if (arm == Arm.LEFT)
-                renderOffHandItem(scaledWidthHalfed + 91 + 70 + splitOffset, p, tickDelta, player, activeTool)
-            else
-                renderOffHandItem(scaledWidthHalfed - 91 - 26 - splitOffset, p, tickDelta, player, activeTool)
-        }
-
-        //Draw the attack indicator
-        if (client.options.attackIndicator == AttackIndicator.HOTBAR)
-        {
-            val f = client.player?.getAttackCooldownProgress(0.0f) ?: 0f
-            if (f < 1.0f)
-            {
-                val q = scaledHeight - 20
-                val r = if (arm == Arm.LEFT)
-                    scaledWidthHalfed + 91 + 6
-                else
-                    scaledWidthHalfed - 91 - 22
-                client.textureManager.bindTexture(DrawableHelper.GUI_ICONS_TEXTURE)
-                val s = (f * 19.0f).toInt()
-                RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f)
-                hud.drawTexture(matrices, r, q, 0, 94, 18, 18)
-                hud.drawTexture(matrices, r, q + 18 - s, 18, 112 - s, 18, s)
-            }
-        }
-
-        RenderSystem.disableRescaleNormal()
-        RenderSystem.disableBlend()
-    }*/
-
-    fun renderOffHandItem(player: PlayerEntity, stack: ItemStack, x: Int, y: Int)
+    private fun renderItem(player: PlayerEntity, stack: ItemStack, x: Int, y: Int)
     {
         if (stack.isNotEmpty)
         {
             client.itemRenderer.renderInGuiWithOverrides(player, stack, x, y)
             client.itemRenderer.renderGuiItemOverlay(client.textRenderer, stack, x, y)
         }
-    }
-
-    fun renderHotbarItem(x: Int, y: Int, player: PlayerEntity, stack: ItemStack)
-    {
-        client.itemRenderer.renderInGuiWithOverrides(player, stack, x, y)
-        client.itemRenderer.renderGuiItemOverlay(client.textRenderer, stack, x, y)
     }
 }

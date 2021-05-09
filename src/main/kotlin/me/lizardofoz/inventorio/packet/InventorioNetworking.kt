@@ -20,7 +20,7 @@ object InventorioNetworking
     }
 
     @Environment(EnvType.CLIENT)
-    fun C2SSendSelectedUtilitySlot(selectedUtility: Int)
+    fun c2sSendSelectedUtilitySlot(selectedUtility: Int)
     {
         sendC2S(SelectUtilitySlotC2SPacket.identifier) {
             SelectUtilitySlotC2SPacket.write(it, selectedUtility)
@@ -28,18 +28,19 @@ object InventorioNetworking
     }
 
     @Environment(EnvType.CLIENT)
-    fun C2SUseBoostRocket()
+    fun c2sUseBoostRocket()
     {
         sendC2S(UseBoostRocketC2SPacket.identifier) { }
     }
 
-    fun S2CSendSelectedUtilitySlot(player: PlayerEntity)
+    fun s2cSendSelectedUtilitySlot(player: PlayerEntity)
     {
         val buf = PacketByteBuf(PooledByteBufAllocator.DEFAULT.buffer())
         SelectUtilitySlotS2CPacket.write(buf, player.inventoryAddon.selectedUtility)
         ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, SelectUtilitySlotS2CPacket.identifier, buf)
     }
 
+    @Environment(EnvType.CLIENT)
     private fun sendC2S(id: Identifier, func: (PacketByteBuf) -> Unit)
     {
         val buf = PacketByteBuf(PooledByteBufAllocator.DEFAULT.buffer())

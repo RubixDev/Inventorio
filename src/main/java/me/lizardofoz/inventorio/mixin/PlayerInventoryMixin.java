@@ -1,5 +1,6 @@
 package me.lizardofoz.inventorio.mixin;
 
+import me.lizardofoz.inventorio.client.InventorioConfigData;
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
 import me.lizardofoz.inventorio.util.InventoryDuck;
 import net.minecraft.block.BlockState;
@@ -15,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(value = PlayerInventory.class, priority = -9999)
+@Mixin(value = PlayerInventory.class, priority = -5000)
 public abstract class PlayerInventoryMixin implements InventoryDuck
 {
     @Shadow @Final public PlayerEntity player;
@@ -40,7 +41,7 @@ public abstract class PlayerInventoryMixin implements InventoryDuck
     {
         //If no free slot is found in the main inventory, look in the Deep Pockets' extension
         if (cir.getReturnValue() == 40 || cir.getReturnValue() == -1)
-            cir.setReturnValue(getAddon().getEmptyExtensionSlot());
+            cir.setReturnValue(getAddon().getFirstEmptyAddonSlot());
     }
 
     @Inject(method = "getOccupiedSlotWithRoomForStack", at = @At(value = "RETURN"), cancellable = true)
@@ -48,24 +49,32 @@ public abstract class PlayerInventoryMixin implements InventoryDuck
     {
         //If no fitting slot is found in the main inventory, look in the Deep Pockets' extension
         if (cir.getReturnValue() == 40 || cir.getReturnValue() == -1)
-            cir.setReturnValue(getAddon().getOccupiedExtensionSlotWithRoomForStack(stack));
+            cir.setReturnValue(getAddon().getFirstOccupiedAddonSlotWithRoomForStack(stack));
     }
 
     @Inject(method = "getBlockBreakingSpeed", at = @At(value = "RETURN"), cancellable = true)
     public void getBlockBreakingSpeed(BlockState block, CallbackInfoReturnable<Float> cir)
     {
-        float addonValue = getAddon().getBlockBreakingSpeed(block);
+        float addonValue = getAddon().getMiningSpeedMultiplier(block);
         if (cir.getReturnValue() < addonValue)
             cir.setReturnValue(addonValue);
     }
 
     /**
-     * When we scroll in hotbar, we want to reset the "simplified hotbar" thing and select a slot directly.
+     * If player has a "scroll utility belt with a mouse wheel" setting enabled, hijack the vanilla hotbar scrolling
+     *   and scroll the utility belt instead.
+     * Otherwise, set the selected hotbar segment value to -1 in case if a player scrolls a mouse wheel while using Segmented Hotbar
      */
-    @Inject(method = "scrollInHotbar", at = @At(value = "RETURN"), cancellable = true)
-    public void getBlockBreakingSpeed(double scrollAmount, CallbackInfo ci)
+    @Inject(method = "scrollInHotbar", at = @At(value = "HEAD"), cancellable = true)
+    public void scrollInHotbar(double scrollAmount, CallbackInfo ci)
     {
-        PlayerInventoryAddon.Client.INSTANCE.setSelectedHotBarSection(-1);
+        if (InventorioConfigData.INSTANCE.getScrollWheelUtilityBelt())
+        {
+            PlayerInventoryAddon.Client.INSTANCE.getLocal().switchToNextUtility((int) scrollAmount);
+            ci.cancel();
+        }
+        else
+            PlayerInventoryAddon.Client.INSTANCE.setSelectedHotbarSection(-1);
     }
 
     @Override

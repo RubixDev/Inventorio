@@ -5,7 +5,7 @@ import me.lizardofoz.inventorio.player.PlayerInventoryAddon
 import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon
 import net.minecraft.item.*
 
-enum class HotBarSimplified
+enum class SegmentedHotbar
 {
     OFF, ONLY_VISUAL, ON
 }
@@ -23,9 +23,9 @@ interface InventoryDuck
 val ItemStack.isNotEmpty: Boolean
     get() = !this.isEmpty
 
-val toolBelt = generateToolBelt()
+val toolBeltSlotPredicates = generateToolBeltPredicates()
 
-private fun generateToolBelt(): List<(ItemStack) -> Boolean>
+private fun generateToolBeltPredicates(): List<(ItemStack) -> Boolean>
 {
     val toolBeltItems = mutableListOf<(ItemStack) -> Boolean>()
     toolBeltItems.add { it.item is PickaxeItem }
