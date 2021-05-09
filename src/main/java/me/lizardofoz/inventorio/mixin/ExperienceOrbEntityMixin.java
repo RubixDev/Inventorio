@@ -4,20 +4,25 @@ import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
 import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ExperienceOrbEntity.class)
 public abstract class ExperienceOrbEntityMixin
 {
+    @Shadow private int amount;
+
     /**
-     * This redirect allows items in the ToolBelt to be Mended
+     * This inject allows items in the ToolBelt to be Mended
      */
-    @Redirect(method = "onPlayerCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;addExperience(I)V"))
-    public void mendToolBeltItems(PlayerEntity playerEntity, int experience)
+    @Inject(method = "onPlayerCollision",
+            at = @At(value = "FIELD",
+                    target = "Lnet/minecraft/entity/ExperienceOrbEntity;amount:I",
+                    ordinal = 3))
+    public void mendToolBeltItems(PlayerEntity player, CallbackInfo ci)
     {
-        int xpLeft = PlayerInventoryAddon.getInventoryAddon(playerEntity).mendToolBeltItems(experience);
-        if (xpLeft > 0)
-            playerEntity.addExperience(xpLeft);
+        this.amount = PlayerInventoryAddon.getInventoryAddon(player).mendToolBeltItems(this.amount);
     }
 }

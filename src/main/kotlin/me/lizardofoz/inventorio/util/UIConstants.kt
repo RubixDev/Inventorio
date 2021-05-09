@@ -2,44 +2,40 @@
 
 package me.lizardofoz.inventorio.util
 
-import java.awt.Point
-import java.awt.Rectangle
-import java.awt.geom.Point2D
-
 const val SLOT_UI_SIZE = 18
 
-val CANVAS_INVENTORY_TOP = Point2D.Float(0f, 0f)
+val CANVAS_INVENTORY_TOP = Point2F(0f, 0f)
 val GUI_INVENTORY_TOP = Rectangle(0, 0, 198, 79)
 
-val CANVAS_INVENTORY_MAIN = Point2D.Float(0f, 79f)
+val CANVAS_INVENTORY_MAIN = Point2F(0f, 79f)
 fun GUI_INVENTORY_MAIN(deepPocketsRows: Int) = Rectangle(0, 79 + DEEP_POCKETS_EXTRA_HEIGHT(deepPocketsRows), 198, 87)
-fun SLOTS_INVENTORY_MAIN(deepPocketsRows: Int) = Point(8, 84 + DEEP_POCKETS_EXTRA_HEIGHT(deepPocketsRows))
-fun SLOTS_INVENTORY_HOTBAR(deepPocketsRows: Int) = Point(8, 142 + DEEP_POCKETS_EXTRA_HEIGHT(deepPocketsRows))
+fun SLOTS_INVENTORY_MAIN(deepPocketsRows: Int) = Point2I(8, 84 + DEEP_POCKETS_EXTRA_HEIGHT(deepPocketsRows))
+fun SLOTS_INVENTORY_HOTBAR(deepPocketsRows: Int) = Point2I(8, 142 + DEEP_POCKETS_EXTRA_HEIGHT(deepPocketsRows))
 
-val CANVAS_INVENTORY_DEEP_POCKETS = Point2D.Float(0f, 166f)
+val CANVAS_INVENTORY_DEEP_POCKETS = Point2F(0f, 166f)
 fun GUI_INVENTORY_DEEP_POCKETS(deepPocketsRows: Int) = Rectangle(0, 79, 198, DEEP_POCKETS_EXTRA_HEIGHT(deepPocketsRows))
-val SLOT_INVENTORY_DEEP_POCKETS = Point(8, 84)
+val SLOT_INVENTORY_DEEP_POCKETS = Point2I(8, 84)
 
-val CANVAS_UTILITY_BELT_COLUMN_2 = Point2D.Float(198f, 0f)
+val CANVAS_UTILITY_BELT_COLUMN_2 = Point2F(198f, 0f)
 val GUI_UTILITY_BELT_COLUMN_2 = Rectangle(94, 7, 18, 72)
-val SLOT_UTILITY_BELT_COLUMN_1 = Point(77, 8)
+val SLOT_UTILITY_BELT_COLUMN_1 = Point2I(77, 8)
 
 fun GUI_TOOL_BELT(deepPocketsRows: Int) = Rectangle(173, 69 + DEEP_POCKETS_EXTRA_HEIGHT(deepPocketsRows), 18, 90)
-val CANVAS_TOOL_BELT = Point2D.Float(216f, 0f)
-fun SLOT_TOOL_BELT(deepPocketsRows: Int) = Point(174, 70 + DEEP_POCKETS_EXTRA_HEIGHT(deepPocketsRows))
+val CANVAS_TOOL_BELT = Point2F(216f, 0f)
+fun SLOT_TOOL_BELT(deepPocketsRows: Int) = Point2I(174, 70 + DEEP_POCKETS_EXTRA_HEIGHT(deepPocketsRows))
 
 val CANVAS_TOOLS = Rectangle(234, 22, 16, 16)
 
 val CANVAS_UTILITY_BELT_FRAME = Rectangle(234, 0, 22, 22)
-val GUI_UTILITY_BELT_FRAME_ORIGIN = Point(74, 5)
+val GUI_UTILITY_BELT_FRAME_ORIGIN = Point2I(74, 5)
 
 fun DEEP_POCKETS_EXTRA_HEIGHT(deepPocketsRows: Int) = if (deepPocketsRows <= 0) 0 else 4 + deepPocketsRows * 18
 const val CRAFTING_GRID_OFFSET_X = 20
 
-val GUI_RECIPE_WIDGET_WINDOW_OFFSET = Point(0, 19)
-val GUI_RECIPE_WIDGET_BUTTON_OFFSET = Point(124, 22)
+val GUI_RECIPE_WIDGET_WINDOW_OFFSET = Point2I(0, 19)
+val GUI_RECIPE_WIDGET_BUTTON_OFFSET = Point2I(124, 22)
 val CANVAS_RECIPE_WIDGET_BUTTON = Rectangle(0, 0, 20, 18)
 const val GUI_RECIPE_WIDGET_BUTTON_TOOLTIP_OFFSET = 19
 
-val CANVAS_INVENTORY_TEXTURE_SIZE = Point(256, 256)
-val CANVAS_WIDGETS_TEXTURE_SIZE = Point(256, 64)
+val CANVAS_INVENTORY_TEXTURE_SIZE = Point2I(256, 256)
+val CANVAS_WIDGETS_TEXTURE_SIZE = Point2I(256, 64)

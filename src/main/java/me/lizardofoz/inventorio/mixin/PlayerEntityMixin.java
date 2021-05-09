@@ -2,8 +2,8 @@ package me.lizardofoz.inventorio.mixin;
 
 import com.mojang.authlib.GameProfile;
 import me.lizardofoz.inventorio.mixin.accessor.SimpleInventoryAccessor;
-import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
 import me.lizardofoz.inventorio.player.InventorioPlayerSerializer;
+import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
 import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon;
 import me.lizardofoz.inventorio.util.GeneralConstantsKt;
 import me.lizardofoz.inventorio.util.InventoryDuck;
@@ -23,7 +23,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -38,7 +37,7 @@ public abstract class PlayerEntityMixin
     {
         PlayerEntity thisPlayer = (PlayerEntity) (Object) this;
         PlayerScreenHandlerAddon screenAddon = new PlayerScreenHandlerAddon(thisPlayer.playerScreenHandler);
-        ((ScreenHandlerDuck) thisPlayer.playerScreenHandler).setAddon(screenAddon);
+        ((ScreenHandlerDuck) thisPlayer.playerScreenHandler).setScreenHandlerAddon(screenAddon);
         screenAddon.initialize(thisPlayer);
     }
 
@@ -61,12 +60,6 @@ public abstract class PlayerEntityMixin
     {
         if (slot == EquipmentSlot.OFFHAND)
             cir.setReturnValue(getAddon().getOffHandStack());
-    }
-
-    @Redirect(method = "getBlockBreakingSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isEmpty()Z", ordinal = 0))
-    private boolean removeBadCheck(ItemStack itemStack)
-    {
-        return false;
     }
 
     /**
@@ -115,6 +108,6 @@ public abstract class PlayerEntityMixin
 
     private PlayerInventoryAddon getAddon()
     {
-        return ((InventoryDuck) inventory).getAddon();
+        return ((InventoryDuck) inventory).getInventorioAddon();
     }
 }

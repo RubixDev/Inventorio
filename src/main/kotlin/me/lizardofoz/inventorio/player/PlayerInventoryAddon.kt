@@ -306,6 +306,6 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
 
         @JvmStatic
         val PlayerEntity.inventoryAddon: PlayerInventoryAddon
-            get() = (this.inventory as InventoryDuck).addon
+            get() = (this.inventory as InventoryDuck).inventorioAddon
     }
 }

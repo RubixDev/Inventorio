@@ -8,7 +8,6 @@ import me.lizardofoz.inventorio.client.InventorioControls.keyUseUtility
 import me.lizardofoz.inventorio.mixin.client.accessor.MinecraftClientAccessor
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon.Companion.inventoryAddon
-import me.lizardofoz.inventorio.util.SegmentedHotbar
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
@@ -23,13 +22,9 @@ object InventorioKeyHandler
         return !MinecraftClient.getInstance().options.keyUse.equals(keyUseUtility)
     }
 
-    fun handleHotbarSlotSelection(inventory: PlayerInventory, slotToSelect: Int)
+    fun handleSegmentedHotbarSlotSelection(inventory: PlayerInventory, slotToSelect: Int)
     {
-        if (InventorioConfigData.segmentedHotbar != SegmentedHotbar.ON)
-        {
-            inventory.selectedSlot = slotToSelect
-        }
-        else if (PlayerInventoryAddon.Client.selectedHotbarSection == -1)
+        if (PlayerInventoryAddon.Client.selectedHotbarSection == -1)
         {
             if (slotToSelect in 0..2)
                 PlayerInventoryAddon.Client.selectedHotbarSection = slotToSelect

@@ -25,8 +25,5 @@
     "client.MinecraftClientMixin",
     "client.accessor.HandledScreenAccessor",
     "client.accessor.MinecraftClientAccessor"
-  ],
-  "injectors": {
-    "defaultRequire": 1
-  }
+  ]
 }
