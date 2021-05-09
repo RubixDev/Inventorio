@@ -8,10 +8,10 @@ import net.minecraft.item.ItemStack
 import net.minecraft.screen.slot.Slot
 
 /**
- * Minecraft has hardcoded slot indexes (40 for inventory and 45 for screen handlers) for the offhand.
+ * Minecraft has hardcoded slot indexes (40 for inventory and 45 for screen handler) for the offhand.
  * This is a hack to counter-act any potential unaccounted Mojang hardcoding related to the offhand
  */
-class DudOffhandSlot(inventory: Inventory, index: Int, x: Int, y: Int): Slot(inventory, index, x, y)
+class DudOffhandSlot(inventory: Inventory, index: Int, x: Int, y: Int) : Slot(inventory, index, x, y)
 {
     override fun canTakeItems(playerEntity: PlayerEntity): Boolean
     {

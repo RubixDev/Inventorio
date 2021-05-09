@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.network.PacketContext
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.util.Identifier
 
+@Suppress("UNUSED_PARAMETER")
 object SelectUtilitySlotS2CPacket
 {
     val identifier = Identifier("inventorio", "set_inventory_settings_s2c")

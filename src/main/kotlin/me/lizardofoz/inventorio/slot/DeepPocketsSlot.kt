@@ -7,7 +7,7 @@ import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
 import net.minecraft.screen.slot.Slot
 
-open class ExtensionSlot(inventory: Inventory, index: Int, x: Int, y: Int) : Slot(inventory, index, x, y)
+open class DeepPocketsSlot(inventory: Inventory, index: Int, x: Int, y: Int) : Slot(inventory, index, x, y)
 {
     var canTakeItems = true
 

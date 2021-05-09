@@ -35,10 +35,17 @@ object InventorioControls
             "inventorio.keys.category"
     ))!!
 
-    val keyScrollSimplifiedMode = KeyBindingHelper.registerKeyBinding(KeyBinding(
-        "inventorio.keys.scroll_simplified_hotbar",
-        InputUtil.Type.KEYSYM,
-        GLFW.GLFW_KEY_I,
-        "inventorio.keys.category"
+    val keySwitchSegmentedHotbarMode = KeyBindingHelper.registerKeyBinding(KeyBinding(
+            "inventorio.keys.switch_segment_hotbar_mode",
+            InputUtil.Type.KEYSYM,
+            GLFW.GLFW_KEY_I,
+            "inventorio.keys.category"
+    ))!!
+
+    val keyScrollWheelUtilityBeltMode = KeyBindingHelper.registerKeyBinding(KeyBinding(
+            "inventorio.keys.scroll_wheel_utility_belt_mode",
+            InputUtil.Type.KEYSYM,
+            GLFW.GLFW_KEY_O,
+            "inventorio.keys.category"
     ))!!
 }

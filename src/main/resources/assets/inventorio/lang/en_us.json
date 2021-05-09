@@ -5,12 +5,16 @@
   "inventorio.keys.prev_utility": "Previous Utility",
   "inventorio.keys.use_utility": "Use Utility",
   "inventorio.keys.open_config": "Open Inventorio Settings",
-  "inventorio.keys.scroll_simplified_hotbar": "Switch Simplified Hotbar Mode",
+  "inventorio.keys.switch_segment_hotbar_mode": "Switch Segmented Hotbar Mode",
+  "inventorio.keys.scroll_wheel_utility_belt_mode": "Switch Scroll Wheel for Utility Belt",
 
   "enchantment.inventorio.deep_pockets": "Deep Pockets",
   "inventorio.ignore_screen.tooltip": "Disable Inventorio for this screen",
 
-  "inventorio.simplified_hotbar.OFF": "Simplified Hotbar: Disabled",
-  "inventorio.simplified_hotbar.ONLY_VISUAL": "Simplified Hotbar: Visual Only",
-  "inventorio.simplified_hotbar.ON": "Simplified Hotbar: Enabled"
+  "inventorio.segmented_hotbar.OFF": "Segmented Hotbar: Disabled",
+  "inventorio.segmented_hotbar.ONLY_VISUAL": "Segmented Hotbar: Visual Only",
+  "inventorio.segmented_hotbar.ON": "Segmented Hotbar: Enabled",
+
+  "inventorio.scroll_wheel_utility_belt.false": "Scroll Wheel: Hotbar",
+  "inventorio.scroll_wheel_utility_belt.true": "Scroll Wheel: Utility Belt"
 }

@@ -36,9 +36,9 @@ public abstract class PlayerEntityMixin
     @Inject(method = "<init>", at = @At(value = "RETURN"))
     private void createPlayerAddon(World world, BlockPos pos, float yaw, GameProfile profile, CallbackInfo ci)
     {
-        PlayerEntity thisPlayer = (PlayerEntity)(Object)this;
+        PlayerEntity thisPlayer = (PlayerEntity) (Object) this;
         PlayerScreenHandlerAddon screenAddon = new PlayerScreenHandlerAddon(thisPlayer.playerScreenHandler);
-        ((ScreenHandlerDuck)thisPlayer.playerScreenHandler).setAddon(screenAddon);
+        ((ScreenHandlerDuck) thisPlayer.playerScreenHandler).setAddon(screenAddon);
         screenAddon.initialize(thisPlayer);
     }
 
@@ -67,6 +67,16 @@ public abstract class PlayerEntityMixin
     private boolean removeBadCheck(ItemStack itemStack)
     {
         return false;
+    }
+
+    /**
+     * This mixin refreshes the available slots when we equip armor through right clicking or a dispenser
+     */
+    @Inject(method = "equipStack", at = @At(value = "RETURN"))
+    private void postAttack(EquipmentSlot slot, ItemStack stack, CallbackInfo ci)
+    {
+        if (slot.getType() == EquipmentSlot.Type.ARMOR)
+            PlayerScreenHandlerAddon.Companion.getScreenHandlerAddon(inventory.player).updateDeepPocketsCapacity();
     }
 
     /**
@@ -105,6 +115,6 @@ public abstract class PlayerEntityMixin
 
     private PlayerInventoryAddon getAddon()
     {
-        return ((InventoryDuck)inventory).getAddon();
+        return ((InventoryDuck) inventory).getAddon();
     }
 }
