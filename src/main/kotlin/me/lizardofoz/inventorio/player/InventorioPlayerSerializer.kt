@@ -10,22 +10,16 @@ object InventorioPlayerSerializer
 {
     fun serialize(inventoryAddon: PlayerInventoryAddon, inventorioTag: CompoundTag)
     {
-        val extension = ListTag()
-        val utilityBelt = ListTag()
-        val toolBelt = ListTag()
-
-        serializeSection(inventoryAddon.deepPockets, extension)
-        serializeSection(inventoryAddon.utilityBelt, utilityBelt)
-        serializeSection(inventoryAddon.toolBelt, toolBelt)
 
         inventorioTag.putInt("SelectedUtilitySlot", inventoryAddon.selectedUtility)
-        inventorioTag.put("Extension", extension)
-        inventorioTag.put("UtilityBelt", utilityBelt)
-        inventorioTag.put("ToolBelt", toolBelt)
+        inventorioTag.put("DeepPockets", serializeSection(inventoryAddon.deepPockets))
+        inventorioTag.put("UtilityBelt", serializeSection(inventoryAddon.utilityBelt))
+        inventorioTag.put("ToolBelt", serializeSection(inventoryAddon.toolBelt))
     }
 
-    private fun serializeSection(section: List<ItemStack>, tag: ListTag)
+    private fun serializeSection(section: List<ItemStack>): ListTag
     {
+        val resultTag = ListTag()
         for ((i, itemStack) in section.withIndex())
         {
             if (itemStack.isEmpty)
@@ -33,8 +27,9 @@ object InventorioPlayerSerializer
             val itemTag = CompoundTag()
             itemTag.putInt("Slot", i)
             itemStack.toTag(itemTag)
-            tag.add(itemTag)
+            resultTag.add(itemTag)
         }
+        return resultTag
     }
 
     fun deserialize(inventoryAddon: PlayerInventoryAddon, inventorioTag: CompoundTag)
@@ -43,21 +38,21 @@ object InventorioPlayerSerializer
 
         deserializeSection(inventoryAddon.utilityBelt, inventorioTag.getList("UtilityBelt", NbtType.COMPOUND))
         deserializeSection(inventoryAddon.toolBelt, inventorioTag.getList("ToolBelt", NbtType.COMPOUND))
-        deserializeSection(inventoryAddon.deepPockets, inventorioTag.getList("Extension", NbtType.COMPOUND))
+        deserializeSection(inventoryAddon.deepPockets, inventorioTag.getList("DeepPockets", NbtType.COMPOUND))
     }
 
-    private fun deserializeSection(section: MutableList<ItemStack>, tag: ListTag)
+    private fun deserializeSection(inventorySection: MutableList<ItemStack>, sectionTag: ListTag)
     {
-        for(i in section.indices)
-            section[i] = ItemStack.EMPTY
+        for (i in inventorySection.indices)
+            inventorySection[i] = ItemStack.EMPTY
 
-        for (itemTag in tag)
+        for (itemTag in sectionTag)
         {
             val compoundTag = itemTag as CompoundTag
             val i = compoundTag.getInt("Slot")
             val itemStack = ItemStack.fromTag(compoundTag)
             if (itemStack.isNotEmpty)
-                section[i] = itemStack
+                inventorySection[i] = itemStack
         }
     }
 }

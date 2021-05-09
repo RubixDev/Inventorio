@@ -8,12 +8,12 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 /**
- * This mixin overwrites the Quickbar rendering on the HUD
+ * This mixin overwrites the Hotbar rendering on the HUD
  */
 @Mixin(value = InGameHud.class)
 @Environment(EnvType.CLIENT)
 public interface InGameHudAccessor
 {
     @Invoker("renderHotbar")
-    void renderHotBar(float tickDelta, MatrixStack matrices);
+    void renderAHotbar(float tickDelta, MatrixStack matrices);
 }

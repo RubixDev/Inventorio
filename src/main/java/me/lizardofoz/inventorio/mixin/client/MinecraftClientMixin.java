@@ -18,12 +18,12 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class MinecraftClientMixin
 {
     /**
-     * This redirect replaced vanilla QuickBar slot selection with ours (in case if Simplified QuickBar is enabled)
+     * This redirect replaced vanilla Hotbar slot selection with ours (in case if Segmented Hotbar is enabled)
      */
     @Redirect(method = "handleInputEvents", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerInventory;selectedSlot:I"))
-    private void handleSlotSelection(PlayerInventory inventory, int selectedSlot)
+    private void handleHotbarSlotSelection(PlayerInventory inventory, int selectedSlot)
     {
-        InventorioKeyHandler.INSTANCE.handleSlotSelection(inventory, selectedSlot);
+        InventorioKeyHandler.INSTANCE.handleHotbarSlotSelection(inventory, selectedSlot);
     }
 
     /**

@@ -21,6 +21,6 @@ public class ServerPlayNetworkHandlerMixin
     @Inject(method = "onClientSettings", at = @At(value = "RETURN"))
     private void setPlayerSettingsBack(ClientSettingsC2SPacket packet, CallbackInfo ci)
     {
-        InventorioNetworking.INSTANCE.S2CSendSelectedUtilitySlot(this.player);
+        InventorioNetworking.INSTANCE.s2cSendSelectedUtilitySlot(this.player);
     }
 }

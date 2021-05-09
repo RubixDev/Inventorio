@@ -8,6 +8,7 @@ import me.lizardofoz.inventorio.packet.InventorioNetworking
 import me.lizardofoz.inventorio.util.*
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
+import net.fabricmc.fabric.api.util.NbtType
 import net.minecraft.block.BlockState
 import net.minecraft.block.Material
 import net.minecraft.client.MinecraftClient
@@ -27,14 +28,14 @@ import kotlin.math.sign
 /**
  * This class is responsible for the inventory addon itself,
  * while [PlayerInventoryUIAddon] is responsible for the visuals of the Player Screen UI
- * and [PlayerScreenHandlerAddon] is responsible for the slots and player interaction with them
+ * and [PlayerScreenHandlerAddon] is responsible for the slots and player interacting with the slots
  */
 class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : SimpleInventory(DEEP_POCKETS_MAX_SIZE + TOOL_BELT_SIZE + UTILITY_BELT_SIZE)
 {
     @Suppress("CAST_NEVER_SUCCEEDS")
     private val accessor = this as SimpleInventoryAccessor
 
-    val stacks : MutableList<ItemStack>
+    val stacks: MutableList<ItemStack>
     val deepPockets: MutableList<ItemStack>
     val toolBelt: MutableList<ItemStack>
     val utilityBelt: MutableList<ItemStack>
@@ -54,6 +55,10 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
     //Injects. These functions are either injected or redirected to by a mixin of a [PlayerInventory] class
     //==============================
 
+    /**
+     * Returns null if we want to proceed with vanilla behaviour.
+     * Responsible for a functioning main hand, rather than what's in the selected hotbar slot
+     */
     fun getMainHandStack(): ItemStack?
     {
         return if (player.handSwinging && mainHandDisplayTool.isNotEmpty)
@@ -62,50 +67,81 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
             null
     }
 
+    /**
+     * Responsible for a functioning offhand, rather than what's in the deprecated offhand slot
+     */
     fun getOffHandStack(): ItemStack
     {
         return getSelectedUtilityStack()
     }
 
-    fun getEmptyExtensionSlot(): Int
+    /**
+     * This method looks for the first empty slot in the Deep Pockets and the Utility Belt
+     */
+    fun getFirstEmptyAddonSlot(): Int
     {
-        for (i in getAvailableDeepPocketsRange())
+        for (index in getAvailableDeepPocketsRange())
         {
-            if (deepPockets[i].isEmpty)
-                return i
+            if (deepPockets[index].isEmpty)
+                return index
+        }
+        for ((index, utilityBeltStack) in utilityBelt.withIndex())
+        {
+            if (utilityBeltStack.isEmpty)
+                return index
         }
         return -1
     }
 
-    fun getOccupiedExtensionSlotWithRoomForStack(stack: ItemStack): Int
+    /**
+     * This method looks for the first slot in the Deep Pockets and the Utility Belt that might take the input item stack
+     */
+    fun getFirstOccupiedAddonSlotWithRoomForStack(inputStack: ItemStack): Int
     {
-        for (i in getAvailableDeepPocketsRange())
+        for (index in getAvailableDeepPocketsRange())
         {
-            if (canStackAddMore(deepPockets[i], stack))
-                return i
+            if (canStackAddMore(deepPockets[index], inputStack))
+                return index
+        }
+        for ((index, utilityBeltStack) in utilityBelt.withIndex())
+        {
+            if (canStackAddMore(utilityBeltStack, inputStack))
+                return index
         }
         return -1
     }
 
-    fun getBlockBreakingSpeed(block: BlockState): Float
+    /**
+     * Returns the block breaking speed based on the return of [getMostPrefferedTool]
+     * Note: the calling injector will discard the result if another mod sets a bigger value than the return
+     */
+    fun getMiningSpeedMultiplier(block: BlockState): Float
     {
-        val tool = getMostEffectiveTool(block)
+        val tool = getMostPrefferedTool(block)
         mainHandDisplayTool = tool
         return max(1f, tool.getMiningSpeedMultiplier(block))
     }
 
     fun prePlayerAttack()
     {
+        //If a player tries to attack with a tool, respect that tool and don't change anything
+        if (player.inventory.getStack(player.inventory.selectedSlot).item is ToolItem)
+            return
+
+        //Or else set a sword/trident as a weapon of choice, or an axe if a sword slot is empty
         player.handSwinging = true
         mainHandDisplayTool = if (!toolBelt[SLOT_INDEX_SWORD].isEmpty)
             toolBelt[SLOT_INDEX_SWORD]
         else
             toolBelt[SLOT_INDEX_AXE]
+        //For some reason we need to manually add weapon's attack modifiers - the game doesn't do that for us
         player.attributes.addTemporaryModifiers(mainHandDisplayTool.getAttributeModifiers(EquipmentSlot.MAINHAND))
     }
 
     fun postPlayerAttack()
     {
+        if (player.inventory.getStack(player.inventory.selectedSlot).item is ToolItem)
+            return
         player.attributes.removeModifiers(mainHandDisplayTool.getAttributeModifiers(EquipmentSlot.MAINHAND))
     }
 
@@ -128,22 +164,22 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
     //==============================
 
     @Environment(EnvType.CLIENT)
+    fun activateSelectedUtility()
+    {
+        Client.triesToUseUtility = true
+        (MinecraftClient.getInstance() as MinecraftClientAccessor).invokeDoItemUse()
+        Client.triesToUseUtility = false
+    }
+
+    @Environment(EnvType.CLIENT)
     fun switchToNextUtility(direction: Int): Boolean
     {
         val (nextSlot, slotIndex) = findNextUtility(direction)
         if (nextSlot.isEmpty)
             return false
         selectedUtility = slotIndex
-        InventorioNetworking.C2SSendSelectedUtilitySlot(slotIndex)
+        InventorioNetworking.c2sSendSelectedUtilitySlot(slotIndex)
         return true
-    }
-
-    @Environment(EnvType.CLIENT)
-    fun activateSelectedUtility()
-    {
-        Client.triesToUseUtility = true
-        (MinecraftClient.getInstance() as MinecraftClientAccessor).invokeDoItemUse()
-        Client.triesToUseUtility = false
     }
 
     fun findNextUtility(direction: Int): Pair<ItemStack, Int>
@@ -174,12 +210,12 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
 
     private fun tryFireRocket(itemStack: ItemStack)
     {
-        //todo exclude explosive rockets
-        if (itemStack.item is FireworkItem)
+        if (itemStack.item is FireworkItem && itemStack.getSubTag("Fireworks")?.getList("Explosions", NbtType.COMPOUND)?.isEmpty() != false)
         {
+            //If this is the client side, request a server to actually fire a rocket.
             if (player.world.isClient)
-                InventorioNetworking.C2SUseBoostRocket()
-            else
+                InventorioNetworking.c2sUseBoostRocket()
+            else //If this is a server, spawn a firework entity
                 player.world.spawnEntity(FireworkRocketEntity(player.world, itemStack, player))
             player.swingHand(Hand.MAIN_HAND)
             itemStack.decrement(1)
@@ -192,11 +228,13 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
     //Utility methods
     //==============================
 
-    fun getMostEffectiveTool(block: BlockState): ItemStack
+    fun getMostPrefferedTool(block: BlockState): ItemStack
     {
+        //If a player tries to attack with a tool, respect that tool and don't change anything
         val selectedItem = player.inventory.getStack(player.inventory.selectedSlot)
         if (selectedItem.item is ToolItem)
             return selectedItem
+        //Try to find the fastest tool on the tool belt to mine this block
         val result = toolBelt.maxByOrNull { it.getMiningSpeedMultiplier(block) } ?: ItemStack.EMPTY
         return if (result.getMiningSpeedMultiplier(block) > 1.0f)
             result
@@ -206,6 +244,9 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
             ItemStack.EMPTY
     }
 
+    /**
+     * Returns 3 utility belt items to display on the HUD
+     */
     fun getDisplayedUtilities(): Array<ItemStack>
     {
         return arrayOf(findNextUtility(-1).first, getSelectedUtilityStack(), findNextUtility(1).first)
@@ -216,18 +257,20 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
         return utilityBelt[selectedUtility]
     }
 
-    fun getAvailableDeepPocketsRange(): IntRange
+    //Note: this class returns the range within the INVENTORY, which is different from the range within the Screen Handler
+    private fun getAvailableDeepPocketsRange(): IntRange
     {
         return INVENTORY_ADDON_DEEP_POCKETS_RANGE.first until
-                INVENTORY_ADDON_DEEP_POCKETS_RANGE.first + getExtensionRows() * VANILLA_ROW_LENGTH
+                INVENTORY_ADDON_DEEP_POCKETS_RANGE.first + getDeepPocketsRowCount() * VANILLA_ROW_LENGTH
     }
 
-    fun getUnavailableDeepPocketsRange(): IntRange
+    //Note: this class returns the range within the INVENTORY, which is different from the range within the Screen Handler
+    private fun getUnavailableDeepPocketsRange(): IntRange
     {
-        return getAvailableDeepPocketsRange().last + 1 .. INVENTORY_ADDON_DEEP_POCKETS_RANGE.last
+        return getAvailableDeepPocketsRange().last + 1..INVENTORY_ADDON_DEEP_POCKETS_RANGE.last
     }
 
-    fun getExtensionRows(): Int
+    fun getDeepPocketsRowCount(): Int
     {
         return EnchantmentHelper.getEquipmentLevel(DeepPocketsEnchantment, player)
     }
@@ -249,7 +292,7 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
     object Client
     {
         val local get() = MinecraftClient.getInstance().player!!.inventoryAddon
-        var selectedHotBarSection = -1
+        var selectedHotbarSection = -1
         @JvmField var triesToUseUtility = false
     }
 
