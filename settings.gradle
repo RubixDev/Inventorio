@@ -1,15 +1,18 @@
 pluginManagement {
     repositories {
-        jcenter()
-        maven {
-            name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
-        }
+        maven { url "https://maven.fabricmc.net/" }
+        maven { url "https://maven.architectury.dev/" }
+        maven { url "https://maven.minecraftforge.net/" }
         gradlePluginPortal()
     }
 
     plugins {
-        id 'fabric-loom' version loom_version
         id "org.jetbrains.kotlin.jvm" version kotlin_version
     }
 }
+
+include("common")
+include("fabric")
+include("forge")
+
+rootProject.name = "inventorio"
