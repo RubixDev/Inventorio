@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "authors": ["LizardOfOz"],
+  "contact": {
+    "sources": "https://github.com/Lizard-Of-Oz/Inventorio"
+  },
+
+  
+  "icon": "assets/inventorio/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.lizardofoz.inventorio.Inventorio"
+    ]
+  },
+  "mixins": [
+    "inventorio.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "fabric": "*",
+    "fabric-language-kotlin": "*",
+    "minecraft": "1.16.x"
+  }
+}
