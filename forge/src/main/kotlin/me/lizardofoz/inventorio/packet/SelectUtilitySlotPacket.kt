@@ -40,7 +40,7 @@ class SelectUtilitySlotPacket
         {
             val player = supplier.get().sender ?: return
             supplier.get().enqueueWork {
-                player.inventoryAddon.selectedUtility = utilitySlot
+                player.inventoryAddon?.selectedUtility = utilitySlot
 
                 val broadcastPacket = EntityEquipmentUpdateS2CPacket(player.entityId, listOf(Pair(EquipmentSlot.OFFHAND, player.offHandStack)))
                 (player.world as ServerWorld).chunkManager.sendToOtherNearbyPlayers(player, broadcastPacket)

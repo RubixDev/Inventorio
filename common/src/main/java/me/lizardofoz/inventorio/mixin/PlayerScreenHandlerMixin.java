@@ -3,12 +3,14 @@ package me.lizardofoz.inventorio.mixin;
 import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon;
 import me.lizardofoz.inventorio.util.ScreenHandlerDuck;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.PlayerScreenHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
@@ -19,9 +21,18 @@ public class PlayerScreenHandlerMixin implements ScreenHandlerDuck
 {
     @Unique public PlayerScreenHandlerAddon inventorioAddon;
 
+    @Inject(method = "<init>", at = @At(value = "RETURN"))
+    private void inventorioCreateScreenHandlerAddon(PlayerInventory inventory, boolean onServer, PlayerEntity owner, CallbackInfo ci)
+    {
+        if (owner != null)
+            inventorioAddon = new PlayerScreenHandlerAddon((PlayerScreenHandler) (Object) this, owner);
+    }
+
     @Inject(method = "transferSlot", at = @At("HEAD"), cancellable = true)
     public void inventorioTransferSlot(PlayerEntity player, int index, CallbackInfoReturnable<ItemStack> cir)
     {
+        if (inventorioAddon == null)
+            return;
         ItemStack result = inventorioAddon.transferSlot(index);
         if (result != null)
             cir.setReturnValue(result);

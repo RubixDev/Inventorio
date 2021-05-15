@@ -19,9 +19,7 @@ import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.projectile.FireworkRocketEntity
 import net.minecraft.inventory.SimpleInventory
-import net.minecraft.item.FireworkItem
-import net.minecraft.item.ItemStack
-import net.minecraft.item.ToolItem
+import net.minecraft.item.*
 import kotlin.math.max
 import kotlin.math.sign
 
@@ -73,6 +71,11 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
     fun getOffHandStack(): ItemStack
     {
         return getSelectedUtilityStack()
+    }
+
+    fun setOffHandStack(itemStack: ItemStack)
+    {
+        return setSelectedUtilityStack(itemStack)
     }
 
     /**
@@ -129,8 +132,13 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
 
     fun insertOnlySimilarStack(sourceStack: ItemStack): Boolean
     {
-        if (sourceStack.isDamaged)
+        //Skip unstackable items
+        if (!sourceStack.isStackable)
             return false
+        //Skip items which can go into hotbar (and allow vanilla to handle it)
+        for(i in INVENTORY_HOTBAR_RANGE)
+            if (areItemsSimilar(sourceStack, player.inventory.main[i]))
+                return false
         for (utilityStack in utilityBelt)
         {
             if (areItemsSimilar(sourceStack, utilityStack))
@@ -159,7 +167,7 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
         {
             if (deepPockets[index].isEmpty)
             {
-                deepPockets[index] = sourceStack
+                deepPockets[index] = sourceStack.copy()
                 sourceStack.count = 0
                 markDirty()
                 return true
@@ -281,6 +289,11 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
         return utilityBelt[selectedUtility]
     }
 
+    fun setSelectedUtilityStack(itemStack: ItemStack)
+    {
+        utilityBelt[selectedUtility] = itemStack
+    }
+
     //Note: this class returns the range within the INVENTORY, which is different from the range within the Screen Handler
     private fun getAvailableDeepPocketsRange(): IntRange
     {
@@ -304,10 +317,23 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
         return stack1.isNotEmpty && stack1.item === stack2.item && ItemStack.areTagsEqual(stack1, stack2)
     }
 
+    fun removeOne(sourceStack: ItemStack): Boolean
+    {
+        for ((index, stack) in stacks.withIndex())
+        {
+            if (stack === sourceStack)
+            {
+                stacks[index] = ItemStack.EMPTY
+                return true
+            }
+        }
+        return false
+    }
+
     @Environment(EnvType.CLIENT)
     object Client
     {
-        val local get() = MinecraftClient.getInstance().player!!.inventoryAddon
+        val local get() = MinecraftClient.getInstance().player!!.inventoryAddon!!
         var selectedHotbarSection = -1
         @JvmField var triesToUseUtility = false
         @JvmField var isUsingUtility = false
@@ -321,8 +347,7 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
         const val SLOT_INDEX_SHOVEL = 3
         const val SLOT_INDEX_HOE = 4
 
-        @JvmStatic
-        val PlayerEntity.inventoryAddon: PlayerInventoryAddon
+        val PlayerEntity.inventoryAddon: PlayerInventoryAddon?
             get() = (this.inventory as InventoryDuck).inventorioAddon
     }
 }

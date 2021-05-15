@@ -10,6 +10,7 @@ object InventorioServerConfig
 {
     private lateinit var file : File
 
+    var expandedEnderChest = true
     var infinityBowNeedsNoArrow = false
     var unloyalTridentCannotBeThrown = false
 
@@ -22,6 +23,7 @@ object InventorioServerConfig
             {
                 FileReader(file).use { writer ->
                     val configRoot = Gson().fromJson(writer, JsonObject::class.java)
+                    expandedEnderChest = configRoot.get("ExpandedEnderChest").asBoolean
                     infinityBowNeedsNoArrow = configRoot.get("InfinityBowNeedsNoArrow").asBoolean
                     unloyalTridentCannotBeThrown = configRoot.get("UnloyalTridentCannotBeThrown").asBoolean
                 }
@@ -30,6 +32,7 @@ object InventorioServerConfig
             {
                 FileWriter(file).use { writer ->
                     val configRoot = JsonObject()
+                    configRoot.addProperty("ExpandedEnderChest", true)
                     configRoot.addProperty("InfinityBowNeedsNoArrow", false)
                     configRoot.addProperty("UnloyalTridentCannotBeThrown", false)
                     Gson().toJson(configRoot, writer)

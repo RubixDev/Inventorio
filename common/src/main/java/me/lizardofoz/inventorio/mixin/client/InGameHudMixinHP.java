@@ -30,7 +30,7 @@ public abstract class InGameHudMixinHP
     @Inject(method = "render", at = @At(value = "RETURN"))
     public void inventorioRenderHotbarAddons(MatrixStack matrices, float tickDelta, CallbackInfo ci)
     {
-        if (this.client.interactionManager.getCurrentGameMode() != GameMode.SPECTATOR && !this.client.options.hudHidden)
+        if (this.client.interactionManager != null && this.client.interactionManager.getCurrentGameMode() != GameMode.SPECTATOR && !this.client.options.hudHidden)
         {
             PlayerEntity playerEntity = getCameraPlayer();
             if (playerEntity != null && playerEntity.isAlive() && playerEntity.playerScreenHandler != null)

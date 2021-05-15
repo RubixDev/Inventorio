@@ -16,7 +16,7 @@ object UseBoostRocketC2SPacket
     fun consume(server: MinecraftServer, player: ServerPlayerEntity, handler: ServerPlayNetworkHandler, buf: PacketByteBuf, responseSender: PacketSender)
     {
         server.execute {
-            player.inventoryAddon.fireRocketFromInventory()
+            player.inventoryAddon?.fireRocketFromInventory()
         }
     }
 }

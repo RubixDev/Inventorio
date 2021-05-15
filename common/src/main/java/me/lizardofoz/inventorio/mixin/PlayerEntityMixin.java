@@ -1,13 +1,13 @@
 package me.lizardofoz.inventorio.mixin;
 
 import com.mojang.authlib.GameProfile;
+import me.lizardofoz.inventorio.extra.InventorioServerConfig;
 import me.lizardofoz.inventorio.mixin.accessor.SimpleInventoryAccessor;
 import me.lizardofoz.inventorio.player.InventorioPlayerSerializer;
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
 import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon;
 import me.lizardofoz.inventorio.util.GeneralConstantsKt;
 import me.lizardofoz.inventorio.util.InventoryDuck;
-import me.lizardofoz.inventorio.util.ScreenHandlerDuck;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
@@ -32,24 +32,18 @@ public abstract class PlayerEntityMixin
     @Shadow public abstract EnderChestInventory getEnderChestInventory();
     @Shadow @Final public PlayerInventory inventory;
 
-    @Inject(method = "<init>", at = @At(value = "RETURN"))
-    private void inventorioCreatePlayerAddon(World world, BlockPos pos, float yaw, GameProfile profile, CallbackInfo ci)
-    {
-        PlayerEntity thisPlayer = (PlayerEntity) (Object) this;
-        PlayerScreenHandlerAddon screenAddon = new PlayerScreenHandlerAddon(thisPlayer.playerScreenHandler);
-        ((ScreenHandlerDuck) thisPlayer.playerScreenHandler).setScreenHandlerAddon(screenAddon);
-        screenAddon.initialize(thisPlayer);
-    }
-
     /**
      * This inject enlarges the Ender Chest's capacity to 6 rows.
      */
     @Inject(method = "<init>", at = @At(value = "RETURN"))
     private void inventorioResizeEnderChest(World world, BlockPos pos, float yaw, GameProfile profile, CallbackInfo ci)
     {
-        SimpleInventoryAccessor accessor = ((SimpleInventoryAccessor) getEnderChestInventory());
-        accessor.setSize(GeneralConstantsKt.VANILLA_ROW_LENGTH * 6);
-        accessor.setStacks(DefaultedList.ofSize(GeneralConstantsKt.VANILLA_ROW_LENGTH * 6, ItemStack.EMPTY));
+        if (InventorioServerConfig.INSTANCE.getExpandedEnderChest())
+        {
+            SimpleInventoryAccessor accessor = ((SimpleInventoryAccessor) getEnderChestInventory());
+            accessor.setSize(GeneralConstantsKt.VANILLA_ROW_LENGTH * 6);
+            accessor.setStacks(DefaultedList.ofSize(GeneralConstantsKt.VANILLA_ROW_LENGTH * 6, ItemStack.EMPTY));
+        }
     }
 
     /**
@@ -58,7 +52,7 @@ public abstract class PlayerEntityMixin
     @Inject(method = "getEquippedStack", at = @At(value = "HEAD"), cancellable = true)
     private void inventorioDisplayUtilityInOffhand(EquipmentSlot slot, CallbackInfoReturnable<ItemStack> cir)
     {
-        if (slot == EquipmentSlot.OFFHAND)
+        if (slot == EquipmentSlot.OFFHAND && getAddon() != null)
             cir.setReturnValue(getAddon().getOffHandStack());
     }
 
@@ -68,8 +62,18 @@ public abstract class PlayerEntityMixin
     @Inject(method = "equipStack", at = @At(value = "RETURN"))
     private void inventorioPostAttack(EquipmentSlot slot, ItemStack stack, CallbackInfo ci)
     {
+        if (slot == EquipmentSlot.OFFHAND)
+        {
+            PlayerInventoryAddon addon = ((InventoryDuck) inventory).getInventorioAddon();
+            if (addon != null)
+                addon.setOffHandStack(stack);
+        }
         if (slot.getType() == EquipmentSlot.Type.ARMOR)
-            PlayerScreenHandlerAddon.Companion.getScreenHandlerAddon(inventory.player).updateDeepPocketsCapacity();
+        {
+            PlayerScreenHandlerAddon screenHandlerAddon = PlayerScreenHandlerAddon.Companion.getScreenHandlerAddon(inventory.player);
+            if (screenHandlerAddon != null)
+                screenHandlerAddon.updateDeepPocketsCapacity();
+        }
     }
 
     /**
@@ -78,14 +82,14 @@ public abstract class PlayerEntityMixin
     @Inject(method = "attack", at = @At(value = "HEAD"))
     private void inventorioPreAttack(Entity target, CallbackInfo ci)
     {
-        if (target.isAttackable())
+        if (target.isAttackable() && getAddon() != null)
             getAddon().prePlayerAttack();
     }
 
     @Inject(method = "attack", at = @At(value = "RETURN"))
     private void inventorioPostAttack(Entity target, CallbackInfo ci)
     {
-        if (target.isAttackable())
+        if (target.isAttackable() && getAddon() != null)
             getAddon().postPlayerAttack();
     }
 
@@ -95,12 +99,15 @@ public abstract class PlayerEntityMixin
     @Inject(method = "readCustomDataFromTag", at = @At(value = "RETURN"))
     private void inventorioDeserializePlayerAddon(CompoundTag tag, CallbackInfo ci)
     {
-        InventorioPlayerSerializer.INSTANCE.deserialize(getAddon(), tag.getCompound("Inventorio"));
+        if (getAddon() != null)
+            InventorioPlayerSerializer.INSTANCE.deserialize(getAddon(), tag.getCompound("Inventorio"));
     }
 
     @Inject(method = "writeCustomDataToTag", at = @At(value = "RETURN"))
     private void inventorioSerializePlayerAddon(CompoundTag tag, CallbackInfo ci)
     {
+        if (getAddon() == null)
+            return;
         CompoundTag inventorioTag = new CompoundTag();
         InventorioPlayerSerializer.INSTANCE.serialize(getAddon(), inventorioTag);
         tag.put("Inventorio", inventorioTag);
@@ -111,7 +118,11 @@ public abstract class PlayerEntityMixin
     {
         PlayerEntity thisPlayer = ((PlayerEntity)(Object)this);
         if (!thisPlayer.handSwinging)
-            PlayerInventoryAddon.getInventoryAddon(thisPlayer).setMainHandDisplayTool(ItemStack.EMPTY);
+        {
+            PlayerInventoryAddon addon = PlayerInventoryAddon.Companion.getInventoryAddon(thisPlayer);
+            if (addon != null)
+                addon.setMainHandDisplayTool(ItemStack.EMPTY);
+        }
     }
 
     private PlayerInventoryAddon getAddon()

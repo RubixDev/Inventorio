@@ -47,6 +47,7 @@ object InventorioKeyHandler
         val client = MinecraftClient.getInstance()!!
         val options = client.options ?: return
         val player = client.player ?: return
+        val inventoryAddon = player.inventoryAddon ?: return
         val hasDedicatedUseUtilityButton = hasDedicatedUseUtilityButton()
 
         if (InventorioControls.INSTANCE.keySwitchSegmentedHotbarMode.wasPressed())
@@ -55,12 +56,12 @@ object InventorioKeyHandler
             player.sendMessage(TranslatableText("inventorio.scroll_wheel_utility_belt." + InventorioConfig.switchScrollWheelUtilityBeltMode()), true)
 
         if (InventorioControls.INSTANCE.keyNextUtility.wasPressed())
-            player.inventoryAddon.switchToNextUtility(1)
+            inventoryAddon.switchToNextUtility(1)
         if (InventorioControls.INSTANCE.keyPrevUtility.wasPressed())
-            player.inventoryAddon.switchToNextUtility(-1)
+            inventoryAddon.switchToNextUtility(-1)
         if (hasDedicatedUseUtilityButton && InventorioControls.INSTANCE.keyUseUtility.isPressed
                 && (client as MinecraftClientAccessor).itemUseCooldown <= 0 && !player.isUsingItem)
-            player.inventoryAddon.activateSelectedUtility()
+            inventoryAddon.activateSelectedUtility()
 
         //This code stops the usage of the utility belt item if you have a dedicated "use utility" key
         if (PlayerInventoryAddon.Client.isUsingUtility && hasDedicatedUseUtilityButton && !InventorioControls.INSTANCE.keyUseUtility.isPressed)
@@ -68,6 +69,6 @@ object InventorioKeyHandler
 
         //Shoot fireworks with Jump button
         if (options.keyJump.wasPressed() && player.isFallFlying)
-            player.inventoryAddon.fireRocketFromInventory()
+            inventoryAddon.fireRocketFromInventory()
     }
 }
