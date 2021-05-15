@@ -25,7 +25,7 @@ public abstract class InGameHudMixinLP
      *
      * Forge has something going on with the "InGameHud#render" method that excludes the ability to inject into it.
      * While injecting there is better for mod compatibility than this solution, Forge forces my hand to do THIS.
-     * P.S., Forge's event for hotbar rendering is uncancellable, thus, not an option.
+     * P.S. Forge's event for hotbar rendering is uncancellable, thus, not an option.
      */
     @Inject(method = "renderHotbar", at = @At(value = "HEAD"), cancellable = true)
     public void inventorioRenderHotbarRedirectForge(float tickDelta, MatrixStack matrixStack, CallbackInfo ci)

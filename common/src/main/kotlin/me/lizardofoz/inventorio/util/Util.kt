@@ -5,9 +5,9 @@ import me.lizardofoz.inventorio.player.PlayerInventoryAddon
 import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon
 import net.minecraft.item.*
 
-class Point2I(val x: Int, val y: Int)
-class Point2F(val x: Float, val y: Float)
-class Rectangle(val x: Int, val y: Int, val width: Int, val height: Int)
+data class Point2I(val x: Int, val y: Int)
+data class Point2F(val x: Float, val y: Float)
+data class Rectangle(val x: Int, val y: Int, val width: Int, val height: Int)
 
 enum class SegmentedHotbar
 {
@@ -16,18 +16,20 @@ enum class SegmentedHotbar
 
 interface ScreenHandlerDuck
 {
-    var screenHandlerAddon: PlayerScreenHandlerAddon
+    var screenHandlerAddon: PlayerScreenHandlerAddon?
 }
 
 interface InventoryDuck
 {
-    val inventorioAddon: PlayerInventoryAddon
+    val inventorioAddon: PlayerInventoryAddon?
 }
 
 val ItemStack.isNotEmpty: Boolean
     get() = !this.isEmpty
 
 val toolBeltSlotPredicates = generateToolBeltPredicates()
+
+val unusableTools = { it: ItemStack -> it.item is TridentItem }
 
 private fun generateToolBeltPredicates(): List<(ItemStack) -> Boolean>
 {

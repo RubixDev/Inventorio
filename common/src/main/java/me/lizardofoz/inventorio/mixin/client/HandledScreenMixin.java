@@ -36,6 +36,6 @@ public class HandledScreenMixin
             cancellable = true)
     private void inventorioRemoveOffhandSwap(int keyCode, int scanCode, CallbackInfoReturnable<Boolean> cir)
     {
-        cir.setReturnValue(false);
+        cir.setReturnValue(true);
     }
 }

@@ -8,6 +8,7 @@ import me.lizardofoz.inventorio.extra.InventorioServerConfig
 import me.lizardofoz.inventorio.packet.InventorioNetworking
 import me.lizardofoz.inventorio.packet.InventorioNetworkingForge
 import net.minecraft.enchantment.Enchantment
+import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.util.Identifier
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.common.MinecraftForge

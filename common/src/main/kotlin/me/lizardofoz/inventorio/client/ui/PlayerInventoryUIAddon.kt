@@ -8,7 +8,6 @@ import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawableHelper
-import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen
 import net.minecraft.client.gui.screen.ingame.InventoryScreen
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget
 import net.minecraft.client.gui.widget.ButtonWidget
@@ -24,30 +23,25 @@ object PlayerInventoryUIAddon
     private lateinit var inventoryAddon: PlayerInventoryAddon
     private lateinit var screenAccessor: HandledScreenAccessor
 
-    private var initialHeight = 0
-    private var initialTitleX = 0
-
     fun init(inventoryScreen: InventoryScreen)
     {
         inventoryAddon = PlayerInventoryAddon.Client.local
         screenAccessor = inventoryScreen as HandledScreenAccessor
-        initialTitleX = this.screenAccessor.titleX
-        initialHeight = this.screenAccessor.backgroundHeight
         onResize()
     }
 
     fun postInit()
     {
-        inventoryAddon.player.screenHandlerAddon.updateDeepPocketsCapacity()
+        inventoryAddon.player.screenHandlerAddon?.updateDeepPocketsCapacity()
     }
 
     fun onResize()
     {
         if (!this::screenAccessor.isInitialized)
             return
-        screenAccessor.titleX = initialTitleX + CRAFTING_GRID_OFFSET_X
+        screenAccessor.titleX = INVENTORY_TITLE_X + CRAFTING_GRID_OFFSET_X
         screenAccessor.backgroundWidth = GUI_INVENTORY_TOP.width
-        screenAccessor.backgroundHeight = initialHeight + inventoryAddon.getDeepPocketsRowCount() * SLOT_UI_SIZE
+        screenAccessor.backgroundHeight = INVENTORY_HEIGHT + inventoryAddon.getDeepPocketsRowCount() * SLOT_UI_SIZE
     }
 
     fun makeWidgetButton(inventoryScreen: InventoryScreen, recipeBook: RecipeBookWidget, narrow: Boolean): TexturedButtonWidget

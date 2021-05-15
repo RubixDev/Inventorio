@@ -1,5 +1,6 @@
 package me.lizardofoz.inventorio.player
 
+import me.lizardofoz.inventorio.RobertoGarbagio
 import me.lizardofoz.inventorio.client.ui.PlayerInventoryUIAddon
 import me.lizardofoz.inventorio.mixin.accessor.ScreenHandlerAccessor
 import me.lizardofoz.inventorio.mixin.accessor.SlotAccessor
@@ -17,17 +18,23 @@ import net.minecraft.item.ItemStack
 import net.minecraft.screen.PlayerScreenHandler
 import net.minecraft.screen.ScreenHandler
 
-class PlayerScreenHandlerAddon internal constructor(private val screenHandler: PlayerScreenHandler)
+class PlayerScreenHandlerAddon internal constructor(private val screenHandler: PlayerScreenHandler, player: PlayerEntity)
 {
-    private lateinit var inventoryAddon: PlayerInventoryAddon
+    private val inventoryAddon = player.inventoryAddon!!
+
+    //Other mods can add additional slots into player's inventory.
+    //Since this mods has a high priority,
+    val deepPocketsRange: IntRange
+    private val toolBeltRange: IntRange
+    private val utilityBeltRange: IntRange
+    private val utilityBeltRangeExtendedPart: IntRange
 
     //==============================
     //Injects. These functions are either injected or redirected to by a mixin of a [PlayerInventory] class
     //==============================
 
-    fun initialize(player: PlayerEntity)
+    init
     {
-        inventoryAddon = player.inventoryAddon
         val screenHandlerAccessor = screenHandler as ScreenHandlerAccessor
         val deepPocketsRowCount = inventoryAddon.getDeepPocketsRowCount()
 
@@ -36,8 +43,14 @@ class PlayerScreenHandlerAddon internal constructor(private val screenHandler: P
             (screenHandler.slots[i] as SlotAccessor).x += CRAFTING_GRID_OFFSET_X
 
         //We can't just REMOVE the offhand slot, but we can replace it with a dud slot that doesn't accept any items
-        screenHandlerAccessor.trackedSlots[HANDLER_ADDON_DUD_OFFHAND_RANGE.first] = ItemStack.EMPTY
-        screenHandler.slots[HANDLER_ADDON_DUD_OFFHAND_RANGE.first] = DudOffhandSlot(player.inventory, HANDLER_ADDON_DUD_OFFHAND_RANGE.first, -1000, -1000)
+        screenHandlerAccessor.trackedSlots[HANDLER_ADDON_DUD_OFFHAND_RANGE] = ItemStack.EMPTY
+        screenHandler.slots[HANDLER_ADDON_DUD_OFFHAND_RANGE] = DudOffhandSlot(player.inventory, HANDLER_ADDON_DUD_OFFHAND_RANGE, -1000, -1000)
+
+        val addonSlotsIndexShift = screenHandler.slots.size
+        deepPocketsRange = addonSlotsIndexShift expandBy DEEP_POCKETS_MAX_SIZE
+        toolBeltRange = deepPocketsRange.last + 1 expandBy TOOL_BELT_SIZE
+        utilityBeltRange = toolBeltRange.last + 1 expandBy UTILITY_BELT_SIZE
+        utilityBeltRangeExtendedPart = utilityBeltRange.first + 4 .. utilityBeltRange.last
 
         //Extended Inventory Section (Deep Pockets Enchantment)
         for ((absoluteIndex, relativeIndex) in INVENTORY_ADDON_DEEP_POCKETS_RANGE.withRelativeIndex())
@@ -62,8 +75,8 @@ class PlayerScreenHandlerAddon internal constructor(private val screenHandler: P
     {
         if (slotIndex in HANDLER_ADDON_ARMOR_RANGE)
             updateDeepPocketsCapacity()
-        else if (slotIndex in HANDLER_ADDON_UTILITY_BELT_RANGE && inventoryAddon.getSelectedUtilityStack().isEmpty)
-            inventoryAddon.selectedUtility = slotIndex - HANDLER_ADDON_UTILITY_BELT_RANGE.first
+        else if (slotIndex in utilityBeltRange && inventoryAddon.getSelectedUtilityStack().isEmpty)
+            inventoryAddon.selectedUtility = slotIndex - utilityBeltRange.first
     }
 
     /**
@@ -91,7 +104,7 @@ class PlayerScreenHandlerAddon internal constructor(private val screenHandler: P
             //Try to send an item into the Tool Belt
             for ((index, predicate) in toolBeltSlotPredicates.withIndex())
             {
-                val absoluteIndex = HANDLER_ADDON_TOOL_BELT_RANGE.first + index
+                val absoluteIndex = toolBeltRange.first + index
                 //Yes, we ultimately invoke this predicate twice (here and within the ToolBeltSlot),
                 //  but have you seen the body of ScreenHandler#insertItem method?
                 if (predicate(itemStackDynamic) && screenHandlerAccessor.insertAnItem(itemStackDynamic, absoluteIndex, absoluteIndex + 1, false))
@@ -114,7 +127,7 @@ class PlayerScreenHandlerAddon internal constructor(private val screenHandler: P
         }
         //When we shift-click an item in armor slots, tool belt or utility belt, try to move it into the main inventory
         //If the main inventory is full, move it into the deep pockets
-        else if (sourceIndex in HANDLER_ADDON_ARMOR_RANGE || sourceIndex in HANDLER_ADDON_UTILITY_BELT_RANGE || sourceIndex in HANDLER_ADDON_TOOL_BELT_RANGE)
+        else if (sourceIndex in HANDLER_ADDON_ARMOR_RANGE || sourceIndex in utilityBeltRange || sourceIndex in toolBeltRange)
         {
             if (screenHandlerAccessor.insertAnItem(itemStackDynamic, HANDLER_ADDON_MAIN_INVENTORY_RANGE.first, HANDLER_ADDON_MAIN_INVENTORY_RANGE.last, false)
                     || (!deepPocketsSlots.isEmpty() && screenHandlerAccessor.insertAnItem(itemStackDynamic, deepPocketsSlots.first, deepPocketsSlots.last, false)))
@@ -158,7 +171,7 @@ class PlayerScreenHandlerAddon internal constructor(private val screenHandler: P
             }
             slot.canTakeItems = false
         }
-        for (i in HANDLER_ADDON_UTILITY_BELT_EXTENSION_RANGE)
+        for (i in utilityBeltRangeExtendedPart)
         {
             val slot = screenHandler.getSlot(i) as DeepPocketsSlot
             if (deepPocketsRange.isEmpty()) //If we don't have Deep Pockets on us, we need to drop items within the extended utility belt
@@ -194,7 +207,7 @@ class PlayerScreenHandlerAddon internal constructor(private val screenHandler: P
             slot.x = SLOTS_INVENTORY_HOTBAR(deepPocketsRowCount).x + SLOT_UI_SIZE * relativeIndex
             slot.y = SLOTS_INVENTORY_HOTBAR(deepPocketsRowCount).y
         }
-        for ((absoluteIndex, relativeIndex) in HANDLER_ADDON_TOOL_BELT_RANGE.withRelativeIndex())
+        for ((absoluteIndex, relativeIndex) in toolBeltRange.withRelativeIndex())
         {
             val slot = screenHandler.getSlot(absoluteIndex) as SlotAccessor
             slot.x = SLOT_TOOL_BELT(deepPocketsRowCount).x
@@ -215,19 +228,19 @@ class PlayerScreenHandlerAddon internal constructor(private val screenHandler: P
     //Note: this class returns the range within the SCREEN HANDLER, which is different from the range within the inventory
     private fun getAvailableDeepPocketsRange(): IntRange
     {
-        return HANDLER_ADDON_DEEP_POCKETS_RANGE.first until
-                HANDLER_ADDON_DEEP_POCKETS_RANGE.first + inventoryAddon.getDeepPocketsRowCount() * VANILLA_ROW_LENGTH
+        return deepPocketsRange.first until
+                deepPocketsRange.first + inventoryAddon.getDeepPocketsRowCount() * VANILLA_ROW_LENGTH
     }
 
     //Note: this class returns the range within the SCREEN HANDLER, which is different from the range within the inventory
     private fun getUnavailableDeepPocketsRange(): IntRange
     {
-        return getAvailableDeepPocketsRange().last + 1..HANDLER_ADDON_DEEP_POCKETS_RANGE.last
+        return getAvailableDeepPocketsRange().last + 1..deepPocketsRange.last
     }
 
     companion object
     {
-        val PlayerEntity.screenHandlerAddon: PlayerScreenHandlerAddon
+        val PlayerEntity.screenHandlerAddon: PlayerScreenHandlerAddon?
             get() = (this.playerScreenHandler as ScreenHandlerDuck).screenHandlerAddon
     }
 }

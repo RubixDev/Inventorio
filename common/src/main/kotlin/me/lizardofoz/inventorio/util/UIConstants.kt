@@ -3,6 +3,8 @@
 package me.lizardofoz.inventorio.util
 
 const val SLOT_UI_SIZE = 18
+const val INVENTORY_HEIGHT = 166
+const val INVENTORY_TITLE_X = 97
 
 val CANVAS_INVENTORY_TOP = Point2F(0f, 0f)
 val GUI_INVENTORY_TOP = Rectangle(0, 0, 198, 79)
