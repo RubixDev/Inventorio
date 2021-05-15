@@ -1,5 +1,6 @@
 package me.lizardofoz.inventorio.player
 
+import me.lizardofoz.inventorio.RobertoGarbagio
 import me.lizardofoz.inventorio.client.ui.HotbarHUDRenderer
 import me.lizardofoz.inventorio.client.ui.PlayerInventoryUIAddon
 import me.lizardofoz.inventorio.enchantment.DeepPocketsEnchantment
@@ -21,7 +22,6 @@ import net.minecraft.inventory.SimpleInventory
 import net.minecraft.item.FireworkItem
 import net.minecraft.item.ItemStack
 import net.minecraft.item.ToolItem
-import net.minecraft.util.Hand
 import kotlin.math.max
 import kotlin.math.sign
 
@@ -76,44 +76,6 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
     }
 
     /**
-     * This method looks for the first empty slot in the Deep Pockets and the Utility Belt
-     */
-    fun getFirstEmptyAddonSlot(): Int
-    {
-        //todo this doesn't work how you'd expect it to work
-        for ((absoluteIndex, relativeIndex) in getAvailableDeepPocketsRange().withRelativeIndex())
-        {
-            if (deepPockets[relativeIndex].isEmpty)
-                return absoluteIndex
-        }
-        for ((absoluteIndex, relativeIndex) in INVENTORY_ADDON_TOOL_BELT_RANGE.withRelativeIndex())
-        {
-            if (utilityBelt[relativeIndex].isEmpty)
-                return absoluteIndex
-        }
-        return -1
-    }
-
-    /**
-     * This method looks for the first slot in the Deep Pockets and the Utility Belt that might take the input item stack
-     */
-    fun getFirstOccupiedAddonSlotWithRoomForStack(inputStack: ItemStack): Int
-    {
-        //todo this doesn't work how you'd expect it to work
-        for ((absoluteIndex, relativeIndex) in getAvailableDeepPocketsRange().withRelativeIndex())
-        {
-            if (canStackAddMore(deepPockets[relativeIndex], inputStack))
-                return absoluteIndex
-        }
-        for ((absoluteIndex, relativeIndex) in INVENTORY_ADDON_TOOL_BELT_RANGE.withRelativeIndex())
-        {
-            if (canStackAddMore(utilityBelt[relativeIndex], inputStack))
-                return absoluteIndex
-        }
-        return -1
-    }
-
-    /**
      * Returns the block breaking speed based on the return of [getMostPrefferedTool]
      * Note: the calling injector will discard the result if another mod sets a bigger value than the return
      */
@@ -159,6 +121,63 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
                 return amount
             }
         return amount
+    }
+
+    //==============================
+    //Item inserting
+    //==============================
+
+    fun insertOnlySimilarStack(sourceStack: ItemStack): Boolean
+    {
+        if (sourceStack.isDamaged)
+            return false
+        for (utilityStack in utilityBelt)
+        {
+            if (areItemsSimilar(sourceStack, utilityStack))
+            {
+                transfer(sourceStack, utilityStack)
+                if (sourceStack.isEmpty)
+                    return true
+            }
+        }
+        for (index in getAvailableDeepPocketsRange())
+        {
+            val targetStack = deepPockets[index]
+            if (areItemsSimilar(sourceStack, targetStack))
+            {
+                transfer(sourceStack, targetStack)
+                if (sourceStack.isEmpty)
+                    return true
+            }
+        }
+        return false
+    }
+
+    fun insertStackIntoEmptySlot(sourceStack: ItemStack): Boolean
+    {
+        for (index in getAvailableDeepPocketsRange())
+        {
+            if (deepPockets[index].isEmpty)
+            {
+                deepPockets[index] = sourceStack
+                sourceStack.count = 0
+                markDirty()
+                return true
+            }
+        }
+        return false
+    }
+
+    private fun transfer(sourceStack: ItemStack, targetStack: ItemStack)
+    {
+        val i = Math.min(this.maxCountPerStack, targetStack.maxCount)
+        val j = Math.min(sourceStack.count, i - targetStack.count)
+        if (j > 0)
+        {
+            targetStack.increment(j)
+            sourceStack.decrement(j)
+            markDirty()
+        }
     }
 
     //==============================
@@ -277,15 +296,7 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
 
     fun getDeepPocketsRowCount(): Int
     {
-        return EnchantmentHelper.getEquipmentLevel(DeepPocketsEnchantment, player)
-    }
-
-    private fun canStackAddMore(existingStack: ItemStack, stack: ItemStack): Boolean
-    {
-        return !existingStack.isEmpty && areItemsSimilar(existingStack, stack)
-                && existingStack.isStackable
-                && existingStack.count < existingStack.maxCount
-                && existingStack.count < 64
+        return EnchantmentHelper.getEquipmentLevel(DeepPocketsEnchantment, player).coerceIn(0, 3)
     }
 
     private fun areItemsSimilar(stack1: ItemStack, stack2: ItemStack): Boolean

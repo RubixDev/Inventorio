@@ -23,7 +23,7 @@ public class TridentItemMixin
      * Why? Because why would you throw a Trident that doesn't come back and will despawn in just 1-2 minutes?
      */
     @Inject(method = "use", at = @At(value = "HEAD"), cancellable = true)
-    private void displayUtilityInOffhand(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir)
+    private void inventorioDisplayUtilityInOffhand(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir)
     {
         if (InventorioServerConfig.INSTANCE.getUnloyalTridentCannotBeThrown())
         {

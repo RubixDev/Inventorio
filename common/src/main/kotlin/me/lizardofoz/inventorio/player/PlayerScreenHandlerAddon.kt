@@ -170,6 +170,8 @@ class PlayerScreenHandlerAddon internal constructor(private val screenHandler: P
             else
                 slot.canTakeItems = true
         }
+        if (deepPocketsRange.isEmpty() && inventoryAddon.selectedUtility >= 4)
+            inventoryAddon.selectedUtility -= 4
         if (!screenHandler.onServer)
             refreshSlotPositions()
     }

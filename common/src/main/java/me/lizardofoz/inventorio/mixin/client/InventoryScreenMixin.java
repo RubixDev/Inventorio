@@ -28,13 +28,13 @@ public class InventoryScreenMixin
     @Shadow private boolean narrow;
 
     @Inject(method = "init", at = @At(value = "HEAD"))
-    private void initScreenAddon(CallbackInfo ci)
+    private void inventorioInitScreenAddon(CallbackInfo ci)
     {
         PlayerInventoryUIAddon.INSTANCE.init((InventoryScreen) (Object) this);
     }
 
     @Inject(method = "init", at = @At(value = "RETURN"))
-    private void postInitScreenAddon(CallbackInfo ci)
+    private void inventorioPostInitScreenAddon(CallbackInfo ci)
     {
         PlayerInventoryUIAddon.INSTANCE.postInit();
     }
@@ -45,7 +45,7 @@ public class InventoryScreenMixin
     @Redirect(method = "init",
             at = @At(value = "NEW",
                     target = "net/minecraft/client/gui/widget/TexturedButtonWidget"))
-    public TexturedButtonWidget redirectAddButton(int x, int y, int width, int height, int u, int v, int hoveredVOffset, Identifier texture, ButtonWidget.PressAction pressAction)
+    public TexturedButtonWidget inventorioRedirectAddButton(int x, int y, int width, int height, int u, int v, int hoveredVOffset, Identifier texture, ButtonWidget.PressAction pressAction)
     {
         return PlayerInventoryUIAddon.INSTANCE.makeWidgetButton((InventoryScreen) (Object) this, this.recipeBook, this.narrow);
     }
@@ -56,7 +56,7 @@ public class InventoryScreenMixin
     @Inject(method = "drawBackground",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawEntity(IIIFFLnet/minecraft/entity/LivingEntity;)V"))
-    public void drawScreenAddon(MatrixStack matrices, float delta, int mouseX, int mouseY, CallbackInfo ci)
+    public void inventorioDrawScreenAddon(MatrixStack matrices, float delta, int mouseX, int mouseY, CallbackInfo ci)
     {
         PlayerInventoryUIAddon.INSTANCE.drawAddon(matrices);
     }

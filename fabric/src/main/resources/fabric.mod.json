@@ -10,7 +10,7 @@
   },
 
   "license": "GPLv3",
-  "icon": "assets/inventorio/icon.png",
+  "icon": "icon.png",
 
   "environment": "*",
   "entrypoints": {

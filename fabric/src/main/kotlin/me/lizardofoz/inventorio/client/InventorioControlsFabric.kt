@@ -7,7 +7,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 @Environment(EnvType.CLIENT)
 object InventorioControlsFabric : InventorioControls()
 {
-    override fun registerKeyBindings()
+    init
     {
         inventorioKeys.forEach { KeyBindingHelper.registerKeyBinding(it) }
     }

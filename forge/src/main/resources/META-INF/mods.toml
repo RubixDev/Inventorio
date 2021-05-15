@@ -9,7 +9,7 @@ version = "${mod_version}"
 displayName = "${mod_name}"
 authors = "LizardOfOz"
 description = "${mod_description}"
-logoFile = "assets/inventorio/icon.png"
+logoFile = "icon.png"
 
 [[dependencies.inventorio]]
 modId = "forge"
