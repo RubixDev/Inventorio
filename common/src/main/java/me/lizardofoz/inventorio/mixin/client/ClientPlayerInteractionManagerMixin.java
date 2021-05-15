@@ -20,7 +20,7 @@ public class ClientPlayerInteractionManagerMixin
      * This mods adds an optional secondary use key, and this prevents the secondary item usage from being cancelled
      */
     @Inject(method = "stopUsingItem", at = @At(value = "HEAD"), cancellable = true)
-    private void stop(PlayerEntity player, CallbackInfo ci)
+    private void inventorioStopUsingItem(PlayerEntity player, CallbackInfo ci)
     {
         if (PlayerInventoryAddon.Client.isUsingUtility)
         {

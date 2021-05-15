@@ -20,7 +20,7 @@ public class PlayerScreenHandlerMixin implements ScreenHandlerDuck
     @Unique public PlayerScreenHandlerAddon inventorioAddon;
 
     @Inject(method = "transferSlot", at = @At("HEAD"), cancellable = true)
-    public void transferSlot(PlayerEntity player, int index, CallbackInfoReturnable<ItemStack> cir)
+    public void inventorioTransferSlot(PlayerEntity player, int index, CallbackInfoReturnable<ItemStack> cir)
     {
         ItemStack result = inventorioAddon.transferSlot(index);
         if (result != null)

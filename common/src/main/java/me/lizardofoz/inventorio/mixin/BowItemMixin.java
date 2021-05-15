@@ -21,7 +21,7 @@ public class BowItemMixin
     @Redirect(method = "use",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/entity/player/PlayerEntity;getArrowType(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;"))
-    private ItemStack displayUtilityInOffhand(PlayerEntity playerEntity, ItemStack bowStack)
+    private ItemStack inventorioDisplayUtilityInOffhand(PlayerEntity playerEntity, ItemStack bowStack)
     {
         if (InventorioServerConfig.INSTANCE.getInfinityBowNeedsNoArrow() && EnchantmentHelper.getLevel(Enchantments.INFINITY, bowStack) > 0)
             return new ItemStack(Items.ARROW);

@@ -31,7 +31,7 @@ public class MinecraftClientMixin
     @Inject(method = "handleInputEvents",
             at = @At(value = "FIELD",
                     target = "Lnet/minecraft/entity/player/PlayerInventory;selectedSlot:I"), cancellable = true)
-    private void handleHotbarSlotSelection(CallbackInfo ci)
+    private void inventorioHandleHotbarSlotSelection(CallbackInfo ci)
     {
         for (int i = 0; i < 9; ++i)
         {
@@ -52,7 +52,7 @@ public class MinecraftClientMixin
     @Redirect(method = "doItemUse",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/util/Hand;values()[Lnet/minecraft/util/Hand;"))
-    private Hand[] doItemUse()
+    private Hand[] inventorioDoItemUse()
     {
         if (!InventorioKeyHandler.INSTANCE.hasDedicatedUseUtilityButton())
             return Hand.values();
@@ -67,7 +67,7 @@ public class MinecraftClientMixin
     @Redirect(method = "handleInputEvents",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V"))
-    private void removeOffhandSwap(ClientPlayNetworkHandler clientPlayNetworkHandler, Packet<?> packet)
+    private void inventorioRemoveOffhandSwap(ClientPlayNetworkHandler clientPlayNetworkHandler, Packet<?> packet)
     {
     }
 }

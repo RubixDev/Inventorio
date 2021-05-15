@@ -43,6 +43,8 @@ object PlayerInventoryUIAddon
 
     fun onResize()
     {
+        if (!this::screenAccessor.isInitialized)
+            return
         screenAccessor.titleX = initialTitleX + CRAFTING_GRID_OFFSET_X
         screenAccessor.backgroundWidth = GUI_INVENTORY_TOP.width
         screenAccessor.backgroundHeight = initialHeight + inventoryAddon.getDeepPocketsRowCount() * SLOT_UI_SIZE

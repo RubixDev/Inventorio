@@ -33,7 +33,7 @@ public abstract class PlayerEntityMixin
     @Shadow @Final public PlayerInventory inventory;
 
     @Inject(method = "<init>", at = @At(value = "RETURN"))
-    private void createPlayerAddon(World world, BlockPos pos, float yaw, GameProfile profile, CallbackInfo ci)
+    private void inventorioCreatePlayerAddon(World world, BlockPos pos, float yaw, GameProfile profile, CallbackInfo ci)
     {
         PlayerEntity thisPlayer = (PlayerEntity) (Object) this;
         PlayerScreenHandlerAddon screenAddon = new PlayerScreenHandlerAddon(thisPlayer.playerScreenHandler);
@@ -45,7 +45,7 @@ public abstract class PlayerEntityMixin
      * This inject enlarges the Ender Chest's capacity to 6 rows.
      */
     @Inject(method = "<init>", at = @At(value = "RETURN"))
-    private void resizeEnderChest(World world, BlockPos pos, float yaw, GameProfile profile, CallbackInfo ci)
+    private void inventorioResizeEnderChest(World world, BlockPos pos, float yaw, GameProfile profile, CallbackInfo ci)
     {
         SimpleInventoryAccessor accessor = ((SimpleInventoryAccessor) getEnderChestInventory());
         accessor.setSize(GeneralConstantsKt.VANILLA_ROW_LENGTH * 6);
@@ -56,7 +56,7 @@ public abstract class PlayerEntityMixin
      * This inject causes the selected UtilityBelt item to be displayed in the offhand
      */
     @Inject(method = "getEquippedStack", at = @At(value = "HEAD"), cancellable = true)
-    private void displayUtilityInOffhand(EquipmentSlot slot, CallbackInfoReturnable<ItemStack> cir)
+    private void inventorioDisplayUtilityInOffhand(EquipmentSlot slot, CallbackInfoReturnable<ItemStack> cir)
     {
         if (slot == EquipmentSlot.OFFHAND)
             cir.setReturnValue(getAddon().getOffHandStack());
@@ -66,7 +66,7 @@ public abstract class PlayerEntityMixin
      * This mixin refreshes the available slots when we equip armor through right clicking or a dispenser
      */
     @Inject(method = "equipStack", at = @At(value = "RETURN"))
-    private void postAttack(EquipmentSlot slot, ItemStack stack, CallbackInfo ci)
+    private void inventorioPostAttack(EquipmentSlot slot, ItemStack stack, CallbackInfo ci)
     {
         if (slot.getType() == EquipmentSlot.Type.ARMOR)
             PlayerScreenHandlerAddon.Companion.getScreenHandlerAddon(inventory.player).updateDeepPocketsCapacity();
@@ -76,14 +76,14 @@ public abstract class PlayerEntityMixin
      * These 2 injects cause a correct weapon to be automatically selected and withdrawn upon attack
      */
     @Inject(method = "attack", at = @At(value = "HEAD"))
-    private void preAttack(Entity target, CallbackInfo ci)
+    private void inventorioPreAttack(Entity target, CallbackInfo ci)
     {
         if (target.isAttackable())
             getAddon().prePlayerAttack();
     }
 
     @Inject(method = "attack", at = @At(value = "RETURN"))
-    private void postAttack(Entity target, CallbackInfo ci)
+    private void inventorioPostAttack(Entity target, CallbackInfo ci)
     {
         if (target.isAttackable())
             getAddon().postPlayerAttack();
@@ -93,13 +93,13 @@ public abstract class PlayerEntityMixin
      * These 2 injects read and write additional data into Player's NBT
      */
     @Inject(method = "readCustomDataFromTag", at = @At(value = "RETURN"))
-    private void deserializePlayerAddon(CompoundTag tag, CallbackInfo ci)
+    private void inventorioDeserializePlayerAddon(CompoundTag tag, CallbackInfo ci)
     {
         InventorioPlayerSerializer.INSTANCE.deserialize(getAddon(), tag.getCompound("Inventorio"));
     }
 
     @Inject(method = "writeCustomDataToTag", at = @At(value = "RETURN"))
-    private void serializePlayerAddon(CompoundTag tag, CallbackInfo ci)
+    private void inventorioSerializePlayerAddon(CompoundTag tag, CallbackInfo ci)
     {
         CompoundTag inventorioTag = new CompoundTag();
         InventorioPlayerSerializer.INSTANCE.serialize(getAddon(), inventorioTag);
@@ -107,7 +107,7 @@ public abstract class PlayerEntityMixin
     }
 
     @Inject(method = "tickNewAi", at = @At(value = "RETURN"))
-    private void emptyMainHandDisplayTool(CallbackInfo ci)
+    private void inventorioEmptyMainHandDisplayTool(CallbackInfo ci)
     {
         PlayerEntity thisPlayer = ((PlayerEntity)(Object)this);
         if (!thisPlayer.handSwinging)

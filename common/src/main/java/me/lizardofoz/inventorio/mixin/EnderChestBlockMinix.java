@@ -24,7 +24,7 @@ public class EnderChestBlockMinix
                     target = "Lnet/minecraft/entity/player/PlayerEntity;openHandledScreen(Lnet/minecraft/screen/NamedScreenHandlerFactory;)Ljava/util/OptionalInt;",
                     ordinal = 0),
             require = 0)
-    private OptionalInt onEnderChestOpenForge(PlayerEntity playerEntity, NamedScreenHandlerFactory factory)
+    private OptionalInt inventorioOnEnderChestOpenForge(PlayerEntity playerEntity, NamedScreenHandlerFactory factory)
     {
         return playerEntity.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, playerInventory, playerEntityInner) ->
                 GenericContainerScreenHandler.createGeneric9x6(syncId, playerInventory, playerEntityInner.getEnderChestInventory()),
@@ -36,7 +36,7 @@ public class EnderChestBlockMinix
                     target = "Lnet/minecraft/entity/player/PlayerEntity;openHandledScreen(Lnet/minecraft/screen/NamedScreenHandlerFactory;)Ljava/util/OptionalInt;",
                     ordinal = 0),
             require = 0)
-    private OptionalInt onEnderChestOpenFabric(PlayerEntity playerEntity, NamedScreenHandlerFactory factory)
+    private OptionalInt inventorioOnEnderChestOpenFabric(PlayerEntity playerEntity, NamedScreenHandlerFactory factory)
     {
         return playerEntity.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, playerInventory, playerEntityInner) ->
                 GenericContainerScreenHandler.createGeneric9x6(syncId, playerInventory, playerEntityInner.getEnderChestInventory()),
