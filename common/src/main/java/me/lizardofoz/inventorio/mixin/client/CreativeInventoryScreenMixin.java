@@ -20,7 +20,7 @@ public abstract class CreativeInventoryScreenMixin
      * addon slots (deep pockets, tool belt etc) to appear on top of the gui's hotbar
      */
     @Redirect(method = "setSelectedTab", at = @At(value = "INVOKE", target = "Ljava/util/List;size()I"), require = 0)
-    public int removeExtraPlayerSlotsFromInventory(List<Slot> list)
+    public int inventorioRemoveExtraPlayerSlotsFromInventory(List<Slot> list)
     {
         return GeneralConstantsKt.getHANDLER_ADDON_DUD_OFFHAND_RANGE().getLast();
     }

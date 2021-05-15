@@ -23,41 +23,44 @@ public abstract class PlayerInventoryMixin implements InventoryDuck
     @Unique public PlayerInventoryAddon inventorioAddon;
 
     @Inject(method = "<init>", at = @At(value = "RETURN"))
-    private <E> void createInventoryAddon(PlayerEntity player, CallbackInfo ci)
+    private <E> void inventorioCreateInventoryAddon(PlayerEntity player, CallbackInfo ci)
     {
         inventorioAddon = new PlayerInventoryAddon(this.player);
     }
 
     @Inject(method = "getMainHandStack", at = @At(value = "RETURN"), cancellable = true)
-    public void getMainHandStack(CallbackInfoReturnable<ItemStack> cir)
+    public void inventorioGetMainHandStack(CallbackInfoReturnable<ItemStack> cir)
     {
         ItemStack displayTool = getInventorioAddon().getMainHandStack();
         if (displayTool != null)
             cir.setReturnValue(displayTool);
     }
 
-    @Inject(method = "getEmptySlot", at = @At(value = "RETURN"), cancellable = true)
-    public void getEmptySlot(CallbackInfoReturnable<Integer> cir)
-    {
-        //If no free slot is found in the main inventory, look in the Deep Pockets' extension
-        if (cir.getReturnValue() == 40 || cir.getReturnValue() == -1)
-            cir.setReturnValue(getInventorioAddon().getFirstEmptyAddonSlot());
-    }
-
-    @Inject(method = "getOccupiedSlotWithRoomForStack", at = @At(value = "RETURN"), cancellable = true)
-    public void getOccupiedSlotWithRoomForStack(ItemStack stack, CallbackInfoReturnable<Integer> cir)
-    {
-        //If no fitting slot is found in the main inventory, look in the Deep Pockets' extension
-        if (cir.getReturnValue() == 40 || cir.getReturnValue() == -1)
-            cir.setReturnValue(getInventorioAddon().getFirstOccupiedAddonSlotWithRoomForStack(stack));
-    }
-
     @Inject(method = "getBlockBreakingSpeed", at = @At(value = "RETURN"), cancellable = true)
-    public void getBlockBreakingSpeed(BlockState block, CallbackInfoReturnable<Float> cir)
+    public void inventorioGetBlockBreakingSpeed(BlockState block, CallbackInfoReturnable<Float> cir)
     {
         float addonValue = getInventorioAddon().getMiningSpeedMultiplier(block);
         if (cir.getReturnValue() < addonValue)
             cir.setReturnValue(addonValue);
+    }
+
+    /**
+     * Here's how it works: when an item is getting inserted into player's inventory (e.g. by picking up an item from the ground),
+     * it will find a similar incomplete stack in the Deep Pockets and Utility Belt first.
+     * If none is present, it will go through vanilla logic, and if the Main Inventory is full, it will find a free slot in the Deep Pockets
+     */
+    @Inject(method = "insertStack(ILnet/minecraft/item/ItemStack;)Z", at = @At(value = "HEAD"), cancellable = true)
+    public void inventorioInsertSimilarStackIntoAddon(int slot, ItemStack originalStack, CallbackInfoReturnable<Boolean> cir)
+    {
+        if (getInventorioAddon().insertOnlySimilarStack(originalStack))
+            cir.setReturnValue(true);
+    }
+
+    @Inject(method = "insertStack(ILnet/minecraft/item/ItemStack;)Z", at = @At(value = "RETURN"), cancellable = true)
+    public void inventorioInsertStackIntoAddon(int slot, ItemStack originalStack, CallbackInfoReturnable<Boolean> cir)
+    {
+        if (!cir.getReturnValue() && getInventorioAddon().insertStackIntoEmptySlot(originalStack))
+            cir.setReturnValue(true);
     }
 
     /**
@@ -66,7 +69,7 @@ public abstract class PlayerInventoryMixin implements InventoryDuck
      * Otherwise, set the selected hotbar segment value to -1 in case if a player scrolls a mouse wheel while using Segmented Hotbar
      */
     @Inject(method = "scrollInHotbar", at = @At(value = "HEAD"), cancellable = true)
-    public void scrollInHotbar(double scrollAmount, CallbackInfo ci)
+    public void inventorioScrollInHotbar(double scrollAmount, CallbackInfo ci)
     {
         if (InventorioConfig.INSTANCE.getScrollWheelUtilityBelt())
         {

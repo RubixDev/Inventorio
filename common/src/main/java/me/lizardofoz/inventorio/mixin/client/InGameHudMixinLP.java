@@ -28,7 +28,7 @@ public abstract class InGameHudMixinLP
      * P.S., Forge's event for hotbar rendering is uncancellable, thus, not an option.
      */
     @Inject(method = "renderHotbar", at = @At(value = "HEAD"), cancellable = true)
-    public void renderHotbarRedirectForge(float tickDelta, MatrixStack matrixStack, CallbackInfo ci)
+    public void inventorioRenderHotbarRedirectForge(float tickDelta, MatrixStack matrixStack, CallbackInfo ci)
     {
         if (inventorioAntiRecursionFlag)
             return;

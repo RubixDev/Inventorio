@@ -21,7 +21,7 @@ public abstract class ExperienceOrbEntityMixin
             at = @At(value = "FIELD",
                     target = "Lnet/minecraft/entity/ExperienceOrbEntity;amount:I",
                     ordinal = 3))
-    public void mendToolBeltItems(PlayerEntity player, CallbackInfo ci)
+    public void inventorioMendToolBeltItems(PlayerEntity player, CallbackInfo ci)
     {
         this.amount = PlayerInventoryAddon.getInventoryAddon(player).mendToolBeltItems(this.amount);
     }

@@ -28,7 +28,7 @@ public abstract class InGameHudMixinHP
      * This mixin calls the hotbar addon rendering. Note: this mixin doesn't work in Forge and substituted with a Forge event.
      */
     @Inject(method = "render", at = @At(value = "RETURN"))
-    public void renderHotbarAddons(MatrixStack matrices, float tickDelta, CallbackInfo ci)
+    public void inventorioRenderHotbarAddons(MatrixStack matrices, float tickDelta, CallbackInfo ci)
     {
         if (this.client.interactionManager.getCurrentGameMode() != GameMode.SPECTATOR && !this.client.options.hudHidden)
         {
@@ -44,7 +44,7 @@ public abstract class InGameHudMixinHP
     @Redirect(method = "renderHotbar",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/entity/player/PlayerEntity;getOffHandStack()Lnet/minecraft/item/ItemStack;"))
-    public ItemStack removeOffhandDisplayFromHotbar(PlayerEntity playerEntity)
+    public ItemStack inventorioRemoveOffhandDisplayFromHotbar(PlayerEntity playerEntity)
     {
         return ItemStack.EMPTY;
     }

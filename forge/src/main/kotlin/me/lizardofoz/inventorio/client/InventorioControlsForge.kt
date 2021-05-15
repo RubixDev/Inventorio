@@ -7,7 +7,7 @@ import net.minecraftforge.api.distmarker.OnlyIn
 @OnlyIn(Dist.CLIENT)
 object InventorioControlsForge : InventorioControls()
 {
-    override fun registerKeyBindings()
+    init
     {
         MinecraftClient.getInstance().options.keysAll += inventorioKeys
     }

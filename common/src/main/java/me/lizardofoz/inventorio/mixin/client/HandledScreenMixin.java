@@ -21,7 +21,7 @@ public class HandledScreenMixin
                     target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V",
                     ordinal = 0),
             cancellable = true)
-    private void removeOffhandSwap(int i, CallbackInfo ci)
+    private void inventorioRemoveOffhandSwap(int i, CallbackInfo ci)
     {
         ci.cancel();
     }
@@ -34,7 +34,7 @@ public class HandledScreenMixin
                     target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V",
                     ordinal = 0),
             cancellable = true)
-    private void removeOffhandSwap(int keyCode, int scanCode, CallbackInfoReturnable<Boolean> cir)
+    private void inventorioRemoveOffhandSwap(int keyCode, int scanCode, CallbackInfoReturnable<Boolean> cir)
     {
         cir.setReturnValue(false);
     }

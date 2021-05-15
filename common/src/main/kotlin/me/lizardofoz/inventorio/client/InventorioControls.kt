@@ -46,8 +46,6 @@ abstract class InventorioControls
 
     val inventorioKeys = arrayOf(keyUseUtility, keyNextUtility, keyPrevUtility, keySwitchSegmentedHotbarMode, keyScrollWheelUtilityBeltMode)
 
-    abstract fun registerKeyBindings()
-
     companion object
     {
         lateinit var INSTANCE: InventorioControls

@@ -1,8 +1,10 @@
 package me.lizardofoz.inventorio.client
 
+import me.lizardofoz.inventorio.RobertoGarbagio
 import me.lizardofoz.inventorio.mixin.client.accessor.MinecraftClientAccessor
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon.Companion.inventoryAddon
+import me.lizardofoz.inventorio.util.SegmentedHotbar
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
@@ -22,6 +24,8 @@ object InventorioKeyHandler
      */
     fun handleSegmentedHotbarSlotSelection(inventory: PlayerInventory, slotToSelect: Int): Boolean
     {
+        if (InventorioConfig.segmentedHotbar != SegmentedHotbar.ON)
+            return false
         val addon = PlayerInventoryAddon.Client
         if (addon.selectedHotbarSection == -1)
         {
