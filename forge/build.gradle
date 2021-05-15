@@ -6,7 +6,7 @@ plugins {
 compileKotlin.kotlinOptions.jvmTarget = "1.8"
 
 configurations {
-    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
+    shadowCommon
 }
 
 architectury {
@@ -17,7 +17,7 @@ architectury {
 minecraft {
     runs {
         client {
-            property 'forge.logging.console.level', 'debug'
+            property "forge.logging.console.level", "debug"
         }
     }
 }
@@ -27,10 +27,7 @@ loom {
 }
 
 repositories {
-    maven {
-        name = 'Kotlin for Forge'
-        url = 'https://thedarkcolour.github.io/KotlinForForge/'
-    }
+    maven { url "https://thedarkcolour.github.io/KotlinForForge/" }
 }
 
 dependencies {
@@ -46,7 +43,7 @@ dependencies {
         transitive = false
     }
 
-    implementation('thedarkcolour:kotlinforforge:1.12.0')
+    implementation("thedarkcolour:kotlinforforge:1.12.0")
 }
 
 shadowJar {

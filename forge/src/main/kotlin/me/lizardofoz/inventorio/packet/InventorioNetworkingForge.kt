@@ -46,6 +46,7 @@ object InventorioNetworkingForge : InventorioNetworking
 
     override fun s2cSendSelectedUtilitySlot(player: ServerPlayerEntity)
     {
-        INSTANCE.sendTo(SelectUtilitySlotPacket(player.inventoryAddon.selectedUtility), player.networkHandler.connection, NetworkDirection.PLAY_TO_CLIENT)
+        val inventoryAddon = player.inventoryAddon ?: return
+        INSTANCE.sendTo(SelectUtilitySlotPacket(inventoryAddon.selectedUtility), player.networkHandler.connection, NetworkDirection.PLAY_TO_CLIENT)
     }
 }

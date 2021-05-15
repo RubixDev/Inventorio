@@ -25,12 +25,15 @@ public abstract class PlayerInventoryMixin implements InventoryDuck
     @Inject(method = "<init>", at = @At(value = "RETURN"))
     private <E> void inventorioCreateInventoryAddon(PlayerEntity player, CallbackInfo ci)
     {
-        inventorioAddon = new PlayerInventoryAddon(this.player);
+        if (this.player != null)
+            inventorioAddon = new PlayerInventoryAddon(this.player);
     }
 
     @Inject(method = "getMainHandStack", at = @At(value = "RETURN"), cancellable = true)
     public void inventorioGetMainHandStack(CallbackInfoReturnable<ItemStack> cir)
     {
+        if (getInventorioAddon() == null)
+            return;
         ItemStack displayTool = getInventorioAddon().getMainHandStack();
         if (displayTool != null)
             cir.setReturnValue(displayTool);
@@ -39,6 +42,8 @@ public abstract class PlayerInventoryMixin implements InventoryDuck
     @Inject(method = "getBlockBreakingSpeed", at = @At(value = "RETURN"), cancellable = true)
     public void inventorioGetBlockBreakingSpeed(BlockState block, CallbackInfoReturnable<Float> cir)
     {
+        if (getInventorioAddon() == null)
+            return;
         float addonValue = getInventorioAddon().getMiningSpeedMultiplier(block);
         if (cir.getReturnValue() < addonValue)
             cir.setReturnValue(addonValue);
@@ -52,6 +57,8 @@ public abstract class PlayerInventoryMixin implements InventoryDuck
     @Inject(method = "insertStack(ILnet/minecraft/item/ItemStack;)Z", at = @At(value = "HEAD"), cancellable = true)
     public void inventorioInsertSimilarStackIntoAddon(int slot, ItemStack originalStack, CallbackInfoReturnable<Boolean> cir)
     {
+        if (slot != -1 || getInventorioAddon() == null)
+            return;
         if (getInventorioAddon().insertOnlySimilarStack(originalStack))
             cir.setReturnValue(true);
     }
@@ -59,8 +66,19 @@ public abstract class PlayerInventoryMixin implements InventoryDuck
     @Inject(method = "insertStack(ILnet/minecraft/item/ItemStack;)Z", at = @At(value = "RETURN"), cancellable = true)
     public void inventorioInsertStackIntoAddon(int slot, ItemStack originalStack, CallbackInfoReturnable<Boolean> cir)
     {
+        if (slot != -1 || getInventorioAddon() == null)
+            return;
         if (!cir.getReturnValue() && getInventorioAddon().insertStackIntoEmptySlot(originalStack))
             cir.setReturnValue(true);
+    }
+
+    @Inject(method = "removeOne", at = @At(value = "HEAD"), cancellable = true)
+    public void inventorioRemoveOneFromAddon(ItemStack stack, CallbackInfo ci)
+    {
+        if (getInventorioAddon() == null)
+            return;
+        if (getInventorioAddon().removeOne(stack))
+            ci.cancel();
     }
 
     /**

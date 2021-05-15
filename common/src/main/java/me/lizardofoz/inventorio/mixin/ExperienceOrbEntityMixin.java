@@ -23,6 +23,8 @@ public abstract class ExperienceOrbEntityMixin
                     ordinal = 3))
     public void inventorioMendToolBeltItems(PlayerEntity player, CallbackInfo ci)
     {
-        this.amount = PlayerInventoryAddon.getInventoryAddon(player).mendToolBeltItems(this.amount);
+        PlayerInventoryAddon addon = PlayerInventoryAddon.Companion.getInventoryAddon(player);
+        if (addon != null)
+            this.amount = addon.mendToolBeltItems(this.amount);
     }
 }

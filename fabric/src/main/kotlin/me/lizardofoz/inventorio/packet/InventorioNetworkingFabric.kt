@@ -6,6 +6,7 @@ import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
+import net.minecraft.client.MinecraftClient
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
@@ -35,8 +36,9 @@ object InventorioNetworkingFabric : InventorioNetworking
 
     override fun s2cSendSelectedUtilitySlot(player: ServerPlayerEntity)
     {
+        val inventoryAddon = player.inventoryAddon ?: return
         val buf = PacketByteBuf(PooledByteBufAllocator.DEFAULT.buffer())
-        SelectUtilitySlotS2CPacket.write(buf, player.inventoryAddon.selectedUtility)
+        SelectUtilitySlotS2CPacket.write(buf, inventoryAddon.selectedUtility)
         ServerPlayNetworking.send(player, SelectUtilitySlotS2CPacket.identifier, buf)
     }
 

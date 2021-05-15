@@ -3,7 +3,6 @@ package me.lizardofoz.inventorio
 import me.lizardofoz.inventorio.client.InventorioKeyHandler
 import me.lizardofoz.inventorio.client.ui.HotbarHUDRenderer.renderHotbarAddons
 import net.minecraft.client.MinecraftClient
-import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.world.GameMode
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.api.distmarker.OnlyIn

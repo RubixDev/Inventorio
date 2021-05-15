@@ -14,7 +14,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ScreenHandler.class)
 public class ScreenHandlerMixin
 {
-    @SuppressWarnings("ConstantConditions")
     @Inject(method = "onSlotClick", at = @At(value = "RETURN"))
     private void inventorioPostSlotClick(int slotIndex, int clickData, SlotActionType actionType, PlayerEntity playerEntity, CallbackInfoReturnable<ItemStack> cir)
     {

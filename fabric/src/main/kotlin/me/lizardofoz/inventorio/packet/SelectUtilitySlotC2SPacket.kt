@@ -12,6 +12,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.Identifier
 
+@Suppress("UNUSED_PARAMETER")
 object SelectUtilitySlotC2SPacket
 {
     val identifier = Identifier("inventorio", "select_utility_c2s")
@@ -21,7 +22,7 @@ object SelectUtilitySlotC2SPacket
         val utilitySlot = buf.readByte().toInt()
 
         server.execute {
-            player.inventoryAddon.selectedUtility = utilitySlot
+            player.inventoryAddon?.selectedUtility = utilitySlot
 
             //Resending the current offhand item (aka a selected utility belt item) of this player to other players
             val broadcastPacket = EntityEquipmentUpdateS2CPacket(player.entityId, listOf(Pair(EquipmentSlot.OFFHAND, player.offHandStack)))
