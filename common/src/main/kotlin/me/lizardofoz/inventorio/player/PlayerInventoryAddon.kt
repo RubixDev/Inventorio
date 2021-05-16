@@ -1,6 +1,5 @@
 package me.lizardofoz.inventorio.player
 
-import me.lizardofoz.inventorio.RobertoGarbagio
 import me.lizardofoz.inventorio.client.ui.HotbarHUDRenderer
 import me.lizardofoz.inventorio.client.ui.PlayerInventoryUIAddon
 import me.lizardofoz.inventorio.enchantment.DeepPocketsEnchantment
@@ -79,12 +78,12 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
     }
 
     /**
-     * Returns the block breaking speed based on the return of [getMostPrefferedTool]
+     * Returns the block breaking speed based on the return of [getMostPreferredTool]
      * Note: the calling injector will discard the result if another mod sets a bigger value than the return
      */
     fun getMiningSpeedMultiplier(block: BlockState): Float
     {
-        val tool = getMostPrefferedTool(block)
+        val tool = getMostPreferredTool(block)
         mainHandDisplayTool = tool
         return max(1f, tool.getMiningSpeedMultiplier(block))
     }
@@ -231,14 +230,17 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
         if (!player.isFallFlying)
             return
         for (itemStack in player.inventory.main)
-            tryFireRocket(itemStack)
+            if (tryFireRocket(itemStack))
+                return
         for (itemStack in deepPockets)
-            tryFireRocket(itemStack)
+            if (tryFireRocket(itemStack))
+                return
         for (itemStack in utilityBelt)
-            tryFireRocket(itemStack)
+            if (tryFireRocket(itemStack))
+                return
     }
 
-    private fun tryFireRocket(itemStack: ItemStack)
+    private fun tryFireRocket(itemStack: ItemStack): Boolean
     {
         if (itemStack.item is FireworkItem && itemStack.getSubTag("Fireworks")?.getList("Explosions", 10)?.isEmpty() != false)
         {
@@ -252,16 +254,19 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
             }
             else //If this is a server, spawn a firework entity
                 player.world.spawnEntity(FireworkRocketEntity(player.world, itemStack, player))
-            return
+            return true
         }
+        return false
     }
 
     //==============================
     //Utility methods
     //==============================
 
-    fun getMostPrefferedTool(block: BlockState): ItemStack
+    fun getMostPreferredTool(block: BlockState): ItemStack
     {
+        //todo some mods will disagree with justifying the most preferred tool by just speed
+
         //If a player tries to attack with a tool, respect that tool and don't change anything
         val selectedItem = player.inventory.getStack(player.inventory.selectedSlot)
         if (selectedItem.item is ToolItem)

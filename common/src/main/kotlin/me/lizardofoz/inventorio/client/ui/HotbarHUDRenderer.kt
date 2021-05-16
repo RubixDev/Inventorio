@@ -1,7 +1,7 @@
 package me.lizardofoz.inventorio.client.ui
 
 import com.mojang.blaze3d.systems.RenderSystem
-import me.lizardofoz.inventorio.client.InventorioConfig
+import me.lizardofoz.inventorio.client.config.InventorioConfig
 import me.lizardofoz.inventorio.mixin.client.accessor.InGameHudAccessor
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon
 import me.lizardofoz.inventorio.util.*

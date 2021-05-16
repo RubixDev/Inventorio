@@ -31,20 +31,44 @@ abstract class InventorioControls
     )
 
     val keySwitchSegmentedHotbarMode = KeyBinding(
-            "inventorio.keys.switch_segment_hotbar_mode",
+            "inventorio.keys.settings_segmented_hotbar_mode",
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_I,
             "inventorio.keys.category"
     )
 
     val keyScrollWheelUtilityBeltMode = KeyBinding(
-            "inventorio.keys.scroll_wheel_utility_belt_mode",
-            InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_O,
-            "inventorio.keys.category"
+        "inventorio.keys.settings_scroll_wheel_utility_belt",
+        InputUtil.Type.KEYSYM,
+        GLFW.GLFW_KEY_O,
+        "inventorio.keys.category"
     )
 
-    val inventorioKeys = arrayOf(keyUseUtility, keyNextUtility, keyPrevUtility, keySwitchSegmentedHotbarMode, keyScrollWheelUtilityBeltMode)
+    val keySwitchJumpToRocketBoostMode = KeyBinding(
+        "inventorio.keys.settings_jump_to_rocket_boost",
+        InputUtil.Type.KEYSYM,
+        GLFW.GLFW_KEY_P,
+        "inventorio.keys.category"
+    )
+
+    val keySwitchCanThrowUnloyalTrident = KeyBinding(
+        "inventorio.keys.settings_can_throw_unloyal_trident",
+        InputUtil.Type.KEYSYM,
+        GLFW.GLFW_KEY_LEFT_BRACKET,
+        "inventorio.keys.category"
+    )
+
+    val keyOpenSettings = KeyBinding(
+        "inventorio.keys.open_settings",
+        InputUtil.Type.KEYSYM,
+        GLFW.GLFW_KEY_RIGHT_BRACKET,
+        "inventorio.keys.category"
+    )
+
+    val functionalKeys = arrayOf(keyUseUtility, keyNextUtility, keyPrevUtility)
+    val settingsKeys = arrayOf(keySwitchSegmentedHotbarMode, keySwitchJumpToRocketBoostMode, keySwitchCanThrowUnloyalTrident, keyScrollWheelUtilityBeltMode)
+    var settingsKeysEnabled = false
+        internal set
 
     companion object
     {

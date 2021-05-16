@@ -1,8 +1,10 @@
 package me.lizardofoz.inventorio.mixin;
 
-import me.lizardofoz.inventorio.client.InventorioConfig;
+import me.lizardofoz.inventorio.client.config.InventorioConfig;
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
 import me.lizardofoz.inventorio.util.InventoryDuck;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -87,6 +89,7 @@ public abstract class PlayerInventoryMixin implements InventoryDuck
      * Otherwise, set the selected hotbar segment value to -1 in case if a player scrolls a mouse wheel while using Segmented Hotbar
      */
     @Inject(method = "scrollInHotbar", at = @At(value = "HEAD"), cancellable = true)
+    @Environment(EnvType.CLIENT)
     public void inventorioScrollInHotbar(double scrollAmount, CallbackInfo ci)
     {
         if (InventorioConfig.INSTANCE.getScrollWheelUtilityBelt())
