@@ -1,8 +1,6 @@
 package me.lizardofoz.inventorio.mixin.client;
 
 import me.lizardofoz.inventorio.client.InventorioKeyHandler;
-import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
-import me.lizardofoz.inventorio.util.UtilKt;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -58,14 +56,9 @@ public class MinecraftClientMixin
                     target = "Lnet/minecraft/util/Hand;values()[Lnet/minecraft/util/Hand;"))
     private Hand[] inventorioDoItemUse()
     {
-        //Some items which can be used as a tool (e.g. trident) would REPLACE a hotbar selected stack upon use.
-        if (UtilKt.getUnusableTools().invoke(PlayerInventoryAddon.Client.INSTANCE.getLocal().getMainHandDisplayTool()))
+        if (player == null)
             return new Hand[]{};
-        if (!InventorioKeyHandler.INSTANCE.hasDedicatedUseUtilityButton())
-            return Hand.values();
-        if (PlayerInventoryAddon.Client.triesToUseUtility)
-            return new Hand[]{Hand.OFF_HAND};
-        return new Hand[]{Hand.MAIN_HAND};
+        return InventorioKeyHandler.INSTANCE.handleItemUsage(player);
     }
 
     /**

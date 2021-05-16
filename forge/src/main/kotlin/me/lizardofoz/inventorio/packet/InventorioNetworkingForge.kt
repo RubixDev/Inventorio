@@ -19,6 +19,7 @@ object InventorioNetworkingForge : InventorioNetworking
             { PROTOCOL_VERSION == it }
     )
 
+    @Suppress("INACCESSIBLE_TYPE")
     fun initialize()
     {
         INSTANCE.registerMessage(0, SelectUtilitySlotPacket::class.java,

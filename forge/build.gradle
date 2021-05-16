@@ -32,6 +32,7 @@ repositories {
 
 dependencies {
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
+    modApi("me.shedaniel.cloth:cloth-config-forge:${rootProject.cloth_config_fabric_version}")
 
     implementation(project(path: ":common")) {
         transitive = false

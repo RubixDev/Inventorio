@@ -15,7 +15,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "me.lizardofoz.inventorio.Inventorio"
+      "me.lizardofoz.inventorio.InventorioFabric"
+    ],
+    "modmenu": [
+      "me.lizardofoz.inventorio.client.InventorioModMenuApi"
     ]
   },
   "mixins": [
@@ -28,6 +31,7 @@
     "minecraft": "1.16.x"
   },
   "suggests": {
-    "trinkets": "*"
+    "trinkets": "*",
+    "cloth-config2": "*"
   }
 }

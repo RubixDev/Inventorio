@@ -6,7 +6,7 @@ import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
-import net.minecraft.client.MinecraftClient
+import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
@@ -17,7 +17,9 @@ object InventorioNetworkingFabric : InventorioNetworking
     {
         ServerPlayNetworking.registerGlobalReceiver(UseBoostRocketC2SPacket.identifier, UseBoostRocketC2SPacket::consume)
         ServerPlayNetworking.registerGlobalReceiver(SelectUtilitySlotC2SPacket.identifier, SelectUtilitySlotC2SPacket::consume)
-        ClientPlayNetworking.registerGlobalReceiver(SelectUtilitySlotS2CPacket.identifier, SelectUtilitySlotS2CPacket::consume)
+
+        if (FabricLoader.getInstance().environmentType == EnvType.CLIENT)
+            ClientPlayNetworking.registerGlobalReceiver(SelectUtilitySlotS2CPacket.identifier, SelectUtilitySlotS2CPacket::consume)
     }
 
     @Environment(EnvType.CLIENT)

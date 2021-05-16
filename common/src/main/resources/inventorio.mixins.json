@@ -11,13 +11,9 @@
     "PlayerScreenHandlerMixin",
     "ScreenHandlerMixin",
     "ServerPlayNetworkHandlerMixin",
-    "TridentItemMixin",
     "accessor.ScreenHandlerAccessor",
     "accessor.SimpleInventoryAccessor",
-    "accessor.SlotAccessor",
-    "client.CreativeInventoryScreenMixin",
-    "client.HandledScreenMixin",
-    "client.accessor.InGameHudAccessor"
+    "accessor.SlotAccessor"
   ],
   "client": [
     "client.ClientPlayerInteractionManagerMixin",
@@ -26,7 +22,10 @@
     "client.InventoryScreenMixin",
     "client.MinecraftClientMixin",
     "client.accessor.HandledScreenAccessor",
-    "client.accessor.MinecraftClientAccessor"
+    "client.accessor.MinecraftClientAccessor",
+    "client.CreativeInventoryScreenMixin",
+    "client.HandledScreenMixin",
+    "client.accessor.InGameHudAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
