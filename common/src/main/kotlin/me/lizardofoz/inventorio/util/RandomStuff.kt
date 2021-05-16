@@ -1,8 +1,10 @@
 package me.lizardofoz.inventorio.util
 
 import com.google.common.collect.ImmutableList
+import me.lizardofoz.inventorio.client.config.InventorioConfig
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon
 import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon
+import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.item.*
 
 data class Point2I(val x: Int, val y: Int)
@@ -29,7 +31,14 @@ val ItemStack.isNotEmpty: Boolean
 
 val toolBeltSlotPredicates = generateToolBeltPredicates()
 
-val unusableTools = { it: ItemStack -> it.item is TridentItem }
+val toolBeltWhiteList = { it: ItemStack ->
+    val itemClass = it.item.javaClass
+    itemClass === AxeItem::javaClass || itemClass === ShovelItem::javaClass
+}
+
+val hotbarBlackList = { it: ItemStack ->
+    !InventorioConfig.canThrowUnloyalTrident && (it.item is TridentItem) && EnchantmentHelper.getLoyalty(it) <= 0 && EnchantmentHelper.getRiptide(it) <= 0
+}
 
 private fun generateToolBeltPredicates(): List<(ItemStack) -> Boolean>
 {

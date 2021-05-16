@@ -1,4 +1,4 @@
-package me.lizardofoz.inventorio.client
+package me.lizardofoz.inventorio.client.config
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -16,6 +16,8 @@ object InventorioConfig
 
     var segmentedHotbar = SegmentedHotbar.OFF
     var scrollWheelUtilityBelt = false
+    var jumpToRocketBoost = true
+    var canThrowUnloyalTrident = false
 
     fun switchSegmentedHotbarMode(): SegmentedHotbar
     {
@@ -36,6 +38,20 @@ object InventorioConfig
         return scrollWheelUtilityBelt
     }
 
+    fun switchJumpToRocketBoost(): Boolean
+    {
+        jumpToRocketBoost = !jumpToRocketBoost
+        save()
+        return jumpToRocketBoost
+    }
+
+    fun switchCanThrowUnloyalTrident(): Boolean
+    {
+        canThrowUnloyalTrident = !canThrowUnloyalTrident
+        save()
+        return canThrowUnloyalTrident
+    }
+
     fun save()
     {
         try
@@ -44,6 +60,8 @@ object InventorioConfig
                 val configRoot = JsonObject()
                 configRoot.addProperty("SegmentedHotbar", segmentedHotbar.name)
                 configRoot.addProperty("ScrollWheelUtilityBelt", scrollWheelUtilityBelt)
+                configRoot.addProperty("JumpToRocketBoost", jumpToRocketBoost)
+                configRoot.addProperty("CanThrowUnloyalTrident", canThrowUnloyalTrident)
                 Gson().toJson(configRoot, writer)
             }
         }
@@ -56,12 +74,14 @@ object InventorioConfig
     {
         try
         {
-            this.file = configFolder.resolve("inventorio.json")
+            file = configFolder.resolve("inventorio.json")
             if (file.exists())
                 FileReader(file).use { writer ->
                     val configRoot = Gson().fromJson(writer, JsonObject::class.java)
                     segmentedHotbar = SegmentedHotbar.valueOf(configRoot.get("SegmentedHotbar").asString)
                     scrollWheelUtilityBelt = configRoot.get("ScrollWheelUtilityBelt").asBoolean
+                    jumpToRocketBoost = configRoot.get("JumpToRocketBoost").asBoolean
+                    canThrowUnloyalTrident = configRoot.get("UnloyalTridentCanBeThrown").asBoolean
                 }
         }
         catch (ignored: Exception)

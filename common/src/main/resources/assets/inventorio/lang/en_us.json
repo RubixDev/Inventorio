@@ -1,20 +1,35 @@
 {
-  "inventorio.keys.category": "Inventorio",
+  "enchantment.inventorio.deep_pockets": "Deep Pockets",
 
+  "inventorio.keys.category": "Inventorio",
   "inventorio.keys.next_utility": "Next Utility",
   "inventorio.keys.prev_utility": "Previous Utility",
   "inventorio.keys.use_utility": "Use Utility",
-  "inventorio.keys.open_config": "Open Inventorio Settings",
-  "inventorio.keys.switch_segment_hotbar_mode": "Switch Segmented Hotbar Mode",
-  "inventorio.keys.scroll_wheel_utility_belt_mode": "Switch Scroll Wheel for Utility Belt",
+  "inventorio.keys.open_settings": "Open Inventorio Settings",
+  "inventorio.keys.settings_segmented_hotbar_mode": "Switch Segmented Hotbar Mode",
+  "inventorio.keys.settings_scroll_wheel_utility_belt": "Switch Scroll Wheel for Utility Belt",
+  "inventorio.keys.settings_jump_to_rocket_boost": "Toggle Rocket Boost by Jumping",
+  "inventorio.keys.settings_can_throw_unloyal_trident": "Toggle Throwing Trident Without Loyalty",
 
-  "enchantment.inventorio.deep_pockets": "Deep Pockets",
-  "inventorio.ignore_screen.tooltip": "Disable Inventorio for this screen",
+  "inventorio.settings_key.segmented_hotbar.OFF": "Segmented Hotbar: §cDisabled",
+  "inventorio.settings_key.segmented_hotbar.ONLY_VISUAL": "Segmented Hotbar: §dVisual Only",
+  "inventorio.settings_key.segmented_hotbar.ON": "Segmented Hotbar: §aEnabled",
 
-  "inventorio.segmented_hotbar.OFF": "Segmented Hotbar: Disabled",
-  "inventorio.segmented_hotbar.ONLY_VISUAL": "Segmented Hotbar: Visual Only",
-  "inventorio.segmented_hotbar.ON": "Segmented Hotbar: Enabled",
+  "inventorio.settings_key.scroll_wheel_utility_belt.true": "Scroll Wheel: §dUtility Belt",
+  "inventorio.settings_key.scroll_wheel_utility_belt.false": "Scroll Wheel: §aHotbar",
 
-  "inventorio.scroll_wheel_utility_belt.false": "Scroll Wheel: Hotbar",
-  "inventorio.scroll_wheel_utility_belt.true": "Scroll Wheel: Utility Belt"
+  "inventorio.settings_key.jump_rocket_boost_mode.true": "Jump Rocket Boost: §aEnabled",
+  "inventorio.settings_key.jump_rocket_boost_mode.false": "Jump Rocket Boost: §cDisabled",
+
+  "inventorio.settings_key.can_throw_unloyal_trident.true": "Throwing Trident Without Loyalty: §aEnabled",
+  "inventorio.settings_key.can_throw_unloyal_trident.false": "Throwing Trident Without Loyalty: §cDisabled",
+
+  "inventorio.config.segmented_hotbar_mode": "Segmented Hotbar Mode",
+  "inventorio.config.scroll_wheel_utility_belt_mode": "Scroll Wheel for Utility Belt",
+  "inventorio.config.jump_to_rocket_boost": "Rocket Boost by Jumping",
+  "inventorio.config.can_throw_unloyal_trident": "Throwing Trident without Loyalty",
+
+  "inventorio.config.segmented_hotbar_mode.OFF": "§cNo",
+  "inventorio.config.segmented_hotbar_mode.ONLY_VISUAL": "§dVisual Only",
+  "inventorio.config.segmented_hotbar_mode.ON": "§aYes"
 }

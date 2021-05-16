@@ -9,7 +9,6 @@ object InventorioPlayerSerializer
 {
     fun serialize(inventoryAddon: PlayerInventoryAddon, inventorioTag: CompoundTag)
     {
-
         inventorioTag.putInt("SelectedUtilitySlot", inventoryAddon.selectedUtility)
         inventorioTag.put("DeepPockets", serializeSection(inventoryAddon.deepPockets))
         inventorioTag.put("UtilityBelt", serializeSection(inventoryAddon.utilityBelt))

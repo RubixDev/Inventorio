@@ -166,7 +166,7 @@ class PlayerScreenHandlerAddon internal constructor(private val screenHandler: P
             val slot = screenHandler.getSlot(i) as DeepPocketsSlot
             if (slot.stack.isNotEmpty)
             {
-                player.dropItem(slot.stack, false, true)?.setPickupDelay(0)
+                player.dropItem(slot.stack, false, true)
                 slot.stack = ItemStack.EMPTY
             }
             slot.canTakeItems = false
@@ -176,7 +176,7 @@ class PlayerScreenHandlerAddon internal constructor(private val screenHandler: P
             val slot = screenHandler.getSlot(i) as DeepPocketsSlot
             if (deepPocketsRange.isEmpty()) //If we don't have Deep Pockets on us, we need to drop items within the extended utility belt
             {
-                player.dropItem(slot.stack, false, true)?.setPickupDelay(0)
+                player.dropItem(slot.stack, false, true)
                 slot.stack = ItemStack.EMPTY
                 slot.canTakeItems = false
             }

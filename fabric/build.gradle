@@ -20,11 +20,11 @@ repositories {
 
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
-    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
     modImplementation "net.fabricmc:fabric-language-kotlin:${rootProject.fabric_kotlin_version}"
-    modImplementation ("dev.emi:trinkets:${rootProject.trinkets_version}") {
+    modApi ("dev.emi:trinkets:${rootProject.trinkets_version}") {
         transitive = false
     }
+    modImplementation "io.github.prospector:modmenu:1.14.13+build.22"
 
     implementation(project(path: ":common")) {
         transitive = false
