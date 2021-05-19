@@ -20,7 +20,8 @@ public abstract class ExperienceOrbEntityMixin
     @Inject(method = "onPlayerCollision",
             at = @At(value = "FIELD",
                     target = "Lnet/minecraft/entity/ExperienceOrbEntity;amount:I",
-                    ordinal = 3))
+                    ordinal = 3),
+            require = 0)
     public void inventorioMendToolBeltItems(PlayerEntity player, CallbackInfo ci)
     {
         PlayerInventoryAddon addon = PlayerInventoryAddon.Companion.getInventoryAddon(player);

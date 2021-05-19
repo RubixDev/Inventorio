@@ -24,6 +24,7 @@
   "inventorio.settings_key.can_throw_unloyal_trident.true": "Throwing Trident Without Loyalty: §aEnabled",
   "inventorio.settings_key.can_throw_unloyal_trident.false": "Throwing Trident Without Loyalty: §cDisabled",
 
+  "inventorio.config.title": "Inventorio",
   "inventorio.config.segmented_hotbar_mode": "Segmented Hotbar Mode",
   "inventorio.config.scroll_wheel_utility_belt_mode": "Scroll Wheel for Utility Belt",
   "inventorio.config.jump_to_rocket_boost": "Rocket Boost by Jumping",
