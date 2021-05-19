@@ -27,6 +27,10 @@ Dependencies for Forge:
 #### Toolbelt
 Instead of taking space in the Hotbar, tools are now stored in their own place.
 When you mine a block, a correct tool gets passively applied from the said Toolbelt.
+* Mending will mend tools in the Toolbelt before going into player's XP bar
+* Axe will be used as a melee weapon in the sword slot is empty
+* Hoe Toolbelt slot accepts shears. Sword Toolbelt slot accepts Trident.
+* Toolbelt slots accept modded tools as long as they inherit from vanilla tool classes
 
 #### Utility Belt
 An Offhand replacement with a dedicated hotbar of 4 slots that can be scrolled through independently, and which skips the empty slots.
