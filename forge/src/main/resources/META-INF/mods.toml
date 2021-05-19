@@ -10,6 +10,7 @@ displayName = "${mod_name}"
 authors = "LizardOfOz"
 description = "${mod_description}"
 logoFile = "icon.png"
+displayURL="https://github.com/Lizard-Of-Oz/Inventorio"
 
 [[dependencies.inventorio]]
 modId = "forge"

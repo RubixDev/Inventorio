@@ -1,6 +1,5 @@
 package me.lizardofoz.inventorio.client
 
-import me.lizardofoz.inventorio.RobertoGarbagio
 import me.lizardofoz.inventorio.client.config.InventorioConfig
 import me.lizardofoz.inventorio.client.config.InventorioConfigScreenMenu
 import me.lizardofoz.inventorio.mixin.client.accessor.MinecraftClientAccessor
@@ -87,6 +86,11 @@ object InventorioKeyHandler
         val inventoryAddon = player.inventoryAddon ?: return
         val hasDedicatedUseUtilityButton = hasDedicatedUseUtilityButton()
         val controls = InventorioControls.INSTANCE
+
+        //Fabric fix: if you bind the same key to multiple things, Fabric tracks only one of them
+        //In our case, keyUseUtility overshadows the vanilla keyUse, and this is how we fix it
+        if (!hasDedicatedUseUtilityButton)
+            client.options.keyUse.isPressed = controls.keyUseUtility.isPressed
 
         if (controls.keyNextUtility.wasPressed())
             inventoryAddon.switchToNextUtility(1)

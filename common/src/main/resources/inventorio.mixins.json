@@ -2,9 +2,8 @@
   "required": true,
   "package": "me.lizardofoz.inventorio.mixin",
   "compatibilityLevel": "JAVA_8",
+  "plugin": "me.lizardofoz.inventorio.InventorioMixinPlugin",
   "mixins": [
-    "BowItemMixin",
-    "EnderChestBlockMinix",
     "ExperienceOrbEntityMixin",
     "PlayerEntityMixin",
     "PlayerInventoryMixin",
@@ -13,19 +12,22 @@
     "ServerPlayNetworkHandlerMixin",
     "accessor.ScreenHandlerAccessor",
     "accessor.SimpleInventoryAccessor",
-    "accessor.SlotAccessor"
+    "accessor.SlotAccessor",
+    "bowfix.BowItemMixin",
+    "enderchest.EnderChestBlockMinix",
+    "enderchest.PlayerEntityMixin"
   ],
   "client": [
     "client.ClientPlayerInteractionManagerMixin",
+    "client.CreativeInventoryScreenMixin",
+    "client.HandledScreenMixin",
     "client.InGameHudMixinHP",
     "client.InGameHudMixinLP",
     "client.InventoryScreenMixin",
     "client.MinecraftClientMixin",
     "client.accessor.HandledScreenAccessor",
-    "client.accessor.MinecraftClientAccessor",
-    "client.CreativeInventoryScreenMixin",
-    "client.HandledScreenMixin",
-    "client.accessor.InGameHudAccessor"
+    "client.accessor.InGameHudAccessor",
+    "client.accessor.MinecraftClientAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,23 +1,15 @@
 package me.lizardofoz.inventorio.mixin;
 
-import com.mojang.authlib.GameProfile;
-import me.lizardofoz.inventorio.extra.InventorioServerConfig;
-import me.lizardofoz.inventorio.mixin.accessor.SimpleInventoryAccessor;
 import me.lizardofoz.inventorio.player.InventorioPlayerSerializer;
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
 import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon;
-import me.lizardofoz.inventorio.util.GeneralConstantsKt;
 import me.lizardofoz.inventorio.util.InventoryDuck;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.EnderChestInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -29,22 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin
 {
-    @Shadow public abstract EnderChestInventory getEnderChestInventory();
     @Shadow @Final public PlayerInventory inventory;
-
-    /**
-     * This inject enlarges the Ender Chest's capacity to 6 rows.
-     */
-    @Inject(method = "<init>", at = @At(value = "RETURN"))
-    private void inventorioResizeEnderChest(World world, BlockPos pos, float yaw, GameProfile profile, CallbackInfo ci)
-    {
-        if (InventorioServerConfig.INSTANCE.getExpandedEnderChest())
-        {
-            SimpleInventoryAccessor accessor = ((SimpleInventoryAccessor) getEnderChestInventory());
-            accessor.setSize(GeneralConstantsKt.VANILLA_ROW_LENGTH * 6);
-            accessor.setStacks(DefaultedList.ofSize(GeneralConstantsKt.VANILLA_ROW_LENGTH * 6, ItemStack.EMPTY));
-        }
-    }
 
     /**
      * This inject causes the selected UtilityBelt item to be displayed in the offhand
@@ -74,6 +51,16 @@ public abstract class PlayerEntityMixin
             if (screenHandlerAddon != null)
                 screenHandlerAddon.updateDeepPocketsCapacity();
         }
+    }
+
+    @Inject(method = "getArrowType", at = @At(value = "RETURN"), cancellable = true)
+    private void inventorioGetArrowType(ItemStack bowStack, CallbackInfoReturnable<ItemStack> cir)
+    {
+        if (getAddon() == null || !cir.getReturnValue().isEmpty())
+            return;
+        ItemStack arrowStack = getAddon().getArrowType(bowStack);
+        if (arrowStack != null)
+            cir.setReturnValue(arrowStack);
     }
 
     /**

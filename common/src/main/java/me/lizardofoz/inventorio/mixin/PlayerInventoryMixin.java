@@ -83,6 +83,13 @@ public abstract class PlayerInventoryMixin implements InventoryDuck
             ci.cancel();
     }
 
+    @Inject(method = "dropAll", at = @At(value = "RETURN"), cancellable = true)
+    public void inventorioDropAllFromAddon(CallbackInfo ci)
+    {
+        if (getInventorioAddon() != null)
+            getInventorioAddon().dropAll();
+    }
+
     /**
      * If player has a "scroll utility belt with a mouse wheel" setting enabled, hijack the vanilla hotbar scrolling
      *   and scroll the utility belt instead.

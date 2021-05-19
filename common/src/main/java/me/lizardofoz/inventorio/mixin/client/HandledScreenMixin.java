@@ -19,7 +19,7 @@ public class HandledScreenMixin
     @Inject(method = "method_30107",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V",
-                    ordinal = 0),
+                    ordinal = 1),
             cancellable = true)
     private void inventorioRemoveOffhandSwap(int i, CallbackInfo ci)
     {
@@ -32,7 +32,7 @@ public class HandledScreenMixin
     @Inject(method = "handleHotbarKeyPressed",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V",
-                    ordinal = 0),
+                    ordinal = 1),
             cancellable = true)
     private void inventorioRemoveOffhandSwap(int keyCode, int scanCode, CallbackInfoReturnable<Boolean> cir)
     {

@@ -18,7 +18,7 @@ public class ServerPlayNetworkHandlerMixin
     /**
      * This inject sends the last utility slot, saved by the server, from the server to the client
      */
-    @Inject(method = "onClientSettings", at = @At(value = "RETURN"))
+    @Inject(method = "onClientSettings", at = @At(value = "RETURN"), require = 0)
     private void inventorioSetPlayerSettings(ClientSettingsC2SPacket packet, CallbackInfo ci)
     {
         InventorioNetworking.Companion.getINSTANCE().s2cSendSelectedUtilitySlot(this.player);
