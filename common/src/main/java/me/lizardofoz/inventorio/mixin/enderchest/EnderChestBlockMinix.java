@@ -1,6 +1,5 @@
-package me.lizardofoz.inventorio.mixin;
+package me.lizardofoz.inventorio.mixin.enderchest;
 
-import me.lizardofoz.inventorio.extra.InventorioServerConfig;
 import net.minecraft.block.EnderChestBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.screen.GenericContainerScreenHandler;
@@ -17,6 +16,7 @@ import java.util.OptionalInt;
  * This mixin enlarges the Ender Chest's Inventory Screen to 6 rows.
  * To enlarge the actual storage, {@link PlayerEntityMixin#inventorioResizeEnderChest} is used
  */
+@SuppressWarnings("UnresolvedMixinReference")
 @Mixin(value = EnderChestBlock.class)
 public class EnderChestBlockMinix
 {
@@ -28,12 +28,8 @@ public class EnderChestBlockMinix
     private OptionalInt inventorioOnEnderChestOpenForge(PlayerEntity playerEntity, NamedScreenHandlerFactory factory)
     {
         return playerEntity.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, playerInventory, playerEntityInner) ->
-        {
-            if (InventorioServerConfig.INSTANCE.getExpandedEnderChest())
-                return GenericContainerScreenHandler.createGeneric9x6(syncId, playerInventory, playerEntityInner.getEnderChestInventory());
-            else
-                return GenericContainerScreenHandler.createGeneric9x3(syncId, playerInventory, playerEntityInner.getEnderChestInventory());
-        }, new TranslatableText("container.enderchest")));
+                GenericContainerScreenHandler.createGeneric9x6(syncId, playerInventory, playerEntityInner.getEnderChestInventory()),
+                new TranslatableText("container.enderchest")));
     }
 
     @Redirect(method = "onUse",
@@ -44,11 +40,7 @@ public class EnderChestBlockMinix
     private OptionalInt inventorioOnEnderChestOpenFabric(PlayerEntity playerEntity, NamedScreenHandlerFactory factory)
     {
         return playerEntity.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, playerInventory, playerEntityInner) ->
-        {
-            if (InventorioServerConfig.INSTANCE.getExpandedEnderChest())
-                return GenericContainerScreenHandler.createGeneric9x6(syncId, playerInventory, playerEntityInner.getEnderChestInventory());
-            else
-                return GenericContainerScreenHandler.createGeneric9x3(syncId, playerInventory, playerEntityInner.getEnderChestInventory());
-        }, new TranslatableText("container.enderchest")));
+                GenericContainerScreenHandler.createGeneric9x6(syncId, playerInventory, playerEntityInner.getEnderChestInventory()),
+                new TranslatableText("container.enderchest")));
     }
 }

@@ -44,7 +44,7 @@ public class InventoryScreenMixin
      */
     @Redirect(method = "init",
             at = @At(value = "NEW",
-                    target = "net/minecraft/client/gui/widget/TexturedButtonWidget"))
+                    target = "net/minecraft/client/gui/widget/TexturedButtonWidget"), require = 0)
     public TexturedButtonWidget inventorioRedirectAddButton(int x, int y, int width, int height, int u, int v, int hoveredVOffset, Identifier texture, ButtonWidget.PressAction pressAction)
     {
         return PlayerInventoryUIAddon.INSTANCE.makeWidgetButton((InventoryScreen) (Object) this, this.recipeBook, this.narrow);

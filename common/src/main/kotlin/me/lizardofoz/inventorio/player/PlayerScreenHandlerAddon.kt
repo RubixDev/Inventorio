@@ -1,6 +1,5 @@
 package me.lizardofoz.inventorio.player
 
-import me.lizardofoz.inventorio.RobertoGarbagio
 import me.lizardofoz.inventorio.client.ui.PlayerInventoryUIAddon
 import me.lizardofoz.inventorio.mixin.accessor.ScreenHandlerAccessor
 import me.lizardofoz.inventorio.mixin.accessor.SlotAccessor
@@ -18,7 +17,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.screen.PlayerScreenHandler
 import net.minecraft.screen.ScreenHandler
 
-class PlayerScreenHandlerAddon internal constructor(private val screenHandler: PlayerScreenHandler, player: PlayerEntity)
+class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScreenHandler, player: PlayerEntity)
 {
     private val inventoryAddon = player.inventoryAddon!!
 
@@ -113,8 +112,14 @@ class PlayerScreenHandlerAddon internal constructor(private val screenHandler: P
         }
         //If we're here, an item can't be moved to neither tool belt nor armor slots
 
+        //When we shift-click an item in hotbar, we want vanilla behavior to kick in.
+        //Otherwise it'd move it to Deep Pockets instead of Main Inventory
+        if (sourceIndex in HANDLER_ADDON_HOTBAR_RANGE)
+        {
+            return null
+        }
         //When we shift-click an item that's in the main inventory, we try to move it into deep pockets
-        if (sourceIndex in HANDLER_ADDON_MAIN_INVENTORY_RANGE)
+        else if (sourceIndex in HANDLER_ADDON_MAIN_INVENTORY_RANGE)
         {
             if (!deepPocketsSlots.isEmpty() && screenHandlerAccessor.insertAnItem(itemStackDynamic, deepPocketsSlots.first, deepPocketsSlots.last, false))
                 return itemStackStaticCopy

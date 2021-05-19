@@ -7,6 +7,8 @@ import net.minecraft.entity.EquipmentSlot
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.network.packet.s2c.play.EntityEquipmentUpdateS2CPacket
 import net.minecraft.server.world.ServerWorld
+import net.minecraftforge.api.distmarker.Dist
+import net.minecraftforge.api.distmarker.OnlyIn
 import net.minecraftforge.fml.network.NetworkDirection
 import net.minecraftforge.fml.network.NetworkEvent
 import java.util.function.Supplier
@@ -49,10 +51,14 @@ class SelectUtilitySlotPacket
         }
         else
         {
-            supplier.get().enqueueWork {
-                PlayerInventoryAddon.Client.local.selectedUtility = utilitySlot
-            }
+            supplier.get().enqueueWork { selectOnClient() }
             supplier.get().packetHandled = true
         }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    private fun selectOnClient()
+    {
+        PlayerInventoryAddon.Client.local.selectedUtility = utilitySlot
     }
 }

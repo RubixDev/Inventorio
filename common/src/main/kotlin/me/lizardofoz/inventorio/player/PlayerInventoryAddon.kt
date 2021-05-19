@@ -18,7 +18,10 @@ import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.projectile.FireworkRocketEntity
 import net.minecraft.inventory.SimpleInventory
-import net.minecraft.item.*
+import net.minecraft.item.FireworkItem
+import net.minecraft.item.ItemStack
+import net.minecraft.item.RangedWeaponItem
+import net.minecraft.item.ToolItem
 import kotlin.math.max
 import kotlin.math.sign
 
@@ -129,6 +132,21 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
     //Item inserting
     //==============================
 
+    fun getArrowType(bowStack: ItemStack): ItemStack?
+    {
+        val predicate = (bowStack.item as RangedWeaponItem).heldProjectiles
+        for (stack in stacks)
+        {
+            if (predicate.test(stack))
+                return stack
+        }
+        return null;
+    }
+
+    /**
+     * Returns false if we want to proceed with vanilla item inserting behavior
+     * Returns true if we do our own logic instead
+     */
     fun insertOnlySimilarStack(sourceStack: ItemStack): Boolean
     {
         //Skip unstackable items
@@ -136,8 +154,11 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
             return false
         //Skip items which can go into hotbar (and allow vanilla to handle it)
         for(i in INVENTORY_HOTBAR_RANGE)
-            if (areItemsSimilar(sourceStack, player.inventory.main[i]))
+        {
+            val hotbarStack = player.inventory.main[i]
+            if (areItemsSimilar(sourceStack, hotbarStack) && hotbarStack.count < hotbarStack.maxCount)
                 return false
+        }
         for (utilityStack in utilityBelt)
         {
             if (areItemsSimilar(sourceStack, utilityStack))
@@ -184,6 +205,29 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
             targetStack.increment(j)
             sourceStack.decrement(j)
             markDirty()
+        }
+    }
+
+    fun removeOne(sourceStack: ItemStack): Boolean
+    {
+        for ((index, stack) in stacks.withIndex())
+        {
+            if (stack === sourceStack)
+            {
+                stacks[index] = ItemStack.EMPTY
+                return true
+            }
+        }
+        return false
+    }
+
+    fun dropAll()
+    {
+        for ((index, itemStack) in stacks.withIndex())
+        {
+            if (!EnchantmentHelper.hasVanishingCurse(itemStack))
+                player.dropItem(itemStack, true, false)
+            stacks[index] = ItemStack.EMPTY
         }
     }
 
@@ -244,16 +288,18 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
     {
         if (itemStack.item is FireworkItem && itemStack.getSubTag("Fireworks")?.getList("Explosions", 10)?.isEmpty() != false)
         {
+            val copyStack = itemStack.copy()
             itemStack.decrement(1)
             //If this is the client side, request a server to actually fire a rocket.
             if (player.world.isClient)
             {
-                HotbarHUDRenderer.mainHandDisplayItem = itemStack
+                HotbarHUDRenderer.mainHandDisplayItem = copyStack
+                HotbarHUDRenderer.mainHandDisplayItem.count = getTotalAmount(copyStack)
                 HotbarHUDRenderer.mainHandDisplayTimeStamp = System.currentTimeMillis() + 2_000
                 InventorioNetworking.INSTANCE.c2sUseBoostRocket()
             }
             else //If this is a server, spawn a firework entity
-                player.world.spawnEntity(FireworkRocketEntity(player.world, itemStack, player))
+                player.world.spawnEntity(FireworkRocketEntity(player.world, copyStack, player))
             return true
         }
         return false
@@ -322,17 +368,16 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
         return stack1.isNotEmpty && stack1.item === stack2.item && ItemStack.areTagsEqual(stack1, stack2)
     }
 
-    fun removeOne(sourceStack: ItemStack): Boolean
+    private fun getTotalAmount(sampleStack: ItemStack): Int
     {
-        for ((index, stack) in stacks.withIndex())
+        var count = 0
+        for (i in 0 until player.inventory.size())
         {
-            if (stack === sourceStack)
-            {
-                stacks[index] = ItemStack.EMPTY
-                return true
-            }
+            val stack = player.inventory.getStack(i)
+            if (areItemsSimilar(stack, sampleStack))
+                count += stack.count
         }
-        return false
+        return count + stacks.filter { areItemsSimilar(it, sampleStack) }.sumOf { it.count }
     }
 
     @Environment(EnvType.CLIENT)

@@ -27,8 +27,8 @@ public abstract class InGameHudMixinLP
      * While injecting there is better for mod compatibility than this solution, Forge forces my hand to do THIS.
      * P.S. Forge's event for hotbar rendering is uncancellable, thus, not an option.
      */
-    @Inject(method = "renderHotbar", at = @At(value = "HEAD"), cancellable = true)
-    public void inventorioRenderHotbarRedirectForge(float tickDelta, MatrixStack matrixStack, CallbackInfo ci)
+    @Inject(method = "renderHotbar", at = @At(value = "HEAD"), cancellable = true, require = 0)
+    public void inventorioRenderHotbarRedirect(float tickDelta, MatrixStack matrixStack, CallbackInfo ci)
     {
         if (inventorioAntiRecursionFlag)
             return;

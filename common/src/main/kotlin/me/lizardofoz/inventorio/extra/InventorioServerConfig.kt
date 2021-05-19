@@ -11,13 +11,20 @@ object InventorioServerConfig
     private lateinit var file : File
 
     var expandedEnderChest = true
+        private set
     var infinityBowNeedsNoArrow = true
+        private set
 
-    fun load(configFolder: File)
+    init
+    {
+        load(File(".").resolve("config"))
+    }
+
+    private fun load(configFolder: File)
     {
         try
         {
-            this.file = configFolder.resolve("inventorio_server.json")
+            this.file = configFolder.resolve("inventorio_shared.json")
             if (file.exists())
             {
                 FileReader(file).use { writer ->
