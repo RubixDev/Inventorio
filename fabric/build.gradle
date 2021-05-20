@@ -18,15 +18,19 @@ architectury {
 
 repositories {
     maven { url "https://maven.terraformersmc.com/" }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     modImplementation "net.fabricmc:fabric-language-kotlin:${rootProject.fabric_kotlin_version}"
-    modApi ("dev.emi:trinkets:${rootProject.trinkets_version}") {
+    modImplementation "io.github.prospector:modmenu:1.14.13+build.22"
+    modImplementation ("dev.emi:trinkets:${rootProject.trinkets_version}") {
         transitive = false
     }
-    modImplementation "io.github.prospector:modmenu:1.14.13+build.22"
+    modImplementation ("com.github.Geometrically:Gravestones:${rootProject.gravestones_tag}") {
+        transitive = false
+    }
 
     implementation(project(path: ":common")) {
         transitive = false

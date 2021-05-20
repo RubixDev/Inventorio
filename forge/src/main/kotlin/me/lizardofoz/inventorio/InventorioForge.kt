@@ -1,34 +1,24 @@
 package me.lizardofoz.inventorio
 
 import me.lizardofoz.inventorio.client.config.InventorioConfig
-import me.lizardofoz.inventorio.client.InventorioControls
-import me.lizardofoz.inventorio.client.InventorioControlsForge
-import me.lizardofoz.inventorio.client.config.InventorioConfigScreenMenu
 import me.lizardofoz.inventorio.enchantment.DeepPocketsEnchantment
-import me.lizardofoz.inventorio.extra.InventorioServerConfig
-import me.lizardofoz.inventorio.modcomp.InventorioModCompatibility
-import me.lizardofoz.inventorio.modcomp.ModComp
+import me.lizardofoz.inventorio.integration.ClothConfigForgeIntegration
+import me.lizardofoz.inventorio.integration.InventorioModIntegration
 import me.lizardofoz.inventorio.packet.InventorioNetworking
 import me.lizardofoz.inventorio.packet.InventorioNetworkingForge
-import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.screen.Screen
 import net.minecraft.enchantment.Enchantment
 import net.minecraft.util.Identifier
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.fml.ExtensionPoint
-import net.minecraftforge.fml.ModList
-import net.minecraftforge.fml.ModLoadingContext
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.loading.FMLEnvironment
 import net.minecraftforge.fml.loading.FMLPaths
 import net.minecraftforge.registries.ForgeRegistries
-import java.util.function.BiFunction
 
 @Mod("inventorio")
 class InventorioForge
 {
-    private val forgeModComps = emptyList<ModComp>()
+    private val forgeModIntegrations = listOf(ClothConfigForgeIntegration)
     init
     {
         InventorioNetworking.INSTANCE = InventorioNetworkingForge
@@ -36,19 +26,13 @@ class InventorioForge
         val enchantment = (DeepPocketsEnchantment as Enchantment).setRegistryName(Identifier("inventorio", "deep_pockets"))
         ForgeRegistries.ENCHANTMENTS.register(enchantment)
 
-        InventorioNetworkingForge.initialize()
         if (FMLEnvironment.dist == Dist.CLIENT)
         {
-            InventorioControls.INSTANCE = InventorioControlsForge
             MinecraftForge.EVENT_BUS.register(ForgeEvents)
             InventorioConfig.load(FMLPaths.CONFIGDIR.get().toFile())
-            if (ModList.get().isLoaded("cloth-config"))
-                ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY) {
-                    BiFunction { minecraft, screen -> InventorioConfigScreenMenu.get(screen) }
-                }
         }
 
-        InventorioModCompatibility.addModComps(forgeModComps)
-        InventorioModCompatibility.apply()
+        InventorioModIntegration.addModIntegrations(forgeModIntegrations)
+        InventorioModIntegration.apply()
     }
 }

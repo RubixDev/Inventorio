@@ -1,10 +1,12 @@
-package me.lizardofoz.inventorio.modcomp
+package me.lizardofoz.inventorio.integration
 
-abstract class ModComp
+abstract class ModIntegration
 {
-    private var isActive = false
+    var isActive = false
+        private set
 
     abstract val name: String
+    abstract val displayName: String
 
     fun test(): Boolean
     {
@@ -19,7 +21,7 @@ abstract class ModComp
         return isActive
     }
 
-    fun applyInRuntime(vararg args: Any?): Boolean
+    open fun applyInRuntime(vararg args: Any?): Boolean
     {
         if (isActive)
             applyInRuntimeInner(*args)
@@ -48,12 +50,9 @@ abstract class ModComp
         {
             try
             {
-                net.fabricmc.loader.api.FabricLoader.getInstance()
-                isFabric = true
+                isFabric = net.fabricmc.loader.api.FabricLoader.getInstance() != null
             }
-            catch (e: Throwable)
-            {
-            }
+            catch (ignored: Throwable) { }
         }
     }
 }

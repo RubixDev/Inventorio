@@ -8,19 +8,19 @@ import net.minecraftforge.api.distmarker.OnlyIn
 import net.minecraftforge.fml.network.NetworkDirection
 import net.minecraftforge.fml.network.NetworkRegistry
 
+@Suppress("INACCESSIBLE_TYPE")
 object InventorioNetworkingForge : InventorioNetworking
 {
     private const val PROTOCOL_VERSION = "1"
 
-    val INSTANCE = NetworkRegistry.newSimpleChannel(
+    private val INSTANCE = NetworkRegistry.newSimpleChannel(
             Identifier("inventorio", "packets"),
             { PROTOCOL_VERSION },
             { PROTOCOL_VERSION == it },
             { PROTOCOL_VERSION == it }
-    )
+    )!!
 
-    @Suppress("INACCESSIBLE_TYPE")
-    fun initialize()
+    init
     {
         INSTANCE.registerMessage(0, SelectUtilitySlotPacket::class.java,
                 { packet, buf -> packet.write(buf) },

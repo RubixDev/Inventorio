@@ -7,34 +7,34 @@ import net.minecraft.client.util.InputUtil
 import org.lwjgl.glfw.GLFW
 
 @Environment(EnvType.CLIENT)
-abstract class InventorioControls
+object InventorioControls
 {
     val keyUseUtility = KeyBinding(
-            "inventorio.keys.use_utility",
-            InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_G,
-            "inventorio.keys.category"
+        "inventorio.keys.use_utility",
+        InputUtil.Type.KEYSYM,
+        GLFW.GLFW_KEY_G,
+        "inventorio.keys.category"
     )
 
     val keyNextUtility = KeyBinding(
-            "inventorio.keys.next_utility",
-            InputUtil.Type.MOUSE,
-            GLFW.GLFW_MOUSE_BUTTON_4,
-            "inventorio.keys.category"
+        "inventorio.keys.next_utility",
+        InputUtil.Type.MOUSE,
+        GLFW.GLFW_MOUSE_BUTTON_4,
+        "inventorio.keys.category"
     )
 
     val keyPrevUtility = KeyBinding(
-            "inventorio.keys.prev_utility",
-            InputUtil.Type.MOUSE,
-            GLFW.GLFW_MOUSE_BUTTON_5,
-            "inventorio.keys.category"
+        "inventorio.keys.prev_utility",
+        InputUtil.Type.MOUSE,
+        GLFW.GLFW_MOUSE_BUTTON_5,
+        "inventorio.keys.category"
     )
 
     val keySwitchSegmentedHotbarMode = KeyBinding(
-            "inventorio.keys.settings_segmented_hotbar_mode",
-            InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_I,
-            "inventorio.keys.category"
+        "inventorio.keys.settings_segmented_hotbar_mode",
+        InputUtil.Type.KEYSYM,
+        GLFW.GLFW_KEY_I,
+        "inventorio.keys.category"
     )
 
     val keyScrollWheelUtilityBeltMode = KeyBinding(
@@ -58,7 +58,7 @@ abstract class InventorioControls
         "inventorio.keys.category"
     )
 
-    val keyOpenSettings = KeyBinding(
+    val keyOpenSettingsMenu = KeyBinding(
         "inventorio.keys.open_settings",
         InputUtil.Type.KEYSYM,
         GLFW.GLFW_KEY_RIGHT_BRACKET,
@@ -66,12 +66,11 @@ abstract class InventorioControls
     )
 
     val functionalKeys = arrayOf(keyUseUtility, keyNextUtility, keyPrevUtility)
-    val settingsKeys = arrayOf(keySwitchSegmentedHotbarMode, keySwitchJumpToRocketBoostMode, keySwitchCanThrowUnloyalTrident, keyScrollWheelUtilityBeltMode)
-    var settingsKeysEnabled = false
-        internal set
-
-    companion object
-    {
-        lateinit var INSTANCE: InventorioControls
-    }
+    val optionToggleKeys = arrayOf(
+        keySwitchSegmentedHotbarMode,
+        keySwitchJumpToRocketBoostMode,
+        keySwitchCanThrowUnloyalTrident,
+        keyScrollWheelUtilityBeltMode
+    )
+    var optionToggleKeysEnabled = false
 }

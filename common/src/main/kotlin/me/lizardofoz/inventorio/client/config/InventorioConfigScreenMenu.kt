@@ -68,6 +68,19 @@ object InventorioConfigScreenMenu
             }
             .build())
 
+        category.addEntry(entryBuilder
+            .startBooleanToggle(
+                TranslatableText("inventorio.config.dedicated_use_utility_key"),
+                InventorioConfig.dedicatedUseUtilityKey
+            )
+            .setDefaultValue(true)
+            .setTooltip(TranslatableText("inventorio.config.dedicated_use_utility_key.tooltip"))
+            .setSaveConsumer {
+                InventorioConfig.dedicatedUseUtilityKey = it
+                InventorioConfig.save()
+            }
+            .build())
+
         return builder.build()
     }
 }
