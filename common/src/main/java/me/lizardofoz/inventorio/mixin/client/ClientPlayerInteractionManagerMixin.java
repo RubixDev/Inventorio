@@ -24,7 +24,7 @@ public class ClientPlayerInteractionManagerMixin
     {
         if (PlayerInventoryAddon.Client.isUsingUtility)
         {
-            boolean isUtilityPressed = InventorioControls.Companion.getINSTANCE().getKeyUseUtility().isPressed();
+            boolean isUtilityPressed = InventorioControls.INSTANCE.getKeyUseUtility().isPressed();
             if (isUtilityPressed)
                 ci.cancel();
             else

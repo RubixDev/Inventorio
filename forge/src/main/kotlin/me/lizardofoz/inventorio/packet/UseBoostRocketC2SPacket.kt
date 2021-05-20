@@ -6,10 +6,6 @@ import java.util.function.Supplier
 
 class UseBoostRocketC2SPacket
 {
-    constructor()
-    {
-    }
-
     fun consume(supplier: Supplier<NetworkEvent.Context>)
     {
         val sender = supplier.get().sender

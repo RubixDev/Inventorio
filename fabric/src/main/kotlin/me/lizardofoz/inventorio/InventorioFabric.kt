@@ -1,13 +1,11 @@
 package me.lizardofoz.inventorio
 
 import me.lizardofoz.inventorio.client.config.InventorioConfig
-import me.lizardofoz.inventorio.client.InventorioControls
-import me.lizardofoz.inventorio.client.InventorioControlsFabric
 import me.lizardofoz.inventorio.client.InventorioKeyHandler
 import me.lizardofoz.inventorio.enchantment.DeepPocketsEnchantment
-import me.lizardofoz.inventorio.extra.InventorioServerConfig
-import me.lizardofoz.inventorio.modcomp.InventorioModCompatibility
-import me.lizardofoz.inventorio.modcomp.TrinketsComp
+import me.lizardofoz.inventorio.integration.ClothConfigFabricIntegration
+import me.lizardofoz.inventorio.integration.InventorioModIntegration
+import me.lizardofoz.inventorio.integration.TrinketsIntegration
 import me.lizardofoz.inventorio.packet.InventorioNetworking
 import me.lizardofoz.inventorio.packet.InventorioNetworkingFabric
 import net.fabricmc.api.EnvType
@@ -19,7 +17,7 @@ import net.minecraft.util.registry.Registry
 
 open class InventorioFabric : ModInitializer
 {
-    private val fabricModComps = listOf(TrinketsComp)
+    private val fabricModIntegrations = listOf(ClothConfigFabricIntegration, TrinketsIntegration)
 
     override fun onInitialize()
     {
@@ -29,12 +27,11 @@ open class InventorioFabric : ModInitializer
 
         if (FabricLoader.getInstance().environmentType == EnvType.CLIENT)
         {
-            InventorioControls.INSTANCE = InventorioControlsFabric
             ClientTickEvents.START_CLIENT_TICK.register(ClientTickEvents.StartTick { InventorioKeyHandler.tick() })
             InventorioConfig.load(FabricLoader.getInstance().configDir.toFile())
         }
 
-        InventorioModCompatibility.addModComps(fabricModComps)
-        InventorioModCompatibility.apply()
+        InventorioModIntegration.addModIntegrations(fabricModIntegrations)
+        InventorioModIntegration.apply()
     }
 }

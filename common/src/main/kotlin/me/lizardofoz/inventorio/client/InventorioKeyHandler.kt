@@ -75,7 +75,7 @@ object InventorioKeyHandler
 
     fun hasDedicatedUseUtilityButton(): Boolean
     {
-        return !MinecraftClient.getInstance().options.keyUse.equals(InventorioControls.INSTANCE.keyUseUtility)
+        return InventorioConfig.dedicatedUseUtilityKey && !MinecraftClient.getInstance().options.keyUse.equals(InventorioControls.keyUseUtility)
     }
 
     fun tick()
@@ -85,22 +85,24 @@ object InventorioKeyHandler
         val player = client.player ?: return
         val inventoryAddon = player.inventoryAddon ?: return
         val hasDedicatedUseUtilityButton = hasDedicatedUseUtilityButton()
-        val controls = InventorioControls.INSTANCE
 
         //Fabric fix: if you bind the same key to multiple things, Fabric tracks only one of them
         //In our case, keyUseUtility overshadows the vanilla keyUse, and this is how we fix it
         if (!hasDedicatedUseUtilityButton)
-            client.options.keyUse.isPressed = controls.keyUseUtility.isPressed
+        {
+            if (client.options.keyUse.equals(InventorioControls.keyUseUtility))
+                client.options.keyUse.isPressed = InventorioControls.keyUseUtility.isPressed
+        }
 
-        if (controls.keyNextUtility.wasPressed())
+        if (InventorioControls.keyNextUtility.wasPressed())
             inventoryAddon.switchToNextUtility(1)
-        if (controls.keyPrevUtility.wasPressed())
+        if (InventorioControls.keyPrevUtility.wasPressed())
             inventoryAddon.switchToNextUtility(-1)
-        if (hasDedicatedUseUtilityButton && controls.keyUseUtility.isPressed && !player.isUsingItem && (client as MinecraftClientAccessor).itemUseCooldown <= 0)
+        if (hasDedicatedUseUtilityButton && InventorioControls.keyUseUtility.isPressed && !player.isUsingItem && (client as MinecraftClientAccessor).itemUseCooldown <= 0)
             inventoryAddon.activateSelectedUtility()
 
         //This code stops the usage of the utility belt item if you have a dedicated "use utility" key
-        if (PlayerInventoryAddon.Client.isUsingUtility && hasDedicatedUseUtilityButton && !controls.keyUseUtility.isPressed)
+        if (PlayerInventoryAddon.Client.isUsingUtility && hasDedicatedUseUtilityButton && !InventorioControls.keyUseUtility.isPressed)
             client.interactionManager?.stopUsingItem(player)
 
         //Shoot fireworks with Jump button
@@ -108,20 +110,20 @@ object InventorioKeyHandler
             inventoryAddon.fireRocketFromInventory()
 
         //Settings. If Cloth Config mod is present, then we don't need to handle various "setting toggle" buttons
-        if (!controls.settingsKeysEnabled)
+        if (!InventorioControls.optionToggleKeysEnabled)
         {
-            if (controls.keyOpenSettings.wasPressed())
+            if (InventorioControls.keyOpenSettingsMenu.wasPressed())
                 openSettings()
         }
         else
         {
-            if (controls.keySwitchSegmentedHotbarMode.wasPressed())
+            if (InventorioControls.keySwitchSegmentedHotbarMode.wasPressed())
                 player.sendMessage(TranslatableText("inventorio.settings_key.segmented_hotbar." + InventorioConfig.switchSegmentedHotbarMode().name), true)
-            if (controls.keySwitchJumpToRocketBoostMode.wasPressed())
+            if (InventorioControls.keySwitchJumpToRocketBoostMode.wasPressed())
                 player.sendMessage( TranslatableText("inventorio.settings_key.jump_rocket_boost_mode." + InventorioConfig.switchJumpToRocketBoost()), true)
-            if (controls.keyScrollWheelUtilityBeltMode.wasPressed())
+            if (InventorioControls.keyScrollWheelUtilityBeltMode.wasPressed())
                 player.sendMessage(TranslatableText("inventorio.settings_key.scroll_wheel_utility_belt." + InventorioConfig.switchScrollWheelUtilityBeltMode()), true)
-            if (controls.keySwitchCanThrowUnloyalTrident.wasPressed())
+            if (InventorioControls.keySwitchCanThrowUnloyalTrident.wasPressed())
                 player.sendMessage(TranslatableText("inventorio.settings_key.can_throw_unloyal_trident." + InventorioConfig.switchCanThrowUnloyalTrident()), true)
         }
     }
