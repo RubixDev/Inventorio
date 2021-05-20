@@ -18,6 +18,7 @@ object InventorioConfig
     var scrollWheelUtilityBelt = false
     var jumpToRocketBoost = true
     var canThrowUnloyalTrident = false
+    var dedicatedUseUtilityKey = true
 
     fun switchSegmentedHotbarMode(): SegmentedHotbar
     {
@@ -62,6 +63,7 @@ object InventorioConfig
                 configRoot.addProperty("ScrollWheelUtilityBelt", scrollWheelUtilityBelt)
                 configRoot.addProperty("JumpToRocketBoost", jumpToRocketBoost)
                 configRoot.addProperty("CanThrowUnloyalTrident", canThrowUnloyalTrident)
+                configRoot.addProperty("DedicatedUseUtilityKey", dedicatedUseUtilityKey)
                 Gson().toJson(configRoot, writer)
             }
         }
@@ -82,6 +84,7 @@ object InventorioConfig
                     scrollWheelUtilityBelt = configRoot.get("ScrollWheelUtilityBelt").asBoolean
                     jumpToRocketBoost = configRoot.get("JumpToRocketBoost").asBoolean
                     canThrowUnloyalTrident = configRoot.get("UnloyalTridentCanBeThrown").asBoolean
+                    dedicatedUseUtilityKey = configRoot.get("DedicatedUseUtilityKey").asBoolean
                 }
         }
         catch (ignored: Exception)

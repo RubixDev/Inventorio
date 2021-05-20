@@ -29,6 +29,8 @@
   "inventorio.config.scroll_wheel_utility_belt_mode": "Scroll Wheel for Utility Belt",
   "inventorio.config.jump_to_rocket_boost": "Rocket Boost by Jumping",
   "inventorio.config.can_throw_unloyal_trident": "Throwing Trident without Loyalty",
+  "inventorio.config.dedicated_use_utility_key": "Dedicated 'Use Utility' Key",
+  "inventorio.config.dedicated_use_utility_key.tooltip": "When disabled, restores Vanilla right-click behavior\nfor both hands, effectively deleting 'Use Utility' key",
 
   "inventorio.config.segmented_hotbar_mode.OFF": "§cNo",
   "inventorio.config.segmented_hotbar_mode.ONLY_VISUAL": "§dVisual Only",

@@ -17,6 +17,7 @@ class SelectUtilitySlotPacket
 {
     private var utilitySlot = 0
 
+    @Suppress("unused")
     constructor()
     {
     }

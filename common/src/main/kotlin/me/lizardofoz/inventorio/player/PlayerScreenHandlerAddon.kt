@@ -95,7 +95,7 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
         {
             //Try to send an item into the armor slots
             if (MobEntity.getPreferredEquipmentSlot(itemStackStaticCopy).type == EquipmentSlot.Type.ARMOR
-                    && screenHandlerAccessor.insertAnItem(itemStackDynamic, HANDLER_ADDON_ARMOR_RANGE.first, HANDLER_ADDON_ARMOR_RANGE.last, false))
+                    && screenHandlerAccessor.insertAnItem(itemStackDynamic, HANDLER_ADDON_ARMOR_RANGE.first, HANDLER_ADDON_ARMOR_RANGE.last + 1, false))
             {
                 updateDeepPocketsCapacity()
                 return itemStackStaticCopy
@@ -121,30 +121,22 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
         //When we shift-click an item that's in the main inventory, we try to move it into deep pockets
         else if (sourceIndex in HANDLER_ADDON_MAIN_INVENTORY_RANGE)
         {
-            if (!deepPocketsSlots.isEmpty() && screenHandlerAccessor.insertAnItem(itemStackDynamic, deepPocketsSlots.first, deepPocketsSlots.last, false))
+            if (!deepPocketsSlots.isEmpty() && screenHandlerAccessor.insertAnItem(itemStackDynamic, deepPocketsSlots.first, deepPocketsSlots.last + 1, false))
                 return itemStackStaticCopy
         }
         //When we shift-click an item that's in the deep pockets, we try to move it into the main inventory
         else if (sourceIndex in deepPocketsSlots)
         {
-            if (screenHandlerAccessor.insertAnItem(itemStackDynamic, HANDLER_ADDON_MAIN_INVENTORY_RANGE.first, HANDLER_ADDON_MAIN_INVENTORY_RANGE.last, false))
+            if (screenHandlerAccessor.insertAnItem(itemStackDynamic, HANDLER_ADDON_MAIN_INVENTORY_RANGE.first, HANDLER_ADDON_MAIN_INVENTORY_RANGE.last + 1, false))
                 return itemStackStaticCopy
         }
         //When we shift-click an item in armor slots, tool belt or utility belt, try to move it into the main inventory
         //If the main inventory is full, move it into the deep pockets
         else if (sourceIndex in HANDLER_ADDON_ARMOR_RANGE || sourceIndex in utilityBeltRange || sourceIndex in toolBeltRange)
         {
-            if (screenHandlerAccessor.insertAnItem(itemStackDynamic, HANDLER_ADDON_MAIN_INVENTORY_RANGE.first, HANDLER_ADDON_MAIN_INVENTORY_RANGE.last, false)
-                    || (!deepPocketsSlots.isEmpty() && screenHandlerAccessor.insertAnItem(itemStackDynamic, deepPocketsSlots.first, deepPocketsSlots.last, false)))
+            if (screenHandlerAccessor.insertAnItem(itemStackDynamic, HANDLER_ADDON_MAIN_INVENTORY_RANGE.first, HANDLER_ADDON_MAIN_INVENTORY_RANGE.last + 1, false)
+                    || (!deepPocketsSlots.isEmpty() && screenHandlerAccessor.insertAnItem(itemStackDynamic, deepPocketsSlots.first, deepPocketsSlots.last + 1, false)))
                 return itemStackStaticCopy
-        }
-        //Same with the crafting grid, but we also need to call onStackChanged or else the crafting grid will bug out
-        else if (sourceIndex in HANDLER_ADDON_CRAFTING_GRID_RANGE)
-        {
-            if (screenHandlerAccessor.insertAnItem(itemStackDynamic, HANDLER_ADDON_MAIN_INVENTORY_RANGE.first, HANDLER_ADDON_MAIN_INVENTORY_RANGE.last, false)
-                    || (!deepPocketsSlots.isEmpty() && screenHandlerAccessor.insertAnItem(itemStackDynamic, deepPocketsSlots.first, deepPocketsSlots.last, false)))
-                return itemStackStaticCopy
-            sourceSlot.onStackChanged(itemStackDynamic, itemStackStaticCopy)
         }
         return null
     }

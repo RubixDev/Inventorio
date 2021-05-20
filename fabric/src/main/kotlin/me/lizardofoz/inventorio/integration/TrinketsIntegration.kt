@@ -1,4 +1,4 @@
-package me.lizardofoz.inventorio.modcomp
+package me.lizardofoz.inventorio.integration
 
 import dev.emi.trinkets.api.SlotGroups
 import dev.emi.trinkets.api.TrinketSlots
@@ -7,9 +7,10 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
 
-object TrinketsComp : ModComp()
+object TrinketsIntegration : ModIntegration()
 {
     override val name = "trinkets"
+    override val displayName = "Trinkets"
 
     override fun testFabric(): Boolean
     {
