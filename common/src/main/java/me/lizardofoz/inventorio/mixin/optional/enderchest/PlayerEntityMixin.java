@@ -1,4 +1,4 @@
-package me.lizardofoz.inventorio.mixin.enderchest;
+package me.lizardofoz.inventorio.mixin.optional.enderchest;
 
 import com.mojang.authlib.GameProfile;
 import me.lizardofoz.inventorio.mixin.accessor.SimpleInventoryAccessor;
