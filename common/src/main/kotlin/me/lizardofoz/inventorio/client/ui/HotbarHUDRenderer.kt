@@ -15,6 +15,7 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.util.Arm
 import net.minecraft.util.Identifier
+import net.minecraft.util.Util
 import net.minecraft.util.math.MathHelper
 import org.jetbrains.annotations.NotNull
 
@@ -111,7 +112,7 @@ object HotbarHUDRenderer
         //Here's how it works: if [HotbarHUDRenderer#mainHandDisplayItem] and [mainHandDisplayTimeStamp] are valid,
         //It means somethings wants to dispaly this item on the "current tool" widget instead of the actual tool from the toolbelt
         //If that's not present, then we display an actual tool from the tool belt, but only if it's currently used
-        val activeDisplayTool = if (mainHandDisplayItem.isNotEmpty && mainHandDisplayTimeStamp >= System.currentTimeMillis())
+        val activeDisplayTool = if (mainHandDisplayItem.isNotEmpty && mainHandDisplayTimeStamp >= Util.getMeasuringTimeMs())
             mainHandDisplayItem
         else
             inventoryAddon.mainHandDisplayTool

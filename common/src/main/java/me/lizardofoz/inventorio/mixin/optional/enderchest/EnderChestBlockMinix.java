@@ -1,4 +1,4 @@
-package me.lizardofoz.inventorio.mixin.enderchest;
+package me.lizardofoz.inventorio.mixin.optional.enderchest;
 
 import net.minecraft.block.EnderChestBlock;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,8 +22,7 @@ public class EnderChestBlockMinix
 {
     @Redirect(method = "onBlockActivated",
             at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/entity/player/PlayerEntity;openHandledScreen(Lnet/minecraft/screen/NamedScreenHandlerFactory;)Ljava/util/OptionalInt;",
-                    ordinal = 0),
+                    target = "Lnet/minecraft/entity/player/PlayerEntity;openHandledScreen(Lnet/minecraft/screen/NamedScreenHandlerFactory;)Ljava/util/OptionalInt;"),
             require = 0)
     private OptionalInt inventorioOnEnderChestOpenForge(PlayerEntity playerEntity, NamedScreenHandlerFactory factory)
     {
@@ -34,8 +33,7 @@ public class EnderChestBlockMinix
 
     @Redirect(method = "onUse",
             at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/entity/player/PlayerEntity;openHandledScreen(Lnet/minecraft/screen/NamedScreenHandlerFactory;)Ljava/util/OptionalInt;",
-                    ordinal = 0),
+                    target = "Lnet/minecraft/entity/player/PlayerEntity;openHandledScreen(Lnet/minecraft/screen/NamedScreenHandlerFactory;)Ljava/util/OptionalInt;"),
             require = 0)
     private OptionalInt inventorioOnEnderChestOpenFabric(PlayerEntity playerEntity, NamedScreenHandlerFactory factory)
     {

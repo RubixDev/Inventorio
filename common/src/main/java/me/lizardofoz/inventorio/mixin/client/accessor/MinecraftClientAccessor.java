@@ -16,4 +16,7 @@ public interface MinecraftClientAccessor
 
     @Accessor("itemUseCooldown")
     int getItemUseCooldown();
+
+    @Accessor("itemUseCooldown")
+    void setItemUseCooldown(int value);
 }

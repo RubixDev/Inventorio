@@ -10,7 +10,7 @@ abstract class ModIntegration
 
     fun test(): Boolean
     {
-        isActive = if (isFabric) testFabric() else testForge()
+        isActive = if (InventorioModIntegration.isFabric) testFabric() else testForge()
         return isActive
     }
 
@@ -40,19 +40,4 @@ abstract class ModIntegration
 
     protected open fun applyOnLaunchInner(vararg args: Any?) { }
     protected open fun applyInRuntimeInner(vararg args: Any?) { }
-
-    companion object
-    {
-        var isFabric = false
-            private set
-
-        init
-        {
-            try
-            {
-                isFabric = net.fabricmc.loader.api.FabricLoader.getInstance() != null
-            }
-            catch (ignored: Throwable) { }
-        }
-    }
 }

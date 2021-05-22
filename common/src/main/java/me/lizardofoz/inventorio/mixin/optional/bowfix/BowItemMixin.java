@@ -1,4 +1,4 @@
-package me.lizardofoz.inventorio.mixin.bowfix;
+package me.lizardofoz.inventorio.mixin.optional.bowfix;
 
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
@@ -18,7 +18,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class BowItemMixin
 {
     /**
-     * [This option is disabled by default]
      * This fixes a bug (yes, it's a bug! check out BowItem#onStoppedUsing method!) that Infinity Bow requires an arrow to shoot.
      */
     @Inject(method = "use", at = @At(value = "RETURN"), cancellable = true, require = 0)
