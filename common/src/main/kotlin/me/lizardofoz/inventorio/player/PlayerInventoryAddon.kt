@@ -22,6 +22,7 @@ import net.minecraft.item.FireworkItem
 import net.minecraft.item.ItemStack
 import net.minecraft.item.RangedWeaponItem
 import net.minecraft.item.ToolItem
+import net.minecraft.util.Util
 import kotlin.math.max
 import kotlin.math.sign
 
@@ -41,6 +42,7 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
     val utilityBelt: MutableList<ItemStack>
 
     var selectedUtility = 0
+    var mainHandDisplayToolTimeStamp = 0L
     var mainHandDisplayTool = ItemStack.EMPTY!!
 
     init
@@ -87,6 +89,7 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
     fun getMiningSpeedMultiplier(block: BlockState): Float
     {
         val tool = getMostPreferredTool(block)
+        mainHandDisplayToolTimeStamp = Util.getMeasuringTimeMs() + 1000
         mainHandDisplayTool = tool
         return max(1f, tool.getMiningSpeedMultiplier(block))
     }
@@ -140,7 +143,7 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
             if (predicate.test(stack))
                 return stack
         }
-        return null;
+        return null
     }
 
     /**
@@ -295,8 +298,9 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
             {
                 HotbarHUDRenderer.mainHandDisplayItem = copyStack
                 HotbarHUDRenderer.mainHandDisplayItem.count = getTotalAmount(copyStack)
-                HotbarHUDRenderer.mainHandDisplayTimeStamp = System.currentTimeMillis() + 2_000
+                HotbarHUDRenderer.mainHandDisplayTimeStamp = Util.getMeasuringTimeMs() + 2000
                 InventorioNetworking.INSTANCE.c2sUseBoostRocket()
+                (MinecraftClient.getInstance() as MinecraftClientAccessor).itemUseCooldown = 4
             }
             else //If this is a server, spawn a firework entity
                 player.world.spawnEntity(FireworkRocketEntity(player.world, copyStack, player))
@@ -378,6 +382,15 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
                 count += stack.count
         }
         return count + stacks.filter { areItemsSimilar(it, sampleStack) }.sumOf { it.count }
+    }
+
+    fun tick()
+    {
+        val ms = Util.getMeasuringTimeMs()
+        if (player.handSwinging)
+            mainHandDisplayToolTimeStamp = ms + 1000
+        if (mainHandDisplayToolTimeStamp <= ms)
+            mainHandDisplayTool = ItemStack.EMPTY
     }
 
     @Environment(EnvType.CLIENT)

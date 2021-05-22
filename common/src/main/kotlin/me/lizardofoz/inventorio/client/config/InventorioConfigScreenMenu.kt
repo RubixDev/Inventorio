@@ -46,18 +46,6 @@ object InventorioConfigScreenMenu
 
         category.addEntry(entryBuilder
             .startBooleanToggle(
-                TranslatableText("inventorio.config.jump_to_rocket_boost"),
-                InventorioConfig.jumpToRocketBoost
-            )
-            .setDefaultValue(true)
-            .setSaveConsumer {
-                InventorioConfig.jumpToRocketBoost = it
-                InventorioConfig.save()
-            }
-            .build())
-
-        category.addEntry(entryBuilder
-            .startBooleanToggle(
                 TranslatableText("inventorio.config.can_throw_unloyal_trident"),
                 InventorioConfig.canThrowUnloyalTrident
             )
@@ -70,13 +58,13 @@ object InventorioConfigScreenMenu
 
         category.addEntry(entryBuilder
             .startBooleanToggle(
-                TranslatableText("inventorio.config.dedicated_use_utility_key"),
-                InventorioConfig.dedicatedUseUtilityKey
+                TranslatableText("inventorio.config.use_item_applies_to_offhand"),
+                InventorioConfig.useItemAppliesToOffhand
             )
-            .setDefaultValue(true)
-            .setTooltip(TranslatableText("inventorio.config.dedicated_use_utility_key.tooltip"))
+            .setDefaultValue(false)
+            .setTooltip(TranslatableText("inventorio.config.use_item_applies_to_offhand.tooltip"))
             .setSaveConsumer {
-                InventorioConfig.dedicatedUseUtilityKey = it
+                InventorioConfig.useItemAppliesToOffhand = it
                 InventorioConfig.save()
             }
             .build())

@@ -4,9 +4,18 @@ import org.apache.logging.log4j.LogManager
 
 object InventorioModIntegration
 {
-    private val logger = LogManager.getLogger("Inventorio Mod Integration")!!
-
+    var isFabric = false
+        private set
     private val modIntegrations = arrayListOf<ModIntegration>()
+
+    init
+    {
+        try
+        {
+            isFabric = this.javaClass.classLoader.loadClass("me.lizardofoz.inventorio.InventorioFabric") != null
+        }
+        catch (ignored: Throwable) { }
+    }
 
     fun addModIntegrations(modIntegrations: Collection<ModIntegration>)
     {
@@ -20,6 +29,7 @@ object InventorioModIntegration
 
     fun apply()
     {
+        val logger = LogManager.getLogger("Inventorio Mod Integration")!!
         for (modIntegration in modIntegrations)
         {
             try

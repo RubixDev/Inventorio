@@ -103,13 +103,9 @@ public abstract class PlayerEntityMixin
     @Inject(method = "tickNewAi", at = @At(value = "RETURN"))
     private void inventorioEmptyMainHandDisplayTool(CallbackInfo ci)
     {
-        PlayerEntity thisPlayer = ((PlayerEntity)(Object)this);
-        if (!thisPlayer.handSwinging)
-        {
-            PlayerInventoryAddon addon = PlayerInventoryAddon.Companion.getInventoryAddon(thisPlayer);
-            if (addon != null)
-                addon.setMainHandDisplayTool(ItemStack.EMPTY);
-        }
+        PlayerInventoryAddon addon = getAddon();
+        if (addon != null)
+            addon.tick();
     }
 
     private PlayerInventoryAddon getAddon()
