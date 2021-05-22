@@ -13,9 +13,9 @@
     "accessor.ScreenHandlerAccessor",
     "accessor.SimpleInventoryAccessor",
     "accessor.SlotAccessor",
-    "bowfix.BowItemMixin",
-    "enderchest.EnderChestBlockMinix",
-    "enderchest.PlayerEntityMixin"
+    "optional.bowfix.BowItemMixin",
+    "optional.enderchest.EnderChestBlockMinix",
+    "optional.enderchest.PlayerEntityMixin"
   ],
   "client": [
     "client.ClientPlayerInteractionManagerMixin",

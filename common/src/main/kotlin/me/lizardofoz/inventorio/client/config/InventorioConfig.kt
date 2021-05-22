@@ -16,11 +16,10 @@ object InventorioConfig
 
     var segmentedHotbar = SegmentedHotbar.OFF
     var scrollWheelUtilityBelt = false
-    var jumpToRocketBoost = true
     var canThrowUnloyalTrident = false
-    var dedicatedUseUtilityKey = true
+    var useItemAppliesToOffhand = false
 
-    fun switchSegmentedHotbarMode(): SegmentedHotbar
+    fun toggleSegmentedHotbarMode(): SegmentedHotbar
     {
         segmentedHotbar = when (segmentedHotbar)
         {
@@ -32,25 +31,25 @@ object InventorioConfig
         return segmentedHotbar
     }
 
-    fun switchScrollWheelUtilityBeltMode(): Boolean
+    fun toggleScrollWheelUtilityBeltMode(): Boolean
     {
         scrollWheelUtilityBelt = !scrollWheelUtilityBelt
         save()
         return scrollWheelUtilityBelt
     }
 
-    fun switchJumpToRocketBoost(): Boolean
-    {
-        jumpToRocketBoost = !jumpToRocketBoost
-        save()
-        return jumpToRocketBoost
-    }
-
-    fun switchCanThrowUnloyalTrident(): Boolean
+    fun toggleCanThrowUnloyalTrident(): Boolean
     {
         canThrowUnloyalTrident = !canThrowUnloyalTrident
         save()
         return canThrowUnloyalTrident
+    }
+
+    fun toggleUseItemAppliesToOffhand(): Boolean
+    {
+        useItemAppliesToOffhand = !useItemAppliesToOffhand
+        save()
+        return useItemAppliesToOffhand
     }
 
     fun save()
@@ -61,9 +60,8 @@ object InventorioConfig
                 val configRoot = JsonObject()
                 configRoot.addProperty("SegmentedHotbar", segmentedHotbar.name)
                 configRoot.addProperty("ScrollWheelUtilityBelt", scrollWheelUtilityBelt)
-                configRoot.addProperty("JumpToRocketBoost", jumpToRocketBoost)
                 configRoot.addProperty("CanThrowUnloyalTrident", canThrowUnloyalTrident)
-                configRoot.addProperty("DedicatedUseUtilityKey", dedicatedUseUtilityKey)
+                configRoot.addProperty("UseItemAppliesToOffhand", useItemAppliesToOffhand)
                 Gson().toJson(configRoot, writer)
             }
         }
@@ -82,9 +80,8 @@ object InventorioConfig
                     val configRoot = Gson().fromJson(writer, JsonObject::class.java)
                     segmentedHotbar = SegmentedHotbar.valueOf(configRoot.get("SegmentedHotbar").asString)
                     scrollWheelUtilityBelt = configRoot.get("ScrollWheelUtilityBelt").asBoolean
-                    jumpToRocketBoost = configRoot.get("JumpToRocketBoost").asBoolean
                     canThrowUnloyalTrident = configRoot.get("UnloyalTridentCanBeThrown").asBoolean
-                    dedicatedUseUtilityKey = configRoot.get("DedicatedUseUtilityKey").asBoolean
+                    useItemAppliesToOffhand = configRoot.get("UseItemAppliesToOffhand").asBoolean
                 }
         }
         catch (ignored: Exception)
