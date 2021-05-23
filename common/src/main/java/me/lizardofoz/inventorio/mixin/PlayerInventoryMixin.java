@@ -9,9 +9,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,22 +19,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(value = PlayerInventory.class, priority = -5000)
 public abstract class PlayerInventoryMixin implements InventoryDuck
 {
-    @Shadow @Final public PlayerEntity player;
     @Unique public PlayerInventoryAddon inventorioAddon;
 
     @Inject(method = "<init>", at = @At(value = "RETURN"))
     private <E> void inventorioCreateInventoryAddon(PlayerEntity player, CallbackInfo ci)
     {
-        if (this.player != null)
-            inventorioAddon = new PlayerInventoryAddon(this.player);
+        if (player != null)
+            inventorioAddon = new PlayerInventoryAddon(player);
     }
 
     @Inject(method = "getMainHandStack", at = @At(value = "RETURN"), cancellable = true)
     public void inventorioGetMainHandStack(CallbackInfoReturnable<ItemStack> cir)
     {
-        if (getInventorioAddon() == null)
+        if (inventorioAddon == null)
             return;
-        ItemStack displayTool = getInventorioAddon().getMainHandStack();
+        ItemStack displayTool = inventorioAddon.getMainHandStack();
         if (displayTool != null)
             cir.setReturnValue(displayTool);
     }
@@ -44,9 +41,9 @@ public abstract class PlayerInventoryMixin implements InventoryDuck
     @Inject(method = "getBlockBreakingSpeed", at = @At(value = "RETURN"), cancellable = true)
     public void inventorioGetBlockBreakingSpeed(BlockState block, CallbackInfoReturnable<Float> cir)
     {
-        if (getInventorioAddon() == null)
+        if (inventorioAddon == null)
             return;
-        float addonValue = getInventorioAddon().getMiningSpeedMultiplier(block);
+        float addonValue = inventorioAddon.getMiningSpeedMultiplier(block);
         if (cir.getReturnValue() < addonValue)
             cir.setReturnValue(addonValue);
     }
@@ -59,35 +56,29 @@ public abstract class PlayerInventoryMixin implements InventoryDuck
     @Inject(method = "insertStack(ILnet/minecraft/item/ItemStack;)Z", at = @At(value = "HEAD"), cancellable = true)
     public void inventorioInsertSimilarStackIntoAddon(int slot, ItemStack originalStack, CallbackInfoReturnable<Boolean> cir)
     {
-        if (slot != -1 || getInventorioAddon() == null)
-            return;
-        if (getInventorioAddon().insertOnlySimilarStack(originalStack))
+        if (slot == -1 && inventorioAddon != null && inventorioAddon.insertOnlySimilarStack(originalStack))
             cir.setReturnValue(true);
     }
 
     @Inject(method = "insertStack(ILnet/minecraft/item/ItemStack;)Z", at = @At(value = "RETURN"), cancellable = true)
     public void inventorioInsertStackIntoAddon(int slot, ItemStack originalStack, CallbackInfoReturnable<Boolean> cir)
     {
-        if (slot != -1 || getInventorioAddon() == null)
-            return;
-        if (!cir.getReturnValue() && getInventorioAddon().insertStackIntoEmptySlot(originalStack))
+        if (slot == -1 && !cir.getReturnValue() && inventorioAddon != null && inventorioAddon.insertStackIntoEmptySlot(originalStack))
             cir.setReturnValue(true);
     }
 
     @Inject(method = "removeOne", at = @At(value = "HEAD"), cancellable = true)
     public void inventorioRemoveOneFromAddon(ItemStack stack, CallbackInfo ci)
     {
-        if (getInventorioAddon() == null)
-            return;
-        if (getInventorioAddon().removeOne(stack))
+        if (inventorioAddon != null && inventorioAddon.removeOne(stack))
             ci.cancel();
     }
 
     @Inject(method = "dropAll", at = @At(value = "RETURN"), cancellable = true)
     public void inventorioDropAllFromAddon(CallbackInfo ci)
     {
-        if (getInventorioAddon() != null)
-            getInventorioAddon().dropAll();
+        if (inventorioAddon != null)
+            inventorioAddon.dropAll();
     }
 
     /**
@@ -99,9 +90,9 @@ public abstract class PlayerInventoryMixin implements InventoryDuck
     @Environment(EnvType.CLIENT)
     public void inventorioScrollInHotbar(double scrollAmount, CallbackInfo ci)
     {
-        if (InventorioConfig.INSTANCE.getScrollWheelUtilityBelt())
+        if (InventorioConfig.INSTANCE.getScrollWheelUtilityBelt() && inventorioAddon != null)
         {
-            PlayerInventoryAddon.Client.INSTANCE.getLocal().switchToNextUtility((int) scrollAmount);
+            inventorioAddon.switchToNextUtility((int) scrollAmount);
             ci.cancel();
         }
         else
