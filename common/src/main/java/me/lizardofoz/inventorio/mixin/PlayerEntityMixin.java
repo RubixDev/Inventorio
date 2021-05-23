@@ -87,7 +87,10 @@ public abstract class PlayerEntityMixin
     private void inventorioDeserializePlayerAddon(CompoundTag tag, CallbackInfo ci)
     {
         if (getAddon() != null)
-            InventorioPlayerSerializer.INSTANCE.deserialize(getAddon(), tag.getCompound("Inventorio"));
+        {
+            boolean isFirstLaunch = !tag.contains("Inventorio");
+            InventorioPlayerSerializer.INSTANCE.deserialize(getAddon(), tag.getCompound("Inventorio"), isFirstLaunch);
+        }
     }
 
     @Inject(method = "writeCustomDataToTag", at = @At(value = "RETURN"))

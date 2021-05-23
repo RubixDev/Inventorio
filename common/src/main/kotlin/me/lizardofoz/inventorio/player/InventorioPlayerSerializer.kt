@@ -31,7 +31,7 @@ object InventorioPlayerSerializer
         return resultTag
     }
 
-    fun deserialize(inventoryAddon: PlayerInventoryAddon, inventorioTag: CompoundTag)
+    fun deserialize(inventoryAddon: PlayerInventoryAddon, inventorioTag: CompoundTag, isFirstLaunch: Boolean)
     {
         inventoryAddon.selectedUtility = inventorioTag.getInt("SelectedUtilitySlot")
 
@@ -39,7 +39,8 @@ object InventorioPlayerSerializer
         deserializeSection(inventoryAddon.toolBelt, inventorioTag.getList("ToolBelt", 10))
         deserializeSection(inventoryAddon.deepPockets, inventorioTag.getList("DeepPockets", 10))
 
-        ejectVanillaOffhand(inventoryAddon.player)
+        if (isFirstLaunch)
+            ejectVanillaOffhand(inventoryAddon.player)
     }
 
     private fun deserializeSection(inventorySection: MutableList<ItemStack>, sectionTag: ListTag)
