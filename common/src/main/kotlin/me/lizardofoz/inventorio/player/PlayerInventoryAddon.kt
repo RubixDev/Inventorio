@@ -42,6 +42,8 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
     val utilityBelt: MutableList<ItemStack>
 
     var selectedUtility = 0
+        set(value) { field = value.coerceIn(0, 7) }
+
     var mainHandDisplayToolTimeStamp = 0L
     var mainHandDisplayTool = ItemStack.EMPTY!!
 
@@ -121,7 +123,7 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
     {
         var amount = experience
         for (itemStack in toolBelt)
-            if (itemStack.isNotEmpty && itemStack.isDamaged)
+            if (itemStack.isNotEmpty && itemStack.isDamaged && EnchantmentHelper.getLevel(Enchantments.MENDING, itemStack) > 0)
             {
                 val delta = Math.min(amount * 2, itemStack.damage)
                 amount -= delta
