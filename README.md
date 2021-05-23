@@ -53,8 +53,8 @@ Accessing slots after 5 with a keyboard might be cumbersome because the keys are
 
 There's a "Visual Only" option that keeps the default selection schema.
 
-#### Press Jump to use a Firework
-When you press the jump button while gliding, it fires a boost rocket directly from your inventory.
+#### Firework Rocket Boost Button
+A dedicated button to fire a boost rocket directly from your inventory while flying. Can be co-bound to Jump.
 
 #### Trident Loyalty Check 
 This option  prevents you from throwing a Trident without Loyalty.
@@ -65,3 +65,8 @@ Feel free to use this mod in a modpack.
 If you encounter bugs or compatibility issues with other mods, please report them on the [Issue Tracker](https://github.com/Lizard-Of-Oz/Inventorio/issues)
 
 If you want to request a feature or modification, please use an Issue Tracker or make a [Pull Request](https://github.com/Lizard-Of-Oz/Inventorio/pulls)  
+
+### Compatible mods you might be interested in:
+* [Gravestones (Fabric)](https://github.com/Geometrically/Gravestones)
+* [GraveStone Mod (Forge)](https://www.curseforge.com/minecraft/mc-mods/gravestone-mod)
+* [Quark (Forge)](https://www.curseforge.com/minecraft/mc-mods/quark)
