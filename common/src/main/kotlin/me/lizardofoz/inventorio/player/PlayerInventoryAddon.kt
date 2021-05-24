@@ -137,6 +137,15 @@ class PlayerInventoryAddon internal constructor(val player: PlayerEntity) : Simp
     //Item inserting
     //==============================
 
+    fun cloneFrom(oldAddon: PlayerInventoryAddon)
+    {
+        for ((index, stack) in oldAddon.stacks.withIndex())
+        {
+            this.setStack(index, stack)
+            this.selectedUtility = oldAddon.selectedUtility
+        }
+    }
+
     fun getArrowType(bowStack: ItemStack): ItemStack?
     {
         val predicate = (bowStack.item as RangedWeaponItem).heldProjectiles
