@@ -28,6 +28,17 @@ public abstract class PlayerInventoryMixin implements InventoryDuck
             inventorioAddon = new PlayerInventoryAddon(player);
     }
 
+    @Inject(method = "clone", at = @At(value = "RETURN"))
+    public void inventorioClonePlayerInventory(PlayerInventory other, CallbackInfo ci)
+    {
+        if (inventorioAddon == null)
+            return;
+        PlayerInventoryAddon oldAddon = PlayerInventoryAddon.Companion.getInventoryAddon(other.player);
+        if (oldAddon == null)
+            return;
+        inventorioAddon.cloneFrom(oldAddon);
+    }
+
     @Inject(method = "getMainHandStack", at = @At(value = "RETURN"), cancellable = true)
     public void inventorioGetMainHandStack(CallbackInfoReturnable<ItemStack> cir)
     {
