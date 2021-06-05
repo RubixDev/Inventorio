@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 /**
  * This mixin attaches {@link PlayerInventoryUIAddon} to {@link InventoryScreen} (Player's inventory screen)
  */
-@Mixin(InventoryScreen.class)
+@Mixin(value = InventoryScreen.class, priority = 2000)
 @Environment(EnvType.CLIENT)
 public class InventoryScreenMixin
 {
@@ -40,23 +40,25 @@ public class InventoryScreenMixin
     }
 
     /**
-     * This mixin redirects the creation of a recipe book widget button
+     * This mixin redirects the creation of a recipe book widget button,
+     * needed to reposition both the button and the widget.
      */
     @Redirect(method = "init",
             at = @At(value = "NEW",
                     target = "net/minecraft/client/gui/widget/TexturedButtonWidget"), require = 0)
-    public TexturedButtonWidget inventorioRedirectAddButton(int x, int y, int width, int height, int u, int v, int hoveredVOffset, Identifier texture, ButtonWidget.PressAction pressAction)
+    private TexturedButtonWidget inventorioRedirectRecipeButton(int x, int y, int width, int height, int u, int v, int hoveredVOffset, Identifier texture, ButtonWidget.PressAction pressAction)
     {
         return PlayerInventoryUIAddon.INSTANCE.makeWidgetButton((InventoryScreen) (Object) this, this.recipeBook, this.narrow);
     }
 
     /**
-     * This inject draws the modified player interface. We use an @Inject instead of @Redirect for the mod compatibility sake.
+     * This inject draws the modified player inventory interface. We use an @Inject instead of @Redirect for the mod compatibility sake.
      */
     @Inject(method = "drawBackground",
             at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawEntity(IIIFFLnet/minecraft/entity/LivingEntity;)V"))
-    public void inventorioDrawScreenAddon(MatrixStack matrices, float delta, int mouseX, int mouseY, CallbackInfo ci)
+                    target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;drawTexture(Lnet/minecraft/client/util/math/MatrixStack;IIIIII)V",
+            shift = At.Shift.AFTER))
+    private void inventorioDrawScreenAddon(MatrixStack matrices, float delta, int mouseX, int mouseY, CallbackInfo ci)
     {
         PlayerInventoryUIAddon.INSTANCE.drawAddon(matrices);
     }

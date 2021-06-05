@@ -17,7 +17,7 @@ object TrinketsIntegration : ModIntegration()
         return FabricLoader.getInstance().isModLoaded("trinkets")
     }
 
-    override fun applyOnLaunchInner(vararg args: Any?)
+    override fun applyOnLaunchInner()
     {
         if (FabricLoader.getInstance().environmentType == EnvType.CLIENT)
             ClientLifecycleEvents.CLIENT_STARTED.register(ClientLifecycleEvents.ClientStarted { removeOverlappingTrinketSlots() })

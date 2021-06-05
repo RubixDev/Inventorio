@@ -8,20 +8,20 @@ abstract class ModIntegration
     abstract val name: String
     abstract val displayName: String
 
-    fun test(): Boolean
+    open fun test(): Boolean
     {
         isActive = if (InventorioModIntegration.isFabric) testFabric() else testForge()
         return isActive
     }
 
-    open fun applyOnLaunch(vararg args: Any?): Boolean
+    fun applyOnLaunch(): Boolean
     {
         if (isActive)
-            applyOnLaunchInner(*args)
+            applyOnLaunchInner()
         return isActive
     }
 
-    open fun applyInRuntime(vararg args: Any?): Boolean
+    fun applyInRuntime(vararg args: Any?): Boolean
     {
         if (isActive)
             applyInRuntimeInner(*args)
@@ -30,14 +30,14 @@ abstract class ModIntegration
 
     protected open fun testFabric(): Boolean
     {
-        throw IllegalStateException("Test Fabric has not been implemented or ran in incorrect environment")
+        throw IllegalStateException("Test Fabric has not been implemented or ran in incorrect environment for $displayName")
     }
 
     protected open fun testForge(): Boolean
     {
-        throw IllegalStateException("Test Forge has not been implemented or ran in incorrect environment")
+        throw IllegalStateException("Test Forge has not been implemented or ran in incorrect environment for $displayName")
     }
 
-    protected open fun applyOnLaunchInner(vararg args: Any?) { }
+    protected open fun applyOnLaunchInner() { }
     protected open fun applyInRuntimeInner(vararg args: Any?) { }
 }

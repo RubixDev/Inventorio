@@ -3,6 +3,7 @@ package me.lizardofoz.inventorio.player
 import me.lizardofoz.inventorio.client.ui.PlayerInventoryUIAddon
 import me.lizardofoz.inventorio.mixin.accessor.ScreenHandlerAccessor
 import me.lizardofoz.inventorio.mixin.accessor.SlotAccessor
+import me.lizardofoz.inventorio.packet.InventorioNetworking
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon.Companion.inventoryAddon
 import me.lizardofoz.inventorio.slot.DeepPocketsSlot
 import me.lizardofoz.inventorio.slot.DudOffhandSlot
@@ -16,20 +17,22 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.screen.PlayerScreenHandler
 import net.minecraft.screen.ScreenHandler
+import net.minecraft.screen.slot.Slot
 
 class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScreenHandler, player: PlayerEntity)
 {
     private val inventoryAddon = player.inventoryAddon!!
 
     //Other mods can add additional slots into player's inventory.
-    //Since this mods has a high priority,
+    // Thus, we can't attach the slot numbers of our slots to numeric constants,
+    // and we calculate it dynamically when we create a handler addon
     val deepPocketsRange: IntRange
-    private val toolBeltRange: IntRange
-    private val utilityBeltRange: IntRange
-    private val utilityBeltRangeExtendedPart: IntRange
+    val toolBeltRange: IntRange
+    val utilityBeltRange: IntRange
+    val utilityBeltRangeExtendedPart: IntRange
 
     //==============================
-    //Injects. These functions are either injected or redirected to by a mixin of a [PlayerInventory] class
+    //Injects. These functions are either injected or redirected to by a mixin of a [PlayerScreenHandler] class
     //==============================
 
     init
@@ -59,7 +62,7 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
 
         //Tool Belt
         for ((absoluteIndex, relativeIndex) in INVENTORY_ADDON_TOOL_BELT_RANGE.withRelativeIndex())
-            screenHandlerAccessor.addASlot(ToolBeltSlot(inventoryAddon, toolBeltSlotPredicates[relativeIndex], absoluteIndex,
+            screenHandlerAccessor.addASlot(ToolBeltSlot(inventoryAddon, toolBeltSlotFilters[relativeIndex], absoluteIndex,
                     SLOT_TOOL_BELT(deepPocketsRowCount).x,
                     SLOT_TOOL_BELT(deepPocketsRowCount).y + SLOT_UI_SIZE * relativeIndex))
 
@@ -101,7 +104,7 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
                 return itemStackStaticCopy
             }
             //Try to send an item into the Tool Belt
-            for ((index, predicate) in toolBeltSlotPredicates.withIndex())
+            for ((index, predicate) in toolBeltSlotFilters.withIndex())
             {
                 val absoluteIndex = toolBeltRange.first + index
                 //Yes, we ultimately invoke this predicate twice (here and within the ToolBeltSlot),
@@ -139,6 +142,41 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
                 return itemStackStaticCopy
         }
         return null
+    }
+
+    /**
+     * This is called when the player presses "Swap Item With Offhand" (F by default) in the player's inventory screen
+     */
+    fun tryTransferToUtilityBeltSlot(sourceSlot: Slot?): Boolean
+    {
+        if (sourceSlot == null)
+            return false
+        val itemStackDynamic = sourceSlot.stack
+        val screenHandlerAccessor = screenHandler as ScreenHandlerAccessor
+        val beltRange = getAvailableUtilityBeltRange()
+        //If this is true, we send an item to the utility belt
+        if (sourceSlot.id !in beltRange)
+        {
+            if (screenHandlerAccessor.insertAnItem(itemStackDynamic, beltRange.first, beltRange.last + 1, true))
+            {
+                if (!screenHandler.onServer)
+                    InventorioNetworking.INSTANCE.c2sSendItemToUtilityBelt(sourceSlot.id)
+                return true
+            }
+            return false
+        }
+        //If we're here, we're sending an item FROM the utility belt to the rest of the inventory
+        val mainInvetoryRange = HANDLER_ADDON_MAIN_INVENTORY_RANGE
+        val deepPocketsRange = getAvailableDeepPocketsRange()
+        if (screenHandlerAccessor.insertAnItem(itemStackDynamic, mainInvetoryRange.first, mainInvetoryRange.last + 1, true)
+            || screenHandlerAccessor.insertAnItem(itemStackDynamic, deepPocketsRange.first, deepPocketsRange.last + 1, true)
+        )
+        {
+            if (!screenHandler.onServer)
+                InventorioNetworking.INSTANCE.c2sSendItemToUtilityBelt(sourceSlot.id)
+            return true
+        }
+        return false
     }
 
     //==============================
@@ -220,6 +258,12 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
             val slot = screenHandler.getSlot(absoluteIndex) as DeepPocketsSlot
             slot.canTakeItems = false
         }
+    }
+
+    //Note: this class returns the range within the SCREEN HANDLER, which is different from the range within the inventory
+    private fun getAvailableUtilityBeltRange(): IntRange
+    {
+        return if (inventoryAddon.getDeepPocketsRowCount() > 0) utilityBeltRange else utilityBeltRange.first expandBy 4
     }
 
     //Note: this class returns the range within the SCREEN HANDLER, which is different from the range within the inventory

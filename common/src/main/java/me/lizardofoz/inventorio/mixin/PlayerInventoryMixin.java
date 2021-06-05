@@ -1,6 +1,7 @@
 package me.lizardofoz.inventorio.mixin;
 
 import me.lizardofoz.inventorio.client.config.InventorioConfig;
+import me.lizardofoz.inventorio.util.MixinHelpers;
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
 import me.lizardofoz.inventorio.util.InventoryDuck;
 import net.fabricmc.api.EnvType;
@@ -17,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = PlayerInventory.class, priority = -5000)
-public abstract class PlayerInventoryMixin implements InventoryDuck
+public class PlayerInventoryMixin implements InventoryDuck
 {
     @Unique public PlayerInventoryAddon inventorioAddon;
 
@@ -28,35 +29,32 @@ public abstract class PlayerInventoryMixin implements InventoryDuck
             inventorioAddon = new PlayerInventoryAddon(player);
     }
 
+    /**
+     * This mixin causes inventory addon to get copied when the main inventory is
+     * (e.g. playing dying with /gamerule keepInventory true or going from the End to the Overworld)
+     */
     @Inject(method = "clone", at = @At(value = "RETURN"))
-    public void inventorioClonePlayerInventory(PlayerInventory other, CallbackInfo ci)
+    private void inventorioClonePlayerInventory(PlayerInventory sourceInventory, CallbackInfo ci)
     {
-        if (inventorioAddon == null)
-            return;
-        PlayerInventoryAddon oldAddon = PlayerInventoryAddon.Companion.getInventoryAddon(other.player);
-        if (oldAddon == null)
-            return;
-        inventorioAddon.cloneFrom(oldAddon);
+        if (inventorioAddon != null)
+            MixinHelpers.withInventoryAddon(sourceInventory.player, otherAddon -> inventorioAddon.cloneFrom(otherAddon));
     }
 
     @Inject(method = "getMainHandStack", at = @At(value = "RETURN"), cancellable = true)
-    public void inventorioGetMainHandStack(CallbackInfoReturnable<ItemStack> cir)
+    private void inventorioGetMainHandStack(CallbackInfoReturnable<ItemStack> cir)
     {
         if (inventorioAddon == null)
             return;
-        ItemStack displayTool = inventorioAddon.getMainHandStack();
-        if (displayTool != null)
-            cir.setReturnValue(displayTool);
+        ItemStack mainHandStack = inventorioAddon.getDisplayedMainHandStack();
+        if (mainHandStack != null)
+            cir.setReturnValue(mainHandStack);
     }
 
     @Inject(method = "getBlockBreakingSpeed", at = @At(value = "RETURN"), cancellable = true)
-    public void inventorioGetBlockBreakingSpeed(BlockState block, CallbackInfoReturnable<Float> cir)
+    private void inventorioGetBlockBreakingSpeed(BlockState block, CallbackInfoReturnable<Float> cir)
     {
-        if (inventorioAddon == null)
-            return;
-        float addonValue = inventorioAddon.getMiningSpeedMultiplier(block);
-        if (cir.getReturnValue() < addonValue)
-            cir.setReturnValue(addonValue);
+        if (inventorioAddon != null)
+            cir.setReturnValue(inventorioAddon.getMiningSpeedMultiplier(block));
     }
 
     /**
@@ -65,28 +63,28 @@ public abstract class PlayerInventoryMixin implements InventoryDuck
      * If none is present, it will go through vanilla logic, and if the Main Inventory is full, it will find a free slot in the Deep Pockets
      */
     @Inject(method = "insertStack(ILnet/minecraft/item/ItemStack;)Z", at = @At(value = "HEAD"), cancellable = true)
-    public void inventorioInsertSimilarStackIntoAddon(int slot, ItemStack originalStack, CallbackInfoReturnable<Boolean> cir)
+    private void inventorioInsertSimilarStackIntoAddon(int slot, ItemStack originalStack, CallbackInfoReturnable<Boolean> cir)
     {
         if (slot == -1 && inventorioAddon != null && inventorioAddon.insertOnlySimilarStack(originalStack))
             cir.setReturnValue(true);
     }
 
     @Inject(method = "insertStack(ILnet/minecraft/item/ItemStack;)Z", at = @At(value = "RETURN"), cancellable = true)
-    public void inventorioInsertStackIntoAddon(int slot, ItemStack originalStack, CallbackInfoReturnable<Boolean> cir)
+    private void inventorioInsertStackIntoAddon(int slot, ItemStack originalStack, CallbackInfoReturnable<Boolean> cir)
     {
         if (slot == -1 && !cir.getReturnValue() && inventorioAddon != null && inventorioAddon.insertStackIntoEmptySlot(originalStack))
             cir.setReturnValue(true);
     }
 
     @Inject(method = "removeOne", at = @At(value = "HEAD"), cancellable = true)
-    public void inventorioRemoveOneFromAddon(ItemStack stack, CallbackInfo ci)
+    private void inventorioRemoveOneFromAddon(ItemStack stack, CallbackInfo ci)
     {
         if (inventorioAddon != null && inventorioAddon.removeOne(stack))
             ci.cancel();
     }
 
     @Inject(method = "dropAll", at = @At(value = "RETURN"), cancellable = true)
-    public void inventorioDropAllFromAddon(CallbackInfo ci)
+    private void inventorioDropAllFromAddon(CallbackInfo ci)
     {
         if (inventorioAddon != null)
             inventorioAddon.dropAll();
@@ -99,7 +97,7 @@ public abstract class PlayerInventoryMixin implements InventoryDuck
      */
     @Inject(method = "scrollInHotbar", at = @At(value = "HEAD"), cancellable = true)
     @Environment(EnvType.CLIENT)
-    public void inventorioScrollInHotbar(double scrollAmount, CallbackInfo ci)
+    private void inventorioScrollInHotbar(double scrollAmount, CallbackInfo ci)
     {
         if (InventorioConfig.INSTANCE.getScrollWheelUtilityBelt() && inventorioAddon != null)
         {

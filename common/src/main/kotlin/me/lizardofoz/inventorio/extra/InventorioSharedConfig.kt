@@ -6,13 +6,17 @@ import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
 
-object InventorioServerConfig
+object InventorioSharedConfig
 {
     private lateinit var file : File
 
     var expandedEnderChest = true
         private set
     var infinityBowNeedsNoArrow = true
+        private set
+    var totemFromUtilityBelt = true
+        private set
+    var allowSwappedHands = true
         private set
 
     init
@@ -31,6 +35,8 @@ object InventorioServerConfig
                     val configRoot = Gson().fromJson(writer, JsonObject::class.java)
                     expandedEnderChest = configRoot.get("ExpandedEnderChest").asBoolean
                     infinityBowNeedsNoArrow = configRoot.get("InfinityBowNeedsNoArrow").asBoolean
+                    totemFromUtilityBelt = configRoot.get("TotemFromUtilityBelt").asBoolean
+                    allowSwappedHands = configRoot.get("AllowSwappedHands").asBoolean
                 }
             }
             else
@@ -39,12 +45,28 @@ object InventorioServerConfig
                     val configRoot = JsonObject()
                     configRoot.addProperty("ExpandedEnderChest", true)
                     configRoot.addProperty("InfinityBowNeedsNoArrow", true)
+                    configRoot.addProperty("TotemFromUtilityBelt", true)
+                    configRoot.addProperty("AllowSwappedHands", true)
                     Gson().toJson(configRoot, writer)
                 }
             }
         }
         catch (ignored: Exception)
         {
+            try
+            {
+                FileWriter(file).use { writer ->
+                    val configRoot = JsonObject()
+                    configRoot.addProperty("ExpandedEnderChest", expandedEnderChest)
+                    configRoot.addProperty("InfinityBowNeedsNoArrow", infinityBowNeedsNoArrow)
+                    configRoot.addProperty("TotemFromUtilityBelt", totemFromUtilityBelt)
+                    configRoot.addProperty("AllowSwappedHands", allowSwappedHands)
+                    Gson().toJson(configRoot, writer)
+                }
+            }
+            catch (ignored: Exception)
+            {
+            }
         }
     }
 }

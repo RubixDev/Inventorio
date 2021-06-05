@@ -35,9 +35,11 @@ object InventorioModIntegration
             try
             {
                 val testResult = modIntegration.test()
-                logger.info("Mod integration ${if (testResult) "succeeded" else "failed"}: ${modIntegration.displayName}")
                 if (testResult)
+                {
                     modIntegration.applyOnLaunch()
+                    logger.info("Mod integration ${if (testResult) "succeeded" else "failed"}: ${modIntegration.displayName}")
+                }
             }
             catch (e: Throwable)
             {

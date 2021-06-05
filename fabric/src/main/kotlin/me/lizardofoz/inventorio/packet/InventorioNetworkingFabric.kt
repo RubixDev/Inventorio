@@ -7,6 +7,7 @@ import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.client.MinecraftClient
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
@@ -15,18 +16,28 @@ object InventorioNetworkingFabric : InventorioNetworking
 {
     init
     {
-        ServerPlayNetworking.registerGlobalReceiver(UseBoostRocketC2SPacket.identifier, UseBoostRocketC2SPacket::consume)
-        ServerPlayNetworking.registerGlobalReceiver(SelectUtilitySlotC2SPacket.identifier, SelectUtilitySlotC2SPacket::consume)
-
         if (FabricLoader.getInstance().environmentType == EnvType.CLIENT)
-            ClientPlayNetworking.registerGlobalReceiver(SelectUtilitySlotS2CPacket.identifier, SelectUtilitySlotS2CPacket::consume)
+            ClientPlayNetworking.registerGlobalReceiver(SelectUtilitySlotPacket.identifier, SelectUtilitySlotPacket::consume)
+
+        ServerPlayNetworking.registerGlobalReceiver(UseBoostRocketC2SPacket.identifier, UseBoostRocketC2SPacket::consume)
+        ServerPlayNetworking.registerGlobalReceiver(SelectUtilitySlotPacket.identifier, SelectUtilitySlotPacket::consume)
+        ServerPlayNetworking.registerGlobalReceiver(SwappedHandsC2SPacket.identifier, SwappedHandsC2SPacket::consume)
+        ServerPlayNetworking.registerGlobalReceiver(SendItemToUtilityBeltC2SPacket.identifier, SendItemToUtilityBeltC2SPacket::consume)
+    }
+
+    override fun s2cSendSelectedUtilitySlot(player: ServerPlayerEntity)
+    {
+        val inventoryAddon = player.inventoryAddon ?: return
+        val buf = PacketByteBuf(PooledByteBufAllocator.DEFAULT.buffer())
+        SelectUtilitySlotPacket.write(buf, inventoryAddon.selectedUtility)
+        ServerPlayNetworking.send(player, SelectUtilitySlotPacket.identifier, buf)
     }
 
     @Environment(EnvType.CLIENT)
     override fun c2sSendSelectedUtilitySlot(selectedUtility: Int)
     {
-        sendC2S(SelectUtilitySlotC2SPacket.identifier) {
-            SelectUtilitySlotC2SPacket.write(it, selectedUtility)
+        sendC2S(SelectUtilitySlotPacket.identifier) {
+            SelectUtilitySlotPacket.write(it, selectedUtility)
         }
     }
 
@@ -36,12 +47,21 @@ object InventorioNetworkingFabric : InventorioNetworking
         sendC2S(UseBoostRocketC2SPacket.identifier) { }
     }
 
-    override fun s2cSendSelectedUtilitySlot(player: ServerPlayerEntity)
+    @Environment(EnvType.CLIENT)
+    override fun c2sSetSwappedHands(swappedHands: Boolean)
     {
-        val inventoryAddon = player.inventoryAddon ?: return
-        val buf = PacketByteBuf(PooledByteBufAllocator.DEFAULT.buffer())
-        SelectUtilitySlotS2CPacket.write(buf, inventoryAddon.selectedUtility)
-        ServerPlayNetworking.send(player, SelectUtilitySlotS2CPacket.identifier, buf)
+        if (MinecraftClient.getInstance().networkHandler != null)
+            sendC2S(SwappedHandsC2SPacket.identifier) {
+                SwappedHandsC2SPacket.write(it, swappedHands)
+            }
+    }
+
+    @Environment(EnvType.CLIENT)
+    override fun c2sSendItemToUtilityBelt(sourceSlot: Int)
+    {
+        sendC2S(SendItemToUtilityBeltC2SPacket.identifier) {
+            SendItemToUtilityBeltC2SPacket.write(it, sourceSlot)
+        }
     }
 
     @Environment(EnvType.CLIENT)

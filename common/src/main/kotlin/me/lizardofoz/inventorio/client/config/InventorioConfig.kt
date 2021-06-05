@@ -2,9 +2,12 @@ package me.lizardofoz.inventorio.client.config
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import me.lizardofoz.inventorio.player.PlayerInventoryAddon
+import me.lizardofoz.inventorio.player.PlayerInventoryAddon.Companion.inventoryAddon
 import me.lizardofoz.inventorio.util.SegmentedHotbar
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
+import net.minecraft.client.MinecraftClient
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
@@ -12,12 +15,23 @@ import java.io.FileWriter
 @Environment(EnvType.CLIENT)
 object InventorioConfig
 {
-    private lateinit var file : File
+    private lateinit var file: File
 
     var segmentedHotbar = SegmentedHotbar.OFF
+        set(value)
+        {
+            field = value
+            PlayerInventoryAddon.Client.selectedHotbarSection = -1
+        }
     var scrollWheelUtilityBelt = false
     var canThrowUnloyalTrident = false
     var useItemAppliesToOffhand = false
+    var swappedHands = false
+        set(value)
+        {
+            field = value
+            MinecraftClient.getInstance().player?.inventoryAddon?.swappedHands = value
+        }
 
     fun toggleSegmentedHotbarMode(): SegmentedHotbar
     {
@@ -52,6 +66,13 @@ object InventorioConfig
         return useItemAppliesToOffhand
     }
 
+    fun toggleSwappedHands(): Boolean
+    {
+        swappedHands = !swappedHands
+        save()
+        return swappedHands
+    }
+
     fun save()
     {
         try
@@ -62,6 +83,7 @@ object InventorioConfig
                 configRoot.addProperty("ScrollWheelUtilityBelt", scrollWheelUtilityBelt)
                 configRoot.addProperty("CanThrowUnloyalTrident", canThrowUnloyalTrident)
                 configRoot.addProperty("UseItemAppliesToOffhand", useItemAppliesToOffhand)
+                configRoot.addProperty("SwappedHands", swappedHands)
                 Gson().toJson(configRoot, writer)
             }
         }
@@ -80,8 +102,9 @@ object InventorioConfig
                     val configRoot = Gson().fromJson(writer, JsonObject::class.java)
                     segmentedHotbar = SegmentedHotbar.valueOf(configRoot.get("SegmentedHotbar").asString)
                     scrollWheelUtilityBelt = configRoot.get("ScrollWheelUtilityBelt").asBoolean
-                    canThrowUnloyalTrident = configRoot.get("UnloyalTridentCanBeThrown").asBoolean
+                    canThrowUnloyalTrident = configRoot.get("CanThrowUnloyalTrident").asBoolean
                     useItemAppliesToOffhand = configRoot.get("UseItemAppliesToOffhand").asBoolean
+                    swappedHands = configRoot.get("SwappedHands").asBoolean
                 }
         }
         catch (ignored: Exception)
