@@ -7,6 +7,9 @@
 This is my vision of the Inventory Update for Minecraft.
 [Features](#Features) I believe are in line with Mojang's vision and could be potentially added to the game.
 
+### 1.17?
+1.17 version is coming soon. 1.16.3+ will also be supported updates until it's no longer the main modded version.
+
 ## Installation
 Grab the jar file from the [Release page](https://github.com/Lizard-Of-Oz/Inventorio/releases/). CurseForge and Modrinth pages are coming soon.
  
@@ -47,7 +50,7 @@ This can be disabled in the server-wide config, but you need to distribute the s
 #### Infinity Bow Requires No Arrow
 This mod fixes a Vanilla bug when you need an arrow to use the Infinity Bow.
 
-### Client Tweaks
+### Player Options
 #### Segmented Hotbar
 Accessing slots after 5 with a keyboard might be cumbersome because the keys are just too far away. This feature makes the first keystroke select a section, and the second keystroke will select an item inside that section.
 
@@ -57,7 +60,21 @@ There's a "Visual Only" option that keeps the default selection schema.
 A dedicated button to fire a boost rocket directly from your inventory while flying. Can be co-bound to Jump.
 
 #### Trident Loyalty Check 
-This option  prevents you from throwing a Trident without Loyalty.
+This option prevents you from throwing a Trident without Loyalty.
+
+#### Swapped Hands
+This option allows to assign the vanilla Hotbar to your Offhand, and the Utility Belt to your Main Hand.
+![image](https://user-images.githubusercontent.com/701551/120894901-e828dd00-c644-11eb-86aa-6935ad71002a.png)
+
+### Server/Shared Config
+To improve mod compatibility, some features can be disabled globally.
+
+This requires changing the config at `%root_folder%/config/inventorio_shared.json`, and distributing said config to all players.
+
+* `ExpandedEnderChest (default: true)` - when set to `false`, disables mixins responsible for increasing Ender Chest capacity.
+* `InfinityBowNeedsNoArrow (default: true)` - when set to `false`, disables mixins responsible for Infinity Bow requiring no arrows.
+* `TotemFromUtilityBelt (default: true)` - when set to `false`, disables mixins responsible for Totem of Undying going off from any Utility Belt slot.
+* `AllowSwappedHands (default: true)` - when set to `false`, removes the option to [Swap Hands](#swapped-hands)
 
 ## Feedback, Use in Modpacks and Mod Compatibility
 Feel free to use this mod in a modpack.
@@ -66,7 +83,12 @@ If you encounter bugs or compatibility issues with other mods, please report the
 
 If you want to request a feature or modification, please use an Issue Tracker or make a [Pull Request](https://github.com/Lizard-Of-Oz/Inventorio/pulls)  
 
-### Compatible mods you might be interested in:
-* [Gravestones (Fabric)](https://github.com/Geometrically/Gravestones)
-* [GraveStone Mod (Forge)](https://www.curseforge.com/minecraft/mc-mods/gravestone-mod)
-* [Quark (Forge)](https://www.curseforge.com/minecraft/mc-mods/quark)
+### Confirmed compatible mods:
+Fabric: 
+* [Gravestones](https://github.com/Geometrically/Gravestones)
+* [BetterGraves](https://github.com/CerulanLumina/better-graves)
+* [Trinkets](https://github.com/emilyalexandra/trinkets) - Partially. This mod removes Hand and Offhand Trinkets slots to make space for the Utility Belt. Full compatibility requires changes in Trinkets. 
+
+Forge:
+* [GraveStone Mod](https://www.curseforge.com/minecraft/mc-mods/gravestone-mod)
+* [Quark](https://www.curseforge.com/minecraft/mc-mods/quark)

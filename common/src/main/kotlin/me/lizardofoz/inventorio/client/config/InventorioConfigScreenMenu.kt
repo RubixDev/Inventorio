@@ -1,5 +1,6 @@
 package me.lizardofoz.inventorio.client.config
 
+import me.lizardofoz.inventorio.extra.InventorioSharedConfig
 import me.lizardofoz.inventorio.util.SegmentedHotbar
 import me.shedaniel.clothconfig2.api.ConfigBuilder
 import net.fabricmc.api.EnvType
@@ -68,6 +69,27 @@ object InventorioConfigScreenMenu
                 InventorioConfig.save()
             }
             .build())
+
+        if (InventorioSharedConfig.allowSwappedHands)
+            category.addEntry(entryBuilder
+                .startBooleanToggle(
+                    TranslatableText("inventorio.config.swapped_hands"),
+                    InventorioConfig.swappedHands
+                )
+                .setDefaultValue(false)
+                .setTooltip(TranslatableText("inventorio.config.swapped_hands.tooltip"))
+                .setSaveConsumer {
+                    InventorioConfig.swappedHands = it
+                    InventorioConfig.save()
+                }
+                .build())
+        else
+            category.addEntry(entryBuilder
+                .startTextDescription(
+                    TranslatableText("inventorio.config.swapped_hands.disabled"),
+                )
+                .setTooltip(TranslatableText("inventorio.config.swapped_hands.disabled.tooltip"))
+                .build())
 
         return builder.build()
     }

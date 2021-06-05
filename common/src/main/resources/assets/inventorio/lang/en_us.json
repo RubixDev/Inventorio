@@ -14,6 +14,7 @@
   "inventorio.keys.option_toggle_scroll_wheel_utility_belt": "Toggle Scroll Wheel for Utility Belt",
   "inventorio.keys.option_toggle_can_throw_unloyal_trident": "Toggle Throwing Trident Without Loyalty",
   "inventorio.keys.option_toggle_use_item_applies_to_offhand": "Toggle Vanilla \"Use Item\" For OffHand",
+  "inventorio.keys.option_toggle_swapped_hands": "Toggle Hotbar To Offhand",
 
   "inventorio.option_toggle_key.segmented_hotbar.OFF": "Segmented Hotbar: §cDisabled",
   "inventorio.option_toggle_key.segmented_hotbar.ONLY_VISUAL": "Segmented Hotbar: §dVisual Only",
@@ -24,6 +25,8 @@
   "inventorio.option_toggle_key.can_throw_unloyal_trident.false": "Throwing Trident Without Loyalty: §cDisabled",
   "inventorio.option_toggle_key.use_item_applies_to_offhand.true": "Vanilla \"Use Item\": §aApplies to Offhand",
   "inventorio.option_toggle_key.use_item_applies_to_offhand.false": "Vanilla \"Use Item\": §cDoesn't Apply to Offhand",
+  "inventorio.option_toggle_key.swapped_hands.true": "Hotbar Assigned To: §dOffhand",
+  "inventorio.option_toggle_key.swapped_hands.false": "Hotbar Assigned To: §aMain Hand",
 
   "inventorio.config.title": "Inventorio",
   "inventorio.config.segmented_hotbar_mode": "Segmented Hotbar Mode",
@@ -31,6 +34,10 @@
   "inventorio.config.can_throw_unloyal_trident": "Throwing Trident without Loyalty",
   "inventorio.config.use_item_applies_to_offhand": "\"Use Item\" Applies To OffHand",
   "inventorio.config.use_item_applies_to_offhand.tooltip": "Allow the Vanilla \"Use Item\" to use the Offhand.\nDisabled by default due to \"Use Utility\" button.\nNot mutually exclusive with \"Use Utility\" keybinding.",
+  "inventorio.config.swapped_hands": "Swap Main- and Offhand",
+  "inventorio.config.swapped_hands.tooltip": "Assigns the Hotbar to the Offhand,\nand the Utility Belt to the Main Hand.",
+  "inventorio.config.swapped_hands.disabled": "§cSwap Main- and Offhand [Disabled]",
+  "inventorio.config.swapped_hands.disabled.tooltip": "Assigns the Hotbar to the Offhand,\nand the Utility Belt to the Main Hand.\n§cDisabled by a server/shared config!",
 
   "inventorio.config.segmented_hotbar_mode.OFF": "§cNo",
   "inventorio.config.segmented_hotbar_mode.ONLY_VISUAL": "§dVisual Only",

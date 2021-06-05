@@ -8,9 +8,9 @@ class UseBoostRocketC2SPacket
 {
     fun consume(supplier: Supplier<NetworkEvent.Context>)
     {
-        val sender = supplier.get().sender
+        val sender = supplier.get().sender ?: return
         supplier.get().enqueueWork {
-            sender?.inventoryAddon?.fireRocketFromInventory()
+            sender.inventoryAddon?.fireRocketFromInventory()
         }
         supplier.get().packetHandled = true
     }

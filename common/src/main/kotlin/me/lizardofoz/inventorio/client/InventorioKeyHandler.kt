@@ -6,13 +6,14 @@ import me.lizardofoz.inventorio.mixin.client.accessor.MinecraftClientAccessor
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon.Companion.inventoryAddon
 import me.lizardofoz.inventorio.util.SegmentedHotbar
-import me.lizardofoz.inventorio.util.hotbarBlackList
-import me.lizardofoz.inventorio.util.toolBeltWhiteList
+import me.lizardofoz.inventorio.util.usageHotbarBlackList
+import me.lizardofoz.inventorio.util.usageDisplayToolWhiteList
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
+import net.minecraft.item.ItemStack
 import net.minecraft.text.TranslatableText
 import net.minecraft.util.Hand
 
@@ -24,9 +25,9 @@ object InventorioKeyHandler
         //Some items which can be used as a tool (e.g. trident) would REPLACE a selected hotbar stack upon use.
         //But something like VANILLA axes and shovels work fine.
         //Some modded stuff breaks it tho.
-        val displayTool = PlayerInventoryAddon.Client.local.mainHandDisplayTool
-        var useMainHand = (displayTool.isEmpty || toolBeltWhiteList.invoke(displayTool)) && !hotbarBlackList.invoke(player.getStackInHand(Hand.MAIN_HAND))
-        var useOffHand = !hotbarBlackList.invoke(player.getStackInHand(Hand.OFF_HAND))
+        val displayTool = player.inventoryAddon?.displayTool ?: ItemStack.EMPTY
+        var useMainHand = (displayTool.isEmpty || usageDisplayToolWhiteList.invoke(displayTool)) && !usageHotbarBlackList.invoke(player.getStackInHand(Hand.MAIN_HAND))
+        var useOffHand = !usageHotbarBlackList.invoke(player.getStackInHand(Hand.OFF_HAND))
 
         if (PlayerInventoryAddon.Client.triesToUseUtility)
             useMainHand = false
@@ -63,11 +64,6 @@ object InventorioKeyHandler
         return true
     }
 
-    private fun openSettings()
-    {
-        MinecraftClient.getInstance().openScreen(InventorioConfigScreenMenu.get(MinecraftClient.getInstance().currentScreen))
-    }
-
     fun tick()
     {
         val client = MinecraftClient.getInstance()
@@ -77,7 +73,7 @@ object InventorioKeyHandler
         if ((client as MinecraftClientAccessor).itemUseCooldown <= 0)
         {
             if (InventorioControls.keyUseUtility.isPressed && !player.isUsingItem)
-                inventoryAddon.activateSelectedUtility()
+                PlayerInventoryAddon.Client.activateSelectedUtility()
             if (player.isFallFlying && InventorioControls.keyFireBoostRocket.isThisOrVanillaPressed)
                 inventoryAddon.fireRocketFromInventory()
         }
@@ -95,7 +91,7 @@ object InventorioKeyHandler
         if (!InventorioControls.optionToggleKeysEnabled)
         {
             if (InventorioControls.keyOpenSettingsMenu.wasPressed())
-                openSettings()
+                client.openScreen(InventorioConfigScreenMenu.get(client.currentScreen))
         }
         else
         {
@@ -107,6 +103,8 @@ object InventorioKeyHandler
                 player.sendMessage(TranslatableText("inventorio.option_toggle_key.can_throw_unloyal_trident." + InventorioConfig.toggleCanThrowUnloyalTrident()), true)
             if (InventorioControls.keyOptionToggleUseItemAppliesToOffhand.wasPressed())
                 player.sendMessage(TranslatableText("inventorio.option_toggle_key.use_item_applies_to_offhand." + InventorioConfig.toggleUseItemAppliesToOffhand()), true)
+            if (InventorioControls.keyOptionToggleSwappedHands.wasPressed())
+                player.sendMessage(TranslatableText("inventorio.option_toggle_key.swapped_hands." + InventorioConfig.toggleSwappedHands()), true)
         }
     }
 }

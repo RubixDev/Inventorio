@@ -29,14 +29,14 @@ interface InventoryDuck
 val ItemStack.isNotEmpty: Boolean
     get() = !this.isEmpty
 
-val toolBeltSlotPredicates = generateToolBeltPredicates()
+val toolBeltSlotFilters = generateToolBeltPredicates()
 
-val toolBeltWhiteList = { it: ItemStack ->
+val usageDisplayToolWhiteList = { it: ItemStack ->
     val itemClass = it.item.javaClass
     itemClass === AxeItem::javaClass || itemClass === ShovelItem::javaClass
 }
 
-val hotbarBlackList = { it: ItemStack ->
+val usageHotbarBlackList = { it: ItemStack ->
     !InventorioConfig.canThrowUnloyalTrident && (it.item is TridentItem) && EnchantmentHelper.getLoyalty(it) <= 0 && EnchantmentHelper.getRiptide(it) <= 0
 }
 
