@@ -1,6 +1,7 @@
 package me.lizardofoz.inventorio.mixin;
 
 import me.lizardofoz.inventorio.packet.InventorioNetworking;
+import me.lizardofoz.inventorio.util.MixinHelpers;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -26,8 +27,15 @@ public class PlayerManagerMixin
      * This inject sends the last utility slot, saved by the server, from the server to the client
      */
     @Inject(method = "respawnPlayer", at = @At(value = "RETURN"), require = 0)
-    private void inventorioSetPlayerSettings(ServerPlayerEntity player, boolean alive, CallbackInfoReturnable<ServerPlayerEntity> cir)
+    private void inventorioSetPlayerSettings(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfoReturnable<ServerPlayerEntity> cir)
     {
-        InventorioNetworking.Companion.getINSTANCE().s2cSendSelectedUtilitySlot(player);
+        ServerPlayerEntity newPlayer = cir.getReturnValue();
+        MixinHelpers.withInventoryAddon(newPlayer, newAddon -> {
+            MixinHelpers.withInventoryAddon(oldPlayer, oldAddon -> {
+                newAddon.setSwappedHands(oldAddon.getSwappedHands());
+                newAddon.setSelectedUtility(oldAddon.getSelectedUtility());
+            });
+        });
+        InventorioNetworking.Companion.getINSTANCE().s2cSendSelectedUtilitySlot(newPlayer);
     }
 }

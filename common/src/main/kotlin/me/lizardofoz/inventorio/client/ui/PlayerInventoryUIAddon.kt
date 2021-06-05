@@ -25,7 +25,7 @@ object PlayerInventoryUIAddon
 
     fun init(inventoryScreen: InventoryScreen)
     {
-        inventoryAddon = PlayerInventoryAddon.Client.local
+        inventoryAddon = PlayerInventoryAddon.Client.local!!
         screenAccessor = inventoryScreen as HandledScreenAccessor
         onResize()
     }
@@ -46,7 +46,7 @@ object PlayerInventoryUIAddon
 
     fun makeWidgetButton(inventoryScreen: InventoryScreen, recipeBook: RecipeBookWidget, narrow: Boolean): TexturedButtonWidget
     {
-        val buttonYOffset = GUI_RECIPE_WIDGET_BUTTON_OFFSET.y + PlayerInventoryAddon.Client.local.getDeepPocketsRowCount() * 10
+        val buttonYOffset = GUI_RECIPE_WIDGET_BUTTON_OFFSET.y + (PlayerInventoryAddon.Client.local?.getDeepPocketsRowCount() ?: 0) * 10
 
         screenAccessor.x = recipeBook.findLeftEdge(narrow, inventoryScreen.width, screenAccessor.backgroundWidth - GUI_RECIPE_WIDGET_WINDOW_OFFSET.y)
         return TexturedButtonWidget(

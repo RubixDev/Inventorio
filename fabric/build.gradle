@@ -31,6 +31,9 @@ dependencies {
     modImplementation ("com.github.Geometrically:Gravestones:${rootProject.gravestones_tag}") {
         transitive = false
     }
+    modImplementation ("com.github.CerulanLumina:better-graves:${rootProject.bettergraves_tag}") {
+        transitive = false
+    }
 
     implementation(project(path: ":common")) {
         transitive = false

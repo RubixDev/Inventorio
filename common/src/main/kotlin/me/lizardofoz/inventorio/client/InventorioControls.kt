@@ -70,6 +70,13 @@ object InventorioControls
         "inventorio.keys.category"
     )
 
+    val keyOptionToggleSwappedHands = KeyBinding(
+        "inventorio.keys.option_toggle_swapped_hands",
+        InputUtil.Type.KEYSYM,
+        GLFW.GLFW_KEY_UNKNOWN,
+        "inventorio.keys.category"
+    )
+
     val keyOpenSettingsMenu = KeyBinding(
         "inventorio.keys.open_settings",
         InputUtil.Type.KEYSYM,
@@ -88,7 +95,8 @@ object InventorioControls
         keyOptionToggleSegmentedHotbar,
         keyOptionToggleCanThrowUnloyalTrident,
         keyOptionToggleScrollWheelUtilityBelt,
-        keyOptionToggleUseItemAppliesToOffhand
+        keyOptionToggleUseItemAppliesToOffhand,
+        keyOptionToggleSwappedHands
     )
     var optionToggleKeysEnabled = false
 }

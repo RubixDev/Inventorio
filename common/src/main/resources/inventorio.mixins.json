@@ -7,18 +7,20 @@
     "ExperienceOrbEntityMixin",
     "PlayerEntityMixin",
     "PlayerInventoryMixin",
+    "PlayerManagerMixin",
     "PlayerScreenHandlerMixin",
     "ScreenHandlerMixin",
-    "PlayerManagerMixin",
     "accessor.ScreenHandlerAccessor",
     "accessor.SimpleInventoryAccessor",
     "accessor.SlotAccessor",
     "optional.bowfix.BowItemMixin",
     "optional.enderchest.EnderChestBlockMinix",
-    "optional.enderchest.PlayerEntityMixin"
+    "optional.enderchest.PlayerEntityMixin",
+    "optional.totem.LivingEntityMixin"
   ],
   "client": [
     "client.ClientPlayerInteractionManagerMixin",
+    "client.ClientPlayNetworkHandlerMixin",
     "client.CreativeInventoryScreenMixin",
     "client.HandledScreenMixin",
     "client.InGameHudMixinHP",
@@ -26,7 +28,6 @@
     "client.InventoryScreenMixin",
     "client.MinecraftClientMixin",
     "client.accessor.HandledScreenAccessor",
-    "client.accessor.InGameHudAccessor",
     "client.accessor.MinecraftClientAccessor"
   ],
   "injectors": {

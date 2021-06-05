@@ -7,8 +7,6 @@ import net.minecraft.entity.EquipmentSlot
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.network.packet.s2c.play.EntityEquipmentUpdateS2CPacket
 import net.minecraft.server.world.ServerWorld
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.api.distmarker.OnlyIn
 import net.minecraftforge.fml.network.NetworkDirection
 import net.minecraftforge.fml.network.NetworkEvent
 import java.util.function.Supplier
@@ -17,26 +15,25 @@ class SelectUtilitySlotPacket
 {
     private var utilitySlot = 0
 
-    @Suppress("unused")
-    constructor()
-    {
-    }
-
+    //Sender's constructor
     constructor(utilitySlot: Int)
     {
         this.utilitySlot = utilitySlot
     }
 
+    //Receiver's constructor
     constructor(buf: PacketByteBuf)
     {
         this.utilitySlot = buf.readByte().toInt()
     }
 
+    //Sender's writer
     fun write(buf: PacketByteBuf)
     {
         buf.writeByte(utilitySlot)
     }
 
+    //Receiver's consumer
     fun consume(supplier: Supplier<NetworkEvent.Context>)
     {
         if (supplier.get().direction == NetworkDirection.PLAY_TO_SERVER)
@@ -48,18 +45,13 @@ class SelectUtilitySlotPacket
                 val broadcastPacket = EntityEquipmentUpdateS2CPacket(player.entityId, listOf(Pair(EquipmentSlot.OFFHAND, player.offHandStack)))
                 (player.world as ServerWorld).chunkManager.sendToOtherNearbyPlayers(player, broadcastPacket)
             }
-            supplier.get().packetHandled = true
         }
         else
         {
-            supplier.get().enqueueWork { selectOnClient() }
-            supplier.get().packetHandled = true
+            supplier.get().enqueueWork {
+                PlayerInventoryAddon.Client.local?.selectedUtility = utilitySlot
+            }
         }
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    private fun selectOnClient()
-    {
-        PlayerInventoryAddon.Client.local.selectedUtility = utilitySlot
+        supplier.get().packetHandled = true
     }
 }

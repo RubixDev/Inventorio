@@ -2,40 +2,32 @@ package me.lizardofoz.inventorio.client.ui
 
 import com.mojang.blaze3d.systems.RenderSystem
 import me.lizardofoz.inventorio.client.config.InventorioConfig
-import me.lizardofoz.inventorio.mixin.client.accessor.InGameHudAccessor
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon
 import me.lizardofoz.inventorio.util.*
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawableHelper
-import net.minecraft.client.gui.hud.InGameHud
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.util.Arm
 import net.minecraft.util.Identifier
-import net.minecraft.util.Util
 import net.minecraft.util.math.MathHelper
-import org.jetbrains.annotations.NotNull
+import net.minecraft.world.GameMode
 
 @Environment(EnvType.CLIENT)
 object HotbarHUDRenderer
 {
     private val WIDGETS_TEXTURE = Identifier("inventorio", "textures/gui/widgets.png")
     private val client = MinecraftClient.getInstance()!!
-    var mainHandDisplayItem = ItemStack.EMPTY!!
-    var mainHandDisplayTimeStamp = 0L
 
-    fun renderHotbarItself(playerEntity: PlayerEntity, hud: @NotNull InGameHud, tickDelta: Float, matrices: @NotNull MatrixStack)
+    fun renderSegmentedHotbar(matrices: MatrixStack): Boolean
     {
-        if (InventorioConfig.segmentedHotbar == SegmentedHotbar.OFF)
-        {
-            (hud as InGameHudAccessor).renderAHotbar(tickDelta, matrices)
-            return
-        }
-        //If we're here, we've been asked to render the Segmented Hotbar
+        if (InventorioConfig.segmentedHotbar == SegmentedHotbar.OFF || isHidden())
+            return false
 
+        val playerEntity = client.cameraEntity as? PlayerEntity ?: return false
         val inventory = playerEntity.inventory
         val scaledWidthHalved = client.window.scaledWidth / 2 - 30
         val scaledHeight = client.window.scaledHeight
@@ -82,18 +74,31 @@ object HotbarHUDRenderer
             client.itemRenderer.renderInGuiWithOverrides(playerEntity, itemStack, x, y)
             client.itemRenderer.renderGuiItemOverlay(client.textRenderer, itemStack, x, y)
         }
+        return true
+    }
+
+    private fun isHidden(): Boolean
+    {
+        if (client.interactionManager == null
+            || client.interactionManager?.currentGameMode == GameMode.SPECTATOR
+            || client.options.hudHidden
+        )
+            return true
+        val player = client.cameraEntity as? PlayerEntity
+        return player == null || !player.isAlive || player.playerScreenHandler == null
     }
 
     @Suppress("DEPRECATION")
     fun renderHotbarAddons(matrices: MatrixStack)
     {
-        RenderSystem.disableDepthTest()
-        RenderSystem.enableBlend()
-        val inventoryAddon = PlayerInventoryAddon.Client.local
+        if (isHidden())
+            return
+
+        val inventoryAddon = PlayerInventoryAddon.Client.local ?: return
         val player = inventoryAddon.player
 
         val utilBeltDisplay = inventoryAddon.getDisplayedUtilities()
-        val selectedItem = player.inventory.getStack(player.inventory.selectedSlot)
+        val selectedHotbarItem = inventoryAddon.getSelectedHotbarStack()
 
         val scaledWidthHalved = client.window.scaledWidth / 2 - 30
         val scaledHeight = client.window.scaledHeight
@@ -101,7 +106,10 @@ object HotbarHUDRenderer
         val segmentedHotbarMode = InventorioConfig.segmentedHotbar != SegmentedHotbar.OFF
         val segmentedModeOffset = if (segmentedHotbarMode) HUD_SEGMENTED_HOTBAR_GAP else 0
 
-        val rightHanded = player.mainArm == Arm.RIGHT
+        var rightHanded = player.mainArm == Arm.RIGHT
+        if (inventoryAddon.swappedHands)
+            rightHanded = !rightHanded
+
         val leftHandedUtilityBeltOffset = if (rightHanded) 0 else (LEFT_HANDED_UTILITY_BELT_OFFSET + segmentedModeOffset * 2)
         val leftHandedDisplayToolOffset = if (rightHanded) 0 else (LEFT_HANDED_DISPLAY_TOOL_OFFSET - segmentedModeOffset * 2)
 
@@ -109,14 +117,9 @@ object HotbarHUDRenderer
 
         //Draw the frame of a tool currently in use (one on the opposite side from the offhand)
 
-        //Here's how it works: if [HotbarHUDRenderer#mainHandDisplayItem] and [mainHandDisplayTimeStamp] are valid,
-        //It means somethings wants to dispaly this item on the "current tool" widget instead of the actual tool from the toolbelt
-        //If that's not present, then we display an actual tool from the tool belt, but only if it's currently used
-        val activeDisplayTool = if (mainHandDisplayItem.isNotEmpty && mainHandDisplayTimeStamp >= Util.getMeasuringTimeMs())
-            mainHandDisplayItem
-        else
-            inventoryAddon.mainHandDisplayTool
-        if (activeDisplayTool.isNotEmpty && activeDisplayTool != selectedItem)
+        RenderSystem.disableDepthTest()
+        RenderSystem.enableBlend()
+        if (inventoryAddon.displayTool.isNotEmpty && inventoryAddon.displayTool != selectedHotbarItem)
         {
             DrawableHelper.drawTexture(matrices,
                     scaledWidthHalved + leftHandedDisplayToolOffset + HUD_ACTIVE_TOOL_FRAME.x + segmentedModeOffset,
@@ -182,11 +185,11 @@ object HotbarHUDRenderer
         }
 
         //Draw the active tool item itself
-        if (activeDisplayTool.isNotEmpty && activeDisplayTool != selectedItem)
+        if (inventoryAddon.displayTool.isNotEmpty && inventoryAddon.displayTool != selectedHotbarItem)
         {
             renderItem(
                     player,
-                    activeDisplayTool,
+                inventoryAddon.displayTool,
                     scaledWidthHalved + leftHandedDisplayToolOffset + SLOT_ACTIVE_TOOL_FRAME.x + segmentedModeOffset,
                     scaledHeight - SLOT_ACTIVE_TOOL_FRAME.y,
             )

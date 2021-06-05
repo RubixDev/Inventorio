@@ -37,6 +37,7 @@
   },
   "suggests": {
     "trinkets": "*",
-    "cloth-config2": "*"
+    "cloth-config2": "*",
+    "bettergraves": "*"
   }
 }
