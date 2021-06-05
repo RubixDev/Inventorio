@@ -1,22 +1,22 @@
 # Inventorio - An inventory enhancement mod for Minecraft (Forge / Fabric)
 
-## Showcase Video:
+## Showcase Video
 [![Video Demonstration](https://img.youtube.com/vi/ZXQb49LaC30/maxresdefault.jpg)](https://youtu.be/ZXQb49LaC30)
  
 ## About
-This is my vision of the Inventory Update for Minecraft.
-[Features](#Features) I believe are in line with Mojang's vision and could be potentially added to the game.
+This is my vision of the Inventory Update for Minecraft. Of [features](#Features) I believe are in line with Mojang's vision and could be potentially added to the game.
 
 ### 1.17?
-1.17 version is coming soon. 1.16.3+ will also be supported updates until it's no longer the main modded version.
+1.17 version is coming soon. 1.16.3+ will also receive updates until it's no longer the main modded version.
 
 ## Installation
-Grab the jar file from the [Release page](https://github.com/Lizard-Of-Oz/Inventorio/releases/). CurseForge and Modrinth pages are coming soon.
+Grab the jar file from the [Release page](https://github.com/Lizard-Of-Oz/Inventorio/releases/).
+You can also find this mod on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/inventorio) and [Modrinth](https://modrinth.com/mod/inventorio).
  
 Copy the jar file into `%root_folder%/mods/` alongside other mods.
-
+### Dependencies
 Dependencies for Fabric:
-* [Fabric API](https://github.com/FabricMC/fabric) (most mods require it anyway)
+* [Fabric API](https://www.curseforge.com/minecraft/mc-mods/fabric-api)
 * [Fabric Language Kotlin](https://www.curseforge.com/minecraft/mc-mods/fabric-language-kotlin)
 * [Cloth Config (Fabric)](https://www.curseforge.com/minecraft/mc-mods/cloth-config)
 
@@ -64,9 +64,10 @@ This option prevents you from throwing a Trident without Loyalty.
 
 #### Swapped Hands
 This option allows to assign the vanilla Hotbar to your Offhand, and the Utility Belt to your Main Hand.
+
 ![image](https://user-images.githubusercontent.com/701551/120894901-e828dd00-c644-11eb-86aa-6935ad71002a.png)
 
-### Server/Shared Config
+## Server/Shared Config
 To improve mod compatibility, some features can be disabled globally.
 
 This requires changing the config at `%root_folder%/config/inventorio_shared.json`, and distributing said config to all players.
@@ -83,7 +84,7 @@ If you encounter bugs or compatibility issues with other mods, please report the
 
 If you want to request a feature or modification, please use an Issue Tracker or make a [Pull Request](https://github.com/Lizard-Of-Oz/Inventorio/pulls)  
 
-### Confirmed compatible mods:
+## Confirmed compatible mods
 Fabric: 
 * [Gravestones](https://github.com/Geometrically/Gravestones)
 * [BetterGraves](https://github.com/CerulanLumina/better-graves)
