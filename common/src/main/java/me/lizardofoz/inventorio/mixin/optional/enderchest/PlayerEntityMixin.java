@@ -2,7 +2,7 @@ package me.lizardofoz.inventorio.mixin.optional.enderchest;
 
 import com.mojang.authlib.GameProfile;
 import me.lizardofoz.inventorio.mixin.accessor.SimpleInventoryAccessor;
-import me.lizardofoz.inventorio.util.GeneralConstantsKt;
+import me.lizardofoz.inventorio.util.GeneralConstants;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EnderChestInventory;
 import net.minecraft.item.ItemStack;
@@ -27,7 +27,7 @@ public abstract class PlayerEntityMixin
     private void inventorioResizeEnderChest(World world, BlockPos pos, float yaw, GameProfile profile, CallbackInfo ci)
     {
         SimpleInventoryAccessor accessor = ((SimpleInventoryAccessor) getEnderChestInventory());
-        accessor.setSize(GeneralConstantsKt.VANILLA_ROW_LENGTH * 6);
-        accessor.setStacks(DefaultedList.ofSize(GeneralConstantsKt.VANILLA_ROW_LENGTH * 6, ItemStack.EMPTY));
+        accessor.setSize(GeneralConstants.VANILLA_ROW_LENGTH * 6);
+        accessor.setStacks(DefaultedList.ofSize(GeneralConstants.VANILLA_ROW_LENGTH * 6, ItemStack.EMPTY));
     }
 }

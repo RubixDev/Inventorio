@@ -22,7 +22,7 @@ class IntProgressionIterator(intProgression: IntProgression) : Iterator<IntProgr
     }
 }
 
-data class IntProgressionIndices(val absoluteIndex: Int, val relativeIndex: Int)
+data class IntProgressionIndices(@JvmField val absoluteIndex: Int, @JvmField val relativeIndex: Int)
 
 infix fun Int.expandBy(addition: Int): IntRange
 {

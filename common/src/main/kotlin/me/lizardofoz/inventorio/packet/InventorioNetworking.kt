@@ -6,10 +6,12 @@ import net.minecraft.server.network.ServerPlayerEntity
 
 interface InventorioNetworking
 {
-    fun s2cSendSelectedUtilitySlot(player: ServerPlayerEntity)
+    fun s2cSelectUtilitySlot(player: ServerPlayerEntity)
+
+    fun s2cGlobalSettings(player: ServerPlayerEntity)
 
     @Environment(EnvType.CLIENT)
-    fun c2sSendSelectedUtilitySlot(selectedUtility: Int)
+    fun c2sSelectUtilitySlot(selectedUtility: Int)
 
     @Environment(EnvType.CLIENT)
     fun c2sUseBoostRocket()
@@ -18,10 +20,13 @@ interface InventorioNetworking
     fun c2sSetSwappedHands(swappedHands: Boolean)
 
     @Environment(EnvType.CLIENT)
-    fun c2sSendItemToUtilityBelt(sourceSlot: Int)
+    fun c2sMoveItemToUtilityBelt(sourceSlot: Int)
 
     companion object
     {
+        @JvmStatic
+        @get:JvmName("getInstance")
+        @set:JvmName("setInstance")
         lateinit var INSTANCE: InventorioNetworking
     }
 }

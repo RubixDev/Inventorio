@@ -13,10 +13,10 @@ import kotlin.math.sign
 
 abstract class PlayerInventoryExtension protected constructor(val player: PlayerEntity) : SimpleInventory(DEEP_POCKETS_MAX_SIZE + TOOL_BELT_SIZE + UTILITY_BELT_SIZE)
 {
-    val stacks: MutableList<ItemStack>
-    val deepPockets: MutableList<ItemStack>
-    val toolBelt: MutableList<ItemStack>
-    val utilityBelt: MutableList<ItemStack>
+    @JvmField val stacks: MutableList<ItemStack>
+    @JvmField val deepPockets: MutableList<ItemStack>
+    @JvmField val toolBelt: MutableList<ItemStack>
+    @JvmField val utilityBelt: MutableList<ItemStack>
 
     var selectedUtility = 0
         set(value)
@@ -64,7 +64,7 @@ abstract class PlayerInventoryExtension protected constructor(val player: Player
         if (nextSlot.isEmpty)
             return false
         selectedUtility = slotIndex
-        InventorioNetworking.INSTANCE.c2sSendSelectedUtilitySlot(slotIndex)
+        InventorioNetworking.INSTANCE.c2sSelectUtilitySlot(slotIndex)
         return true
     }
 

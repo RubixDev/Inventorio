@@ -19,6 +19,11 @@ import net.minecraft.screen.PlayerScreenHandler
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.slot.Slot
 
+/**
+ * This class is an addon to the Player Screen Handler. It's a thing that manages the DISPLAYED SLOTS in the Player Inventory UI.
+ * Don't confuse with [PlayerInventoryAddon] that's responsible for handling the actual inventory,
+ *   and with [PlayerInventoryUIAddon] that's responsible for the client visuals.
+ */
 class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScreenHandler, player: PlayerEntity)
 {
     private val inventoryAddon = player.inventoryAddon!!
@@ -26,10 +31,12 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
     //Other mods can add additional slots into player's inventory.
     // Thus, we can't attach the slot numbers of our slots to numeric constants,
     // and we calculate it dynamically when we create a handler addon
-    val deepPocketsRange: IntRange
-    val toolBeltRange: IntRange
-    val utilityBeltRange: IntRange
-    val utilityBeltRangeExtendedPart: IntRange
+    /**
+     * Note: returns ALL Deep Pocket Slots, regardless if they're available to the player or not
+     */
+    @JvmField val deepPocketsRange: IntRange
+    @JvmField val toolBeltRange: IntRange
+    @JvmField val utilityBeltRange: IntRange
 
     //==============================
     //Injects. These functions are either injected or redirected to by a mixin of a [PlayerScreenHandler] class
@@ -52,7 +59,6 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
         deepPocketsRange = addonSlotsIndexShift expandBy DEEP_POCKETS_MAX_SIZE
         toolBeltRange = deepPocketsRange.last + 1 expandBy TOOL_BELT_SIZE
         utilityBeltRange = toolBeltRange.last + 1 expandBy UTILITY_BELT_SIZE
-        utilityBeltRangeExtendedPart = utilityBeltRange.first + 4 .. utilityBeltRange.last
 
         //Extended Inventory Section (Deep Pockets Enchantment)
         for ((absoluteIndex, relativeIndex) in INVENTORY_ADDON_DEEP_POCKETS_RANGE.withRelativeIndex())
@@ -104,12 +110,12 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
                 return itemStackStaticCopy
             }
             //Try to send an item into the Tool Belt
-            for ((index, predicate) in toolBeltSlotFilters.withIndex())
+            for ((index, filter) in toolBeltSlotFilters.withIndex())
             {
                 val absoluteIndex = toolBeltRange.first + index
-                //Yes, we ultimately invoke this predicate twice (here and within the ToolBeltSlot),
+                //Yes, we ultimately invoke this filter twice (here and within the ToolBeltSlot),
                 //  but have you seen the body of ScreenHandler#insertItem method?
-                if (predicate(itemStackDynamic) && screenHandlerAccessor.insertAnItem(itemStackDynamic, absoluteIndex, absoluteIndex + 1, false))
+                if (filter(itemStackDynamic) && screenHandlerAccessor.insertAnItem(itemStackDynamic, absoluteIndex, absoluteIndex + 1, false))
                     return itemStackStaticCopy
             }
         }
@@ -160,7 +166,7 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
             if (screenHandlerAccessor.insertAnItem(itemStackDynamic, beltRange.first, beltRange.last + 1, true))
             {
                 if (!screenHandler.onServer)
-                    InventorioNetworking.INSTANCE.c2sSendItemToUtilityBelt(sourceSlot.id)
+                    InventorioNetworking.INSTANCE.c2sMoveItemToUtilityBelt(sourceSlot.id)
                 return true
             }
             return false
@@ -173,7 +179,7 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
         )
         {
             if (!screenHandler.onServer)
-                InventorioNetworking.INSTANCE.c2sSendItemToUtilityBelt(sourceSlot.id)
+                InventorioNetworking.INSTANCE.c2sMoveItemToUtilityBelt(sourceSlot.id)
             return true
         }
         return false
@@ -206,7 +212,7 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
             }
             slot.canTakeItems = false
         }
-        for (i in utilityBeltRangeExtendedPart)
+        for (i in utilityBeltRange.first + 4 .. utilityBeltRange.last)
         {
             val slot = screenHandler.getSlot(i) as DeepPocketsSlot
             if (deepPocketsRange.isEmpty()) //If we don't have Deep Pockets on us, we need to drop items within the extended utility belt
@@ -261,26 +267,27 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
     }
 
     //Note: this class returns the range within the SCREEN HANDLER, which is different from the range within the inventory
-    private fun getAvailableUtilityBeltRange(): IntRange
+    fun getAvailableUtilityBeltRange(): IntRange
     {
         return if (inventoryAddon.getDeepPocketsRowCount() > 0) utilityBeltRange else utilityBeltRange.first expandBy 4
     }
 
     //Note: this class returns the range within the SCREEN HANDLER, which is different from the range within the inventory
-    private fun getAvailableDeepPocketsRange(): IntRange
+    fun getAvailableDeepPocketsRange(): IntRange
     {
         return deepPocketsRange.first until
                 deepPocketsRange.first + inventoryAddon.getDeepPocketsRowCount() * VANILLA_ROW_LENGTH
     }
 
     //Note: this class returns the range within the SCREEN HANDLER, which is different from the range within the inventory
-    private fun getUnavailableDeepPocketsRange(): IntRange
+    fun getUnavailableDeepPocketsRange(): IntRange
     {
         return getAvailableDeepPocketsRange().last + 1..deepPocketsRange.last
     }
 
     companion object
     {
+        @JvmStatic
         val PlayerEntity.screenHandlerAddon: PlayerScreenHandlerAddon?
             get() = (this.playerScreenHandler as ScreenHandlerDuck).screenHandlerAddon
     }

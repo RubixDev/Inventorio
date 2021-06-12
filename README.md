@@ -50,7 +50,7 @@ This can be disabled in the server-wide config, but you need to distribute the s
 #### Infinity Bow Requires No Arrow
 This mod fixes a Vanilla bug when you need an arrow to use the Infinity Bow.
 
-### Player Options
+### Player Settings
 #### Segmented Hotbar
 Accessing slots after 5 with a keyboard might be cumbersome because the keys are just too far away. This feature makes the first keystroke select a section, and the second keystroke will select an item inside that section.
 
@@ -67,15 +67,21 @@ This option allows to assign the vanilla Hotbar to your Offhand, and the Utility
 
 ![image](https://user-images.githubusercontent.com/701551/120894901-e828dd00-c644-11eb-86aa-6935ad71002a.png)
 
-## Server/Shared Config
-To improve mod compatibility, some features can be disabled globally.
+## Global Settings
+To improve mod compatibility, some features can be disabled on a game-wide level for all players. 
 
-This requires changing the config at `%root_folder%/config/inventorio_shared.json`, and distributing said config to all players.
+Global settings can be accessed by a keybind (only in a single player world) or directly at `%root_folder%/config/inventorio_shared.json` 
+
+Joining a server (either dedicated or hosted from another client) with mismatching global settings will prompt a request to sync your settings and restart the game (recommended).
 
 * `ExpandedEnderChest (default: true)` - when set to `false`, disables mixins responsible for increasing Ender Chest capacity.
 * `InfinityBowNeedsNoArrow (default: true)` - when set to `false`, disables mixins responsible for Infinity Bow requiring no arrows.
 * `TotemFromUtilityBelt (default: true)` - when set to `false`, disables mixins responsible for Totem of Undying going off from any Utility Belt slot.
-* `AllowSwappedHands (default: true)` - when set to `false`, removes the option to [Swap Hands](#swapped-hands)
+* `AllowSwappedHands (default: true)` - when set to `false`, removes the option to [Swap Hands](#swapped-hands).
+
+
+* `Integrations.Gravestones (default: true)` - if Gravestones Mod is present, injects into it to fix compatibility bugs.
+* `Integrations.JEI (default: true)` - if JEI is present, injects into it to fix compatibility bugs.
 
 ## Feedback, Use in Modpacks and Mod Compatibility
 Feel free to use this mod in a modpack.
@@ -84,12 +90,29 @@ If you encounter bugs or compatibility issues with other mods, please report the
 
 If you want to request a feature or modification, please use an Issue Tracker or make a [Pull Request](https://github.com/Lizard-Of-Oz/Inventorio/pulls)  
 
-## Confirmed compatible mods
-Fabric: 
-* [Gravestones](https://github.com/Geometrically/Gravestones)
+## Inventorio as a Dependency for Your Mod
+Until this notice is removed (Summer 2021), the structure of the mod is still subject to change, but you can contact me if you need particular functionality or want something to stay consistent.
+
+If you want to use this mode as a dependency, I recommend using [JitPack](https://jitpack.io/)  
+
+## Toolbelt & Item Tags
+By default, any tool inheriting its Java class from a vanilla tool (e.g. `PickaxeItem.java`) will be accepted by a corresponding slot.
+
+In addition, any tool with [item tags](https://fabricmc.net/wiki/tutorial:tags) `inventorio:%item_type%` or `fabric:%item_type%`/`forge:%item_type%` will be accepted by a corresponding slot.
+
+Examples: `fabric:pickaxes` or `inventorio:shears`
+
+You can blacklist a tool from a toolbelt slot by adding giving it a tag `inventorio:%item_type%_blacklist` 
+
+Notice, that `%item_type%` is spelled in plural. Available item types: `pickaxes`, `swords`, `axes`, `shovels`, `hoes`, `shears`
+
+## (Somewhat) Confirmed Compatible Mods
+Fabric:
 * [BetterGraves](https://github.com/CerulanLumina/better-graves)
+* [Gravestones](https://github.com/Geometrically/Gravestones)
 * [Trinkets](https://github.com/emilyalexandra/trinkets) - Partially. This mod removes Hand and Offhand Trinkets slots to make space for the Utility Belt. Full compatibility requires changes in Trinkets. 
 
 Forge:
 * [GraveStone Mod](https://www.curseforge.com/minecraft/mc-mods/gravestone-mod)
 * [Quark](https://www.curseforge.com/minecraft/mc-mods/quark)
+* [JEI](https://www.curseforge.com/minecraft/mc-mods/jei)

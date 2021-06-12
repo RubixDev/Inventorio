@@ -9,9 +9,9 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 
 @Suppress("UNUSED_PARAMETER")
-object SendItemToUtilityBeltC2SPacket
+object MoveItemToUtilityBeltC2SPacket
 {
-    val identifier = Identifier("inventorio", "send_to_utility_c2s")
+    val identifier = Identifier("inventorio", "move_to_utility_c2s")
 
     fun consume(server: MinecraftServer, player: ServerPlayerEntity, handler: ServerPlayNetworkHandler, buf: PacketByteBuf, responseSender: PacketSender)
     {

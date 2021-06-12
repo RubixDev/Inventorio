@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.ListTag
 
-object InventorioPlayerSerializer
+object PlayerAddonSerializer
 {
     fun serialize(inventoryAddon: PlayerInventoryAddon, inventorioTag: CompoundTag)
     {
@@ -16,7 +16,7 @@ object InventorioPlayerSerializer
         inventorioTag.put("ToolBelt", serializeSection(inventoryAddon.toolBelt))
     }
 
-    private fun serializeSection(section: List<ItemStack>): ListTag
+    fun serializeSection(section: List<ItemStack>): ListTag
     {
         val resultTag = ListTag()
         for ((i, itemStack) in section.withIndex())
@@ -43,7 +43,7 @@ object InventorioPlayerSerializer
             ejectVanillaOffhand(inventoryAddon.player)
     }
 
-    private fun deserializeSection(inventorySection: MutableList<ItemStack>, sectionTag: ListTag)
+    fun deserializeSection(inventorySection: MutableList<ItemStack>, sectionTag: ListTag)
     {
         for (i in inventorySection.indices)
             inventorySection[i] = ItemStack.EMPTY
@@ -62,7 +62,7 @@ object InventorioPlayerSerializer
      * If a player somehow has items in their offhand (the vanilla offhand, not the Utility Belt), eject the items
      * And yes, it has to be here, because when PlayerInventoryAddon is created, player's inventory is not fully loaded
      */
-    private fun ejectVanillaOffhand(player: PlayerEntity)
+    fun ejectVanillaOffhand(player: PlayerEntity)
     {
         val offHandItems = ArrayList(player.inventory.offHand)
         player.inventory.offHand.clear()

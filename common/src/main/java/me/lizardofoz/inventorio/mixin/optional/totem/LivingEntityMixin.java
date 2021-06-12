@@ -31,10 +31,10 @@ public abstract class LivingEntityMixin
         if (stackInHand.getItem() == Items.TOTEM_OF_UNDYING || !((Object) this instanceof PlayerEntity))
             return stackInHand;
 
-        PlayerInventoryAddon addon = PlayerInventoryAddon.Companion.getInventoryAddon((PlayerEntity) (Object) this);
+        PlayerInventoryAddon addon = PlayerInventoryAddon.getInventoryAddon((PlayerEntity) (Object) this);
 
         if (addon != null)
-            for (ItemStack itemStack : addon.getUtilityBelt())
+            for (ItemStack itemStack : addon.utilityBelt)
             {
                 if (itemStack.getItem() == Items.TOTEM_OF_UNDYING)
                     return itemStack;

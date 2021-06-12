@@ -10,7 +10,7 @@ import org.lwjgl.glfw.GLFW
 @Environment(EnvType.CLIENT)
 object InventorioControls
 {
-    val keyUseUtility = KeyCoBinding(
+    @JvmField val keyUseUtility = KeyCoBinding(
         "inventorio.keys.combined.with_use_item",
         {MinecraftClient.getInstance()?.options?.keyUse},
         "inventorio.keys.use_utility",
@@ -19,21 +19,21 @@ object InventorioControls
         "inventorio.keys.category"
     )
 
-    val keyNextUtility = KeyBinding(
+    @JvmField val keyNextUtility = KeyBinding(
         "inventorio.keys.next_utility",
         InputUtil.Type.MOUSE,
         GLFW.GLFW_MOUSE_BUTTON_4,
         "inventorio.keys.category"
     )
 
-    val keyPrevUtility = KeyBinding(
+    @JvmField val keyPrevUtility = KeyBinding(
         "inventorio.keys.prev_utility",
         InputUtil.Type.MOUSE,
         GLFW.GLFW_MOUSE_BUTTON_5,
         "inventorio.keys.category"
     )
 
-    val keyFireBoostRocket = KeyCoBinding(
+    @JvmField val keyFireBoostRocket = KeyCoBinding(
         "inventorio.keys.combined.with_jump",
         { MinecraftClient.getInstance()?.options?.keyJump },
         "inventorio.keys.rocket_boost",
@@ -42,61 +42,26 @@ object InventorioControls
         "inventorio.keys.category"
     )
 
-    val keyOptionToggleSegmentedHotbar = KeyBinding(
-        "inventorio.keys.option_toggle_segmented_hotbar_mode",
-        InputUtil.Type.KEYSYM,
-        GLFW.GLFW_KEY_UNKNOWN,
-        "inventorio.keys.category"
-    )
-
-    val keyOptionToggleScrollWheelUtilityBelt = KeyBinding(
-        "inventorio.keys.option_toggle_scroll_wheel_utility_belt",
-        InputUtil.Type.KEYSYM,
-        GLFW.GLFW_KEY_UNKNOWN,
-        "inventorio.keys.category"
-    )
-
-    val keyOptionToggleCanThrowUnloyalTrident = KeyBinding(
-        "inventorio.keys.option_toggle_can_throw_unloyal_trident",
-        InputUtil.Type.KEYSYM,
-        GLFW.GLFW_KEY_UNKNOWN,
-        "inventorio.keys.category"
-    )
-
-    val keyOptionToggleUseItemAppliesToOffhand = KeyBinding(
-        "inventorio.keys.option_toggle_use_item_applies_to_offhand",
-        InputUtil.Type.KEYSYM,
-        GLFW.GLFW_KEY_UNKNOWN,
-        "inventorio.keys.category"
-    )
-
-    val keyOptionToggleSwappedHands = KeyBinding(
-        "inventorio.keys.option_toggle_swapped_hands",
-        InputUtil.Type.KEYSYM,
-        GLFW.GLFW_KEY_UNKNOWN,
-        "inventorio.keys.category"
-    )
-
-    val keyOpenSettingsMenu = KeyBinding(
-        "inventorio.keys.open_settings",
+    @JvmField val keyOpenPlayerSettingsMenu = KeyBinding(
+        "inventorio.keys.open_player_settings",
         InputUtil.Type.KEYSYM,
         GLFW.GLFW_KEY_I,
         "inventorio.keys.category"
     )
 
-    val functionalKeys = arrayOf(
+    @JvmField val keyOpenGlobalSettingsMenu = KeyBinding(
+        "inventorio.keys.open_global_settings",
+        InputUtil.Type.KEYSYM,
+        GLFW.GLFW_KEY_O,
+        "inventorio.keys.category"
+    )
+
+    @JvmField val keys = arrayOf(
         keyUseUtility,
         keyNextUtility,
         keyPrevUtility,
-        keyFireBoostRocket
+        keyFireBoostRocket,
+        keyOpenPlayerSettingsMenu,
+        keyOpenGlobalSettingsMenu
     )
-
-    val optionToggleKeys = arrayOf(
-        keyOptionToggleSegmentedHotbar,
-        keyOptionToggleCanThrowUnloyalTrident,
-        keyOptionToggleScrollWheelUtilityBelt,
-        keyOptionToggleUseItemAppliesToOffhand,
-        keyOptionToggleSwappedHands
-    )
-    var optionToggleKeysEnabled = false
 }

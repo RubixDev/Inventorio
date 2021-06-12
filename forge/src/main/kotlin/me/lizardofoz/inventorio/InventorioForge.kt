@@ -1,11 +1,13 @@
 package me.lizardofoz.inventorio
 
-import me.lizardofoz.inventorio.client.config.InventorioConfig
+import me.lizardofoz.inventorio.config.PlayerSettings
+import me.lizardofoz.inventorio.client.InventorioControls
 import me.lizardofoz.inventorio.enchantment.DeepPocketsEnchantment
-import me.lizardofoz.inventorio.integration.ClothConfigForgeIntegration
 import me.lizardofoz.inventorio.integration.InventorioModIntegration
+import me.lizardofoz.inventorio.integration.ModIntegration
 import me.lizardofoz.inventorio.packet.InventorioNetworking
 import me.lizardofoz.inventorio.packet.InventorioNetworkingForge
+import net.minecraft.client.MinecraftClient
 import net.minecraft.enchantment.Enchantment
 import net.minecraft.util.Identifier
 import net.minecraftforge.api.distmarker.Dist
@@ -18,18 +20,18 @@ import net.minecraftforge.registries.ForgeRegistries
 @Mod("inventorio")
 class InventorioForge
 {
-    private val forgeModIntegrations = listOf(ClothConfigForgeIntegration)
+    private val forgeModIntegrations = listOf<ModIntegration>()
     init
     {
         InventorioNetworking.INSTANCE = InventorioNetworkingForge
 
-        val enchantment = (DeepPocketsEnchantment as Enchantment).setRegistryName(Identifier("inventorio", "deep_pockets"))
-        ForgeRegistries.ENCHANTMENTS.register(enchantment)
+        ForgeRegistries.ENCHANTMENTS.register((DeepPocketsEnchantment as Enchantment).setRegistryName(Identifier("inventorio", "deep_pockets")))
 
         if (FMLEnvironment.dist == Dist.CLIENT)
         {
             MinecraftForge.EVENT_BUS.register(ForgeEvents)
-            InventorioConfig.load(FMLPaths.CONFIGDIR.get().toFile())
+            MinecraftClient.getInstance().options.keysAll += InventorioControls.keys
+            PlayerSettings.load(FMLPaths.CONFIGDIR.get().resolve("inventorio.json").toFile())
         }
 
         InventorioModIntegration.addModIntegrations(forgeModIntegrations)
