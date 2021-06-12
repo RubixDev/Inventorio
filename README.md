@@ -70,7 +70,7 @@ This option allows to assign the vanilla Hotbar to your Offhand, and the Utility
 ## Global Settings
 To improve mod compatibility, some features can be disabled on a game-wide level for all players. 
 
-Global settings can be accessed by a keybind (only in a single player world) or directly at `%root_folder%/config/inventorio_shared.json` 
+Global settings can be accessed by a keybind (only in a single player world) or directly at `%root_folder%/config/inventorio_shared.json`. 
 
 Joining a server (either dedicated or hosted from another client) with mismatching global settings will prompt a request to sync your settings and restart the game (recommended).
 
@@ -86,25 +86,25 @@ Joining a server (either dedicated or hosted from another client) with mismatchi
 ## Feedback, Use in Modpacks and Mod Compatibility
 Feel free to use this mod in a modpack.
 
-If you encounter bugs or compatibility issues with other mods, please report them on the [Issue Tracker](https://github.com/Lizard-Of-Oz/Inventorio/issues)
+If you encounter bugs or compatibility issues with other mods, please report them on the [Issue Tracker](https://github.com/Lizard-Of-Oz/Inventorio/issues).
 
-If you want to request a feature or modification, please use an Issue Tracker or make a [Pull Request](https://github.com/Lizard-Of-Oz/Inventorio/pulls)  
+If you want to request a feature or modification, please use an Issue Tracker or make a [Pull Request](https://github.com/Lizard-Of-Oz/Inventorio/pulls).  
 
 ## Inventorio as a Dependency for Your Mod
 Until this notice is removed (Summer 2021), the structure of the mod is still subject to change, but you can contact me if you need particular functionality or want something to stay consistent.
 
-If you want to use this mode as a dependency, I recommend using [JitPack](https://jitpack.io/)  
+If you want to use this mode as a dependency, I recommend using [JitPack](https://jitpack.io/).
 
 ## Toolbelt & Item Tags
 By default, any tool inheriting its Java class from a vanilla tool (e.g. `PickaxeItem.java`) will be accepted by a corresponding slot.
 
 In addition, any tool with [item tags](https://fabricmc.net/wiki/tutorial:tags) `inventorio:%item_type%` or `fabric:%item_type%`/`forge:%item_type%` will be accepted by a corresponding slot.
 
-Examples: `fabric:pickaxes` or `inventorio:shears`
+Examples: `fabric:pickaxes` or `inventorio:shears`.
 
-You can blacklist a tool from a toolbelt slot by adding giving it a tag `inventorio:%item_type%_blacklist` 
+You can blacklist a tool from a toolbelt slot by adding giving it a tag `inventorio:%item_type%_blacklist`.
 
-Notice, that `%item_type%` is spelled in plural. Available item types: `pickaxes`, `swords`, `axes`, `shovels`, `hoes`, `shears`
+Notice, that `%item_type%` is spelled in plural. Available item types: `pickaxes`, `swords`, `axes`, `shovels`, `hoes`, `shears`.
 
 ## (Somewhat) Confirmed Compatible Mods
 Fabric:
