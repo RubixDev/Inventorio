@@ -1,38 +1,39 @@
 package me.lizardofoz.inventorio.packet
 
-import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon.Companion.screenHandlerAddon
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import me.lizardofoz.inventorio.config.GlobalSettings
 import net.minecraft.network.PacketByteBuf
 import net.minecraftforge.fml.network.NetworkEvent
 import java.util.function.Supplier
 
-class SendItemToUtilityBeltC2SPacket
+class GlobalSettingsS2CPacket
 {
-    private var sourceSlot = 0
+    private var settingsJson: JsonObject
 
     //Sender's constructor
-    constructor(sourceSlot: Int)
+    constructor()
     {
-        this.sourceSlot = sourceSlot
+        this.settingsJson = GlobalSettings.asJson()
     }
 
     //Receiver's constructor
     constructor(buf: PacketByteBuf)
     {
-        sourceSlot = buf.readByte().toInt()
+        this.settingsJson = Gson().fromJson(buf.readString(), JsonObject::class.java)
     }
 
     //Sender's writer
     fun write(buf: PacketByteBuf)
     {
-        buf.writeByte(sourceSlot)
+        buf.writeString(settingsJson.toString())
     }
 
     //Receiver's consumer
     fun consume(supplier: Supplier<NetworkEvent.Context>)
     {
-        val player = supplier.get().sender ?: return
         supplier.get().enqueueWork {
-            player.screenHandlerAddon?.tryTransferToUtilityBeltSlot(player.playerScreenHandler.getSlot(sourceSlot))
+            GlobalSettings.syncFromServer(settingsJson)
         }
         supplier.get().packetHandled = true
     }

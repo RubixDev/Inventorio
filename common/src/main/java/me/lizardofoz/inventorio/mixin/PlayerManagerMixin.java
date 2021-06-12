@@ -20,7 +20,8 @@ public class PlayerManagerMixin
     @Inject(method = "onPlayerConnect", at = @At(value = "RETURN"), require = 0)
     private void inventorioSetPlayerSettings(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci)
     {
-        InventorioNetworking.Companion.getINSTANCE().s2cSendSelectedUtilitySlot(player);
+        InventorioNetworking.getInstance().s2cSelectUtilitySlot(player);
+        InventorioNetworking.getInstance().s2cGlobalSettings(player);
     }
 
     /**
@@ -36,6 +37,6 @@ public class PlayerManagerMixin
                 newAddon.setSelectedUtility(oldAddon.getSelectedUtility());
             });
         });
-        InventorioNetworking.Companion.getINSTANCE().s2cSendSelectedUtilitySlot(newPlayer);
+        InventorioNetworking.getInstance().s2cSelectUtilitySlot(newPlayer);
     }
 }

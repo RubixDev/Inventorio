@@ -1,6 +1,6 @@
 package me.lizardofoz.inventorio.mixin;
 
-import me.lizardofoz.inventorio.client.config.InventorioConfig;
+import me.lizardofoz.inventorio.config.PlayerSettings;
 import me.lizardofoz.inventorio.util.MixinHelpers;
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
 import me.lizardofoz.inventorio.util.InventoryDuck;
@@ -83,11 +83,17 @@ public class PlayerInventoryMixin implements InventoryDuck
             ci.cancel();
     }
 
-    @Inject(method = "dropAll", at = @At(value = "RETURN"), cancellable = true)
+    @Inject(method = "dropAll", at = @At(value = "RETURN"))
     private void inventorioDropAllFromAddon(CallbackInfo ci)
     {
         if (inventorioAddon != null)
             inventorioAddon.dropAll();
+    }
+
+    @Inject(method = "clear", at = @At(value = "RETURN"))
+    private void inventorioClearAddon(CallbackInfo ci)
+    {
+        inventorioAddon.clear();
     }
 
     /**
@@ -99,13 +105,13 @@ public class PlayerInventoryMixin implements InventoryDuck
     @Environment(EnvType.CLIENT)
     private void inventorioScrollInHotbar(double scrollAmount, CallbackInfo ci)
     {
-        if (InventorioConfig.INSTANCE.getScrollWheelUtilityBelt() && inventorioAddon != null)
+        if (PlayerSettings.scrollWheelUtilityBelt.getBoolValue() && inventorioAddon != null)
         {
             inventorioAddon.switchToNextUtility((int) scrollAmount);
             ci.cancel();
         }
         else
-            PlayerInventoryAddon.Client.INSTANCE.setSelectedHotbarSection(-1);
+            PlayerInventoryAddon.Client.selectedHotbarSection = -1;
     }
 
     @Override

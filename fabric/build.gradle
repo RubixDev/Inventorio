@@ -4,6 +4,7 @@ plugins {
 }
 
 compileKotlin.kotlinOptions.jvmTarget = "1.8"
+compileKotlin.kotlinOptions.freeCompilerArgs = ["-Xlambdas=indy"]
 
 archivesBaseName = "${rootProject.archives_base_name}-1.16-fabric"
 
@@ -17,24 +18,22 @@ architectury {
 }
 
 repositories {
-    maven { url "https://maven.terraformersmc.com/" }
+    maven { url "https://maven.terraformersmc.com/" } //Trinkets, ModMenu
     maven { url 'https://jitpack.io' }
 }
 
 dependencies {
+    //Modding platform
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     modImplementation "net.fabricmc:fabric-language-kotlin:${rootProject.fabric_kotlin_version}"
-    modImplementation "io.github.prospector:modmenu:1.14.13+build.22"
-    modImplementation ("dev.emi:trinkets:${rootProject.trinkets_version}") {
-        transitive = false
-    }
-    modImplementation ("com.github.Geometrically:Gravestones:${rootProject.gravestones_tag}") {
-        transitive = false
-    }
-    modImplementation ("com.github.CerulanLumina:better-graves:${rootProject.bettergraves_tag}") {
-        transitive = false
-    }
 
+    //Other mods we do integration with
+    modCompileOnly "io.github.prospector:modmenu:1.14.13+build.22"
+    modCompileOnly("dev.emi:trinkets:${rootProject.trinkets_version}") { transitive = false }
+    modCompileOnly("com.github.Geometrically:Gravestones:${rootProject.gravestones_tag}") { transitive = false }
+    modCompileOnly("com.github.CerulanLumina:better-graves:${rootProject.bettergraves_tag}") { transitive = false }
+
+    //Other modules of this project
     implementation(project(path: ":common")) {
         transitive = false
     }

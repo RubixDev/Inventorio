@@ -1,7 +1,7 @@
 package me.lizardofoz.inventorio.client.ui
 
 import com.mojang.blaze3d.systems.RenderSystem
-import me.lizardofoz.inventorio.client.config.InventorioConfig
+import me.lizardofoz.inventorio.config.PlayerSettings
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon
 import me.lizardofoz.inventorio.util.*
 import net.fabricmc.api.EnvType
@@ -24,7 +24,7 @@ object HotbarHUDRenderer
 
     fun renderSegmentedHotbar(matrices: MatrixStack): Boolean
     {
-        if (InventorioConfig.segmentedHotbar == SegmentedHotbar.OFF || isHidden())
+        if (PlayerSettings.segmentedHotbar.value == SegmentedHotbar.OFF || isHidden())
             return false
 
         val playerEntity = client.cameraEntity as? PlayerEntity ?: return false
@@ -103,7 +103,7 @@ object HotbarHUDRenderer
         val scaledWidthHalved = client.window.scaledWidth / 2 - 30
         val scaledHeight = client.window.scaledHeight
 
-        val segmentedHotbarMode = InventorioConfig.segmentedHotbar != SegmentedHotbar.OFF
+        val segmentedHotbarMode = PlayerSettings.segmentedHotbar.value != SegmentedHotbar.OFF
         val segmentedModeOffset = if (segmentedHotbarMode) HUD_SEGMENTED_HOTBAR_GAP else 0
 
         var rightHanded = player.mainArm == Arm.RIGHT

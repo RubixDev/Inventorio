@@ -12,7 +12,7 @@ import net.minecraftforge.fml.network.NetworkRegistry
 @Suppress("INACCESSIBLE_TYPE", "UNUSED_ANONYMOUS_PARAMETER")
 object InventorioNetworkingForge : InventorioNetworking
 {
-    private const val PROTOCOL_VERSION = "1.3"
+    private const val PROTOCOL_VERSION = "1.4"
 
     private val INSTANCE = NetworkRegistry.newSimpleChannel(
             Identifier("inventorio", "packets"),
@@ -38,20 +38,30 @@ object InventorioNetworkingForge : InventorioNetworking
             { buf -> SwappedHandsC2SPacket(buf) },
             { packet, supplier -> packet.consume(supplier) })
 
-        INSTANCE.registerMessage(3, SendItemToUtilityBeltC2SPacket::class.java,
+        INSTANCE.registerMessage(3, MoveItemToUtilityBeltC2SPacket::class.java,
             { packet, buf -> packet.write(buf) },
-            { buf -> SendItemToUtilityBeltC2SPacket(buf) },
+            { buf -> MoveItemToUtilityBeltC2SPacket(buf) },
+            { packet, supplier -> packet.consume(supplier) })
+
+        INSTANCE.registerMessage(4, GlobalSettingsS2CPacket::class.java,
+            { packet, buf -> packet.write(buf) },
+            { buf -> GlobalSettingsS2CPacket(buf) },
             { packet, supplier -> packet.consume(supplier) })
     }
 
-    override fun s2cSendSelectedUtilitySlot(player: ServerPlayerEntity)
+    override fun s2cSelectUtilitySlot(player: ServerPlayerEntity)
     {
         val inventoryAddon = player.inventoryAddon ?: return
         INSTANCE.sendTo(SelectUtilitySlotPacket(inventoryAddon.selectedUtility), player.networkHandler.connection, NetworkDirection.PLAY_TO_CLIENT)
     }
 
+    override fun s2cGlobalSettings(player: ServerPlayerEntity)
+    {
+        INSTANCE.sendTo(GlobalSettingsS2CPacket(), player.networkHandler.connection, NetworkDirection.PLAY_TO_CLIENT)
+    }
+
     @OnlyIn(Dist.CLIENT)
-    override fun c2sSendSelectedUtilitySlot(selectedUtility: Int)
+    override fun c2sSelectUtilitySlot(selectedUtility: Int)
     {
         INSTANCE.sendToServer(SelectUtilitySlotPacket(selectedUtility))
     }
@@ -70,8 +80,8 @@ object InventorioNetworkingForge : InventorioNetworking
     }
 
     @OnlyIn(Dist.CLIENT)
-    override fun c2sSendItemToUtilityBelt(sourceSlot: Int)
+    override fun c2sMoveItemToUtilityBelt(sourceSlot: Int)
     {
-        INSTANCE.sendToServer(SendItemToUtilityBeltC2SPacket(sourceSlot))
+        INSTANCE.sendToServer(MoveItemToUtilityBeltC2SPacket(sourceSlot))
     }
 }

@@ -30,14 +30,16 @@
     "inventorio.mixins.json"
   ],
   "depends": {
+    "minecraft": "1.16.x",
     "fabricloader": ">=${fabric_loader_version}",
     "fabric": "*",
-    "fabric-language-kotlin": "*",
-    "minecraft": "1.16.x"
+    "fabric-language-kotlin": "*"
   },
   "suggests": {
     "trinkets": "*",
-    "cloth-config2": "*",
-    "bettergraves": "*"
+    "bettergraves": "*",
+    "gravestones": "*",
+    "modmenu":"*",
+    "cloth-config2": "*"
   }
 }
