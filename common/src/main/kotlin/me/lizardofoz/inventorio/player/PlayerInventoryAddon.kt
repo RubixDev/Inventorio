@@ -20,8 +20,8 @@ class PlayerInventoryAddon internal constructor(player: PlayerEntity) : PlayerIn
     object Client
     {
         val local get() = MinecraftClient.getInstance().player?.inventoryAddon
-        var selectedHotbarSection = -1
-        var triesToUseUtility = false
+        @JvmField var selectedHotbarSection = -1
+        @JvmField var triesToUseUtility = false
         @JvmField var isUsingUtility = false
 
         fun activateSelectedUtility()
@@ -35,6 +35,7 @@ class PlayerInventoryAddon internal constructor(player: PlayerEntity) : PlayerIn
 
     companion object
     {
+        @JvmStatic
         val PlayerEntity.inventoryAddon: PlayerInventoryAddon?
             get() = (this.inventory as InventoryDuck).inventorioAddon
     }

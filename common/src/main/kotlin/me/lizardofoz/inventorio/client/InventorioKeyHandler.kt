@@ -1,20 +1,20 @@
 package me.lizardofoz.inventorio.client
 
-import me.lizardofoz.inventorio.client.config.InventorioConfig
-import me.lizardofoz.inventorio.client.config.InventorioConfigScreenMenu
+import me.lizardofoz.inventorio.client.configscreen.PlayerSettingsScreen
+import me.lizardofoz.inventorio.client.configscreen.GlobalSettingsScreen
+import me.lizardofoz.inventorio.config.PlayerSettings
 import me.lizardofoz.inventorio.mixin.client.accessor.MinecraftClientAccessor
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon.Companion.inventoryAddon
 import me.lizardofoz.inventorio.util.SegmentedHotbar
-import me.lizardofoz.inventorio.util.usageHotbarBlackList
-import me.lizardofoz.inventorio.util.usageDisplayToolWhiteList
+import me.lizardofoz.inventorio.util.canRMBAsDisplayTool
+import me.lizardofoz.inventorio.util.canRMBItem
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.item.ItemStack
-import net.minecraft.text.TranslatableText
 import net.minecraft.util.Hand
 
 @Environment(EnvType.CLIENT)
@@ -26,12 +26,12 @@ object InventorioKeyHandler
         //But something like VANILLA axes and shovels work fine.
         //Some modded stuff breaks it tho.
         val displayTool = player.inventoryAddon?.displayTool ?: ItemStack.EMPTY
-        var useMainHand = (displayTool.isEmpty || usageDisplayToolWhiteList.invoke(displayTool)) && !usageHotbarBlackList.invoke(player.getStackInHand(Hand.MAIN_HAND))
-        var useOffHand = !usageHotbarBlackList.invoke(player.getStackInHand(Hand.OFF_HAND))
+        var useMainHand = (displayTool.isEmpty || canRMBAsDisplayTool(displayTool)) && canRMBItem(player.getStackInHand(Hand.MAIN_HAND))
+        var useOffHand = canRMBItem(player.getStackInHand(Hand.OFF_HAND))
 
         if (PlayerInventoryAddon.Client.triesToUseUtility)
             useMainHand = false
-        else if (!InventorioConfig.useItemAppliesToOffhand && !InventorioControls.keyUseUtility.isUnbound)
+        else if (!PlayerSettings.useItemAppliesToOffhand.boolValue && !InventorioControls.keyUseUtility.isUnbound)
             useOffHand = false
 
         return if (useMainHand && useOffHand)
@@ -49,7 +49,7 @@ object InventorioKeyHandler
      */
     fun handleSegmentedHotbarSlotSelection(inventory: PlayerInventory, slotToSelect: Int): Boolean
     {
-        if (InventorioConfig.segmentedHotbar != SegmentedHotbar.ON)
+        if (PlayerSettings.segmentedHotbar.value != SegmentedHotbar.ON)
             return false
         if (slotToSelect > 2)
             return true
@@ -87,24 +87,9 @@ object InventorioKeyHandler
         if (InventorioControls.keyPrevUtility.wasPressed())
             inventoryAddon.switchToNextUtility(-1)
 
-        //Settings. If Cloth Config mod is present, then we don't need to handle various "setting toggle" buttons
-        if (!InventorioControls.optionToggleKeysEnabled)
-        {
-            if (InventorioControls.keyOpenSettingsMenu.wasPressed())
-                client.openScreen(InventorioConfigScreenMenu.get(client.currentScreen))
-        }
-        else
-        {
-            if (InventorioControls.keyOptionToggleSegmentedHotbar.wasPressed())
-                player.sendMessage(TranslatableText("inventorio.option_toggle_key.segmented_hotbar." + InventorioConfig.toggleSegmentedHotbarMode().name), true)
-            if (InventorioControls.keyOptionToggleScrollWheelUtilityBelt.wasPressed())
-                player.sendMessage(TranslatableText("inventorio.option_toggle_key.scroll_wheel_utility_belt." + InventorioConfig.toggleScrollWheelUtilityBeltMode()), true)
-            if (InventorioControls.keyOptionToggleCanThrowUnloyalTrident.wasPressed())
-                player.sendMessage(TranslatableText("inventorio.option_toggle_key.can_throw_unloyal_trident." + InventorioConfig.toggleCanThrowUnloyalTrident()), true)
-            if (InventorioControls.keyOptionToggleUseItemAppliesToOffhand.wasPressed())
-                player.sendMessage(TranslatableText("inventorio.option_toggle_key.use_item_applies_to_offhand." + InventorioConfig.toggleUseItemAppliesToOffhand()), true)
-            if (InventorioControls.keyOptionToggleSwappedHands.wasPressed())
-                player.sendMessage(TranslatableText("inventorio.option_toggle_key.swapped_hands." + InventorioConfig.toggleSwappedHands()), true)
-        }
+        if (InventorioControls.keyOpenPlayerSettingsMenu.wasPressed())
+            client.openScreen(PlayerSettingsScreen.get(client.currentScreen))
+        if (InventorioControls.keyOpenGlobalSettingsMenu.wasPressed())
+            client.openScreen(GlobalSettingsScreen.get(client.currentScreen))
     }
 }

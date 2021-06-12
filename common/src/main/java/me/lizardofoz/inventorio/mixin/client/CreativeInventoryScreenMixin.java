@@ -25,7 +25,7 @@ public class CreativeInventoryScreenMixin
     {
         int[] result = new int[1];
         MixinHelpers.withScreenHandlerAddon(MinecraftClient.getInstance().player,
-                addon -> result[0] = addon.getDeepPocketsRange().getFirst(),
+                addon -> result[0] = addon.deepPocketsRange.getFirst(),
                 player -> result[0] = player == null ? 45 : player.playerScreenHandler.slots.size());
         return result[0];
     }

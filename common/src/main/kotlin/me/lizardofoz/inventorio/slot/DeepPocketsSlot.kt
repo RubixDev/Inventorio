@@ -9,7 +9,7 @@ import net.minecraft.screen.slot.Slot
 
 open class DeepPocketsSlot(inventory: Inventory, index: Int, x: Int, y: Int) : Slot(inventory, index, x, y)
 {
-    var canTakeItems = true
+    @JvmField var canTakeItems = true
 
     override fun canTakeItems(playerEntity: PlayerEntity): Boolean
     {

@@ -16,7 +16,9 @@
     "optional.bowfix.BowItemMixin",
     "optional.enderchest.EnderChestBlockMinix",
     "optional.enderchest.PlayerEntityMixin",
-    "optional.totem.LivingEntityMixin"
+    "optional.totem.LivingEntityMixin",
+    "integration.gravestones.GravestoneBlockMixin",
+    "integration.jei.JEIVanillaPluginMixin"
   ],
   "client": [
     "client.ClientPlayerInteractionManagerMixin",

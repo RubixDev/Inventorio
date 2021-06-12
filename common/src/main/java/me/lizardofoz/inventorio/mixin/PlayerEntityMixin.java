@@ -1,7 +1,7 @@
 package me.lizardofoz.inventorio.mixin;
 
 import me.lizardofoz.inventorio.util.MixinHelpers;
-import me.lizardofoz.inventorio.player.InventorioPlayerSerializer;
+import me.lizardofoz.inventorio.player.PlayerAddonSerializer;
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
 import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon;
 import me.lizardofoz.inventorio.util.InventoryDuck;
@@ -122,7 +122,7 @@ public class PlayerEntityMixin
         if (getAddon() != null)
         {
             boolean isFirstLaunch = !tag.contains("Inventorio");
-            InventorioPlayerSerializer.INSTANCE.deserialize(getAddon(), tag.getCompound("Inventorio"), isFirstLaunch);
+            PlayerAddonSerializer.INSTANCE.deserialize(getAddon(), tag.getCompound("Inventorio"), isFirstLaunch);
         }
     }
 
@@ -132,7 +132,7 @@ public class PlayerEntityMixin
         if (getAddon() == null)
             return;
         CompoundTag inventorioTag = new CompoundTag();
-        InventorioPlayerSerializer.INSTANCE.serialize(getAddon(), inventorioTag);
+        PlayerAddonSerializer.INSTANCE.serialize(getAddon(), inventorioTag);
         tag.put("Inventorio", inventorioTag);
     }
 

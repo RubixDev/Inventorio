@@ -1,7 +1,7 @@
 package me.lizardofoz.inventorio.player.inventory
 
-import me.lizardofoz.inventorio.client.config.InventorioConfig
-import me.lizardofoz.inventorio.extra.InventorioSharedConfig
+import me.lizardofoz.inventorio.config.PlayerSettings
+import me.lizardofoz.inventorio.config.GlobalSettings
 import me.lizardofoz.inventorio.packet.InventorioNetworking
 import me.lizardofoz.inventorio.util.isNotEmpty
 import net.minecraft.entity.player.PlayerEntity
@@ -23,7 +23,7 @@ abstract class PlayerInventoryHandFeatures protected constructor(player: PlayerE
     var swappedHands = false
         set(value)
         {
-            field = InventorioSharedConfig.allowSwappedHands && value
+            field = GlobalSettings.allowSwappedHands.boolValue && value
             if (player.world.isClient)
                 InventorioNetworking.INSTANCE.c2sSetSwappedHands(value)
         }
@@ -31,7 +31,7 @@ abstract class PlayerInventoryHandFeatures protected constructor(player: PlayerE
     init
     {
         if (player.world.isClient)
-            swappedHands = InventorioConfig.swappedHands
+            swappedHands = PlayerSettings.swappedHands.boolValue
     }
 
     /**

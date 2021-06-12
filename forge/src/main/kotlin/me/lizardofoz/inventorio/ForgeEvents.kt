@@ -2,8 +2,6 @@ package me.lizardofoz.inventorio
 
 import me.lizardofoz.inventorio.client.InventorioKeyHandler
 import me.lizardofoz.inventorio.client.ui.HotbarHUDRenderer.renderHotbarAddons
-import net.minecraft.client.MinecraftClient
-import net.minecraft.world.GameMode
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.api.distmarker.OnlyIn
 import net.minecraftforge.client.event.RenderGameOverlayEvent
@@ -23,8 +21,7 @@ object ForgeEvents
     @OnlyIn(Dist.CLIENT)
     fun onClientTick(event: RenderGameOverlayEvent.Post)
     {
-        if (event.type == RenderGameOverlayEvent.ElementType.HOTBAR &&
-                MinecraftClient.getInstance().interactionManager?.currentGameMode != GameMode.SPECTATOR)
+        if (event.type == RenderGameOverlayEvent.ElementType.HOTBAR)
             renderHotbarAddons(event.matrixStack)
     }
 }

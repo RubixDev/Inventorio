@@ -1,5 +1,5 @@
-modLoader = "javafml"
-loaderVersion = "[32,)"
+modLoader = "kotlinforforge"
+loaderVersion = "[1.12,)"
 issueTrackerURL = "https://github.com/Lizard-Of-Oz/Inventorio"
 license = "GPLv3"
 
@@ -13,6 +13,13 @@ logoFile = "icon.png"
 displayURL="https://github.com/Lizard-Of-Oz/Inventorio"
 
 [[dependencies.inventorio]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.16.2,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.inventorio]]
 modId = "forge"
 mandatory = true
 versionRange = "[32,)"
@@ -20,8 +27,8 @@ ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.inventorio]]
-modId = "minecraft"
+modId = "cloth-config"
 mandatory = true
-versionRange = "[1.16.2,)"
+versionRange = "[4,)"
 ordering = "NONE"
-side = "BOTH"
+side = "CLIENT"

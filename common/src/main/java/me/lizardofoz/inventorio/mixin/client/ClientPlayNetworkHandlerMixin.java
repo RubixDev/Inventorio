@@ -23,6 +23,6 @@ public class ClientPlayNetworkHandlerMixin
     {
         PlayerInventoryAddon addon = PlayerInventoryAddon.Client.INSTANCE.getLocal();
         if (addon != null)
-            InventorioNetworking.Companion.getINSTANCE().c2sSetSwappedHands(addon.getSwappedHands());
+            InventorioNetworking.getInstance().c2sSetSwappedHands(addon.getSwappedHands());
     }
 }

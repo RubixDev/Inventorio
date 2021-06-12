@@ -17,15 +17,18 @@ object InventorioNetworkingFabric : InventorioNetworking
     init
     {
         if (FabricLoader.getInstance().environmentType == EnvType.CLIENT)
+        {
             ClientPlayNetworking.registerGlobalReceiver(SelectUtilitySlotPacket.identifier, SelectUtilitySlotPacket::consume)
+            ClientPlayNetworking.registerGlobalReceiver(GlobalSettingsS2CPacket.identifier, GlobalSettingsS2CPacket::consume)
+        }
 
         ServerPlayNetworking.registerGlobalReceiver(UseBoostRocketC2SPacket.identifier, UseBoostRocketC2SPacket::consume)
         ServerPlayNetworking.registerGlobalReceiver(SelectUtilitySlotPacket.identifier, SelectUtilitySlotPacket::consume)
         ServerPlayNetworking.registerGlobalReceiver(SwappedHandsC2SPacket.identifier, SwappedHandsC2SPacket::consume)
-        ServerPlayNetworking.registerGlobalReceiver(SendItemToUtilityBeltC2SPacket.identifier, SendItemToUtilityBeltC2SPacket::consume)
+        ServerPlayNetworking.registerGlobalReceiver(MoveItemToUtilityBeltC2SPacket.identifier, MoveItemToUtilityBeltC2SPacket::consume)
     }
 
-    override fun s2cSendSelectedUtilitySlot(player: ServerPlayerEntity)
+    override fun s2cSelectUtilitySlot(player: ServerPlayerEntity)
     {
         val inventoryAddon = player.inventoryAddon ?: return
         val buf = PacketByteBuf(PooledByteBufAllocator.DEFAULT.buffer())
@@ -33,8 +36,15 @@ object InventorioNetworkingFabric : InventorioNetworking
         ServerPlayNetworking.send(player, SelectUtilitySlotPacket.identifier, buf)
     }
 
+    override fun s2cGlobalSettings(player: ServerPlayerEntity)
+    {
+        val buf = PacketByteBuf(PooledByteBufAllocator.DEFAULT.buffer())
+        GlobalSettingsS2CPacket.write(buf)
+        ServerPlayNetworking.send(player, GlobalSettingsS2CPacket.identifier, buf)
+    }
+
     @Environment(EnvType.CLIENT)
-    override fun c2sSendSelectedUtilitySlot(selectedUtility: Int)
+    override fun c2sSelectUtilitySlot(selectedUtility: Int)
     {
         sendC2S(SelectUtilitySlotPacket.identifier) {
             SelectUtilitySlotPacket.write(it, selectedUtility)
@@ -57,10 +67,10 @@ object InventorioNetworkingFabric : InventorioNetworking
     }
 
     @Environment(EnvType.CLIENT)
-    override fun c2sSendItemToUtilityBelt(sourceSlot: Int)
+    override fun c2sMoveItemToUtilityBelt(sourceSlot: Int)
     {
-        sendC2S(SendItemToUtilityBeltC2SPacket.identifier) {
-            SendItemToUtilityBeltC2SPacket.write(it, sourceSlot)
+        sendC2S(MoveItemToUtilityBeltC2SPacket.identifier) {
+            MoveItemToUtilityBeltC2SPacket.write(it, sourceSlot)
         }
     }
 
