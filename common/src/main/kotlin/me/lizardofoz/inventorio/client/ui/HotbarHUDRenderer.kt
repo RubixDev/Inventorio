@@ -132,7 +132,7 @@ object HotbarHUDRenderer
         }
 
         //Draw utility belt (both the frame and the items)
-        if (utilBeltDisplay.any { it.isNotEmpty })
+        if (!PlayerSettings.skipEmptyUtilitySlots.boolValue || utilBeltDisplay.any { it.isNotEmpty })
         {
             //Draw the semi-transparent background (needed to paint next and prev utility belt items dimmed,
             //   while keeping the resulting slot opacity akin to other hotbar slots)

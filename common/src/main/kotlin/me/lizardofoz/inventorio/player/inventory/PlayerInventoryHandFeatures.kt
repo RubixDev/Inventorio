@@ -15,9 +15,10 @@ abstract class PlayerInventoryHandFeatures protected constructor(player: PlayerE
         protected set
 
     var displayTool = ItemStack.EMPTY!!
-        set(value) {
+        set(value)
+        {
             field = value
-            displayToolTimeStamp = Util.getMeasuringTimeMs() + 1000
+            displayToolTimeStamp = if (value.isNotEmpty) Util.getMeasuringTimeMs() + 1000 else 0
         }
 
     var swappedHands = false
@@ -64,9 +65,9 @@ abstract class PlayerInventoryHandFeatures protected constructor(player: PlayerE
     }
 
     /**
-     * Returns the item selected to be placed in the main hand.
+     * Returns the item selected to be placed in the main hand
      *
-     * Affected by [swappedHands]
+     * (Hotbar by default, Utility Belt with [swappedHands] enabled)
      *
      * Unlike [getDisplayedMainHandStack], it's not affected by [displayTool]
      */
@@ -118,6 +119,7 @@ abstract class PlayerInventoryHandFeatures protected constructor(player: PlayerE
      */
     fun getDisplayedUtilities(): Array<ItemStack>
     {
-        return arrayOf(findNextUtility(-1).first, getSelectedUtilityStack(), findNextUtility(1).first)
+        val skipEmptySlots = PlayerSettings.skipEmptyUtilitySlots.boolValue
+        return arrayOf(findNextUtility(-1, skipEmptySlots).first, getSelectedUtilityStack(), findNextUtility(1, skipEmptySlots).first)
     }
 }

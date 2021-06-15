@@ -2,13 +2,12 @@ package me.lizardofoz.inventorio.config
 
 import com.google.gson.JsonElement
 import com.google.gson.JsonPrimitive
-import net.minecraft.text.Text
 
 open class SettingsEntry(
     @JvmField val defaultValue: Any,
     @JvmField val configKey: String,
-    @JvmField val displayText: Text,
-    @JvmField val tooltipText: Text?,
+    @JvmField val displayText: String,
+    @JvmField val tooltipText: String?,
     @JvmField val valueAsElement: (Any) -> JsonElement,
     @JvmField val elementAsValue: (JsonElement?) -> Any,
     @JvmField val onChange: (Any) -> Unit = { }
@@ -31,7 +30,7 @@ open class SettingsEntry(
     }
 }
 
-class SettingsEntryBoolean(defaultValue: Boolean, configKey: String, displayText: Text, tooltipText: Text? = null, onChange: (Any) -> Unit = { })
+class SettingsEntryBoolean(defaultValue: Boolean, configKey: String, displayText: String, tooltipText: String? = null, onChange: (Any) -> Unit = { })
     : SettingsEntry(defaultValue, configKey, displayText, tooltipText, { JsonPrimitive(it == true) }, { it?.asBoolean ?: defaultValue }, onChange)
 {
     val boolValue get() = this.value == true

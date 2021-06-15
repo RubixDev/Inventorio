@@ -24,7 +24,8 @@ abstract class PlayerInventoryExtraStuff protected constructor(player: PlayerEnt
     fun getMiningSpeedMultiplier(block: BlockState): Float
     {
         val tool = getMostPreferredTool(block)
-        displayTool = tool
+        if (tool != getActualMainHandItem())
+            displayTool = tool
         return max(1f, tool.getMiningSpeedMultiplier(block))
     }
 

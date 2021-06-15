@@ -11,7 +11,7 @@ import net.minecraft.inventory.SimpleInventory
 import net.minecraft.item.ItemStack
 import kotlin.math.sign
 
-abstract class PlayerInventoryExtension protected constructor(val player: PlayerEntity) : SimpleInventory(DEEP_POCKETS_MAX_SIZE + TOOL_BELT_SIZE + UTILITY_BELT_SIZE)
+abstract class PlayerInventoryExtension protected constructor(val player: PlayerEntity) : SimpleInventory(DEEP_POCKETS_MAX_SIZE + TOOL_BELT_SIZE + UTILITY_BELT_FULL_SIZE)
 {
     @JvmField val stacks: MutableList<ItemStack>
     @JvmField val deepPockets: MutableList<ItemStack>
@@ -58,28 +58,56 @@ abstract class PlayerInventoryExtension protected constructor(val player: Player
         }
     }
 
-    fun switchToNextUtility(direction: Int): Boolean
+    fun switchToNextUtility(direction: Int, skipEmptySlots: Boolean): Boolean
     {
-        val (nextSlot, slotIndex) = findNextUtility(direction)
-        if (nextSlot.isEmpty)
+        val slotIndex = findNextUtility(direction, skipEmptySlots).second
+        if (slotIndex == -1)
             return false
         selectedUtility = slotIndex
         InventorioNetworking.INSTANCE.c2sSelectUtilitySlot(slotIndex)
         return true
     }
 
-    fun findNextUtility(direction: Int): Pair<ItemStack, Int>
+    /**
+     * Returns (ItemStack.EMPTY; -1) if no next utility was found
+     */
+    fun findNextUtility(direction: Int, skipEmptySlots: Boolean): Pair<ItemStack, Int>
     {
         val range = if (direction.sign >= 0)
-            (selectedUtility + 1 until UTILITY_BELT_SIZE) + (0 until selectedUtility)
+            (selectedUtility + 1 until getAvailableUtilityBeltSize()) + (0 until selectedUtility)
         else
-            (selectedUtility - 1 downTo 0) + (UTILITY_BELT_SIZE - 1 downTo selectedUtility + 1)
+            (selectedUtility - 1 downTo 0) + (getAvailableUtilityBeltSize() - 1 downTo selectedUtility + 1)
 
         for (i in range)
-            if (utilityBelt[i].isNotEmpty)
+            if (!skipEmptySlots || utilityBelt[i].isNotEmpty)
                 return Pair(utilityBelt[i], i)
 
         return Pair(ItemStack.EMPTY, -1)
+    }
+
+    /**
+     * Returns -1 if no empty utility slot was found
+     */
+    fun findEmptyUtility(direction: Int): Int
+    {
+        val range = if (direction.sign >= 0)
+            (selectedUtility + 1 until getAvailableUtilityBeltSize()) + (0 until selectedUtility)
+        else
+            (selectedUtility - 1 downTo 0) + (getAvailableUtilityBeltSize() - 1 downTo selectedUtility + 1)
+
+        for (i in range)
+            if (utilityBelt[i].isEmpty)
+                return i
+
+        return -1
+    }
+
+    /**
+     * Note: this class returns the range within the SCREEN HANDLER, which is different from the range within the inventory
+     */
+    fun getAvailableUtilityBeltSize(): Int
+    {
+        return if (getDeepPocketsRowCount() > 0) UTILITY_BELT_FULL_SIZE else UTILITY_BELT_SMALL_SIZE
     }
 
     /**
@@ -87,8 +115,7 @@ abstract class PlayerInventoryExtension protected constructor(val player: Player
      */
     fun getAvailableDeepPocketsRange(): IntRange
     {
-        return INVENTORY_ADDON_DEEP_POCKETS_RANGE.first until
-                INVENTORY_ADDON_DEEP_POCKETS_RANGE.first + getDeepPocketsRowCount() * VANILLA_ROW_LENGTH
+        return INVENTORY_ADDON_DEEP_POCKETS_RANGE.first expandBy getDeepPocketsRowCount() * VANILLA_ROW_LENGTH
     }
 
     /**
