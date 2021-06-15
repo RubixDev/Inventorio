@@ -36,10 +36,10 @@
     "fabric-language-kotlin": "*"
   },
   "suggests": {
+    "modmenu":"*",
+    "cloth-config2": "*",
     "trinkets": "*",
     "bettergraves": "*",
-    "gravestones": "*",
-    "modmenu":"*",
-    "cloth-config2": "*"
+    "gravestones": "*"
   }
 }

@@ -57,8 +57,6 @@ dependencies {
 }
 
 shadowJar {
-    exclude "fabric.mod.json"
-
     configurations = [project.configurations.shadowCommon]
     classifier "dev-shadow"
 }

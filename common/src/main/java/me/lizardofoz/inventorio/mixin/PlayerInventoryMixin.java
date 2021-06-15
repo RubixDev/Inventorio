@@ -107,7 +107,7 @@ public class PlayerInventoryMixin implements InventoryDuck
     {
         if (PlayerSettings.scrollWheelUtilityBelt.getBoolValue() && inventorioAddon != null)
         {
-            inventorioAddon.switchToNextUtility((int) scrollAmount);
+            inventorioAddon.switchToNextUtility((int) scrollAmount, PlayerSettings.skipEmptyUtilitySlots.getBoolValue());
             ci.cancel();
         }
         else

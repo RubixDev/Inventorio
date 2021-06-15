@@ -33,6 +33,13 @@ object InventorioControls
         "inventorio.keys.category"
     )
 
+    @JvmField val keyEmptyUtility = KeyBinding(
+        "inventorio.keys.empty_utility",
+        InputUtil.Type.KEYSYM,
+        GLFW.GLFW_KEY_UNKNOWN,
+        "inventorio.keys.category"
+    )
+
     @JvmField val keyFireBoostRocket = KeyCoBinding(
         "inventorio.keys.combined.with_jump",
         { MinecraftClient.getInstance()?.options?.keyJump },
@@ -60,6 +67,7 @@ object InventorioControls
         keyUseUtility,
         keyNextUtility,
         keyPrevUtility,
+        keyEmptyUtility,
         keyFireBoostRocket,
         keyOpenPlayerSettingsMenu,
         keyOpenGlobalSettingsMenu

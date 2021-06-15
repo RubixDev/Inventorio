@@ -47,14 +47,14 @@ object GlobalSettingsScreen
     {
         val builder = entryBuilder
             .startBooleanToggle(
-                settingsEntry.displayText,
+                TranslatableText(settingsEntry.displayText),
                 settingsEntry.boolValue
             )
             .requireRestart()
             .setDefaultValue(settingsEntry.defaultValue == true)
             .setSaveConsumer { settingsEntry.value = it }
         if (settingsEntry.tooltipText != null)
-            builder.setTooltip(settingsEntry.tooltipText)
+            builder.setTooltip(TranslatableText(settingsEntry.tooltipText))
         category.addEntry(builder.build())
     }
 }

@@ -8,12 +8,12 @@ import java.io.File
 
 object GlobalSettings : AbstractSettings()
 {
-    @JvmField val expandedEnderChest = SettingsEntryBoolean(true, "ExpandedEnderChest", TranslatableText("inventorio.settings.global.expanded_ender_chest"))
-    @JvmField val infinityBowNeedsNoArrow = SettingsEntryBoolean(true, "InfinityBowNeedsNoArrow", TranslatableText("inventorio.settings.global.infinity_bow_no_arrows"))
-    @JvmField val totemFromUtilityBelt = SettingsEntryBoolean(true, "TotemFromUtilityBelt", TranslatableText("inventorio.settings.global.totem_from_utility_belt"))
-    @JvmField val allowSwappedHands = SettingsEntryBoolean(true, "AllowSwappedHands", TranslatableText("inventorio.settings.global.allow_swapped_hands"))
-    @JvmField val integrationGravestones = SettingsEntryBoolean(true, "Integrations.Gravestones", TranslatableText("inventorio.settings.global.integrations.gravestones"))
-    @JvmField val integrationJEI = SettingsEntryBoolean(true, "Integrations.JEI", TranslatableText("inventorio.settings.global.integrations.jei"))
+    @JvmField val expandedEnderChest = SettingsEntryBoolean(true, "ExpandedEnderChest", "inventorio.settings.global.expanded_ender_chest")
+    @JvmField val infinityBowNeedsNoArrow = SettingsEntryBoolean(true, "InfinityBowNeedsNoArrow", "inventorio.settings.global.infinity_bow_no_arrows")
+    @JvmField val totemFromUtilityBelt = SettingsEntryBoolean(true, "TotemFromUtilityBelt", "inventorio.settings.global.totem_from_utility_belt")
+    @JvmField val allowSwappedHands = SettingsEntryBoolean(true, "AllowSwappedHands", "inventorio.settings.global.allow_swapped_hands")
+    @JvmField val integrationGravestones = SettingsEntryBoolean(true, "Integrations.Gravestones", "inventorio.settings.global.integrations.gravestones")
+    @JvmField val integrationJEI = SettingsEntryBoolean(true, "Integrations.JEI", "inventorio.settings.global.integrations.jei")
 
     init
     {

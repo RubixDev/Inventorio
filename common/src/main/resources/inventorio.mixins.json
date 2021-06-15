@@ -10,6 +10,7 @@
     "PlayerManagerMixin",
     "PlayerScreenHandlerMixin",
     "ScreenHandlerMixin",
+    "ServerPlayNetworkHandlerMixin",
     "accessor.ScreenHandlerAccessor",
     "accessor.SimpleInventoryAccessor",
     "accessor.SlotAccessor",

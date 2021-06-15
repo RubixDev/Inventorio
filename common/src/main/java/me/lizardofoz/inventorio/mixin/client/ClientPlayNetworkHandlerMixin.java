@@ -18,7 +18,7 @@ public class ClientPlayNetworkHandlerMixin
     /**
      * When a player joins, this mixin sends a packet to the server, telling if the player uses Swapped Hands or not
      */
-    @Inject(method = "onGameJoin", at = @At(value = "RETURN"), cancellable = true)
+    @Inject(method = "onGameJoin", at = @At(value = "RETURN"))
     private void inventorioSendSwappedHandsStatus(GameJoinS2CPacket packet, CallbackInfo ci)
     {
         PlayerInventoryAddon addon = PlayerInventoryAddon.Client.INSTANCE.getLocal();
