@@ -38,12 +38,6 @@ val ItemStack.isNotEmpty
 
 val toolBeltSlotFilters = generateToolBeltPredicates()
 
-fun canRMBAsDisplayTool(itemStack: ItemStack): Boolean
-{
-    val itemClass = itemStack.item.javaClass
-    return itemClass === AxeItem::class.java || itemClass === ShovelItem::class.java
-}
-
 fun canRMBItem(itemStack: ItemStack): Boolean
 {
     return PlayerSettings.canThrowUnloyalTrident.boolValue

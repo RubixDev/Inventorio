@@ -7,7 +7,6 @@ import me.lizardofoz.inventorio.mixin.client.accessor.MinecraftClientAccessor
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon.Companion.inventoryAddon
 import me.lizardofoz.inventorio.util.SegmentedHotbar
-import me.lizardofoz.inventorio.util.canRMBAsDisplayTool
 import me.lizardofoz.inventorio.util.canRMBItem
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -25,14 +24,16 @@ object InventorioKeyHandler
         //Some items which can be used as a tool (e.g. trident) would REPLACE a selected hotbar stack upon use.
         //But something like VANILLA axes and shovels work fine.
         //Some modded stuff breaks it tho.
-        val displayTool = player.inventoryAddon?.displayTool ?: ItemStack.EMPTY
-        var useMainHand = (displayTool.isEmpty || canRMBAsDisplayTool(displayTool)) && canRMBItem(player.getStackInHand(Hand.MAIN_HAND))
+        var useMainHand = canRMBItem(player.getStackInHand(Hand.MAIN_HAND))
         var useOffHand = canRMBItem(player.getStackInHand(Hand.OFF_HAND))
 
         if (PlayerInventoryAddon.Client.triesToUseUtility)
             useMainHand = false
         else if (!PlayerSettings.useItemAppliesToOffhand.boolValue && !InventorioControls.keyUseUtility.isUnbound)
             useOffHand = false
+
+        if (useMainHand)
+            player.inventoryAddon?.displayTool = ItemStack.EMPTY
 
         return if (useMainHand && useOffHand)
             arrayOf(Hand.MAIN_HAND, Hand.OFF_HAND)
@@ -83,9 +84,15 @@ object InventorioKeyHandler
 
         //Scroll through the Utility Belt
         if (InventorioControls.keyNextUtility.wasPressed())
-            inventoryAddon.switchToNextUtility(1)
+            inventoryAddon.switchToNextUtility(1, PlayerSettings.skipEmptyUtilitySlots.boolValue)
         if (InventorioControls.keyPrevUtility.wasPressed())
-            inventoryAddon.switchToNextUtility(-1)
+            inventoryAddon.switchToNextUtility(-1, PlayerSettings.skipEmptyUtilitySlots.boolValue)
+        if (InventorioControls.keyEmptyUtility.wasPressed())
+        {
+            val emptyUtility = inventoryAddon.findEmptyUtility(1)
+            if (emptyUtility != -1)
+                inventoryAddon.selectedUtility = emptyUtility
+        }
 
         if (InventorioControls.keyOpenPlayerSettingsMenu.wasPressed())
             client.openScreen(PlayerSettingsScreen.get(client.currentScreen))

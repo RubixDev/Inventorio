@@ -38,6 +38,7 @@ object PlayerSettingsScreen
         addBoolEntry(category, entryBuilder, PlayerSettings.scrollWheelUtilityBelt)
         addBoolEntry(category, entryBuilder, PlayerSettings.canThrowUnloyalTrident)
         addBoolEntry(category, entryBuilder, PlayerSettings.useItemAppliesToOffhand)
+        addBoolEntry(category, entryBuilder, PlayerSettings.skipEmptyUtilitySlots)
 
         if (GlobalSettings.allowSwappedHands.boolValue)
             addBoolEntry(category, entryBuilder, PlayerSettings.swappedHands)
@@ -56,13 +57,13 @@ object PlayerSettingsScreen
     {
         val builder = entryBuilder
             .startBooleanToggle(
-                settingsEntry.displayText,
+                TranslatableText(settingsEntry.displayText),
                 settingsEntry.boolValue
             )
             .setDefaultValue(settingsEntry.defaultValue == true)
             .setSaveConsumer { settingsEntry.value = it }
         if (settingsEntry.tooltipText != null)
-            builder.setTooltip(settingsEntry.tooltipText)
+            builder.setTooltip(TranslatableText(settingsEntry.tooltipText))
         category.addEntry(builder.build())
     }
 }
