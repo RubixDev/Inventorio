@@ -4,6 +4,7 @@ import me.lizardofoz.inventorio.config.PlayerSettings;
 import me.lizardofoz.inventorio.util.MixinHelpers;
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
 import me.lizardofoz.inventorio.util.InventoryDuck;
+import me.lizardofoz.inventorio.util.ScrollWheelUtilityBeltMode;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
@@ -105,9 +106,11 @@ public class PlayerInventoryMixin implements InventoryDuck
     @Environment(EnvType.CLIENT)
     private void inventorioScrollInHotbar(double scrollAmount, CallbackInfo ci)
     {
-        if (PlayerSettings.scrollWheelUtilityBelt.getBoolValue() && inventorioAddon != null)
+        ScrollWheelUtilityBeltMode scrollMode = (ScrollWheelUtilityBeltMode)PlayerSettings.scrollWheelUtilityBelt.getValue();
+        if (scrollMode != ScrollWheelUtilityBeltMode.OFF && inventorioAddon != null)
         {
-            inventorioAddon.switchToNextUtility((int) scrollAmount, PlayerSettings.skipEmptyUtilitySlots.getBoolValue());
+            int realScrollAmount = (int) (scrollAmount) * (scrollMode == ScrollWheelUtilityBeltMode.REGULAR ? -1 : 1);
+            inventorioAddon.switchToNextUtility(realScrollAmount, PlayerSettings.skipEmptyUtilitySlots.getBoolValue());
             ci.cancel();
         }
         else

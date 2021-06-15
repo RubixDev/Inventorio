@@ -29,7 +29,7 @@ object GlobalSettingsSyncPrompt
         val appended = LiteralText("")
         for (option in GlobalSettings.entries)
         {
-            val newValue = option.elementAsValue(newSettingsJson.get(option.configKey))
+            val newValue = option.tryElementAsValue(newSettingsJson.get(option.configKey))
             if (option.value == newValue)
                 continue
             val crossedValueText = LiteralText(option.value.toString())
