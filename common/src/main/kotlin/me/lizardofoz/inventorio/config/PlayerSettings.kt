@@ -2,11 +2,11 @@ package me.lizardofoz.inventorio.config
 
 import com.google.gson.JsonPrimitive
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon.Companion.inventoryAddon
+import me.lizardofoz.inventorio.util.ScrollWheelUtilityBeltMode
 import me.lizardofoz.inventorio.util.SegmentedHotbar
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
-import net.minecraft.text.TranslatableText
 
 @Environment(EnvType.CLIENT)
 object PlayerSettings : AbstractSettings()
@@ -33,9 +33,13 @@ object PlayerSettings : AbstractSettings()
     ) { MinecraftClient.getInstance().player?.inventoryAddon?.swappedHands = it == true }
 
     @JvmField
-    val scrollWheelUtilityBelt = SettingsEntryBoolean(false,
-        "ScrollWheelUtilityBelt",
-        "inventorio.settings.player.scroll_wheel_utility_belt_mode")
+    val scrollWheelUtilityBelt =
+        SettingsEntry(ScrollWheelUtilityBeltMode.OFF,
+            "ScrollWheelUtilityBelt",
+            "inventorio.settings.player.scroll_wheel_utility_belt_mode",
+            null,
+            { JsonPrimitive((it as ScrollWheelUtilityBeltMode).name) },
+            { if (it != null) ScrollWheelUtilityBeltMode.valueOf(it.asString) else ScrollWheelUtilityBeltMode.OFF })
 
     @JvmField
     val useItemAppliesToOffhand = SettingsEntryBoolean(false,

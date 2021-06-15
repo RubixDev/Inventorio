@@ -27,13 +27,13 @@ abstract class AbstractSettings
     {
         val missingEntries = entries.any { !jsonObject.has(it.configKey) }
         for (option in entries)
-            option.value = option.elementAsValue(jsonObject.get(option.configKey))
+            option.value = option.tryElementAsValue(jsonObject.get(option.configKey))
         return missingEntries
     }
 
     fun anyChanges(jsonObject: JsonObject): Boolean
     {
-        return entries.any { option -> option.value != option.elementAsValue(jsonObject.get(option.configKey)) }
+        return entries.any { option -> option.value != option.tryElementAsValue(jsonObject.get(option.configKey)) }
     }
 
     fun save()

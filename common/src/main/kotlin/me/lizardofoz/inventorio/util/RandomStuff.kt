@@ -23,6 +23,11 @@ enum class SegmentedHotbar
     OFF, ONLY_VISUAL, ON
 }
 
+enum class ScrollWheelUtilityBeltMode
+{
+    OFF, REGULAR, REVERSE
+}
+
 interface ScreenHandlerDuck
 {
     var screenHandlerAddon: PlayerScreenHandlerAddon?

@@ -19,6 +19,18 @@ open class SettingsEntry(
             onChange(value)
         }
 
+    fun tryElementAsValue(element: JsonElement?): Any
+    {
+        return try
+        {
+            elementAsValue(element)
+        }
+        catch (ignored: Throwable)
+        {
+            defaultValue
+        }
+    }
+
     override fun equals(other: Any?): Boolean
     {
         return other is SettingsEntry && configKey == other.configKey
