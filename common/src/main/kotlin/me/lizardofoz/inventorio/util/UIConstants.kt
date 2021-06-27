@@ -19,15 +19,14 @@ fun SLOTS_INVENTORY_HOTBAR(deepPocketsRows: Int) = Point2I(8, 142 + DEEP_POCKETS
 fun GUI_INVENTORY_DEEP_POCKETS(deepPocketsRows: Int) = Rectangle(0, 79, 198, DEEP_POCKETS_EXTRA_HEIGHT(deepPocketsRows))
 @JvmField val SLOT_INVENTORY_DEEP_POCKETS = Point2I(8, 84)
 
-@JvmField val CANVAS_UTILITY_BELT_COLUMN_2 = Point2F(198f, 0f)
+@JvmField val CANVAS_UTILITY_BELT_COLUMN_2 = Point2F(238f, 22f)
 @JvmField val GUI_UTILITY_BELT_COLUMN_2 = Rectangle(94, 7, 18, 72)
 @JvmField val SLOT_UTILITY_BELT_COLUMN_1 = Point2I(77, 8)
 
-fun GUI_TOOL_BELT(deepPocketsRows: Int) = Rectangle(173, 69 + DEEP_POCKETS_EXTRA_HEIGHT(deepPocketsRows), 18, 90)
-@JvmField val CANVAS_TOOL_BELT = Point2F(216f, 0f)
-fun SLOT_TOOL_BELT(deepPocketsRows: Int) = Point2I(174, 70 + DEEP_POCKETS_EXTRA_HEIGHT(deepPocketsRows))
+@JvmField val CANVAS_TOOL_BELT = Point2F(238f, 95f)
 
-@JvmField val CANVAS_TOOLS = Rectangle(234, 22, 16, 16)
+@JvmField val CANVAS_TOOL_BELT_UI_EXTENSION = Rectangle(198, 0, 27, 166)
+@JvmField val GUI_TOOL_BELT_UI_EXTENSION = Point2I(191, 0)
 
 @JvmField val CANVAS_UTILITY_BELT_FRAME = Rectangle(234, 0, 22, 22)
 @JvmField val GUI_UTILITY_BELT_FRAME_ORIGIN = Point2I(74, 5)
@@ -35,7 +34,6 @@ fun SLOT_TOOL_BELT(deepPocketsRows: Int) = Point2I(174, 70 + DEEP_POCKETS_EXTRA_
 fun DEEP_POCKETS_EXTRA_HEIGHT(deepPocketsRows: Int) = if (deepPocketsRows <= 0) 0 else 4 + deepPocketsRows * 18
 const val CRAFTING_GRID_OFFSET_X = 20
 
-@JvmField val GUI_RECIPE_WIDGET_WINDOW_OFFSET = Point2I(0, 19)
 @JvmField val GUI_RECIPE_WIDGET_BUTTON_OFFSET = Point2I(124, 22)
 @JvmField val CANVAS_RECIPE_WIDGET_BUTTON = Rectangle(0, 0, 20, 18)
 const val GUI_RECIPE_WIDGET_BUTTON_TOOLTIP_OFFSET = 19

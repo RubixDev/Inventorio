@@ -1,6 +1,5 @@
 package me.lizardofoz.inventorio.player
 
-import me.lizardofoz.inventorio.util.isNotEmpty
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.CompoundTag
@@ -19,12 +18,12 @@ object PlayerAddonSerializer
     fun serializeSection(section: List<ItemStack>): ListTag
     {
         val resultTag = ListTag()
-        for ((i, itemStack) in section.withIndex())
+        for ((slotIndex, itemStack) in section.withIndex())
         {
             if (itemStack.isEmpty)
                 continue
             val itemTag = CompoundTag()
-            itemTag.putInt("Slot", i)
+            itemTag.putInt("Slot", slotIndex)
             itemStack.toTag(itemTag)
             resultTag.add(itemTag)
         }
@@ -35,15 +34,15 @@ object PlayerAddonSerializer
     {
         inventoryAddon.selectedUtility = inventorioTag.getInt("SelectedUtilitySlot")
 
-        deserializeSection(inventoryAddon.utilityBelt, inventorioTag.getList("UtilityBelt", 10))
-        deserializeSection(inventoryAddon.toolBelt, inventorioTag.getList("ToolBelt", 10))
-        deserializeSection(inventoryAddon.deepPockets, inventorioTag.getList("DeepPockets", 10))
+        deserializeSection(inventoryAddon, inventoryAddon.utilityBelt, inventorioTag.getList("UtilityBelt", 10))
+        deserializeSection(inventoryAddon, inventoryAddon.toolBelt, inventorioTag.getList("ToolBelt", 10))
+        deserializeSection(inventoryAddon, inventoryAddon.deepPockets, inventorioTag.getList("DeepPockets", 10))
 
         if (isFirstLaunch)
             ejectVanillaOffhand(inventoryAddon.player)
     }
 
-    fun deserializeSection(inventorySection: MutableList<ItemStack>, sectionTag: ListTag)
+    fun deserializeSection(inventoryAddon: PlayerInventoryAddon, inventorySection: MutableList<ItemStack>, sectionTag: ListTag)
     {
         for (i in inventorySection.indices)
             inventorySection[i] = ItemStack.EMPTY
@@ -51,10 +50,12 @@ object PlayerAddonSerializer
         for (itemTag in sectionTag)
         {
             val compoundTag = itemTag as CompoundTag
-            val i = compoundTag.getInt("Slot")
             val itemStack = ItemStack.fromTag(compoundTag)
-            if (itemStack.isNotEmpty)
-                inventorySection[i] = itemStack
+            val slotIndex = compoundTag.getInt("Slot")
+            if (slotIndex in inventorySection.indices)
+                inventorySection[slotIndex] = itemStack
+            else
+                inventoryAddon.player.dropItem(itemStack, false)
         }
     }
 
@@ -62,7 +63,7 @@ object PlayerAddonSerializer
      * If a player somehow has items in their offhand (the vanilla offhand, not the Utility Belt), eject the items
      * And yes, it has to be here, because when PlayerInventoryAddon is created, player's inventory is not fully loaded
      */
-    fun ejectVanillaOffhand(player: PlayerEntity)
+    private fun ejectVanillaOffhand(player: PlayerEntity)
     {
         val offHandItems = ArrayList(player.inventory.offHand)
         player.inventory.offHand.clear()

@@ -15,7 +15,7 @@ object InventorioControls
         {MinecraftClient.getInstance()?.options?.keyUse},
         "inventorio.keys.use_utility",
         InputUtil.Type.KEYSYM,
-        GLFW.GLFW_KEY_R,
+        GLFW.GLFW_KEY_UNKNOWN,
         "inventorio.keys.category"
     )
 
@@ -69,6 +69,7 @@ object InventorioControls
         keyPrevUtility,
         keyEmptyUtility,
         keyFireBoostRocket,
+
         keyOpenPlayerSettingsMenu,
         keyOpenGlobalSettingsMenu
     )

@@ -62,6 +62,15 @@ A dedicated button to fire a boost rocket directly from your inventory while fly
 #### Trident Loyalty Check 
 This option prevents you from throwing a Trident without Loyalty.
 
+#### "Use Item" Applies To Offhand
+The original idea was to bind each hand to its own dedicated button, but some people found it confusing, and this option restores the vanilla behavior of vanilla "Use Item", while "Use Utility" applies only to the Utility Belt / Offhand.     
+
+#### Skip Empty Utility Slots 
+By default, scrolling and displaying the Utility Belt skips the empty slots, but you can set this behavior to false. There's also a keybind (not bound by default) that allows to scroll to the first empty Utility Belt slot.   
+
+#### Rebind Scroll Wheel to the Utility Belt
+You can rebind the Scroll Wheel to scroll through the Utility Belt, while using the number keys to chose from the Hotbar slots.   
+
 #### Swapped Hands
 This option allows to assign the vanilla Hotbar to your Offhand, and the Utility Belt to your Main Hand.
 
@@ -74,10 +83,12 @@ Global settings can be accessed by a keybind (only in a single player world) or 
 
 Joining a server (either dedicated or hosted from another client) with mismatching global settings will prompt a request to sync your settings and restart the game (recommended).
 
+* `DeepPocketsEnchantment (default: true)` - Can an Enchanted Book with Deep Pockets be obtained in Survival. Note: other mods may introduce non-vanilla ways of obtaining enchantments which Inventorio can't control.
 * `ExpandedEnderChest (default: true)` - when set to `false`, disables mixins responsible for increasing Ender Chest capacity.
 * `InfinityBowNeedsNoArrow (default: true)` - when set to `false`, disables mixins responsible for Infinity Bow requiring no arrows.
 * `TotemFromUtilityBelt (default: true)` - when set to `false`, disables mixins responsible for Totem of Undying going off from any Utility Belt slot.
 * `AllowSwappedHands (default: true)` - when set to `false`, removes the option to [Swap Hands](#swapped-hands).
+* `IgnoreModdedHandlers (default: true)` - Some mods may replace the Player Inventory Screen or have a custom inventory screen based on it. Modifying a said screen is likely to cause compatibility issues with Inventorio.
 
 
 * `Integrations.Gravestones (default: true)` - if Gravestones Mod is present, injects into it to fix compatibility bugs.
@@ -95,24 +106,34 @@ Until this notice is removed (Summer 2021), the structure of the mod is still su
 
 If you want to use this mode as a dependency, I recommend using [JitPack](https://jitpack.io/).
 
-## Toolbelt & Item Tags
+**Items within Inventorio slots don't do inventory ticks**, which can be resolved with `InventorioAPI#registerInventoryTickHandler`. 
+
+### Toolbelt & Item Tags
+`InventorioAPI` allows your mod to add custom Toolbelt slots and add custom allowing and disallowing tags and conditions to toolbelt slots, including existing ones.
+
 By default, any tool inheriting its Java class from a vanilla tool (e.g. `PickaxeItem.java`) will be accepted by a corresponding slot.
 
-In addition, any tool with [item tags](https://fabricmc.net/wiki/tutorial:tags) `inventorio:%item_type%` or `fabric:%item_type%`/`forge:%item_type%` will be accepted by a corresponding slot.
+Any tool with an [item tag](https://fabricmc.net/wiki/tutorial:tags) `inventorio:%item_type%` will be accepted by a corresponding slot.
 
-Examples: `fabric:pickaxes` or `inventorio:shears`.
+You can blacklist a tool from the Toolbelt slot by adding giving it a tag `inventorio:%item_type%_blacklist`.
 
-You can blacklist a tool from a toolbelt slot by adding giving it a tag `inventorio:%item_type%_blacklist`.
+In Forge, a slot accepts any item with a corresponding [ToolType](https://mcforge.readthedocs.io/en/latest/items/items/#basic-items).
 
-Notice, that `%item_type%` is spelled in plural. Available item types: `pickaxes`, `swords`, `axes`, `shovels`, `hoes`, `shears`.
+In Fabric, `fabric:%item_type%` item tag is accepted by a corresponding slot.
+
+Note: `%item_type%` is always spelled in plural. Available item types: `pickaxes`, `swords`, `axes`, `shovels`, `hoes`.
 
 ## (Somewhat) Confirmed Compatible Mods
 Fabric:
 * [BetterGraves](https://github.com/CerulanLumina/better-graves)
 * [Gravestones](https://github.com/Geometrically/Gravestones)
-* [Trinkets](https://github.com/emilyalexandra/trinkets) - Partially. This mod removes Hand and Offhand Trinkets slots to make space for the Utility Belt. Full compatibility requires changes in Trinkets. 
+* [Trinkets](https://github.com/emilyalexandra/trinkets) - Partially. This mod removes Hand and Offhand Trinkets slots to make space for the Utility Belt. Full compatibility requires changes in Trinkets.
+* [Charm](https://github.com/svenhjol/Charm) - Partially. UI elements conflict with Inventorio, but known crashes have been solved.
+* [Curios](https://github.com/TheIllusiveC4/Curios) - Partially. Inventorio slots are hidden in Curios' menu and vice-versa, but known crashes have been solved.
 
 Forge:
 * [GraveStone Mod](https://www.curseforge.com/minecraft/mc-mods/gravestone-mod)
 * [Quark](https://www.curseforge.com/minecraft/mc-mods/quark)
 * [JEI](https://www.curseforge.com/minecraft/mc-mods/jei)
+* [Charm Reforged](https://github.com/svenhjol/CharmForge) - Partially. UI elements conflict with Inventorio, but known crashes have been solved.
+* [Curios](https://github.com/TheIllusiveC4/Curios) - Partially. Inventorio slots are hidden in Curios' menu and vice-versa, but known crashes have been solved.

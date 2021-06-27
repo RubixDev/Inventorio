@@ -1,5 +1,6 @@
 package me.lizardofoz.inventorio.mixin;
 
+import me.lizardofoz.inventorio.config.GlobalSettings;
 import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon;
 import me.lizardofoz.inventorio.util.ScreenHandlerDuck;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,9 +22,12 @@ public class PlayerScreenHandlerMixin implements ScreenHandlerDuck
 {
     @Unique public PlayerScreenHandlerAddon inventorioAddon;
 
+    @SuppressWarnings({"ConstantConditions", "EqualsBetweenInconvertibleTypes"})
     @Inject(method = "<init>", at = @At(value = "RETURN"))
     private void inventorioCreateScreenHandlerAddon(PlayerInventory inventory, boolean onServer, PlayerEntity owner, CallbackInfo ci)
     {
+        if (GlobalSettings.ignoreModdedHandlers.getBoolValue() && !PlayerScreenHandler.class.equals(this.getClass()))
+            return;
         if (owner != null)
             inventorioAddon = new PlayerScreenHandlerAddon((PlayerScreenHandler) (Object) this, owner);
     }
