@@ -2,7 +2,9 @@ package me.lizardofoz.inventorio.client.ui
 
 import me.lizardofoz.inventorio.mixin.client.accessor.HandledScreenAccessor
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon
+import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon
 import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon.Companion.screenHandlerAddon
+import me.lizardofoz.inventorio.slot.ToolBeltSlot
 import me.lizardofoz.inventorio.util.*
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -27,7 +29,7 @@ object PlayerInventoryUIAddon
     {
         inventoryAddon = PlayerInventoryAddon.Client.local!!
         screenAccessor = inventoryScreen as HandledScreenAccessor
-        onResize()
+        onRefresh()
     }
 
     fun postInit()
@@ -35,12 +37,12 @@ object PlayerInventoryUIAddon
         inventoryAddon.player.screenHandlerAddon?.updateDeepPocketsCapacity()
     }
 
-    fun onResize()
+    fun onRefresh()
     {
         if (!this::screenAccessor.isInitialized)
             return
         screenAccessor.titleX = INVENTORY_TITLE_X + CRAFTING_GRID_OFFSET_X
-        screenAccessor.backgroundWidth = GUI_INVENTORY_TOP.width
+        screenAccessor.backgroundWidth = GUI_INVENTORY_TOP.width + ((inventoryAddon.toolBelt.size - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())) * 20
         screenAccessor.backgroundHeight = INVENTORY_HEIGHT + inventoryAddon.getDeepPocketsRowCount() * SLOT_UI_SIZE
     }
 
@@ -48,7 +50,7 @@ object PlayerInventoryUIAddon
     {
         val buttonYOffset = GUI_RECIPE_WIDGET_BUTTON_OFFSET.y + (PlayerInventoryAddon.Client.local?.getDeepPocketsRowCount() ?: 0) * 10
 
-        screenAccessor.x = recipeBook.findLeftEdge(narrow, inventoryScreen.width, screenAccessor.backgroundWidth - GUI_RECIPE_WIDGET_WINDOW_OFFSET.y)
+        screenAccessor.x = recipeBook.findLeftEdge(narrow, inventoryScreen.width, screenAccessor.backgroundWidth - 19 - 19 * ((inventoryAddon.toolBelt.size - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())))
         return TexturedButtonWidget(
             screenAccessor.x + GUI_RECIPE_WIDGET_BUTTON_OFFSET.x,
             inventoryScreen.height / 2 - buttonYOffset,
@@ -59,14 +61,15 @@ object PlayerInventoryUIAddon
         { buttonWidget: ButtonWidget ->
             recipeBook.reset(narrow)
             recipeBook.toggleOpen()
-            screenAccessor.x = recipeBook.findLeftEdge(narrow, inventoryScreen.width, screenAccessor.backgroundWidth - GUI_RECIPE_WIDGET_WINDOW_OFFSET.y)
+            screenAccessor.x = recipeBook.findLeftEdge(narrow, inventoryScreen.width, screenAccessor.backgroundWidth - 19 - 19 * ((inventoryAddon.toolBelt.size - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())))
             (buttonWidget as TexturedButtonWidget).setPos(screenAccessor.x + GUI_RECIPE_WIDGET_BUTTON_OFFSET.x, inventoryScreen.height / 2 - buttonYOffset)
         }
     }
 
     fun drawAddon(matrices: MatrixStack)
     {
-        MinecraftClient.getInstance().textureManager.bindTexture(BACKGROUND_TEXTURE)
+        val textureManager = MinecraftClient.getInstance().textureManager
+        textureManager.bindTexture(BACKGROUND_TEXTURE)
 
         val screenX = screenAccessor.x
         val screenY = screenAccessor.y
@@ -88,7 +91,7 @@ object PlayerInventoryUIAddon
             CANVAS_INVENTORY_TEXTURE_SIZE.x, CANVAS_INVENTORY_TEXTURE_SIZE.y)
 
         //Deep Pockets Rows
-        if (deepPocketsRowCount > 0)
+        if (inventoryAddon.getAvailableUtilityBeltSize() == UTILITY_BELT_FULL_SIZE)
         {
             val guiDeepPocketsRect = GUI_INVENTORY_DEEP_POCKETS(deepPocketsRowCount)
             DrawableHelper.drawTexture(matrices,
@@ -113,25 +116,34 @@ object PlayerInventoryUIAddon
             CANVAS_INVENTORY_TEXTURE_SIZE.x, CANVAS_INVENTORY_TEXTURE_SIZE.y)
 
         //Tool Belt
-        DrawableHelper.drawTexture(matrices,
-            screenX + GUI_TOOL_BELT(deepPocketsRowCount).x, screenY + GUI_TOOL_BELT(deepPocketsRowCount).y,
-            CANVAS_TOOL_BELT.x, CANVAS_TOOL_BELT.y,
-            GUI_TOOL_BELT(deepPocketsRowCount).width, GUI_TOOL_BELT(deepPocketsRowCount).height,
-            CANVAS_INVENTORY_TEXTURE_SIZE.x, CANVAS_INVENTORY_TEXTURE_SIZE.y)
 
-        //ToolBelt - Empty Items
-        //This isn't particularly nice, but the built-in system requires an empty slot icon to be a part of a vanilla block atlas
+        //If Tool Belt is 2+ columns wide, draw extra background pieces
+        val size = inventoryAddon.toolBelt.size
+        for (column in 0 until (size - 1) / ToolBeltSlot.getColumnCapacity(deepPocketsRowCount))
+            DrawableHelper.drawTexture(matrices,
+                screenX + GUI_TOOL_BELT_UI_EXTENSION.x + column * 20, screenY + GUI_TOOL_BELT_UI_EXTENSION.y,
+                CANVAS_TOOL_BELT_UI_EXTENSION.x.toFloat(), CANVAS_TOOL_BELT_UI_EXTENSION.y.toFloat(),
+                CANVAS_TOOL_BELT_UI_EXTENSION.width, CANVAS_TOOL_BELT_UI_EXTENSION.height,
+                CANVAS_INVENTORY_TEXTURE_SIZE.x, CANVAS_INVENTORY_TEXTURE_SIZE.y)
+
+        //Draw a slot background per each tool belt slot
+        for (index in inventoryAddon.toolBelt.indices)
+            DrawableHelper.drawTexture(matrices,
+                screenX + ToolBeltSlot.getGuiPosition(deepPocketsRowCount, index, size).x, screenY + ToolBeltSlot.getGuiPosition(deepPocketsRowCount, index, size).y,
+                CANVAS_TOOL_BELT.x, CANVAS_TOOL_BELT.y,
+                SLOT_UI_SIZE, SLOT_UI_SIZE,
+                CANVAS_INVENTORY_TEXTURE_SIZE.x, CANVAS_INVENTORY_TEXTURE_SIZE.y)
+
+        //Draw empty slot icons
         for ((index, stack) in inventoryAddon.toolBelt.withIndex())
-        {
             if (stack.isEmpty)
+            {
+                textureManager.bindTexture(PlayerScreenHandlerAddon.toolBeltTemplates[index].emptyIcon)
                 DrawableHelper.drawTexture(matrices,
-                    screenX + SLOT_TOOL_BELT(deepPocketsRowCount).x,
-                    screenY + SLOT_TOOL_BELT(deepPocketsRowCount).y + SLOT_UI_SIZE * index,
-                    CANVAS_TOOLS.x.toFloat(),
-                    CANVAS_TOOLS.y.toFloat() + CANVAS_TOOLS.height * index,
-                    CANVAS_TOOLS.width, CANVAS_TOOLS.height,
-                    CANVAS_INVENTORY_TEXTURE_SIZE.x, CANVAS_INVENTORY_TEXTURE_SIZE.y)
-        }
+                    screenX + ToolBeltSlot.getSlotPosition(deepPocketsRowCount, index, size).x,
+                    screenY + ToolBeltSlot.getSlotPosition(deepPocketsRowCount, index, size).y,
+                    0f, 0f, 16, 16, 16, 16
+                )
+            }
     }
-
 }

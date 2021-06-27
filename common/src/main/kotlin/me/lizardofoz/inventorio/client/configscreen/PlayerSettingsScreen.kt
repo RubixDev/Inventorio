@@ -26,15 +26,15 @@ object PlayerSettingsScreen
         val entryBuilder = builder.entryBuilder()
         val category = builder.getOrCreateCategory(TranslatableText("inventorio.settings.player.title"))
 
-        addEnumEntry(category, entryBuilder, PlayerSettings.segmentedHotbar, SegmentedHotbar::class.java, SegmentedHotbar.OFF)
-        addEnumEntry(category, entryBuilder, PlayerSettings.scrollWheelUtilityBelt, ScrollWheelUtilityBeltMode::class.java, ScrollWheelUtilityBeltMode.OFF)
+        addEnumEntry(category, entryBuilder, PlayerSettings.segmentedHotbar, false, false, SegmentedHotbar::class.java, SegmentedHotbar.OFF)
+        addEnumEntry(category, entryBuilder, PlayerSettings.scrollWheelUtilityBelt, false, false, ScrollWheelUtilityBeltMode::class.java, ScrollWheelUtilityBeltMode.OFF)
 
-        addBoolEntry(category, entryBuilder, PlayerSettings.canThrowUnloyalTrident)
-        addBoolEntry(category, entryBuilder, PlayerSettings.useItemAppliesToOffhand)
-        addBoolEntry(category, entryBuilder, PlayerSettings.skipEmptyUtilitySlots)
+        addBoolEntry(category, entryBuilder, PlayerSettings.canThrowUnloyalTrident, false, false)
+        addBoolEntry(category, entryBuilder, PlayerSettings.useItemAppliesToOffhand, false, false)
+        addBoolEntry(category, entryBuilder, PlayerSettings.skipEmptyUtilitySlots, false, false)
 
         if (GlobalSettings.allowSwappedHands.boolValue)
-            addBoolEntry(category, entryBuilder, PlayerSettings.swappedHands)
+            addBoolEntry(category, entryBuilder, PlayerSettings.swappedHands, false, false)
         else
             category.addEntry(
                 entryBuilder
@@ -46,8 +46,18 @@ object PlayerSettingsScreen
         return builder.build()
     }
 
-    private fun <T : Enum<*>> addEnumEntry(category: ConfigCategory, entryBuilder: ConfigEntryBuilder, settingsEntry: SettingsEntry, enumClass: Class<T>, defaultValue: T)
+    fun <T : Enum<*>> addEnumEntry(category: ConfigCategory, entryBuilder: ConfigEntryBuilder, settingsEntry: SettingsEntry, requireRestart: Boolean, blocked: Boolean, enumClass: Class<T>, defaultValue: T)
     {
+        if (blocked)
+        {
+            category.addEntry(entryBuilder
+                .startTextDescription(TranslatableText(settingsEntry.displayText)
+                    .append(" = ")
+                    .append( TranslatableText("${settingsEntry.displayText}.${settingsEntry.value}")))
+                .build())
+            return
+        }
+
         val builder = entryBuilder
             .startEnumSelector(
                 TranslatableText(settingsEntry.displayText),
@@ -57,13 +67,25 @@ object PlayerSettingsScreen
             .setEnumNameProvider { TranslatableText("${settingsEntry.displayText}.${it.name}") }
             .setDefaultValue(defaultValue)
             .setSaveConsumer { settingsEntry.value = it }
+        if (requireRestart)
+            builder.requireRestart()
         if (settingsEntry.tooltipText != null)
             builder.setTooltip(TranslatableText(settingsEntry.tooltipText))
         category.addEntry(builder.build())
     }
 
-    private fun addBoolEntry(category: ConfigCategory, entryBuilder: ConfigEntryBuilder, settingsEntry: SettingsEntryBoolean)
+    fun addBoolEntry(category: ConfigCategory, entryBuilder: ConfigEntryBuilder, settingsEntry: SettingsEntryBoolean, requireRestart: Boolean, blocked: Boolean)
     {
+        if (blocked)
+        {
+            category.addEntry(entryBuilder
+                .startTextDescription(TranslatableText(settingsEntry.displayText)
+                    .append(" = ")
+                    .append(TranslatableText("text.cloth-config.boolean.value.${settingsEntry.boolValue}")))
+                .build())
+            return
+        }
+
         val builder = entryBuilder
             .startBooleanToggle(
                 TranslatableText(settingsEntry.displayText),
@@ -71,6 +93,8 @@ object PlayerSettingsScreen
             )
             .setDefaultValue(settingsEntry.defaultValue == true)
             .setSaveConsumer { settingsEntry.value = it }
+        if (requireRestart)
+            builder.requireRestart()
         if (settingsEntry.tooltipText != null)
             builder.setTooltip(TranslatableText(settingsEntry.tooltipText))
         category.addEntry(builder.build())

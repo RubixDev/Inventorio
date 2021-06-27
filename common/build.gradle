@@ -1,9 +1,4 @@
-plugins {
-    id "org.jetbrains.kotlin.jvm"
-}
-
-compileKotlin.kotlinOptions.jvmTarget = "1.8"
-compileKotlin.kotlinOptions.freeCompilerArgs = ["-Xlambdas=indy"]
+archivesBaseName = "${rootProject.archives_base_name}-1.16-common"
 
 repositories {
     maven { url 'https://jitpack.io' }
@@ -26,4 +21,18 @@ architectury {
 
 java {
     withSourcesJar()
+    withJavadocJar()
+}
+
+publishing {
+    publications {
+        mavenCommon(MavenPublication) {
+            artifactId = archivesBaseName
+            artifact remapJar
+            artifact javadocJar
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+        }
+    }
 }

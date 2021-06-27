@@ -37,6 +37,13 @@
   "inventorio.settings.global.infinity_bow_no_arrows": "Infinity Bow Requires No Arrows",
   "inventorio.settings.global.totem_from_utility_belt": "Totem Activates from the Utility Belt",
   "inventorio.settings.global.allow_swapped_hands": "Allow Swapped Hands",
+  "inventorio.settings.global.deep_pockets": "Deep Pockets Book in Survival",
+  "inventorio.settings.global.deep_pockets.tooltip": "Can an Enchanted Book with Deep Pockets be obtained in Survival\nNote: other mods may introduce non-vanilla ways\nof obtaining enchantments which Inventorio can't control.",
+  "inventorio.settings.global.deep_pockets.ENABLED": "§aYes",
+  "inventorio.settings.global.deep_pockets.DISABLED_BUT_BIGGER_UTILITY": "§eNo. Expand Utility Belt",
+  "inventorio.settings.global.deep_pockets.DISABLED": "§cNo",
+  "inventorio.settings.global.ignore_modded_handlers": "Ignore Modded Player Screens",
+  "inventorio.settings.global.ignore_modded_handlers.tooltip": "Some mods may replace the Player Inventory Screen\nor have a custom inventory screen based on it.\nModifying a said screen is likely to cause compatibility issues with Inventorio.",
 
   "inventorio.settings.global.integrations": "§fHacky Mod Integrations\n§7While we wait for these mods to implement necessary changes properly, this mod includes hacky injects to fix compatibility issues for the time being.\nHas no effect for non-installed mods.",
   "inventorio.settings.global.integrations.gravestones": "Gravestones",

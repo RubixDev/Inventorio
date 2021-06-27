@@ -136,7 +136,7 @@ public class PlayerEntityMixin
         tag.put("Inventorio", inventorioTag);
     }
 
-    @Inject(method = "tickNewAi", at = @At(value = "RETURN"))
+    @Inject(method = "tickMovement", at = @At(value = "RETURN"))
     private void inventorioEmptyMainHandDisplayTool(CallbackInfo ci)
     {
         PlayerInventoryAddon addon = getAddon();
