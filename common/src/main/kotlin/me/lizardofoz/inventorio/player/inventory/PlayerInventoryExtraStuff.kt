@@ -13,7 +13,6 @@ import net.minecraft.entity.projectile.FireworkRocketEntity
 import net.minecraft.item.FireworkItem
 import net.minecraft.item.ItemStack
 import net.minecraft.item.ToolItem
-import net.minecraft.util.Util
 import kotlin.math.max
 
 abstract class PlayerInventoryExtraStuff protected constructor(player: PlayerEntity) : PlayerInventoryHandFeatures(player)
@@ -98,15 +97,6 @@ abstract class PlayerInventoryExtraStuff protected constructor(player: PlayerEnt
             return true
         }
         return false
-    }
-
-    fun tick()
-    {
-        val ms = Util.getMeasuringTimeMs()
-        if (player.handSwinging)
-            displayToolTimeStamp = ms + 1000
-        if (displayToolTimeStamp <= ms)
-            displayTool = ItemStack.EMPTY
     }
 
     companion object

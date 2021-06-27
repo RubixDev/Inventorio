@@ -88,11 +88,7 @@ object InventorioKeyHandler
         if (InventorioControls.keyPrevUtility.wasPressed())
             inventoryAddon.switchToNextUtility(-1, PlayerSettings.skipEmptyUtilitySlots.boolValue)
         if (InventorioControls.keyEmptyUtility.wasPressed())
-        {
-            val emptyUtility = inventoryAddon.findEmptyUtility(1)
-            if (emptyUtility != -1)
-                inventoryAddon.selectedUtility = emptyUtility
-        }
+            inventoryAddon.switchToEmptyUtility(1)
 
         if (InventorioControls.keyOpenPlayerSettingsMenu.wasPressed())
             client.openScreen(PlayerSettingsScreen.get(client.currentScreen))

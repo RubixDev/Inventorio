@@ -1,6 +1,7 @@
 plugins {
-    id "architectury-plugin" version "3.1-SNAPSHOT"
-    id "forgified-fabric-loom" version "0.6-SNAPSHOT" apply false
+    id "architectury-plugin" version "3.1.105"
+    id "forgified-fabric-loom" version "0.6.96" apply false
+    id "org.jetbrains.kotlin.jvm" version "1.5.0"
 }
 
 architectury {
@@ -19,6 +20,8 @@ def version_replaces = [
 
 subprojects {
     apply plugin: "forgified-fabric-loom"
+    apply plugin: "maven-publish"
+    apply plugin: "org.jetbrains.kotlin.jvm"
 
     dependencies {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
@@ -44,16 +47,19 @@ allprojects {
     archivesBaseName = rootProject.archives_base_name
     version = rootProject.mod_version
 
+    compileKotlin.kotlinOptions.jvmTarget = "1.8"
+    compileKotlin.kotlinOptions.freeCompilerArgs = ["-Xlambdas=indy"]
+
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
 
-        def targetVersion = 8
         if (JavaVersion.current().isJava9Compatible()) {
-            options.release = targetVersion
+            options.release.set(8)
         }
     }
 
     java {
         withSourcesJar()
+        withJavadocJar()
     }
 }

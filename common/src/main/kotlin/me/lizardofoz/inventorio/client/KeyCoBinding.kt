@@ -13,15 +13,15 @@ import net.minecraft.text.TranslatableText
  * This is the fix: the co-bound binding will unbind itself if binded to the same key.
  */
 @Environment(EnvType.CLIENT)
-open class KeyCoBinding(private val coBindTranslationKey: String, private val vanillaBinging: () -> KeyBinding?, translationKey: String, type: InputUtil.Type, code: Int, category: String): KeyBinding(translationKey, type, code, category)
+open class KeyCoBinding(protected val coBindTranslationKey: String, protected val vanillaBinging: () -> KeyBinding?, translationKey: String, type: InputUtil.Type, code: Int, category: String): KeyBinding(translationKey, type, code, category)
 {
-    val isThisOrVanillaPressed: Boolean
+    open val isThisOrVanillaPressed: Boolean
         get() = (isUnbound && vanillaBinging()?.isPressed == true) || super.isPressed()
 
     override fun setBoundKey(boundKey: InputUtil.Key)
     {
         super.setBoundKey(boundKey)
-        if (this.equals(vanillaBinging()))
+        if (!this.isUnbound && this.equals(vanillaBinging()))
             super.setBoundKey(InputUtil.UNKNOWN_KEY)
     }
 

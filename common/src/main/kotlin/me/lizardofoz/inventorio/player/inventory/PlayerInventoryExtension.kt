@@ -1,9 +1,11 @@
 package me.lizardofoz.inventorio.player.inventory
 
+import me.lizardofoz.inventorio.config.GlobalSettings
 import me.lizardofoz.inventorio.enchantment.DeepPocketsEnchantment
 import me.lizardofoz.inventorio.mixin.accessor.SimpleInventoryAccessor
 import me.lizardofoz.inventorio.packet.InventorioNetworking
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon
+import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon
 import me.lizardofoz.inventorio.util.*
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.entity.player.PlayerEntity
@@ -11,12 +13,15 @@ import net.minecraft.inventory.SimpleInventory
 import net.minecraft.item.ItemStack
 import kotlin.math.sign
 
-abstract class PlayerInventoryExtension protected constructor(val player: PlayerEntity) : SimpleInventory(DEEP_POCKETS_MAX_SIZE + TOOL_BELT_SIZE + UTILITY_BELT_FULL_SIZE)
+abstract class PlayerInventoryExtension protected constructor(val player: PlayerEntity)
+    : SimpleInventory(DEEP_POCKETS_MAX_SIZE + UTILITY_BELT_FULL_SIZE + PlayerScreenHandlerAddon.toolBeltTemplates.size)
 {
+    /** Warning! The length of [toolBelt], and thus [stacks], may differ across play sessions depending on the mods installed */
     @JvmField val stacks: MutableList<ItemStack>
     @JvmField val deepPockets: MutableList<ItemStack>
-    @JvmField val toolBelt: MutableList<ItemStack>
     @JvmField val utilityBelt: MutableList<ItemStack>
+    /** Warning! The length of [toolBelt], and thus [stacks], may differ across play sessions depending on the mods installed */
+    @JvmField val toolBelt: MutableList<ItemStack>
 
     var selectedUtility = 0
         set(value)
@@ -28,24 +33,14 @@ abstract class PlayerInventoryExtension protected constructor(val player: Player
     {
         stacks = (this as SimpleInventoryAccessor).stacks!!
         deepPockets = stacks.subList(INVENTORY_ADDON_DEEP_POCKETS_RANGE.first, INVENTORY_ADDON_DEEP_POCKETS_RANGE.last + 1)
-        toolBelt = stacks.subList(INVENTORY_ADDON_TOOL_BELT_RANGE.first, INVENTORY_ADDON_TOOL_BELT_RANGE.last + 1)
         utilityBelt = stacks.subList(INVENTORY_ADDON_UTILITY_BELT_RANGE.first, INVENTORY_ADDON_UTILITY_BELT_RANGE.last + 1)
+        toolBelt = stacks.subList(INVENTORY_ADDON_TOOL_BELT_INDEX_OFFSET, INVENTORY_ADDON_TOOL_BELT_INDEX_OFFSET + PlayerScreenHandlerAddon.toolBeltTemplates.size)
     }
 
     fun cloneFrom(oldAddon: PlayerInventoryAddon)
     {
         for ((index, stack) in oldAddon.stacks.withIndex())
             this.setStack(index, stack)
-    }
-
-    fun asMap(): Map<Int, ItemStack>
-    {
-        return stacks.withIndex().associate { it.index to it.value }
-    }
-
-    fun fromMap(items: Map<Int, ItemStack>)
-    {
-        items.forEach { setStack(it.key, it.value) }
     }
 
     fun dropAll()
@@ -85,6 +80,16 @@ abstract class PlayerInventoryExtension protected constructor(val player: Player
         return Pair(ItemStack.EMPTY, -1)
     }
 
+    fun switchToEmptyUtility(direction: Int): Boolean
+    {
+        val slotIndex = findEmptyUtility(direction)
+        if (slotIndex == -1)
+            return false
+        selectedUtility = slotIndex
+        InventorioNetworking.INSTANCE.c2sSelectUtilitySlot(slotIndex)
+        return true
+    }
+
     /**
      * Returns -1 if no empty utility slot was found
      */
@@ -107,7 +112,10 @@ abstract class PlayerInventoryExtension protected constructor(val player: Player
      */
     fun getAvailableUtilityBeltSize(): Int
     {
-        return if (getDeepPocketsRowCount() > 0) UTILITY_BELT_FULL_SIZE else UTILITY_BELT_SMALL_SIZE
+        return if (getDeepPocketsRowCount() > 0 || GlobalSettings.deepPocketsInSurvival.value == DeepPocketsMode.DISABLED_BUT_BIGGER_UTILITY)
+            UTILITY_BELT_FULL_SIZE
+        else
+            UTILITY_BELT_SMALL_SIZE
     }
 
     /**

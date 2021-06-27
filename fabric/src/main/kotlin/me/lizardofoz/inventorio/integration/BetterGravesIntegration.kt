@@ -7,6 +7,7 @@ import net.fabricmc.api.EnvType
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.item.ItemStack
 
 object BetterGravesIntegration : ModIntegration()
 {
@@ -28,11 +29,18 @@ object BetterGravesIntegration : ModIntegration()
 
     private fun registerDeathHandler()
     {
-        BetterGravesAPI.registerDeathHandler("inventorio", { serverPlayerEntity, damageSource ->
-            ImmutableMap.copyOf(serverPlayerEntity.inventoryAddon?.asMap() ?: emptyMap())
-        }, { serverPlayerEntity, items ->
-            if (items != null)
-                serverPlayerEntity.inventoryAddon?.fromMap(items)
+        BetterGravesAPI.registerDeathHandler("inventorio", { player, _ ->
+            val addon = player.inventoryAddon ?: return@registerDeathHandler ImmutableMap.of()
+            ImmutableMap.copyOf(addon.stacks.withIndex().associate { it.index to it.value })
+        }, { player, items ->
+            val addon = player.inventoryAddon?: return@registerDeathHandler
+            for ((index, itemStack) in items.entries)
+            {
+                if (index in addon.stacks.indices)
+                    addon.stacks[index] = itemStack
+                else
+                    player.dropItem(itemStack, true)
+            }
         })
     }
 }

@@ -25,21 +25,13 @@ object PlayerSettings : AbstractSettings()
         "inventorio.settings.player.can_throw_unloyal_trident")
 
     @JvmField
-    val swappedHands = SettingsEntryBoolean(
-        false,
-        "SwappedHands",
-        "inventorio.settings.player.swapped_hands",
-        "inventorio.settings.player.swapped_hands.tooltip"
-    ) { MinecraftClient.getInstance().player?.inventoryAddon?.swappedHands = it == true }
-
-    @JvmField
     val scrollWheelUtilityBelt =
         SettingsEntry(ScrollWheelUtilityBeltMode.OFF,
             "ScrollWheelUtilityBelt",
             "inventorio.settings.player.scroll_wheel_utility_belt_mode",
             null,
             { JsonPrimitive((it as ScrollWheelUtilityBeltMode).name) },
-            { if (it != null) ScrollWheelUtilityBeltMode.valueOf(it.asString) else ScrollWheelUtilityBeltMode.OFF })
+            { ScrollWheelUtilityBeltMode.valueOf(it!!.asString)})
 
     @JvmField
     val useItemAppliesToOffhand = SettingsEntryBoolean(false,
@@ -51,6 +43,14 @@ object PlayerSettings : AbstractSettings()
     val skipEmptyUtilitySlots = SettingsEntryBoolean(true,
         "SkipEmptyUtilitySlots",
         "inventorio.settings.player.skip_empty_utility_slots")
+
+    @JvmField
+    val swappedHands = SettingsEntryBoolean(
+        false,
+        "SwappedHands",
+        "inventorio.settings.player.swapped_hands",
+        "inventorio.settings.player.swapped_hands.tooltip"
+    ) { MinecraftClient.getInstance().player?.inventoryAddon?.swappedHands = it == true }
 
     init
     {

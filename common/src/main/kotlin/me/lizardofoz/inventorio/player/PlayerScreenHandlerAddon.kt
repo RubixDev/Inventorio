@@ -1,5 +1,7 @@
 package me.lizardofoz.inventorio.player
 
+import com.google.common.collect.ImmutableList
+import me.lizardofoz.inventorio.api.ToolBeltSlotTemplate
 import me.lizardofoz.inventorio.client.ui.PlayerInventoryUIAddon
 import me.lizardofoz.inventorio.mixin.accessor.ScreenHandlerAccessor
 import me.lizardofoz.inventorio.mixin.accessor.SlotAccessor
@@ -35,8 +37,8 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
      * Note: returns ALL Deep Pocket Slots, regardless if they're available to the player or not
      */
     @JvmField val deepPocketsRange: IntRange
-    @JvmField val toolBeltRange: IntRange
     @JvmField val utilityBeltRange: IntRange
+    @JvmField val toolBeltRange: IntRange
 
     //==============================
     //Injects. These functions are either injected or redirected to by a mixin of a [PlayerScreenHandler] class
@@ -44,6 +46,7 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
 
     init
     {
+        bNoMoreToolBeltSlots = true
         val screenHandlerAccessor = screenHandler as ScreenHandlerAccessor
         val deepPocketsRowCount = inventoryAddon.getDeepPocketsRowCount()
 
@@ -57,26 +60,33 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
 
         val addonSlotsIndexShift = screenHandler.slots.size
         deepPocketsRange = addonSlotsIndexShift expandBy DEEP_POCKETS_MAX_SIZE
-        toolBeltRange = deepPocketsRange.last + 1 expandBy TOOL_BELT_SIZE
-        utilityBeltRange = toolBeltRange.last + 1 expandBy UTILITY_BELT_FULL_SIZE
+        utilityBeltRange = deepPocketsRange.last + 1 expandBy UTILITY_BELT_FULL_SIZE
+        toolBeltRange = utilityBeltRange.last + 1 expandBy toolBeltTemplates.size
+
 
         //Extended Inventory Section (Deep Pockets Enchantment)
         for ((absoluteIndex, relativeIndex) in INVENTORY_ADDON_DEEP_POCKETS_RANGE.withRelativeIndex())
-            screenHandlerAccessor.addASlot(DeepPocketsSlot(inventoryAddon, absoluteIndex,
-                    SLOT_INVENTORY_DEEP_POCKETS.x + (relativeIndex % VANILLA_ROW_LENGTH) * SLOT_UI_SIZE,
-                    SLOT_INVENTORY_DEEP_POCKETS.y + (relativeIndex / VANILLA_ROW_LENGTH) * SLOT_UI_SIZE))
-
-        //Tool Belt
-        for ((absoluteIndex, relativeIndex) in INVENTORY_ADDON_TOOL_BELT_RANGE.withRelativeIndex())
-            screenHandlerAccessor.addASlot(ToolBeltSlot(inventoryAddon, toolBeltSlotFilters[relativeIndex], absoluteIndex,
-                    SLOT_TOOL_BELT(deepPocketsRowCount).x,
-                    SLOT_TOOL_BELT(deepPocketsRowCount).y + SLOT_UI_SIZE * relativeIndex))
+            screenHandlerAccessor.addASlot(DeepPocketsSlot(
+                inventoryAddon, absoluteIndex,
+                SLOT_INVENTORY_DEEP_POCKETS.x + (relativeIndex % VANILLA_ROW_LENGTH) * SLOT_UI_SIZE,
+                SLOT_INVENTORY_DEEP_POCKETS.y + (relativeIndex / VANILLA_ROW_LENGTH) * SLOT_UI_SIZE
+            ))
 
         //Utility Belt
         for ((absoluteIndex, relativeIndex) in INVENTORY_ADDON_UTILITY_BELT_RANGE.withRelativeIndex())
-            screenHandlerAccessor.addASlot(DeepPocketsSlot(inventoryAddon, absoluteIndex,
-                    SLOT_UTILITY_BELT_COLUMN_1.x + SLOT_UI_SIZE * (relativeIndex / UTILITY_BELT_SMALL_SIZE),
-                    SLOT_UTILITY_BELT_COLUMN_1.y + SLOT_UI_SIZE * (relativeIndex % UTILITY_BELT_SMALL_SIZE)))
+            screenHandlerAccessor.addASlot(DeepPocketsSlot(
+                inventoryAddon, absoluteIndex,
+                SLOT_UTILITY_BELT_COLUMN_1.x + SLOT_UI_SIZE * (relativeIndex / UTILITY_BELT_SMALL_SIZE),
+                SLOT_UTILITY_BELT_COLUMN_1.y + SLOT_UI_SIZE * (relativeIndex % UTILITY_BELT_SMALL_SIZE)
+            ))
+
+        //Tool Belt
+        for ((relativeIndex, toolBeltTemplate) in toolBeltTemplates.withIndex())
+            screenHandlerAccessor.addASlot(ToolBeltSlot(
+                toolBeltTemplate, inventoryAddon, relativeIndex + INVENTORY_ADDON_TOOL_BELT_INDEX_OFFSET,
+                ToolBeltSlot.getSlotPosition(deepPocketsRowCount, relativeIndex, toolBeltTemplates.size).x,
+                ToolBeltSlot.getSlotPosition(deepPocketsRowCount, relativeIndex, toolBeltTemplates.size).y
+            ))
     }
 
     fun postSlotClick(slotIndex: Int)
@@ -104,20 +114,14 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
         {
             //Try to send an item into the armor slots
             if (MobEntity.getPreferredEquipmentSlot(itemStackStaticCopy).type == EquipmentSlot.Type.ARMOR
-                    && screenHandlerAccessor.insertAnItem(itemStackDynamic, HANDLER_ADDON_ARMOR_RANGE.first, HANDLER_ADDON_ARMOR_RANGE.last + 1, false))
+                && screenHandlerAccessor.insertAnItem(itemStackDynamic, HANDLER_ADDON_ARMOR_RANGE.first, HANDLER_ADDON_ARMOR_RANGE.last + 1, false))
             {
                 updateDeepPocketsCapacity()
                 return itemStackStaticCopy
             }
             //Try to send an item into the Tool Belt
-            for ((index, filter) in toolBeltSlotFilters.withIndex())
-            {
-                val absoluteIndex = toolBeltRange.first + index
-                //Yes, we ultimately invoke this filter twice (here and within the ToolBeltSlot),
-                //  but have you seen the body of ScreenHandler#insertItem method?
-                if (filter(itemStackDynamic) && screenHandlerAccessor.insertAnItem(itemStackDynamic, absoluteIndex, absoluteIndex + 1, false))
-                    return itemStackStaticCopy
-            }
+            if (screenHandlerAccessor.insertAnItem(itemStackDynamic, toolBeltRange.first, toolBeltRange.last + 1, false))
+                return itemStackStaticCopy
         }
         //If we're here, an item can't be moved to neither tool belt nor armor slots
 
@@ -144,7 +148,7 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
         else if (sourceIndex in HANDLER_ADDON_ARMOR_RANGE || sourceIndex in utilityBeltRange || sourceIndex in toolBeltRange)
         {
             if (screenHandlerAccessor.insertAnItem(itemStackDynamic, HANDLER_ADDON_MAIN_INVENTORY_RANGE.first, HANDLER_ADDON_MAIN_INVENTORY_RANGE.last + 1, false)
-                    || (!deepPocketsSlots.isEmpty() && screenHandlerAccessor.insertAnItem(itemStackDynamic, deepPocketsSlots.first, deepPocketsSlots.last + 1, false)))
+                || (!deepPocketsSlots.isEmpty() && screenHandlerAccessor.insertAnItem(itemStackDynamic, deepPocketsSlots.first, deepPocketsSlots.last + 1, false)))
                 return itemStackStaticCopy
         }
         return null
@@ -196,36 +200,28 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
     fun updateDeepPocketsCapacity()
     {
         val player = inventoryAddon.player
-        val deepPocketsRange = getAvailableDeepPocketsRange()
-        for (i in deepPocketsRange)
-        {
-            val slot = screenHandler.getSlot(i) as DeepPocketsSlot
-            slot.canTakeItems = true
-        }
+
+        for (i in getAvailableDeepPocketsRange())
+            (screenHandler.getSlot(i) as DeepPocketsSlot).canTakeItems = true
+        for (i in getAvailableUtilityBeltRange())
+            (screenHandler.getSlot(i) as DeepPocketsSlot).canTakeItems = true
+
         for (i in getUnavailableDeepPocketsRange())
         {
             val slot = screenHandler.getSlot(i) as DeepPocketsSlot
-            if (slot.stack.isNotEmpty)
-            {
-                player.dropItem(slot.stack, false, true)
-                slot.stack = ItemStack.EMPTY
-            }
+            player.dropItem(slot.stack, false, true)
+            slot.stack = ItemStack.EMPTY
             slot.canTakeItems = false
         }
-        for (i in utilityBeltRange.first + UTILITY_BELT_SMALL_SIZE .. utilityBeltRange.last)
+        for (i in getUnavailableUtilityBeltRange())
         {
             val slot = screenHandler.getSlot(i) as DeepPocketsSlot
-            if (deepPocketsRange.isEmpty()) //If we don't have Deep Pockets on us, we need to drop items within the extended utility belt
-            {
-                player.dropItem(slot.stack, false, true)
-                slot.stack = ItemStack.EMPTY
-                slot.canTakeItems = false
-            }
-            else
-                slot.canTakeItems = true
+            player.dropItem(slot.stack, false, true)
+            slot.stack = ItemStack.EMPTY
+            slot.canTakeItems = false
+            if (inventoryAddon.selectedUtility >= UTILITY_BELT_SMALL_SIZE)
+                inventoryAddon.selectedUtility -= UTILITY_BELT_SMALL_SIZE
         }
-        if (deepPocketsRange.isEmpty() && inventoryAddon.selectedUtility >= UTILITY_BELT_SMALL_SIZE)
-            inventoryAddon.selectedUtility -= UTILITY_BELT_SMALL_SIZE
         if (!screenHandler.onServer)
             refreshSlotPositions()
     }
@@ -233,7 +229,7 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
     @Environment(EnvType.CLIENT)
     private fun refreshSlotPositions()
     {
-        PlayerInventoryUIAddon.onResize()
+        PlayerInventoryUIAddon.onRefresh()
         val deepPocketsRowCount = inventoryAddon.getDeepPocketsRowCount()
 
         for ((absoluteIndex, relativeIndex) in HANDLER_ADDON_MAIN_INVENTORY_WITHOUT_HOTBAR_RANGE.withRelativeIndex())
@@ -251,8 +247,8 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
         for ((absoluteIndex, relativeIndex) in toolBeltRange.withRelativeIndex())
         {
             val slot = screenHandler.getSlot(absoluteIndex) as SlotAccessor
-            slot.x = SLOT_TOOL_BELT(deepPocketsRowCount).x
-            slot.y = SLOT_TOOL_BELT(deepPocketsRowCount).y + SLOT_UI_SIZE * relativeIndex
+            slot.x = ToolBeltSlot.getSlotPosition(deepPocketsRowCount, relativeIndex, toolBeltRange.count()).x
+            slot.y = ToolBeltSlot.getSlotPosition(deepPocketsRowCount, relativeIndex, toolBeltRange.count()).y
         }
         for (absoluteIndex in getAvailableDeepPocketsRange())
         {
@@ -269,7 +265,13 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
     //Note: this class returns the range within the SCREEN HANDLER, which is different from the range within the inventory
     fun getAvailableUtilityBeltRange(): IntRange
     {
-        return if (inventoryAddon.getDeepPocketsRowCount() > 0) utilityBeltRange else utilityBeltRange.first expandBy UTILITY_BELT_SMALL_SIZE
+        return utilityBeltRange.first expandBy inventoryAddon.getAvailableUtilityBeltSize()
+    }
+
+    //Note: this class returns the range within the SCREEN HANDLER, which is different from the range within the inventory
+    fun getUnavailableUtilityBeltRange(): IntRange
+    {
+        return getAvailableUtilityBeltRange().last + 1..utilityBeltRange.last
     }
 
     //Note: this class returns the range within the SCREEN HANDLER, which is different from the range within the inventory
@@ -289,5 +291,32 @@ class PlayerScreenHandlerAddon internal constructor(val screenHandler: PlayerScr
         @JvmStatic
         val PlayerEntity.screenHandlerAddon: PlayerScreenHandlerAddon?
             get() = (this.playerScreenHandler as ScreenHandlerDuck).screenHandlerAddon
+
+        internal val toolBeltTemplates = mutableListOf<ToolBeltSlotTemplate>()
+        private var bNoMoreToolBeltSlots = false
+
+        @JvmStatic
+        fun getToolBeltTemplate(slotName: String): ToolBeltSlotTemplate?
+        {
+            return toolBeltTemplates.firstOrNull { it.name == slotName }
+        }
+
+        @JvmStatic
+        fun getToolBeltTemplates(): ImmutableList<ToolBeltSlotTemplate>
+        {
+            return ImmutableList.copyOf(toolBeltTemplates)
+        }
+
+        @JvmStatic
+        fun registerToolBeltTemplateIfNotExists(slotName: String, template: ToolBeltSlotTemplate): ToolBeltSlotTemplate
+        {
+            if (bNoMoreToolBeltSlots)
+                throw IllegalStateException("You can't add any more ToolBelt Slots after a player has already been spawned! Please move the creation of extra ToolBelt Slots earlier.")
+            val existing = getToolBeltTemplate(slotName)
+            if (existing != null)
+                return existing
+            toolBeltTemplates.add(template)
+            return template
+        }
     }
 }

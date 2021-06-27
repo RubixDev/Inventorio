@@ -1,10 +1,6 @@
 plugins {
     id "com.github.johnrengelman.shadow" version "5.0.0"
-    id "org.jetbrains.kotlin.jvm"
 }
-
-compileKotlin.kotlinOptions.jvmTarget = "1.8"
-compileKotlin.kotlinOptions.freeCompilerArgs = ["-Xlambdas=indy"]
 
 archivesBaseName = "${rootProject.archives_base_name}-1.16-forge"
 
@@ -72,10 +68,29 @@ jar {
 
 java {
     withSourcesJar()
+    withJavadocJar()
 }
 
 sourcesJar {
     def commonSources = project(":common").sourcesJar
     dependsOn commonSources
     from commonSources.archiveFile.map { zipTree(it) }
+}
+
+javadocJar {
+    def commonSources = project(":common").javadoc
+    dependsOn commonSources
+    from commonSources.destinationDir
+}
+
+publishing {
+    publications {
+        mavenForge(MavenPublication) {
+            artifactId = archivesBaseName
+            artifact remapJar
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+        }
+    }
 }

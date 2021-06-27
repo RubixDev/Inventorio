@@ -1,8 +1,9 @@
 package me.lizardofoz.inventorio
 
-import me.lizardofoz.inventorio.config.PlayerSettings
+import me.lizardofoz.inventorio.api.InventorioAPI
 import me.lizardofoz.inventorio.client.InventorioControls
 import me.lizardofoz.inventorio.client.InventorioKeyHandler
+import me.lizardofoz.inventorio.config.PlayerSettings
 import me.lizardofoz.inventorio.enchantment.DeepPocketsEnchantment
 import me.lizardofoz.inventorio.integration.BetterGravesIntegration
 import me.lizardofoz.inventorio.integration.InventorioModIntegration
@@ -24,8 +25,8 @@ open class InventorioFabric : ModInitializer
     override fun onInitialize()
     {
         InventorioNetworking.INSTANCE = InventorioNetworkingFabric
-
         Registry.register(Registry.ENCHANTMENT, Identifier("inventorio", "deep_pockets"), DeepPocketsEnchantment)
+        initToolBelt()
 
         if (FabricLoader.getInstance().environmentType == EnvType.CLIENT)
         {
@@ -36,5 +37,18 @@ open class InventorioFabric : ModInitializer
 
         InventorioModIntegration.addModIntegrations(fabricModIntegrations)
         InventorioModIntegration.apply()
+    }
+
+    private fun initToolBelt()
+    {
+        //What this actually does is loads the [InventorioAPI] which creates the ToolBelt
+        //The reason why we do it this way is because we can't guarantee that other mods
+        //  won't call [InventorioAPI] BEFORE [InventorioFabric#onInitialize] has been invoked
+        InventorioAPI.getToolBeltSlotTemplate(InventorioAPI.SLOT_PICKAXE)?.addAllowingTag(Identifier("fabric", "pickaxes"))
+        InventorioAPI.getToolBeltSlotTemplate(InventorioAPI.SLOT_SWORD)?.addAllowingTag(Identifier("fabric", "swords"))
+        InventorioAPI.getToolBeltSlotTemplate(InventorioAPI.SLOT_AXE)?.addAllowingTag(Identifier("fabric", "axes"))
+        InventorioAPI.getToolBeltSlotTemplate(InventorioAPI.SLOT_SHOVEL)?.addAllowingTag(Identifier("fabric", "shovels"))
+        InventorioAPI.getToolBeltSlotTemplate(InventorioAPI.SLOT_HOE)?.addAllowingTag(Identifier("fabric", "hoes"))
+            ?.addAllowingTag(Identifier("fabric", "shears"))
     }
 }
