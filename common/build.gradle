@@ -18,21 +18,3 @@ dependencies {
 architectury {
     common()
 }
-
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
-
-publishing {
-    publications {
-        mavenCommon(MavenPublication) {
-            artifactId = archivesBaseName
-            artifact remapJar
-            artifact javadocJar
-            artifact(sourcesJar) {
-                builtBy remapSourcesJar
-            }
-        }
-    }
-}
