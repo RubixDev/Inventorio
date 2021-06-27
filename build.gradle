@@ -60,6 +60,5 @@ allprojects {
 
     java {
         withSourcesJar()
-        withJavadocJar()
     }
 }
