@@ -66,21 +66,10 @@ jar {
     classifier "dev"
 }
 
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
-
 sourcesJar {
     def commonSources = project(":common").sourcesJar
     dependsOn commonSources
     from commonSources.archiveFile.map { zipTree(it) }
-}
-
-javadocJar {
-    def commonSources = project(":common").javadoc
-    dependsOn commonSources
-    from commonSources.destinationDir
 }
 
 publishing {
