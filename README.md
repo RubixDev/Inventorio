@@ -104,7 +104,7 @@ If you want to request a feature or modification, please use an Issue Tracker or
 ## Inventorio as a Dependency for Your Mod
 Until this notice is removed (Summer 2021), the structure of the mod is still subject to change, but you can contact me if you need particular functionality or want something to stay consistent.
 
-If you want to use this mode as a dependency, I recommend using JitPack. Please note that using Architectury plugin causes the gradle setup to be different that normal: 
+If you want to use this mode as a dependency, I recommend using JitPack. Please note that me using Architectury plugin causes the gradle setup to be different that normal: 
 
 Fabric:
 ```
@@ -114,6 +114,7 @@ repositories {
 }
 
 dependencies {
+  ...
   modImplementation 'com.github.Lizard-Of-Oz.Inventorio:inventorio-1.16-fabric:master-SNAPSHOT'
 }
 ```
@@ -126,6 +127,7 @@ repositories {
 }
 
 dependencies {
+  ...
   implementation 'com.github.Lizard-Of-Oz.Inventorio:inventorio-1.16-forge:master-SNAPSHOT'
 }
 ```
