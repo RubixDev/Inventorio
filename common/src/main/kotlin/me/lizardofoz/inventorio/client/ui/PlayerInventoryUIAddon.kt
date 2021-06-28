@@ -44,7 +44,7 @@ object PlayerInventoryUIAddon
         inventoryAddon.player.screenHandlerAddon?.updateDeepPocketsCapacity()
         recipeButtonYShift = (PlayerInventoryAddon.Client.local?.getDeepPocketsRowCount() ?: 0) * 10
 
-        recipeButton = buttons[0] as? TexturedButtonWidget
+        recipeButton = if (buttons.isEmpty()) null else buttons[0] as? TexturedButtonWidget
         if (recipeButton != null)
         {
             screenAccessor.x = findLeftEdge(recipeBook,
