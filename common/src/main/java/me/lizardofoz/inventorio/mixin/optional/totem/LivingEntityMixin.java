@@ -17,7 +17,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = LivingEntity.class, priority = 500)
-@SuppressWarnings("ConstantConditions")
 public class LivingEntityMixin
 {
     /**
