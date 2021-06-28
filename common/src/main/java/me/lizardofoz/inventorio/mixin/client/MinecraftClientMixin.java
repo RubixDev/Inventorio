@@ -7,8 +7,8 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.options.GameOptions;
-import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.option.GameOptions;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.util.Hand;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -32,8 +32,8 @@ public class MinecraftClientMixin
      */
     @Redirect(method = "handleInputEvents",
             at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/client/options/KeyBinding;wasPressed()Z",
-            ordinal = 2))
+                    target = "Lnet/minecraft/client/option/KeyBinding;wasPressed()Z",
+                    ordinal = 2))
     private boolean inventorioHandleHotbarSlotSelection(KeyBinding keyBinding)
     {
         if (!keyBinding.wasPressed())
@@ -41,14 +41,11 @@ public class MinecraftClientMixin
         if (player.isSpectator())
             return true;
 
-        if (!player.isCreative()
-                || currentScreen != null
-                || (!options.keySaveToolbarActivator.isPressed() && !options.keyLoadToolbarActivator.isPressed())
-        )
+        if (!player.isCreative() || currentScreen != null || (!options.keySaveToolbarActivator.isPressed() && !options.keyLoadToolbarActivator.isPressed()))
             for (int i = 0; i < 9; ++i)
             {
                 if (keyBinding == options.keysHotbar[i])
-                    return !InventorioKeyHandler.INSTANCE.handleSegmentedHotbarSlotSelection(player.inventory, i);
+                    return !InventorioKeyHandler.INSTANCE.handleSegmentedHotbarSlotSelection(player.getInventory(), i);
             }
         return true;
     }

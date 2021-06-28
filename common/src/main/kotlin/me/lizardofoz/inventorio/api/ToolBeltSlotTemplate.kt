@@ -4,7 +4,7 @@ import me.lizardofoz.inventorio.player.PlayerInventoryAddon
 import net.minecraft.item.ItemStack
 import net.minecraft.tag.ServerTagManagerHolder
 import net.minecraft.util.Identifier
-import java.util.ArrayList
+import net.minecraft.util.registry.Registry
 import java.util.function.BiPredicate
 
 class ToolBeltSlotTemplate(val name: String, val emptyIcon: Identifier)
@@ -43,6 +43,6 @@ class ToolBeltSlotTemplate(val name: String, val emptyIcon: Identifier)
 
     private fun testTag(itemStack: ItemStack, identifier: Identifier): Boolean
     {
-        return ServerTagManagerHolder.getTagManager().items.getTag(identifier)?.contains(itemStack.item) == true
+        return ServerTagManagerHolder.getTagManager().getOrCreateTagGroup(Registry.ITEM_KEY).getTag(identifier)?.contains(itemStack.item) == true
     }
 }

@@ -23,10 +23,6 @@ object GlobalSettings : AbstractSettings()
     @JvmField val totemFromUtilityBelt = SettingsEntryBoolean(true, "TotemFromUtilityBelt", "inventorio.settings.global.totem_from_utility_belt")
     @JvmField val allowSwappedHands = SettingsEntryBoolean(true, "AllowSwappedHands", "inventorio.settings.global.allow_swapped_hands")
     @JvmField val ignoreModdedHandlers = SettingsEntryBoolean(true, "IgnoreModdedHandlers", "inventorio.settings.global.ignore_modded_handlers", "inventorio.settings.global.ignore_modded_handlers.tooltip")
-
-    @JvmField val integrationGravestones = SettingsEntryBoolean(true, "Integrations.Gravestones", "inventorio.settings.global.integrations.gravestones")
-    @JvmField val integrationJEI = SettingsEntryBoolean(true, "Integrations.JEI", "inventorio.settings.global.integrations.jei")
-
     init
     {
         entries = listOf(
@@ -35,10 +31,7 @@ object GlobalSettings : AbstractSettings()
             infinityBowNeedsNoArrow,
             totemFromUtilityBelt,
             allowSwappedHands,
-            ignoreModdedHandlers,
-
-            integrationGravestones,
-            integrationJEI)
+            ignoreModdedHandlers)
         load(File(".").resolve("config/inventorio_shared.json"))
     }
 

@@ -1,7 +1,5 @@
 package me.lizardofoz.inventorio.slot
 
-import net.fabricmc.api.EnvType
-import net.fabricmc.api.Environment
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
@@ -21,8 +19,7 @@ open class DeepPocketsSlot(inventory: Inventory, index: Int, x: Int, y: Int) : S
         return canTakeItems
     }
 
-    @Environment(EnvType.CLIENT)
-    override fun doDrawHoveringEffect(): Boolean
+    override fun isEnabled(): Boolean
     {
         return canTakeItems
     }

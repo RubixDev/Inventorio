@@ -2,8 +2,11 @@ package me.lizardofoz.inventorio.player
 
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.CompoundTag
-import net.minecraft.nbt.ListTag
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.nbt.NbtList
+
+typealias CompoundTag = NbtCompound
+typealias ListTag = NbtList
 
 object PlayerAddonSerializer
 {
@@ -24,7 +27,7 @@ object PlayerAddonSerializer
                 continue
             val itemTag = CompoundTag()
             itemTag.putInt("Slot", slotIndex)
-            itemStack.toTag(itemTag)
+            itemStack.writeNbt(itemTag)
             resultTag.add(itemTag)
         }
         return resultTag
@@ -50,7 +53,7 @@ object PlayerAddonSerializer
         for (itemTag in sectionTag)
         {
             val compoundTag = itemTag as CompoundTag
-            val itemStack = ItemStack.fromTag(compoundTag)
+            val itemStack = ItemStack.fromNbt(compoundTag)
             val slotIndex = compoundTag.getInt("Slot")
             if (slotIndex in inventorySection.indices)
                 inventorySection[slotIndex] = itemStack

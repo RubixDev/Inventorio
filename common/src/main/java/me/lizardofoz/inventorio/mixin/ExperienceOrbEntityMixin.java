@@ -19,8 +19,7 @@ public class ExperienceOrbEntityMixin
      */
     @Inject(method = "onPlayerCollision",
             at = @At(value = "FIELD",
-                    target = "Lnet/minecraft/entity/ExperienceOrbEntity;amount:I",
-                    ordinal = 3),
+                    target = "Lnet/minecraft/entity/ExperienceOrbEntity;amount:I"),
             require = 0)
     private void inventorioMendToolBeltItems(PlayerEntity player, CallbackInfo ci)
     {

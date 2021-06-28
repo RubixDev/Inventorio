@@ -36,10 +36,6 @@ object GlobalSettingsScreen
         addBoolEntry(category, entryBuilder, GlobalSettings.allowSwappedHands, true, isNotLocal)
         addBoolEntry(category, entryBuilder, GlobalSettings.ignoreModdedHandlers, true, isNotLocal)
 
-        category.addEntry(entryBuilder.startTextDescription(TranslatableText("inventorio.settings.global.integrations")).build())
-        addBoolEntry(category, entryBuilder, GlobalSettings.integrationGravestones, true, isNotLocal)
-        addBoolEntry(category, entryBuilder, GlobalSettings.integrationJEI, true, isNotLocal)
-
         return builder.build()
     }
 }

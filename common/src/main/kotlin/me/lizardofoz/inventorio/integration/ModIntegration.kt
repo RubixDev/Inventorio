@@ -1,5 +1,9 @@
 package me.lizardofoz.inventorio.integration
 
+/**
+ * This class is intended for INVENTORIO to integrate with other mods,
+ * not for other mods to integrate with INVENTORIO.
+ */
 abstract class ModIntegration
 {
     var isActive = false

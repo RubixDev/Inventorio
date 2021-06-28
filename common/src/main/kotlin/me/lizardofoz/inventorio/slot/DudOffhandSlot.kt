@@ -1,7 +1,5 @@
 package me.lizardofoz.inventorio.slot
 
-import net.fabricmc.api.EnvType
-import net.fabricmc.api.Environment
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
@@ -23,8 +21,7 @@ class DudOffhandSlot(inventory: Inventory, index: Int, x: Int, y: Int) : Slot(in
         return false
     }
 
-    @Environment(EnvType.CLIENT)
-    override fun doDrawHoveringEffect(): Boolean
+    override fun isEnabled(): Boolean
     {
         return false
     }

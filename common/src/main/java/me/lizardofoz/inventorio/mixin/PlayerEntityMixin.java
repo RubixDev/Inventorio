@@ -1,18 +1,17 @@
 package me.lizardofoz.inventorio.mixin;
 
-import me.lizardofoz.inventorio.util.MixinHelpers;
 import me.lizardofoz.inventorio.player.PlayerAddonSerializer;
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
 import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon;
 import me.lizardofoz.inventorio.util.InventoryDuck;
+import me.lizardofoz.inventorio.util.MixinHelpers;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.collection.DefaultedList;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,9 +21,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerEntity.class)
-public class PlayerEntityMixin
+public abstract class PlayerEntityMixin
 {
-    @Shadow @Final public PlayerInventory inventory;
+    @Shadow public abstract PlayerInventory getInventory();
 
     /**
      * This inject causes the selected UtilityBelt item to be displayed in the offhand
@@ -52,7 +51,7 @@ public class PlayerEntityMixin
         if (addon != null && addon.getSwappedHands())
             addon.setSelectedUtilityStack(itemStack);
         else
-            inventory.main.set(inventory.selectedSlot, itemStack);
+            getInventory().main.set(getInventory().selectedSlot, itemStack);
         return null;
     }
 
@@ -65,7 +64,7 @@ public class PlayerEntityMixin
         ItemStack itemStack = (ItemStack) stack;
         PlayerInventoryAddon addon = getAddon();
         if (addon == null)
-            this.inventory.offHand.set(0, itemStack);
+            getInventory().offHand.set(0, itemStack);
         else if (addon.getSwappedHands())
             addon.setSelectedHotbarStack(itemStack);
         else
@@ -80,7 +79,7 @@ public class PlayerEntityMixin
     private void inventorioOnEquipArmor(EquipmentSlot slot, ItemStack stack, CallbackInfo ci)
     {
         if (slot.getType() == EquipmentSlot.Type.ARMOR)
-            MixinHelpers.withScreenHandlerAddon(inventory.player, PlayerScreenHandlerAddon::updateDeepPocketsCapacity);
+            MixinHelpers.withScreenHandlerAddon(getInventory().player, PlayerScreenHandlerAddon::updateDeepPocketsCapacity);
     }
 
     /**
@@ -116,8 +115,8 @@ public class PlayerEntityMixin
     /**
      * These 2 injects read and write additional data into Player's NBT
      */
-    @Inject(method = "readCustomDataFromTag", at = @At(value = "RETURN"))
-    private void inventorioDeserializePlayerAddon(CompoundTag tag, CallbackInfo ci)
+    @Inject(method = "readCustomDataFromNbt", at = @At(value = "RETURN"))
+    private void inventorioDeserializePlayerAddon(NbtCompound tag, CallbackInfo ci)
     {
         if (getAddon() != null)
         {
@@ -126,12 +125,12 @@ public class PlayerEntityMixin
         }
     }
 
-    @Inject(method = "writeCustomDataToTag", at = @At(value = "RETURN"))
-    private void inventorioSerializePlayerAddon(CompoundTag tag, CallbackInfo ci)
+    @Inject(method = "writeCustomDataToNbt", at = @At(value = "RETURN"))
+    private void inventorioSerializePlayerAddon(NbtCompound tag, CallbackInfo ci)
     {
         if (getAddon() == null)
             return;
-        CompoundTag inventorioTag = new CompoundTag();
+        NbtCompound inventorioTag = new NbtCompound();
         PlayerAddonSerializer.INSTANCE.serialize(getAddon(), inventorioTag);
         tag.put("Inventorio", inventorioTag);
     }
@@ -146,6 +145,6 @@ public class PlayerEntityMixin
 
     private PlayerInventoryAddon getAddon()
     {
-        return ((InventoryDuck) inventory).getInventorioAddon();
+        return ((InventoryDuck) getInventory()).getInventorioAddon();
     }
 }

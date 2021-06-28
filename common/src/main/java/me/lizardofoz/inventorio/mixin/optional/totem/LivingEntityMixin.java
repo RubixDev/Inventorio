@@ -43,9 +43,8 @@ public abstract class LivingEntityMixin
                 if (itemStack.getItem() == Items.TOTEM_OF_UNDYING)
                 {
                     itemStack.decrement(1);
-                    if (addon.getPlayer() instanceof ServerPlayerEntity)
+                    if (addon.getPlayer() instanceof ServerPlayerEntity serverPlayerEntity)
                     {
-                        ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) addon.getPlayer();
                         serverPlayerEntity.incrementStat(Stats.USED.getOrCreateStat(Items.TOTEM_OF_UNDYING));
                         Criteria.USED_TOTEM.trigger(serverPlayerEntity, itemStack);
                     }

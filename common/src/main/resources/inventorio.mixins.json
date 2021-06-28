@@ -17,9 +17,7 @@
     "optional.bowfix.BowItemMixin",
     "optional.enderchest.EnderChestBlockMinix",
     "optional.enderchest.PlayerEntityMixin",
-    "optional.totem.LivingEntityMixin",
-    "integration.gravestones.GravestoneBlockMixin",
-    "integration.jei.JEIVanillaPluginMixin"
+    "optional.totem.LivingEntityMixin"
   ],
   "client": [
     "client.ClientPlayerInteractionManagerMixin",
@@ -31,7 +29,8 @@
     "client.InventoryScreenMixin",
     "client.MinecraftClientMixin",
     "client.accessor.HandledScreenAccessor",
-    "client.accessor.MinecraftClientAccessor"
+    "client.accessor.MinecraftClientAccessor",
+    "client.accessor.ScreenAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
