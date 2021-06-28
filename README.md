@@ -111,7 +111,7 @@ repositories {
 
 dependencies {
   ...
-  modImplementation 'com.github.Lizard-Of-Oz.Inventorio:inventorio-1.17-fabric:1.17-SNAPSHOT'
+  modCompileOnly 'com.github.Lizard-Of-Oz.Inventorio:inventorio-1.17-fabric:1.17-SNAPSHOT'
 }
 ```
 
@@ -125,7 +125,7 @@ repositories {
 
 dependencies {
   ...
-  implementation 'com.github.Lizard-Of-Oz.Inventorio:inventorio-1.17-forge:1.17-SNAPSHOT'
+  compileOnly 'com.github.Lizard-Of-Oz.Inventorio:inventorio-1.17-forge:1.17-SNAPSHOT'
 }
 ```
 
