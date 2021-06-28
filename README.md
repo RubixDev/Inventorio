@@ -106,6 +106,7 @@ Fabric:
 repositories {
   ...
   maven { url 'https://jitpack.io' }
+  maven { url "https://maven.architectury.dev/" }
 }
 
 dependencies {
@@ -119,6 +120,7 @@ Forge:
 repositories {
   ...
   maven { url 'https://jitpack.io' }
+  maven { url "https://maven.architectury.dev/" }
 }
 
 dependencies {
