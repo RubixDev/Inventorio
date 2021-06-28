@@ -12,19 +12,14 @@ import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = LivingEntity.class, priority = 500)
 @SuppressWarnings("ConstantConditions")
-public abstract class LivingEntityMixin
+public class LivingEntityMixin
 {
-    @Shadow public abstract void setHealth(float health);
-    @Shadow public abstract boolean clearStatusEffects();
-    @Shadow public abstract boolean addStatusEffect(StatusEffectInstance effect);
-
     /**
      * This optional mixin allows a Totem of Undying to be used automatically from any Utility Slot.
      * Yes, it copies vanilla code, but it's done for the sake of mod compatibility (Charm)
@@ -49,11 +44,11 @@ public abstract class LivingEntityMixin
                         Criteria.USED_TOTEM.trigger(serverPlayerEntity, itemStack);
                     }
 
-                    this.setHealth(1.0F);
-                    this.clearStatusEffects();
-                    this.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 900, 1));
-                    this.addStatusEffect(new StatusEffectInstance(StatusEffects.ABSORPTION, 100, 1));
-                    this.addStatusEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, 800, 0));
+                    addon.getPlayer().setHealth(1.0F);
+                    addon.getPlayer().clearStatusEffects();
+                    addon.getPlayer().addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 900, 1));
+                    addon.getPlayer().addStatusEffect(new StatusEffectInstance(StatusEffects.ABSORPTION, 100, 1));
+                    addon.getPlayer().addStatusEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, 800, 0));
                     addon.getPlayer().world.sendEntityStatus(addon.getPlayer(), (byte) 35);
                     cir.setReturnValue(true);
                     return;
