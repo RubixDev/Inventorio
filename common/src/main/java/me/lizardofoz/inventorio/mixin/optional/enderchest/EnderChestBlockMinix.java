@@ -16,10 +16,10 @@ import java.util.OptionalInt;
  * This mixin enlarges the Ender Chest's Inventory Screen to 6 rows.
  * To enlarge the actual storage, {@link PlayerEntityMixin#inventorioResizeEnderChest} is used
  */
-@SuppressWarnings("UnresolvedMixinReference")
 @Mixin(value = EnderChestBlock.class)
 public class EnderChestBlockMinix
 {
+    @SuppressWarnings("UnresolvedMixinReference")
     @Redirect(method = "onBlockActivated",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/entity/player/PlayerEntity;openHandledScreen(Lnet/minecraft/screen/NamedScreenHandlerFactory;)Ljava/util/OptionalInt;"),
