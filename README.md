@@ -10,7 +10,8 @@ Available for **1.16.3+** (Forge and Fabric) and **1.17+** (Fabric only - Forge 
 
 ## Installation
 Grab the jar file from the [Release page](https://github.com/Lizard-Of-Oz/Inventorio/releases/).
-You can also find this mod on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/inventorio) and [Modrinth](https://modrinth.com/mod/inventorio).
+
+You can also find this mod on CurseForge: [Fabric](https://www.curseforge.com/minecraft/mc-mods/inventorio) and [Forge](https://www.curseforge.com/minecraft/mc-mods/inventorio-forge)
  
 Copy the jar file into `%root_folder%/mods/` alongside other mods.
 ### Dependencies
