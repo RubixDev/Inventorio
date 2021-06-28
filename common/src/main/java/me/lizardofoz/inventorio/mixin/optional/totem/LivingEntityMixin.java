@@ -29,6 +29,7 @@ public class LivingEntityMixin
             require = 0)
     private void inventorioGetTotemFromUtilityBar(DamageSource source, CallbackInfoReturnable<Boolean> cir)
     {
+        //noinspection ConstantConditions
         if (cir.getReturnValue() || source.isOutOfWorld() || !((Object) this instanceof PlayerEntity))
             return;
 
