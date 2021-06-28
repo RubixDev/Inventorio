@@ -5,9 +5,8 @@ import me.lizardofoz.inventorio.client.InventorioControls
 import me.lizardofoz.inventorio.client.InventorioKeyHandler
 import me.lizardofoz.inventorio.config.PlayerSettings
 import me.lizardofoz.inventorio.enchantment.DeepPocketsEnchantment
-import me.lizardofoz.inventorio.integration.BetterGravesIntegration
 import me.lizardofoz.inventorio.integration.InventorioModIntegration
-import me.lizardofoz.inventorio.integration.TrinketsIntegration
+import me.lizardofoz.inventorio.integration.ModIntegration
 import me.lizardofoz.inventorio.packet.InventorioNetworking
 import me.lizardofoz.inventorio.packet.InventorioNetworkingFabric
 import net.fabricmc.api.EnvType
@@ -20,7 +19,7 @@ import net.minecraft.util.registry.Registry
 
 open class InventorioFabric : ModInitializer
 {
-    private val fabricModIntegrations = listOf(TrinketsIntegration, BetterGravesIntegration)
+    private val fabricModIntegrations = listOf<ModIntegration>()
 
     override fun onInitialize()
     {

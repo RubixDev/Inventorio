@@ -6,11 +6,10 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.util.collection.DefaultedList;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-
-import java.util.List;
 
 @Mixin(value = CreativeInventoryScreen.class, priority = 100)
 @Environment(EnvType.CLIENT)
@@ -20,8 +19,8 @@ public class CreativeInventoryScreenMixin
      * This mixin fixes a visual bug when Player's Inventory Tab in the Creative GUI causes
      * addon slots (deep pockets, tool belt etc) to appear on top of the creative gui's hotbar
      */
-    @Redirect(method = "setSelectedTab", at = @At(value = "INVOKE", target = "Ljava/util/List;size()I"), require = 0)
-    private int inventorioRemoveExtraSlotsFromCreativeInventory(List<Slot> list)
+    @Redirect(method = "setSelectedTab", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/collection/DefaultedList;size()I"), require = 0)
+    private int inventorioRemoveExtraSlotsFromCreativeInventory(DefaultedList<Slot> list)
     {
         int[] result = new int[1];
         MixinHelpers.withScreenHandlerAddon(MinecraftClient.getInstance().player,

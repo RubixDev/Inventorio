@@ -28,7 +28,7 @@ object SelectUtilitySlotPacket
             player.inventoryAddon?.selectedUtility = utilitySlot
 
             //Resending the current offhand item (aka a selected utility belt item) of this player to other players
-            val broadcastPacket = EntityEquipmentUpdateS2CPacket(player.entityId, listOf(Pair(EquipmentSlot.OFFHAND, player.offHandStack)))
+            val broadcastPacket = EntityEquipmentUpdateS2CPacket(player.id, listOf(Pair(EquipmentSlot.OFFHAND, player.offHandStack)))
             (player.world as ServerWorld).chunkManager.sendToOtherNearbyPlayers(player, broadcastPacket)
         }
     }

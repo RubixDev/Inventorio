@@ -1,8 +1,8 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "5.0.0"
+    id "com.github.johnrengelman.shadow" version "7.0.0"
 }
 
-archivesBaseName = "${rootProject.archives_base_name}-1.16-fabric"
+archivesBaseName = "${rootProject.archives_base_name}-1.17-fabric"
 
 configurations {
     shadowCommon
@@ -14,7 +14,7 @@ architectury {
 }
 
 repositories {
-    maven { url "https://maven.terraformersmc.com/" } //Trinkets, ModMenu
+    maven { url "https://maven.terraformersmc.com/" } //ModMenu
     maven { url 'https://jitpack.io' }
 }
 
@@ -24,10 +24,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-language-kotlin:${rootProject.fabric_kotlin_version}"
 
     //Other mods we do integration with
-    modCompileOnly "io.github.prospector:modmenu:1.14.13+build.22"
-    modCompileOnly("dev.emi:trinkets:${rootProject.trinkets_version}") { transitive = false }
-    modCompileOnly("com.github.Geometrically:Gravestones:${rootProject.gravestones_tag}") { transitive = false }
-    modCompileOnly("com.github.CerulanLumina:better-graves:${rootProject.bettergraves_tag}") { transitive = false }
+    modCompileOnly "io.github.prospector:modmenu:2.0.0-beta.1+build.2"
 
     //Other modules of this project
     implementation(project(path: ":common")) {

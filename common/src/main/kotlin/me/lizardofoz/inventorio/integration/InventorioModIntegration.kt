@@ -2,6 +2,10 @@ package me.lizardofoz.inventorio.integration
 
 import org.apache.logging.log4j.LogManager
 
+/**
+ * This class is intended for INVENTORIO to integrate with other mods,
+ * NOT for other mods to integrate with inventorio.
+ */
 object InventorioModIntegration
 {
     var isFabric = false

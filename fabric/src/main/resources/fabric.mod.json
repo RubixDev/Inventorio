@@ -21,25 +21,19 @@
     ],
     "modmenu": [
       "me.lizardofoz.inventorio.integration.ModMenuApiIntegration"
-    ],
-    "gravestones": [
-      "me.lizardofoz.inventorio.integration.GravestonesIntegration"
     ]
   },
   "mixins": [
     "inventorio.mixins.json"
   ],
   "depends": {
-    "minecraft": "1.16.x",
+    "minecraft": "1.17.x",
     "fabricloader": ">=${fabric_loader_version}",
     "fabric": "*",
     "fabric-language-kotlin": "*"
   },
   "suggests": {
     "modmenu":"*",
-    "cloth-config2": "*",
-    "trinkets": "*",
-    "bettergraves": "*",
-    "gravestones": "*"
+    "cloth-config2": "*"
   }
 }

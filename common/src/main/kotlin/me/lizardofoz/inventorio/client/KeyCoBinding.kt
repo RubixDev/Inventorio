@@ -2,7 +2,7 @@ package me.lizardofoz.inventorio.client
 
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
-import net.minecraft.client.options.KeyBinding
+import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.InputUtil
 import net.minecraft.text.Text
 import net.minecraft.text.TranslatableText
@@ -21,7 +21,7 @@ open class KeyCoBinding(protected val coBindTranslationKey: String, protected va
     override fun setBoundKey(boundKey: InputUtil.Key)
     {
         super.setBoundKey(boundKey)
-        if (!this.isUnbound && this.equals(vanillaBinging()))
+        if (!this.isUnbound && vanillaBinging() != null && this.equals(vanillaBinging()))
             super.setBoundKey(InputUtil.UNKNOWN_KEY)
     }
 

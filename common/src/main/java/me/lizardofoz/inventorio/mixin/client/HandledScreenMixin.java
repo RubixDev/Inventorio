@@ -25,7 +25,7 @@ public class HandledScreenMixin
      * to move items to the Utility Belt in the inventory
      * (the injected method is an edge-case handler when you have "swap offhand" on mouse buttons)
      */
-    @Inject(method = "method_30107",
+    @Inject(method = "onMouseClick(I)V",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/gui/screen/ingame/HandledScreen;onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V",
                     ordinal = 0),

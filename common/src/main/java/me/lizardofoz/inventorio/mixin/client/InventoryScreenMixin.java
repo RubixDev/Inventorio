@@ -1,20 +1,17 @@
 package me.lizardofoz.inventorio.mixin.client;
 
 import me.lizardofoz.inventorio.client.ui.PlayerInventoryUIAddon;
+import me.lizardofoz.inventorio.mixin.client.accessor.ScreenAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
@@ -22,33 +19,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(value = InventoryScreen.class, priority = 2000)
 @Environment(EnvType.CLIENT)
-public class InventoryScreenMixin
+public abstract class InventoryScreenMixin implements ScreenAccessor
 {
     @Shadow @Final private RecipeBookWidget recipeBook;
-    @Shadow private boolean narrow;
 
     @Inject(method = "init", at = @At(value = "HEAD"))
     private void inventorioInitScreenAddon(CallbackInfo ci)
     {
-        PlayerInventoryUIAddon.INSTANCE.init((InventoryScreen) (Object) this);
+        PlayerInventoryUIAddon.INSTANCE.init((InventoryScreen) (Object) this, recipeBook);
     }
 
     @Inject(method = "init", at = @At(value = "RETURN"))
     private void inventorioPostInitScreenAddon(CallbackInfo ci)
     {
-        PlayerInventoryUIAddon.INSTANCE.postInit();
-    }
-
-    /**
-     * This mixin redirects the creation of a recipe book widget button,
-     * needed to reposition both the button and the widget.
-     */
-    @Redirect(method = "init",
-            at = @At(value = "NEW",
-                    target = "net/minecraft/client/gui/widget/TexturedButtonWidget"), require = 0)
-    private TexturedButtonWidget inventorioRedirectRecipeButton(int x, int y, int width, int height, int u, int v, int hoveredVOffset, Identifier texture, ButtonWidget.PressAction pressAction)
-    {
-        return PlayerInventoryUIAddon.INSTANCE.makeWidgetButton((InventoryScreen) (Object) this, this.recipeBook, this.narrow);
+        PlayerInventoryUIAddon.INSTANCE.postInit(getButtons());
     }
 
     /**

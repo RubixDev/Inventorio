@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(HandledScreen.class)
 @Environment(EnvType.CLIENT)
-public interface HandledScreenAccessor
+public interface HandledScreenAccessor extends ScreenAccessor
 {
     @Accessor("backgroundHeight")
     int getBackgroundHeight();

@@ -6,8 +6,7 @@
 ## About
 This is my vision of the Inventory Update for Minecraft. Of [features](#Features) I believe are in line with Mojang's vision and could be potentially added to the game.
 
-### 1.17?
-1.17 version is coming soon. 1.16.3+ will also receive updates until it's no longer the main modded version.
+Available for **1.16.3+** (Forge and Fabric) and **1.17+** (Fabric only - Forge 1.17 itself isn't out yet)
 
 ## Installation
 Grab the jar file from the [Release page](https://github.com/Lizard-Of-Oz/Inventorio/releases/).
@@ -90,10 +89,6 @@ Joining a server (either dedicated or hosted from another client) with mismatchi
 * `AllowSwappedHands (default: true)` - when set to `false`, removes the option to [Swap Hands](#swapped-hands).
 * `IgnoreModdedHandlers (default: true)` - Some mods may replace the Player Inventory Screen or have a custom inventory screen based on it. Modifying a said screen is likely to cause compatibility issues with Inventorio.
 
-
-* `Integrations.Gravestones (default: true)` - if Gravestones Mod is present, injects into it to fix compatibility bugs.
-* `Integrations.JEI (default: true)` - if JEI is present, injects into it to fix compatibility bugs.
-
 ## Feedback, Use in Modpacks and Mod Compatibility
 Feel free to use this mod in a modpack.
 
@@ -115,7 +110,7 @@ repositories {
 
 dependencies {
   ...
-  modImplementation 'com.github.Lizard-Of-Oz.Inventorio:inventorio-1.16-fabric:master-SNAPSHOT'
+  modImplementation 'com.github.Lizard-Of-Oz.Inventorio:inventorio-1.17-fabric:master-SNAPSHOT'
 }
 ```
 
@@ -128,7 +123,7 @@ repositories {
 
 dependencies {
   ...
-  implementation 'com.github.Lizard-Of-Oz.Inventorio:inventorio-1.16-forge:master-SNAPSHOT'
+  implementation 'com.github.Lizard-Of-Oz.Inventorio:inventorio-1.17-forge:master-SNAPSHOT'
 }
 ```
 
@@ -149,17 +144,12 @@ In Fabric, `fabric:%item_type%` item tag is accepted by a corresponding slot.
 
 Note: `%item_type%` is always spelled in plural. Available item types: `pickaxes`, `swords`, `axes`, `shovels`, `hoes`.
 
-## (Somewhat) Confirmed Compatible Mods
-Fabric:
-* [BetterGraves](https://github.com/CerulanLumina/better-graves)
-* [Gravestones](https://github.com/Geometrically/Gravestones)
-* [Trinkets](https://github.com/emilyalexandra/trinkets) - Partially. This mod removes Hand and Offhand Trinkets slots to make space for the Utility Belt. Full compatibility requires changes in Trinkets.
-* [Charm](https://github.com/svenhjol/Charm) - Partially. UI elements conflict with Inventorio, but known crashes have been solved.
-* [Curios](https://github.com/TheIllusiveC4/Curios) - Partially. Inventorio slots are hidden in Curios' menu and vice-versa, but known crashes have been solved.
+Note: Please ignore `InventorioModIntegration` and `ModIntegration` - they're intended for INVENTORIO to integrate with other mods, NOT for other mods to integrate with inventorio.
 
-Forge:
-* [GraveStone Mod](https://www.curseforge.com/minecraft/mc-mods/gravestone-mod)
-* [Quark](https://www.curseforge.com/minecraft/mc-mods/quark)
-* [JEI](https://www.curseforge.com/minecraft/mc-mods/jei)
-* [Charm Reforged](https://github.com/svenhjol/CharmForge) - Partially. UI elements conflict with Inventorio, but known crashes have been solved.
-* [Curios](https://github.com/TheIllusiveC4/Curios) - Partially. Inventorio slots are hidden in Curios' menu and vice-versa, but known crashes have been solved.
+## ~~(Somewhat) Confirmed Compatible Mods~~
+
+Mod compatibility has drained my soul, as more often than not it's a problem on their end, and they don't provide an API to work with it.
+
+But you're still welcome to use the Issue Tracker. Maybe your problem can indeed be solved with one line of code, who knows?
+
+That said, [1.16 Version](https://github.com/Lizard-Of-Oz/Inventorio/tree/1.16) has some "(somewhat) compatible mods".  

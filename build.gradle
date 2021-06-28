@@ -1,6 +1,6 @@
 plugins {
-    id "architectury-plugin" version "3.1.105"
-    id "forgified-fabric-loom" version "0.6.96" apply false
+    id "architectury-plugin" version "3.2.112"
+    id "dev.architectury.loom" version "0.9.0.131" apply false
     id "org.jetbrains.kotlin.jvm" version "1.5.0"
 }
 
@@ -19,9 +19,7 @@ def version_replaces = [
 ]
 
 subprojects {
-    apply plugin: "forgified-fabric-loom"
-    apply plugin: "maven-publish"
-    apply plugin: "org.jetbrains.kotlin.jvm"
+    apply plugin: "dev.architectury.loom"
 
     dependencies {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
@@ -43,18 +41,22 @@ subprojects {
 allprojects {
     apply plugin: "java"
     apply plugin: "architectury-plugin"
+    apply plugin: "maven-publish"
+    apply plugin: "org.jetbrains.kotlin.jvm"
 
     archivesBaseName = rootProject.archives_base_name
     version = rootProject.mod_version
 
-    compileKotlin.kotlinOptions.jvmTarget = "1.8"
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
+    compileKotlin.kotlinOptions.jvmTarget = "16"
     compileKotlin.kotlinOptions.freeCompilerArgs = ["-Xlambdas=indy"]
 
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
 
         if (JavaVersion.current().isJava9Compatible()) {
-            options.release.set(8)
+            options.release.set(16)
         }
     }
 

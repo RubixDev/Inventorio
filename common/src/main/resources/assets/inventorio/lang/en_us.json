@@ -45,10 +45,6 @@
   "inventorio.settings.global.ignore_modded_handlers": "Ignore Modded Player Screens",
   "inventorio.settings.global.ignore_modded_handlers.tooltip": "Some mods may replace the Player Inventory Screen\nor have a custom inventory screen based on it.\nModifying a said screen is likely to cause compatibility issues with Inventorio.",
 
-  "inventorio.settings.global.integrations": "§fHacky Mod Integrations\n§7While we wait for these mods to implement necessary changes properly, this mod includes hacky injects to fix compatibility issues for the time being.\nHas no effect for non-installed mods.",
-  "inventorio.settings.global.integrations.gravestones": "Gravestones",
-  "inventorio.settings.global.integrations.jei": "JEI",
-
   "inventorio.settings.global.sync_restart_prompt": "§eWarning!\n§eThis server uses different global settings than you do:§7\n%s\n§7It's strongly recommended to sync your global settings and restart the game.",
   "inventorio.settings.global.sync_restart_toggle": "Sync my settings?",
   "inventorio.settings.global.sync_restart_prompt.hint": "§cNot restarting the game will cause bugs!",
