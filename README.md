@@ -106,12 +106,11 @@ Fabric:
 repositories {
   ...
   maven { url 'https://jitpack.io' }
-  maven { url "https://maven.architectury.dev/" }
 }
 
 dependencies {
   ...
-  modCompileOnly 'com.github.Lizard-Of-Oz.Inventorio:inventorio-1.17-fabric:1.17-SNAPSHOT'
+  modCompileOnly ('com.github.Lizard-Of-Oz.Inventorio:inventorio-1.17-fabric:1.17-SNAPSHOT') { transitive = false }
 }
 ```
 
@@ -120,12 +119,11 @@ Forge:
 repositories {
   ...
   maven { url 'https://jitpack.io' }
-  maven { url "https://maven.architectury.dev/" }
 }
 
 dependencies {
   ...
-  compileOnly 'com.github.Lizard-Of-Oz.Inventorio:inventorio-1.17-forge:1.17-SNAPSHOT'
+  compileOnly ('com.github.Lizard-Of-Oz.Inventorio:inventorio-1.17-forge:1.17-SNAPSHOT') { transitive = false }
 }
 ```
 
