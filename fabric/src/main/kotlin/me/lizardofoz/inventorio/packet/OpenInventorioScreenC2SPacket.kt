@@ -1,6 +1,6 @@
 package me.lizardofoz.inventorio.packet
 
-import me.lizardofoz.inventorio.player.InventorioScreenHandler.Companion.inventorioScreenHandler
+import me.lizardofoz.inventorio.player.InventorioScreenHandler
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.MinecraftServer
@@ -9,21 +9,18 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 
 @Suppress("UNUSED_PARAMETER")
-object MoveItemToUtilityBeltC2SPacket
+object OpenInventorioScreenC2SPacket
 {
-    val identifier = Identifier("inventorio", "move_to_utility_c2s")
+    val identifier = Identifier("inventorio", "open_screen")
 
     fun consume(server: MinecraftServer, player: ServerPlayerEntity, handler: ServerPlayNetworkHandler, buf: PacketByteBuf, responseSender: PacketSender)
     {
-        val sourceSlot = buf.readByte().toInt()
         server.execute {
-            val screenHandler = player.inventorioScreenHandler ?: return@execute
-            screenHandler.tryTransferToUtilityBeltSlot(screenHandler.getSlot(sourceSlot))
+            InventorioScreenHandler.open(player)
         }
     }
 
-    fun write(buf: PacketByteBuf, sourceSlot: Int = 0)
+    fun write(buf: PacketByteBuf)
     {
-        buf.writeByte(sourceSlot)
     }
 }

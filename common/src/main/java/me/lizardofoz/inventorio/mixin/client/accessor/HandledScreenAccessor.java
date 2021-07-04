@@ -10,17 +10,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Environment(EnvType.CLIENT)
 public interface HandledScreenAccessor extends ScreenAccessor
 {
-    @Accessor("backgroundHeight")
-    int getBackgroundHeight();
-
-    @Accessor("backgroundHeight")
-    void setBackgroundHeight(int value);
-
     @Accessor("backgroundWidth")
     int getBackgroundWidth();
-
-    @Accessor("backgroundWidth")
-    void setBackgroundWidth(int value);
 
     @Accessor("x")
     int getX();
@@ -33,10 +24,4 @@ public interface HandledScreenAccessor extends ScreenAccessor
 
     @Accessor("y")
     void setY(int y);
-
-    @Accessor("titleX")
-    int getTitleX();
-
-    @Accessor("titleX")
-    void setTitleX(int value);
 }

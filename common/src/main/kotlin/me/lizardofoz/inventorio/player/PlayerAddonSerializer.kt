@@ -1,6 +1,5 @@
 package me.lizardofoz.inventorio.player
 
-import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtList
@@ -33,16 +32,13 @@ object PlayerAddonSerializer
         return resultTag
     }
 
-    fun deserialize(inventoryAddon: PlayerInventoryAddon, inventorioTag: CompoundTag, isFirstLaunch: Boolean)
+    fun deserialize(inventoryAddon: PlayerInventoryAddon, inventorioTag: CompoundTag)
     {
         inventoryAddon.selectedUtility = inventorioTag.getInt("SelectedUtilitySlot")
 
         deserializeSection(inventoryAddon, inventoryAddon.utilityBelt, inventorioTag.getList("UtilityBelt", 10))
         deserializeSection(inventoryAddon, inventoryAddon.toolBelt, inventorioTag.getList("ToolBelt", 10))
         deserializeSection(inventoryAddon, inventoryAddon.deepPockets, inventorioTag.getList("DeepPockets", 10))
-
-        if (isFirstLaunch)
-            ejectVanillaOffhand(inventoryAddon.player)
     }
 
     fun deserializeSection(inventoryAddon: PlayerInventoryAddon, inventorySection: MutableList<ItemStack>, sectionTag: ListTag)
@@ -60,17 +56,5 @@ object PlayerAddonSerializer
             else
                 inventoryAddon.player.dropItem(itemStack, false)
         }
-    }
-
-    /**
-     * If a player somehow has items in their offhand (the vanilla offhand, not the Utility Belt), eject the items
-     * And yes, it has to be here, because when PlayerInventoryAddon is created, player's inventory is not fully loaded
-     */
-    private fun ejectVanillaOffhand(player: PlayerEntity)
-    {
-        val offHandItems = ArrayList(player.inventory.offHand)
-        player.inventory.offHand.clear()
-        for (offHandStack in offHandItems)
-            player.dropStack(offHandStack)
     }
 }

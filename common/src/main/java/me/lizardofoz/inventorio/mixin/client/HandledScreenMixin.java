@@ -32,7 +32,7 @@ public class HandledScreenMixin
             cancellable = true)
     private void inventorioOffhandSwapWithMouse(int i, CallbackInfo ci)
     {
-        MixinHelpers.withScreenHandlerAddon(MinecraftClient.getInstance().player, addon -> addon.tryTransferToUtilityBeltSlot(focusedSlot));
+        MixinHelpers.withScreenHandler(MinecraftClient.getInstance().player, screenHandler -> screenHandler.tryTransferToUtilityBeltSlot(focusedSlot));
         ci.cancel();
     }
 
@@ -48,7 +48,7 @@ public class HandledScreenMixin
     private void inventorioOffhandSwapWithKeyboard(int keyCode, int scanCode, CallbackInfoReturnable<Boolean> cir)
     {
         boolean[] result = new boolean[1];
-        MixinHelpers.withScreenHandlerAddon(MinecraftClient.getInstance().player, addon -> result[0] = addon.tryTransferToUtilityBeltSlot(focusedSlot));
+        MixinHelpers.withScreenHandler(MinecraftClient.getInstance().player, screenHandler -> result[0] = screenHandler.tryTransferToUtilityBeltSlot(focusedSlot));
         cir.setReturnValue(result[0]);
     }
 }
