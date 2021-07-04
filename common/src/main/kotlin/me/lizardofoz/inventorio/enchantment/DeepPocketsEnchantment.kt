@@ -2,15 +2,12 @@ package me.lizardofoz.inventorio.enchantment
 
 import me.lizardofoz.inventorio.config.GlobalSettings
 import me.lizardofoz.inventorio.util.DEEP_POCKETS_MAX_LEVEL
-import me.lizardofoz.inventorio.util.DeepPocketsMode
 import net.minecraft.enchantment.Enchantment
 import net.minecraft.enchantment.EnchantmentTarget
 import net.minecraft.entity.EquipmentSlot
 
 object DeepPocketsEnchantment : Enchantment(Rarity.RARE, EnchantmentTarget.ARMOR_LEGS, arrayOf(EquipmentSlot.LEGS))
 {
-    private val isEnabled = GlobalSettings.deepPocketsInSurvival.value == DeepPocketsMode.ENABLED
-
     override fun getMinLevel(): Int
     {
         return 1
@@ -33,16 +30,16 @@ object DeepPocketsEnchantment : Enchantment(Rarity.RARE, EnchantmentTarget.ARMOR
 
     override fun isTreasure(): Boolean
     {
-        return isEnabled
+        return GlobalSettings.deepPocketsInTrades.boolValue
     }
 
     override fun isAvailableForEnchantedBookOffer(): Boolean
     {
-        return isEnabled
+        return GlobalSettings.deepPocketsInTrades.boolValue
     }
 
     override fun isAvailableForRandomSelection(): Boolean
     {
-        return isEnabled
+        return GlobalSettings.deepPocketsInRandomSelection.boolValue
     }
 }

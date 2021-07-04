@@ -1,9 +1,9 @@
 package me.lizardofoz.inventorio.util
 
+import me.lizardofoz.inventorio.player.InventorioScreenHandler
+import me.lizardofoz.inventorio.player.InventorioScreenHandler.Companion.inventorioScreenHandler
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon.Companion.inventoryAddon
-import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon
-import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon.Companion.screenHandlerAddon
 import net.minecraft.entity.player.PlayerEntity
 import java.util.function.Consumer
 
@@ -21,13 +21,10 @@ object MixinHelpers
     }
 
     @JvmStatic
-    @JvmOverloads
-    fun withScreenHandlerAddon(playerEntity: PlayerEntity?, consumer: Consumer<PlayerScreenHandlerAddon>, ifNotPresent: Consumer<PlayerEntity?> = Consumer { })
+    fun withScreenHandler(playerEntity: PlayerEntity?, consumer: Consumer<InventorioScreenHandler>)
     {
-        val addon = playerEntity?.screenHandlerAddon
+        val addon = playerEntity?.inventorioScreenHandler
         if (addon != null)
             consumer.accept(addon)
-        else
-            ifNotPresent.accept(playerEntity)
     }
 }

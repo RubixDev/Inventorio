@@ -1,4 +1,4 @@
-package me.lizardofoz.inventorio.client
+package me.lizardofoz.inventorio.client.control
 
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment

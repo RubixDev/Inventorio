@@ -12,6 +12,7 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.projectile.FireworkRocketEntity
 import net.minecraft.item.FireworkItem
 import net.minecraft.item.ItemStack
+import net.minecraft.item.Items
 import net.minecraft.item.ToolItem
 import kotlin.math.max
 
@@ -32,29 +33,29 @@ abstract class PlayerInventoryExtraStuff protected constructor(player: PlayerEnt
     {
         //todo some mods will disagree with justifying the most preferred tool by just speed
         //If a player tries to dig with a selected tool, respect that tool and don't change anything
-        if (getActualMainHandItem().item is ToolItem)
+        if (getActualMainHandItem().item is ToolItem || findFittingToolBeltIndex(getActualMainHandItem()) != -1)
             return getActualMainHandItem()
         //Try to find the fastest tool on the tool belt to mine this block
         val result = toolBelt.maxByOrNull { it.getMiningSpeedMultiplier(block) } ?: ItemStack.EMPTY
-        return if (result.getMiningSpeedMultiplier(block) > 1.0f)
-            result
-        else if (block.material == Material.GLASS && EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, toolBelt[SLOT_INDEX_PICKAXE]) > 0)
-            toolBelt[SLOT_INDEX_PICKAXE] //Here we apply a silk touch pickaxe (if present) as a tool to mine glass-alike blocks
-        else
-            ItemStack.EMPTY
+        if (result.getMiningSpeedMultiplier(block) > 1.0f)
+            return result
+        if (block.material == Material.GLASS)
+            return toolBelt.firstOrNull { EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, it) > 0 } ?: ItemStack.EMPTY
+        return ItemStack.EMPTY
     }
 
     fun prePlayerAttack()
     {
         //If a player tries to attack with a tool, respect that tool and don't change anything
-        if (getActualMainHandItem().item is ToolItem)
+        if (getActualMainHandItem().item is ToolItem || findFittingToolBeltIndex(getActualMainHandItem()) != -1)
             return
         //Or else set a sword/trident as a weapon of choice, or an axe if a sword slot is empty
         player.handSwinging = true
-        displayTool = if (!toolBelt[SLOT_INDEX_SWORD].isEmpty)
-            toolBelt[SLOT_INDEX_SWORD]
+        val swordStack = findFittingToolBeltStack(ItemStack(Items.DIAMOND_SWORD))
+        displayTool = if (!swordStack.isEmpty)
+            swordStack
         else
-            toolBelt[SLOT_INDEX_AXE]
+            findFittingToolBeltStack(ItemStack(Items.DIAMOND_AXE))
         //For some reason we need to manually add weapon's attack modifiers - the game doesn't do that for us
         player.attributes.addTemporaryModifiers(displayTool.getAttributeModifiers(EquipmentSlot.MAINHAND))
     }
@@ -97,14 +98,5 @@ abstract class PlayerInventoryExtraStuff protected constructor(player: PlayerEnt
             return true
         }
         return false
-    }
-
-    companion object
-    {
-        const val SLOT_INDEX_PICKAXE = 0
-        const val SLOT_INDEX_SWORD = 1
-        const val SLOT_INDEX_AXE = 2
-        const val SLOT_INDEX_SHOVEL = 3
-        const val SLOT_INDEX_HOE = 4
     }
 }

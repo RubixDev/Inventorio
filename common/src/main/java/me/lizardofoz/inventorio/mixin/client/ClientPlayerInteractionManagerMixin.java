@@ -1,6 +1,6 @@
 package me.lizardofoz.inventorio.mixin.client;
 
-import me.lizardofoz.inventorio.client.InventorioControls;
+import me.lizardofoz.inventorio.client.control.InventorioControls;
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

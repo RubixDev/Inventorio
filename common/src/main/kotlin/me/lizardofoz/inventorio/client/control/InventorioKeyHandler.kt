@@ -1,11 +1,12 @@
-package me.lizardofoz.inventorio.client
+package me.lizardofoz.inventorio.client.control
 
-import me.lizardofoz.inventorio.client.configscreen.PlayerSettingsScreen
 import me.lizardofoz.inventorio.client.configscreen.GlobalSettingsScreen
+import me.lizardofoz.inventorio.client.configscreen.PlayerSettingsScreen
 import me.lizardofoz.inventorio.config.PlayerSettings
 import me.lizardofoz.inventorio.mixin.client.accessor.MinecraftClientAccessor
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon.Companion.inventoryAddon
+import me.lizardofoz.inventorio.util.ScrollWheelUtilityBeltMode
 import me.lizardofoz.inventorio.util.SegmentedHotbar
 import me.lizardofoz.inventorio.util.canRMBItem
 import net.fabricmc.api.EnvType
@@ -63,6 +64,23 @@ object InventorioKeyHandler
             addon.selectedHotbarSection = -1
         }
         return true
+    }
+
+    /**
+     * Returns [true] if vanilla hotbar scrolling has to be cancelled.
+     */
+    fun scrollInHotbar(player: PlayerEntity, scrollAmount: Double): Boolean
+    {
+        val scrollMode = PlayerSettings.scrollWheelUtilityBelt.value as ScrollWheelUtilityBeltMode
+        if (scrollMode != ScrollWheelUtilityBeltMode.OFF)
+        {
+            val realScrollAmount = if (scrollMode == ScrollWheelUtilityBeltMode.REGULAR) -scrollAmount.toInt() else scrollAmount.toInt()
+            player.inventoryAddon?.switchToNextUtility(realScrollAmount, PlayerSettings.skipEmptyUtilitySlots.boolValue)
+            return true
+        }
+        else
+            PlayerInventoryAddon.Client.selectedHotbarSection = -1
+        return false
     }
 
     fun tick()

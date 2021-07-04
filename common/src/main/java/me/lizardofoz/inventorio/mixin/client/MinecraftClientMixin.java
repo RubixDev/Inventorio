@@ -1,6 +1,7 @@
 package me.lizardofoz.inventorio.mixin.client;
 
-import me.lizardofoz.inventorio.client.InventorioKeyHandler;
+import me.lizardofoz.inventorio.client.control.InventorioKeyHandler;
+import me.lizardofoz.inventorio.packet.InventorioNetworking;
 import me.lizardofoz.inventorio.util.MixinHelpers;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -28,12 +29,25 @@ public class MinecraftClientMixin
     @Shadow @Nullable public Screen currentScreen;
 
     /**
+     * This inject opens the Inventorio Screen instead of the Vanilla Player Screen
+     */
+    @Inject(method = "handleInputEvents",
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/client/MinecraftClient;openScreen(Lnet/minecraft/client/gui/screen/Screen;)V",
+                    ordinal = 1),
+            cancellable = true)
+    private void inventorioOpenReplacingScreen(CallbackInfo ci)
+    {
+        InventorioNetworking.getInstance().c2sOpenInventorioScreen();
+        ci.cancel();
+    }
+    /**
      * This inject replaces vanilla Hotbar slot selection with ours (Segmented Hotbar)
      */
     @Redirect(method = "handleInputEvents",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/option/KeyBinding;wasPressed()Z",
-                    ordinal = 2))
+            ordinal = 2))
     private boolean inventorioHandleHotbarSlotSelection(KeyBinding keyBinding)
     {
         if (!keyBinding.wasPressed())

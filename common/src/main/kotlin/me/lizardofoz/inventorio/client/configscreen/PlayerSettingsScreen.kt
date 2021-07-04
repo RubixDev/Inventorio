@@ -26,23 +26,24 @@ object PlayerSettingsScreen
         val entryBuilder = builder.entryBuilder()
         val category = builder.getOrCreateCategory(TranslatableText("inventorio.settings.player.title"))
 
-        addEnumEntry(category, entryBuilder, PlayerSettings.segmentedHotbar, false, false, SegmentedHotbar::class.java, SegmentedHotbar.OFF)
-        addEnumEntry(category, entryBuilder, PlayerSettings.scrollWheelUtilityBelt, false, false, ScrollWheelUtilityBeltMode::class.java, ScrollWheelUtilityBeltMode.OFF)
-
-        addBoolEntry(category, entryBuilder, PlayerSettings.canThrowUnloyalTrident, false, false)
-        addBoolEntry(category, entryBuilder, PlayerSettings.useItemAppliesToOffhand, false, false)
-        addBoolEntry(category, entryBuilder, PlayerSettings.skipEmptyUtilitySlots, false, false)
-
         if (GlobalSettings.allowSwappedHands.boolValue)
             addBoolEntry(category, entryBuilder, PlayerSettings.swappedHands, false, false)
-        else
+
+        addEnumEntry(category, entryBuilder, PlayerSettings.segmentedHotbar, false, false, SegmentedHotbar::class.java, SegmentedHotbar.OFF)
+        addEnumEntry(category, entryBuilder, PlayerSettings.scrollWheelUtilityBelt, false, false, ScrollWheelUtilityBeltMode::class.java, ScrollWheelUtilityBeltMode.OFF)
+        addBoolEntry(category, entryBuilder, PlayerSettings.skipEmptyUtilitySlots, false, false)
+        addBoolEntry(category, entryBuilder, PlayerSettings.useItemAppliesToOffhand, false, false)
+        addBoolEntry(category, entryBuilder, PlayerSettings.canThrowUnloyalTrident, false, false)
+        addBoolEntry(category, entryBuilder, PlayerSettings.aggressiveButtonRemoval, false, false)
+        addBoolEntry(category, entryBuilder, PlayerSettings.toggleButton, false, false)
+
+        if (!GlobalSettings.allowSwappedHands.boolValue)
             category.addEntry(
                 entryBuilder
                     .startTextDescription(TranslatableText("inventorio.settings.player.swapped_hands.disabled"))
                     .setTooltip(TranslatableText("inventorio.settings.player.swapped_hands.disabled.tooltip"))
                     .build()
             )
-
         return builder.build()
     }
 
