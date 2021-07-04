@@ -3,7 +3,7 @@ package me.lizardofoz.inventorio.client.configscreen
 import me.lizardofoz.inventorio.client.configscreen.PlayerSettingsScreen.addBoolEntry
 import me.lizardofoz.inventorio.client.configscreen.PlayerSettingsScreen.addEnumEntry
 import me.lizardofoz.inventorio.config.GlobalSettings
-import me.lizardofoz.inventorio.util.DeepPocketsMode
+import me.lizardofoz.inventorio.util.ToolBeltMode
 import me.shedaniel.clothconfig2.api.ConfigBuilder
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -29,16 +29,16 @@ object GlobalSettingsScreen
         if (isNotLocal)
             category.addEntry(entryBuilder.startTextDescription(TranslatableText("inventorio.settings.global.disabled_by_server")).build())
 
-        addEnumEntry(category, entryBuilder, GlobalSettings.deepPocketsInSurvival, true, isNotLocal, DeepPocketsMode::class.java, DeepPocketsMode.ENABLED)
         addBoolEntry(category, entryBuilder, GlobalSettings.expandedEnderChest, true, isNotLocal)
         addBoolEntry(category, entryBuilder, GlobalSettings.infinityBowNeedsNoArrow, true, isNotLocal)
         addBoolEntry(category, entryBuilder, GlobalSettings.totemFromUtilityBelt, true, isNotLocal)
         addBoolEntry(category, entryBuilder, GlobalSettings.allowSwappedHands, true, isNotLocal)
-        addBoolEntry(category, entryBuilder, GlobalSettings.ignoreModdedHandlers, true, isNotLocal)
 
-        category.addEntry(entryBuilder.startTextDescription(TranslatableText("inventorio.settings.global.integrations")).build())
-        addBoolEntry(category, entryBuilder, GlobalSettings.integrationGravestones, true, isNotLocal)
-        addBoolEntry(category, entryBuilder, GlobalSettings.integrationJEI, true, isNotLocal)
+        addEnumEntry(category, entryBuilder, GlobalSettings.toolBeltMode, true, isNotLocal, ToolBeltMode::class.java, ToolBeltMode.ENABLED)
+        addBoolEntry(category, entryBuilder, GlobalSettings.utilityBeltShortDefaultSize, true, isNotLocal)
+        addBoolEntry(category, entryBuilder, GlobalSettings.deepPocketsInTreasures, true, isNotLocal)
+        addBoolEntry(category, entryBuilder, GlobalSettings.deepPocketsInTrades, true, isNotLocal)
+        addBoolEntry(category, entryBuilder, GlobalSettings.deepPocketsInRandomSelection, true, isNotLocal)
 
         return builder.build()
     }

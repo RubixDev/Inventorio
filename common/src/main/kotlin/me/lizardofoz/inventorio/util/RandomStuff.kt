@@ -4,10 +4,10 @@ package me.lizardofoz.inventorio.util
 
 import me.lizardofoz.inventorio.config.PlayerSettings
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon
-import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.item.ItemStack
 import net.minecraft.item.TridentItem
+import org.apache.logging.log4j.LogManager
 
 data class Point2I(@JvmField val x: Int, @JvmField val y: Int)
 data class Point2F(@JvmField val x: Float, @JvmField val y: Float)
@@ -23,20 +23,17 @@ enum class ScrollWheelUtilityBeltMode
     OFF, REGULAR, REVERSE
 }
 
-enum class DeepPocketsMode
+enum class ToolBeltMode
 {
-    ENABLED, DISABLED_BUT_BIGGER_UTILITY, DISABLED;
+    ENABLED, NO_VANILLA_SLOTS_ONLY, DISABLED
 }
 
-interface ScreenHandlerDuck
-{
-    var screenHandlerAddon: PlayerScreenHandlerAddon?
-}
-
-interface InventoryDuck
+interface PlayerDuck
 {
     val inventorioAddon: PlayerInventoryAddon?
 }
+
+val logger = LogManager.getLogger("Inventorio")!!
 
 val ItemStack.isNotEmpty
     get() = !this.isEmpty

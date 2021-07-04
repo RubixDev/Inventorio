@@ -1,6 +1,6 @@
 package me.lizardofoz.inventorio
 
-import me.lizardofoz.inventorio.client.InventorioKeyHandler
+import me.lizardofoz.inventorio.client.control.InventorioKeyHandler
 import me.lizardofoz.inventorio.client.ui.HotbarHUDRenderer.renderHotbarAddons
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.api.distmarker.OnlyIn

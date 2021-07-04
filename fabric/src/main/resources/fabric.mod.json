@@ -20,7 +20,7 @@
       "me.lizardofoz.inventorio.InventorioFabric"
     ],
     "modmenu": [
-      "me.lizardofoz.inventorio.integration.ModMenuApiIntegration"
+      "me.lizardofoz.inventorio.integration.ModMenuIntegration"
     ],
     "gravestones": [
       "me.lizardofoz.inventorio.integration.GravestonesIntegration"

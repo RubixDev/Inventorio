@@ -1,7 +1,7 @@
 package me.lizardofoz.inventorio
 
 import me.lizardofoz.inventorio.api.InventorioAPI
-import me.lizardofoz.inventorio.client.InventorioControls
+import me.lizardofoz.inventorio.client.control.InventorioControls
 import me.lizardofoz.inventorio.config.PlayerSettings
 import me.lizardofoz.inventorio.enchantment.DeepPocketsEnchantment
 import me.lizardofoz.inventorio.integration.InventorioModIntegration
@@ -10,7 +10,7 @@ import me.lizardofoz.inventorio.packet.InventorioNetworking
 import me.lizardofoz.inventorio.packet.InventorioNetworkingForge
 import net.minecraft.client.MinecraftClient
 import net.minecraft.enchantment.Enchantment
-import net.minecraft.item.Item
+import net.minecraft.item.ItemStack
 import net.minecraft.util.Identifier
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.common.MinecraftForge
@@ -27,6 +27,7 @@ class InventorioForge
 
     init
     {
+        ScreenTypeProvider.INSTANCE = ScreenTypeProviderForge
         InventorioNetworking.INSTANCE = InventorioNetworkingForge
         ForgeRegistries.ENCHANTMENTS.register((DeepPocketsEnchantment as Enchantment).setRegistryName(Identifier("inventorio", "deep_pockets")))
         initToolBelt()
@@ -36,6 +37,7 @@ class InventorioForge
             MinecraftForge.EVENT_BUS.register(ForgeEvents)
             MinecraftClient.getInstance().options.keysAll += InventorioControls.keys
             PlayerSettings.load(FMLPaths.CONFIGDIR.get().resolve("inventorio.json").toFile())
+            ScreenTypeProviderForge.registerScreen()
         }
 
         InventorioModIntegration.addModIntegrations(forgeModIntegrations)
@@ -48,19 +50,23 @@ class InventorioForge
         //The reason why we do it this way is because we can't guarantee that other mods
         //  won't call [InventorioAPI] BEFORE [InventorioForge#onInitialize] has been invoked
         InventorioAPI.getToolBeltSlotTemplate(InventorioAPI.SLOT_PICKAXE)?.addAllowingCondition { itemStack, _ ->
-            (itemStack.item as Item).getToolTypes(itemStack).contains(ToolType.PICKAXE)
+            testToolType(itemStack, ToolType.PICKAXE, ToolType.get("hammer"))
         }
         InventorioAPI.getToolBeltSlotTemplate(InventorioAPI.SLOT_SWORD)?.addAllowingCondition { itemStack, _ ->
-            (itemStack.item as Item).getToolTypes(itemStack).contains(ToolType.get("sword"))
+            testToolType(itemStack, ToolType.get("sword"), ToolType.get("cut"), ToolType.get("trident"), ToolType.get("battleaxe"))
         }
         InventorioAPI.getToolBeltSlotTemplate(InventorioAPI.SLOT_AXE)?.addAllowingCondition { itemStack, _ ->
-            (itemStack.item as Item).getToolTypes(itemStack).contains(ToolType.AXE)
+            testToolType(itemStack, ToolType.AXE, ToolType.get("battleaxe"))
         }
         InventorioAPI.getToolBeltSlotTemplate(InventorioAPI.SLOT_SHOVEL)?.addAllowingCondition { itemStack, _ ->
-            (itemStack.item as Item).getToolTypes(itemStack).contains(ToolType.SHOVEL)
+            testToolType(itemStack, ToolType.SHOVEL, ToolType.get("mattock"))
         }
         InventorioAPI.getToolBeltSlotTemplate(InventorioAPI.SLOT_HOE)?.addAllowingCondition { itemStack, _ ->
-            (itemStack.item as Item).getToolTypes(itemStack).contains(ToolType.HOE)
+            testToolType(itemStack, ToolType.HOE, ToolType.get("shears"))
         }
+    }
+    private fun testToolType(itemStack: ItemStack, vararg entries: ToolType): Boolean
+    {
+        return itemStack.toolTypes.any { entries.contains(it) }
     }
 }

@@ -14,7 +14,7 @@ architectury {
 }
 
 repositories {
-    maven { url "https://maven.terraformersmc.com/" } //Trinkets, ModMenu
+    maven { url "https://maven.terraformersmc.com/" }
     maven { url 'https://jitpack.io' }
 }
 
@@ -25,7 +25,6 @@ dependencies {
 
     //Other mods we do integration with
     modCompileOnly "io.github.prospector:modmenu:1.14.13+build.22"
-    modCompileOnly("dev.emi:trinkets:${rootProject.trinkets_version}") { transitive = false }
     modCompileOnly("com.github.Geometrically:Gravestones:${rootProject.gravestones_tag}") { transitive = false }
     modCompileOnly("com.github.CerulanLumina:better-graves:${rootProject.bettergraves_tag}") { transitive = false }
 

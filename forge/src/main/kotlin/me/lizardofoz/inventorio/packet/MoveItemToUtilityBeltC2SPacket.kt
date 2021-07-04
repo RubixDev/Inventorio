@@ -1,6 +1,6 @@
 package me.lizardofoz.inventorio.packet
 
-import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon.Companion.screenHandlerAddon
+import me.lizardofoz.inventorio.player.InventorioScreenHandler.Companion.inventorioScreenHandler
 import net.minecraft.network.PacketByteBuf
 import net.minecraftforge.fml.network.NetworkEvent
 import java.util.function.Supplier
@@ -32,7 +32,8 @@ class MoveItemToUtilityBeltC2SPacket
     {
         val player = supplier.get().sender ?: return
         supplier.get().enqueueWork {
-            player.screenHandlerAddon?.tryTransferToUtilityBeltSlot(player.playerScreenHandler.getSlot(sourceSlot))
+            val screenHandler = player.inventorioScreenHandler ?: return@enqueueWork
+            screenHandler.tryTransferToUtilityBeltSlot(screenHandler.getSlot(sourceSlot))
         }
         supplier.get().packetHandled = true
     }

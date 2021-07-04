@@ -81,9 +81,9 @@ object HotbarHUDRenderer
     {
         if (client.interactionManager == null
             || client.interactionManager?.currentGameMode == GameMode.SPECTATOR
-            || client.options.hudHidden
-        )
+            || client.options.hudHidden)
             return true
+
         val player = client.cameraEntity as? PlayerEntity
         return player == null || !player.isAlive || player.playerScreenHandler == null
     }

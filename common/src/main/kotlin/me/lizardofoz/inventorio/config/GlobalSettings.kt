@@ -3,42 +3,45 @@ package me.lizardofoz.inventorio.config
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import me.lizardofoz.inventorio.client.configscreen.GlobalSettingsSyncPrompt
-import me.lizardofoz.inventorio.util.DeepPocketsMode
+import me.lizardofoz.inventorio.util.ToolBeltMode
 import net.minecraft.client.MinecraftClient
 import java.io.File
 
 object GlobalSettings : AbstractSettings()
 {
-    @JvmField val deepPocketsInSurvival =
-        SettingsEntry(
-            DeepPocketsMode.ENABLED,
-            "DeepPocketsEnchantment",
-            "inventorio.settings.global.deep_pockets",
-            "inventorio.settings.global.deep_pockets.tooltip",
-            { JsonPrimitive((it as DeepPocketsMode).name) },
-            { DeepPocketsMode.valueOf(it!!.asString) })
-
     @JvmField val expandedEnderChest = SettingsEntryBoolean(true, "ExpandedEnderChest", "inventorio.settings.global.expanded_ender_chest")
     @JvmField val infinityBowNeedsNoArrow = SettingsEntryBoolean(true, "InfinityBowNeedsNoArrow", "inventorio.settings.global.infinity_bow_no_arrows")
     @JvmField val totemFromUtilityBelt = SettingsEntryBoolean(true, "TotemFromUtilityBelt", "inventorio.settings.global.totem_from_utility_belt")
     @JvmField val allowSwappedHands = SettingsEntryBoolean(true, "AllowSwappedHands", "inventorio.settings.global.allow_swapped_hands")
-    @JvmField val ignoreModdedHandlers = SettingsEntryBoolean(true, "IgnoreModdedHandlers", "inventorio.settings.global.ignore_modded_handlers", "inventorio.settings.global.ignore_modded_handlers.tooltip")
 
-    @JvmField val integrationGravestones = SettingsEntryBoolean(true, "Integrations.Gravestones", "inventorio.settings.global.integrations.gravestones")
-    @JvmField val integrationJEI = SettingsEntryBoolean(true, "Integrations.JEI", "inventorio.settings.global.integrations.jei")
+    @JvmField val toolBeltMode =
+        SettingsEntry(ToolBeltMode.ENABLED,
+            "ToolBeltMode",
+            "inventorio.settings.global.tool_belt_mode",
+            "inventorio.settings.global.tool_belt_mode.tooltip",
+            { JsonPrimitive((it as ToolBeltMode).name) },
+            { ToolBeltMode.valueOf(it!!.asString)})
+    @JvmField val utilityBeltShortDefaultSize = SettingsEntryBoolean(true,
+        "UtilityBeltShortDefaultSize",
+        "inventorio.settings.global.utility_belt_short_default_size",
+        "inventorio.settings.global.utility_belt_short_default_size.tooltip")
+    @JvmField val deepPocketsInTreasures = SettingsEntryBoolean(true, "DeepPocketsInTreasures", "inventorio.settings.global.deep_pockets_in_treasures")
+    @JvmField val deepPocketsInTrades = SettingsEntryBoolean(true, "DeepPocketsInTrades", "inventorio.settings.global.deep_pockets_in_trades")
+    @JvmField val deepPocketsInRandomSelection = SettingsEntryBoolean(true, "DeepPocketsInRandomSelection", "inventorio.settings.global.deep_pockets_in_random_selection")
 
     init
     {
         entries = listOf(
-            deepPocketsInSurvival,
             expandedEnderChest,
             infinityBowNeedsNoArrow,
             totemFromUtilityBelt,
             allowSwappedHands,
-            ignoreModdedHandlers,
 
-            integrationGravestones,
-            integrationJEI)
+            toolBeltMode,
+            utilityBeltShortDefaultSize,
+            deepPocketsInTreasures,
+            deepPocketsInTrades,
+            deepPocketsInRandomSelection)
         load(File(".").resolve("config/inventorio_shared.json"))
     }
 

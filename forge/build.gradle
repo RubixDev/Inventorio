@@ -27,16 +27,12 @@ loom {
 
 repositories {
     maven { url "https://thedarkcolour.github.io/KotlinForForge/" }
-    maven { url "https://dvs1.progwml6.com/files/maven/" } //JEI
 }
 
 dependencies {
     //Modding platform
     forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.forge_version}"
     modImplementation("me.shedaniel.cloth:cloth-config-forge:${rootProject.cloth_config_version}")
-
-    //Other mods we do integration with
-    modCompileOnly "mezz.jei:jei-${rootProject.minecraft_version}:${rootProject.jei_version}"
 
     //Other modules of this project
     implementation(project(path: ":common")) {

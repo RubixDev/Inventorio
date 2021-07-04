@@ -34,9 +34,12 @@ fun GUI_INVENTORY_DEEP_POCKETS(deepPocketsRows: Int) = Rectangle(0, 79, 198, DEE
 fun DEEP_POCKETS_EXTRA_HEIGHT(deepPocketsRows: Int) = if (deepPocketsRows <= 0) 0 else 4 + deepPocketsRows * 18
 const val CRAFTING_GRID_OFFSET_X = 20
 
-@JvmField val GUI_RECIPE_WIDGET_BUTTON_OFFSET = Point2I(124, 22)
-@JvmField val CANVAS_RECIPE_WIDGET_BUTTON = Rectangle(0, 0, 20, 18)
-const val GUI_RECIPE_WIDGET_BUTTON_TOOLTIP_OFFSET = 19
+@JvmField val GUI_RECIPE_WIDGET_BUTTON = Rectangle(125, 61, 20, 18)
 
 @JvmField val CANVAS_INVENTORY_TEXTURE_SIZE = Point2I(256, 256)
 @JvmField val CANVAS_WIDGETS_TEXTURE_SIZE = Point2I(256, 64)
+
+@JvmField val CANVAS_TOGGLE_BUTTON_ON = Point2I(243, 114)
+@JvmField val CANVAS_TOGGLE_BUTTON_OFF = Point2I(243, 120)
+const val CANVAS_TOGGLE_BUTTON_HOVER_SHIFT = 12
+@JvmField val GUI_TOGGLE_BUTTON_OFFSET = Rectangle(-19, 5, 13, 6)

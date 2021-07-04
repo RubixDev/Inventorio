@@ -7,6 +7,8 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -42,7 +44,7 @@ public class InGameHudMixinLP
     private float inventorioShowAttackIndicator(ClientPlayerEntity clientPlayerEntity)
     {
         PlayerInventoryAddon addon = PlayerInventoryAddon.Client.INSTANCE.getLocal();
-        if (addon != null && !addon.toolBelt.get(PlayerInventoryAddon.SLOT_INDEX_SWORD).isEmpty())
+        if (addon != null && !addon.findFittingToolBeltStack(new ItemStack(Items.DIAMOND_SWORD)).isEmpty())
             return 20.0f;
         return clientPlayerEntity.getAttackCooldownProgressPerTick();
     }

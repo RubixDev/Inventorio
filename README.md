@@ -31,7 +31,7 @@ When you mine a block, a correct tool gets passively applied from the said Toolb
 * Mending will mend tools in the Toolbelt before going into player's XP bar
 * Axe will be used as a melee weapon in the sword slot is empty
 * Hoe Toolbelt slot accepts shears. Sword Toolbelt slot accepts Trident.
-* Toolbelt slots accept modded tools as long as they inherit from vanilla tool classes
+* Toolbelt slots accept modded tools as long as they inherit from vanilla tool classes.
 
 #### Utility Belt
 An Offhand replacement with a dedicated hotbar of 4 slots that can be scrolled through independently, and which skips the empty slots.
@@ -47,6 +47,9 @@ This can be disabled in the server-wide config, but you need to distribute the s
 
 #### Infinity Bow Requires No Arrow
 This mod fixes a Vanilla bug when you need an arrow to use the Infinity Bow.
+
+#### Totems of Undying activate from the Utility Belt
+Instead of being permanently stuck in the offhand, it will go off from any of 4 (8 with Deep Pockets) Utility Belt slots.
 
 ### Player Settings
 #### Segmented Hotbar
@@ -79,18 +82,18 @@ To improve mod compatibility, some features can be disabled on a game-wide level
 
 Global settings can be accessed by a keybind (only in a single player world) or directly at `%root_folder%/config/inventorio_shared.json`. 
 
-Joining a server (either dedicated or hosted from another client) with mismatching global settings will prompt a request to sync your settings and restart the game (recommended).
+Joining a server (either dedicated or hosted from another client) with mismatching global settings will prompt a request to sync your settings and restart the game, but sharing the config beforehand is recommended.
 
-* `DeepPocketsEnchantment (default: true)` - Can an Enchanted Book with Deep Pockets be obtained in Survival. Note: other mods may introduce non-vanilla ways of obtaining enchantments which Inventorio can't control.
-* `ExpandedEnderChest (default: true)` - when set to `false`, disables mixins responsible for increasing Ender Chest capacity.
-* `InfinityBowNeedsNoArrow (default: true)` - when set to `false`, disables mixins responsible for Infinity Bow requiring no arrows.
-* `TotemFromUtilityBelt (default: true)` - when set to `false`, disables mixins responsible for Totem of Undying going off from any Utility Belt slot.
-* `AllowSwappedHands (default: true)` - when set to `false`, removes the option to [Swap Hands](#swapped-hands).
-* `IgnoreModdedHandlers (default: true)` - Some mods may replace the Player Inventory Screen or have a custom inventory screen based on it. Modifying a said screen is likely to cause compatibility issues with Inventorio.
+* `ExpandedEnderChest (default: true)` - when set to false, disables mixins responsible for increasing Ender Chest capacity.<br/>
+* `InfinityBowNeedsNoArrow (default: true)` - when set to false, disables mixins responsible for Infinity Bow requiring no arrows.<br/>
+* `TotemFromUtilityBelt (default: true)` - when set to false, disables mixins responsible for Totem of Undying going off from any Utility Belt slot.<br/>
+* `AllowSwappedHands (default: true)` - when set to false, removes the option to [Swap Hands](#swapped-hands).<br/>
 
-
-* `Integrations.Gravestones (default: true)` - if Gravestones Mod is present, injects into it to fix compatibility bugs.
-* `Integrations.JEI (default: true)` - if JEI is present, injects into it to fix compatibility bugs.
+* `ToolBeltMode (default: ENABLED)` -  Allows to disable the Toolbelt a)completely b)allow only the Toolbelt slots added by other mods<br/>
+* `UtilityBeltShortDefaultSize (default: true)` - By default, the Deep Pockets Enchantment increases the Utility Belt capacity from 4 to 8. When set to false, the full capacity is given unconditionally.<br/>
+* `DeepPocketsInTreasures (default: true)` - Can a Deep Pockets Book be obtained in treasure chests<br/>
+* `DeepPocketsInTrades (default: true)` - Can a Deep Pockets Book be obtained in a villager trade<br/>
+* `DeepPocketsInRandomSelection (default: true)` - Can a Deep Pockets Book be obtained in random selection (Enchanting Table and mob loot)
 
 ## Feedback, Use in Modpacks and Mod Compatibility
 Feel free to use this mod in a modpack.
@@ -102,7 +105,8 @@ If you want to request a feature or modification, please use an Issue Tracker or
 ## Inventorio as a Dependency for Your Mod
 Until this notice is removed (Summer 2021), the structure of the mod is still subject to change, but you can contact me if you need particular functionality or want something to stay consistent.
 
-If you want to use this mode as a dependency, I recommend using JitPack. Please note that me using Architectury plugin causes the gradle setup to be different that normal: 
+If you want to use this mode as a dependency, I recommend using JitPack.<br/>
+Please note that me using Architectury plugin causes the gradle setup to be different that normal: 
 
 Fabric:
 ```
@@ -135,6 +139,14 @@ Note: I haven't figured out how to include documentation into the jar file gener
 ### Addon Slots, Toolbelt & Item Tags
 `InventorioAPI` allows your mod to add custom Toolbelt slots and add custom allowing and disallowing tags and conditions to toolbelt slots, including existing ones.
 
+Note: when working with the Toolbelt, please consider that its size may vary depending on the mods and settings installed.<br> 
+Don't assume any particular size of the Toolbelt or the slot order across multiple play sessions. ToolBelt size is the same for all players within the same play session.<br>
+Slot indices of the Deep Pockets and the Utility Belt are persistent.
+
+Please use `InventorioAPI#findFittingToolBeltStack` to find a Toolbelt slot that can accept an item and don't assume any persistent index.
+
+<br/>
+
 By default, any tool inheriting its Java class from a vanilla tool (e.g. `PickaxeItem.java`) will be accepted by a corresponding slot.
 
 Any tool with an [item tag](https://fabricmc.net/wiki/tutorial:tags) `inventorio:%item_type%` will be accepted by a corresponding slot.
@@ -145,19 +157,17 @@ In Forge, a slot accepts any item with a corresponding [ToolType](https://mcforg
 
 In Fabric, `fabric:%item_type%` item tag is accepted by a corresponding slot.
 
+Any custom filters and tags can be added via `InventorioAPI`
+
 Note: `%item_type%` is always spelled in plural. Available item types: `pickaxes`, `swords`, `axes`, `shovels`, `hoes`.
 
 ## (Somewhat) Confirmed Compatible Mods
 Fabric:
-* [BetterGraves](https://github.com/CerulanLumina/better-graves)
-* [Gravestones](https://github.com/Geometrically/Gravestones)
-* [Trinkets](https://github.com/emilyalexandra/trinkets) - Partially. This mod removes Hand and Offhand Trinkets slots to make space for the Utility Belt. Full compatibility requires changes in Trinkets.
-* [Charm](https://github.com/svenhjol/Charm) - Partially. UI elements conflict with Inventorio, but known crashes have been solved.
-* [Curios](https://github.com/TheIllusiveC4/Curios) - Partially. Inventorio slots are hidden in Curios' menu and vice-versa, but known crashes have been solved.
+* [BetterGraves](https://github.com/CerulanLumina/better-graves) <br/>
+* [Gravestones](https://github.com/Geometrically/Gravestones) <br/>
+* [REI](https://github.com/shedaniel/RoughlyEnoughItems) <br/>
 
 Forge:
-* [GraveStone Mod](https://www.curseforge.com/minecraft/mc-mods/gravestone-mod)
-* [Quark](https://www.curseforge.com/minecraft/mc-mods/quark)
-* [JEI](https://www.curseforge.com/minecraft/mc-mods/jei)
-* [Charm Reforged](https://github.com/svenhjol/CharmForge) - Partially. UI elements conflict with Inventorio, but known crashes have been solved.
-* [Curios](https://github.com/TheIllusiveC4/Curios) - Partially. Inventorio slots are hidden in Curios' menu and vice-versa, but known crashes have been solved.
+* [GraveStone Mod](https://www.curseforge.com/minecraft/mc-mods/gravestone-mod) <br/>
+* [Quark](https://www.curseforge.com/minecraft/mc-mods/quark) <br/>
+* [JEI](https://www.curseforge.com/minecraft/mc-mods/jei) <br/>

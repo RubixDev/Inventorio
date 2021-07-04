@@ -1,10 +1,11 @@
 package me.lizardofoz.inventorio.mixin;
 
-import me.lizardofoz.inventorio.util.MixinHelpers;
+import com.mojang.authlib.GameProfile;
+import me.lizardofoz.inventorio.player.InventorioScreenHandler;
 import me.lizardofoz.inventorio.player.PlayerAddonSerializer;
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
-import me.lizardofoz.inventorio.player.PlayerScreenHandlerAddon;
-import me.lizardofoz.inventorio.util.InventoryDuck;
+import me.lizardofoz.inventorio.util.MixinHelpers;
+import me.lizardofoz.inventorio.util.PlayerDuck;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
@@ -12,9 +13,13 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -22,9 +27,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerEntity.class)
-public class PlayerEntityMixin
+public class PlayerEntityMixin implements PlayerDuck
 {
     @Shadow @Final public PlayerInventory inventory;
+    @Unique public PlayerInventoryAddon inventorioAddon;
+
+    @Inject(method = "<init>", at = @At(value = "RETURN"))
+    private void inventorioCreateAddon(World world, BlockPos pos, float yaw, GameProfile profile, CallbackInfo ci)
+    {
+        PlayerEntity thisPlayer = (PlayerEntity) (Object) this;
+        inventorioAddon = new PlayerInventoryAddon(thisPlayer);
+    }
 
     /**
      * This inject causes the selected UtilityBelt item to be displayed in the offhand
@@ -32,8 +45,8 @@ public class PlayerEntityMixin
     @Inject(method = "getEquippedStack", at = @At(value = "HEAD"), cancellable = true)
     private void inventorioDisplayOffhand(EquipmentSlot slot, CallbackInfoReturnable<ItemStack> cir)
     {
-        if (slot == EquipmentSlot.OFFHAND && getAddon() != null)
-            cir.setReturnValue(getAddon().getDisplayedOffHandStack());
+        if (slot == EquipmentSlot.OFFHAND)
+            cir.setReturnValue(inventorioAddon.getDisplayedOffHandStack());
     }
 
     /**
@@ -48,9 +61,8 @@ public class PlayerEntityMixin
     private <E> E inventorioEquipMainHand(DefaultedList<E> defaultedList, int index, E stack)
     {
         ItemStack itemStack = (ItemStack) stack;
-        PlayerInventoryAddon addon = getAddon();
-        if (addon != null && addon.getSwappedHands())
-            addon.setSelectedUtilityStack(itemStack);
+        if (inventorioAddon.getSwappedHands())
+            inventorioAddon.setSelectedUtilityStack(itemStack);
         else
             inventory.main.set(inventory.selectedSlot, itemStack);
         return null;
@@ -63,13 +75,10 @@ public class PlayerEntityMixin
     private <E> E inventorioEquipOffhand(DefaultedList<E> defaultedList, int index, E stack)
     {
         ItemStack itemStack = (ItemStack) stack;
-        PlayerInventoryAddon addon = getAddon();
-        if (addon == null)
-            this.inventory.offHand.set(0, itemStack);
-        else if (addon.getSwappedHands())
-            addon.setSelectedHotbarStack(itemStack);
+        if (inventorioAddon.getSwappedHands())
+            inventorioAddon.setSelectedHotbarStack(itemStack);
         else
-            addon.setSelectedUtilityStack(itemStack);
+            inventorioAddon.setSelectedUtilityStack(itemStack);
         return null;
     }
 
@@ -80,7 +89,7 @@ public class PlayerEntityMixin
     private void inventorioOnEquipArmor(EquipmentSlot slot, ItemStack stack, CallbackInfo ci)
     {
         if (slot.getType() == EquipmentSlot.Type.ARMOR)
-            MixinHelpers.withScreenHandlerAddon(inventory.player, PlayerScreenHandlerAddon::updateDeepPocketsCapacity);
+            MixinHelpers.withScreenHandler((PlayerEntity) (Object) this, InventorioScreenHandler::updateDeepPocketsCapacity);
     }
 
     /**
@@ -89,9 +98,9 @@ public class PlayerEntityMixin
     @Inject(method = "getArrowType", at = @At(value = "RETURN"), cancellable = true)
     private void inventorioGetArrowType(ItemStack bowStack, CallbackInfoReturnable<ItemStack> cir)
     {
-        if (getAddon() == null || !cir.getReturnValue().isEmpty())
+        if (!cir.getReturnValue().isEmpty())
             return;
-        ItemStack arrowStack = getAddon().getActiveArrowType(bowStack);
+        ItemStack arrowStack = inventorioAddon.getActiveArrowType(bowStack);
         if (arrowStack != null)
             cir.setReturnValue(arrowStack);
     }
@@ -102,15 +111,15 @@ public class PlayerEntityMixin
     @Inject(method = "attack", at = @At(value = "HEAD"))
     private void inventorioPreAttack(Entity target, CallbackInfo ci)
     {
-        if (target.isAttackable() && getAddon() != null)
-            getAddon().prePlayerAttack();
+        if (target.isAttackable())
+            inventorioAddon.prePlayerAttack();
     }
 
     @Inject(method = "attack", at = @At(value = "RETURN"))
     private void inventorioPostAttack(Entity target, CallbackInfo ci)
     {
-        if (target.isAttackable() && getAddon() != null)
-            getAddon().postPlayerAttack();
+        if (target.isAttackable())
+            inventorioAddon.postPlayerAttack();
     }
 
     /**
@@ -119,33 +128,27 @@ public class PlayerEntityMixin
     @Inject(method = "readCustomDataFromTag", at = @At(value = "RETURN"))
     private void inventorioDeserializePlayerAddon(CompoundTag tag, CallbackInfo ci)
     {
-        if (getAddon() != null)
-        {
-            boolean isFirstLaunch = !tag.contains("Inventorio");
-            PlayerAddonSerializer.INSTANCE.deserialize(getAddon(), tag.getCompound("Inventorio"), isFirstLaunch);
-        }
+        PlayerAddonSerializer.INSTANCE.deserialize(inventorioAddon, tag.getCompound("Inventorio"));
     }
 
     @Inject(method = "writeCustomDataToTag", at = @At(value = "RETURN"))
     private void inventorioSerializePlayerAddon(CompoundTag tag, CallbackInfo ci)
     {
-        if (getAddon() == null)
-            return;
         CompoundTag inventorioTag = new CompoundTag();
-        PlayerAddonSerializer.INSTANCE.serialize(getAddon(), inventorioTag);
+        PlayerAddonSerializer.INSTANCE.serialize(inventorioAddon, inventorioTag);
         tag.put("Inventorio", inventorioTag);
     }
 
     @Inject(method = "tickMovement", at = @At(value = "RETURN"))
     private void inventorioEmptyMainHandDisplayTool(CallbackInfo ci)
     {
-        PlayerInventoryAddon addon = getAddon();
-        if (addon != null)
-            addon.tick();
+        inventorioAddon.tick();
     }
 
-    private PlayerInventoryAddon getAddon()
+    @Nullable
+    @Override
+    public PlayerInventoryAddon getInventorioAddon()
     {
-        return ((InventoryDuck) inventory).getInventorioAddon();
+        return inventorioAddon;
     }
 }

@@ -1,6 +1,6 @@
 package me.lizardofoz.inventorio.integration
 
-import org.apache.logging.log4j.LogManager
+import me.lizardofoz.inventorio.util.logger
 
 object InventorioModIntegration
 {
@@ -29,7 +29,6 @@ object InventorioModIntegration
 
     fun apply()
     {
-        val logger = LogManager.getLogger("Inventorio Mod Integration")!!
         for (modIntegration in modIntegrations)
         {
             try
