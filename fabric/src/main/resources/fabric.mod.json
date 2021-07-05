@@ -27,7 +27,7 @@
     "inventorio.mixins.json"
   ],
   "depends": {
-    "minecraft": "1.17.x",
+    "minecraft": "1.17.0",
     "fabricloader": ">=${fabric_loader_version}",
     "fabric": "*",
     "fabric-language-kotlin": "*"

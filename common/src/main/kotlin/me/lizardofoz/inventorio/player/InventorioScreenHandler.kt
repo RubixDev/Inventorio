@@ -150,7 +150,7 @@ class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory)
         val availableDeepPocketsRange = getAvailableDeepPocketsRange()
 
         //First, we want to transfer armor or tools into their respective slots from any other section
-        if (sourceIndex in mainInventoryRange || sourceIndex in hotbarRange || sourceIndex in availableDeepPocketsRange)
+        if (sourceIndex in mainInventoryRange || sourceIndex in availableDeepPocketsRange)
         {
             //Try to send an item into the armor slots
             if (MobEntity.getPreferredEquipmentSlot(itemStackStaticCopy).type == EquipmentSlot.Type.ARMOR
@@ -168,13 +168,13 @@ class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory)
         //When we shift-click an item that's in the hotbar, we try to move it to main section and then into deep pockets
         if (sourceIndex in hotbarRange)
         {
-            if (insertItem(itemStackDynamic, mainInventoryRange.first, mainInventoryRange.last + 1, false))
+            if (insertItem(itemStackDynamic, mainInventoryWithoutHotbarRange.first, mainInventoryWithoutHotbarRange.last + 1, false))
                 return itemStackStaticCopy
             if (!availableDeepPocketsRange.isEmpty() && insertItem(itemStackDynamic, availableDeepPocketsRange.first, availableDeepPocketsRange.last + 1, false))
                 return itemStackStaticCopy
         }
         //When we shift-click an item that's in the main inventory, we try to move it into deep pockets and then into hotbar (that's what vanilla does)
-        else if (sourceIndex in mainInventoryRange)
+        else if (sourceIndex in mainInventoryWithoutHotbarRange)
         {
             if (!availableDeepPocketsRange.isEmpty() && insertItem(itemStackDynamic, availableDeepPocketsRange.first, availableDeepPocketsRange.last + 1, false))
                 return itemStackStaticCopy
