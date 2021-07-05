@@ -38,6 +38,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
     private var mouseX = 0f
     private var mouseY = 0f
     private val recipeBook = RecipeBookWidget()
+    private var recipeButton : TexturedButtonWidget? = null
     private var toggleButton : TexturedButtonWidget? = null
     private var open = false
     private var narrow = false
@@ -71,7 +72,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
         children.add(recipeBook)
         setInitialFocus(recipeBook)
         toggleButton = addToggleButton(this)
-        addButton(TexturedButtonWidget(
+        recipeButton = addButton(TexturedButtonWidget(
             x + GUI_RECIPE_WIDGET_BUTTON.x, y + GUI_RECIPE_WIDGET_BUTTON.y,
             GUI_RECIPE_WIDGET_BUTTON.width, GUI_RECIPE_WIDGET_BUTTON.height,
             0, 0,
@@ -107,13 +108,10 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
     {
         if (PlayerSettings.aggressiveButtonRemoval.boolValue)
         {
-            val buttonsToRemove = arrayListOf<AbstractButtonWidget>()
-            for (i in (if (PlayerSettings.toggleButton.boolValue) 2 else 1) until buttons.size)
-                buttonsToRemove.add(buttons[i])
-            for (abstractButtonWidget in buttonsToRemove)
+            for (button in buttons.filter { it != recipeButton && it != toggleButton })
             {
-                buttons.remove(abstractButtonWidget)
-                children.remove(abstractButtonWidget)
+                buttons.remove(button)
+                children.remove(button)
             }
         }
         toggleButton?.setPos(x + backgroundWidth + GUI_TOGGLE_BUTTON_OFFSET.x, y + GUI_TOGGLE_BUTTON_OFFSET.y)
