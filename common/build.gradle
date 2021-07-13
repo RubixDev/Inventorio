@@ -1,5 +1,5 @@
 repositories {
-    maven { url 'https://jitpack.io' }
+    maven { url "https://jitpack.io" }
     maven { url "https://dvs1.progwml6.com/files/maven/" } //JEI
 }
 

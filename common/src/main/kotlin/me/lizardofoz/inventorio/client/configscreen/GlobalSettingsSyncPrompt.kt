@@ -55,7 +55,7 @@ object GlobalSettingsSyncPrompt
                 if (it == ExitMode.SYNC_AND_EXIT)
                     MinecraftClient.getInstance().stop()
                 else
-                    MinecraftClient.getInstance().openScreen(null)
+                    MinecraftClient.getInstance().setScreen(null)
             }
             .build())
         category.addEntry(entryBuilder.startTextDescription(TranslatableText("inventorio.settings.global.sync_restart_prompt.hint")).build())
@@ -67,7 +67,7 @@ object GlobalSettingsSyncPrompt
     {
         val builder = ConfigBuilder.create()
             .setParentScreen(null)
-            .setAfterInitConsumer { MinecraftClient.getInstance().openScreen(if (!exitFlag) get(newSettingsJson) else null) }
+            .setAfterInitConsumer { MinecraftClient.getInstance().setScreen(if (!exitFlag) get(newSettingsJson) else null) }
             .setTitle(TranslatableText("inventorio.settings.global.title"))
         builder.getOrCreateCategory(TranslatableText("inventorio.settings.global.title"))
         return builder.build()

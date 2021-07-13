@@ -109,8 +109,8 @@ object InventorioKeyHandler
             inventoryAddon.switchToEmptyUtility(1)
 
         if (InventorioControls.keyOpenPlayerSettingsMenu.wasPressed())
-            client.openScreen(PlayerSettingsScreen.get(client.currentScreen))
+            client.setScreen(PlayerSettingsScreen.get(client.currentScreen))
         if (InventorioControls.keyOpenGlobalSettingsMenu.wasPressed())
-            client.openScreen(GlobalSettingsScreen.get(client.currentScreen))
+            client.setScreen(GlobalSettingsScreen.get(client.currentScreen))
     }
 }

@@ -33,7 +33,7 @@ public class MinecraftClientMixin
      */
     @Inject(method = "handleInputEvents",
             at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/client/MinecraftClient;openScreen(Lnet/minecraft/client/gui/screen/Screen;)V",
+                    target = "Lnet/minecraft/client/MinecraftClient;setScreen(Lnet/minecraft/client/gui/screen/Screen;)V",
                     ordinal = 1),
             cancellable = true)
     private void inventorioOpenReplacingScreen(CallbackInfo ci)
