@@ -48,6 +48,6 @@ object GlobalSettings : AbstractSettings()
     fun syncFromServer(newSettingsJson: JsonObject)
     {
         if (GlobalSettings.anyChanges(newSettingsJson))
-            MinecraftClient.getInstance()?.openScreen(GlobalSettingsSyncPrompt.get(newSettingsJson))
+            MinecraftClient.getInstance()?.setScreen(GlobalSettingsSyncPrompt.get(newSettingsJson))
     }
 }

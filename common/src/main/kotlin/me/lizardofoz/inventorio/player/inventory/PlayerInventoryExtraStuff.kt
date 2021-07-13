@@ -10,7 +10,7 @@ import net.minecraft.enchantment.Enchantments
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.projectile.FireworkRocketEntity
-import net.minecraft.item.FireworkItem
+import net.minecraft.item.FireworkRocketItem
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.item.ToolItem
@@ -81,7 +81,7 @@ abstract class PlayerInventoryExtraStuff protected constructor(player: PlayerEnt
 
     private fun tryFireRocket(itemStack: ItemStack): Boolean
     {
-        if (itemStack.item is FireworkItem && itemStack.getSubTag("Fireworks")?.getList("Explosions", 10)?.isEmpty() != false)
+        if (itemStack.item is FireworkRocketItem && itemStack.getSubNbt("Fireworks")?.getList("Explosions", 10)?.isEmpty() != false)
         {
             val copyStack = itemStack.copy()
             if (!player.abilities.creativeMode)

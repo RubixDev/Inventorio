@@ -61,7 +61,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
         val client = this.client!!
         if (client.interactionManager!!.hasCreativeInventory())
         {
-            client.openScreen(CreativeInventoryScreen(client.player))
+            client.setScreen(CreativeInventoryScreen(client.player))
             return
         }
         onRefresh()
@@ -281,10 +281,10 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
         return recipeBook
     }
 
-    override fun tick()
+    override fun handledScreenTick()
     {
         if (client!!.interactionManager!!.hasCreativeInventory())
-            client!!.openScreen(CreativeInventoryScreen(client!!.player))
+            client!!.setScreen(CreativeInventoryScreen(client!!.player))
         else
             recipeBook.update()
     }
@@ -324,7 +324,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
                 val toVanilla = client.currentScreen is InventorioScreen
                 client.currentScreen?.onClose()
                 if (toVanilla)
-                    client.openScreen(InventoryScreen(client.player))
+                    client.setScreen(InventoryScreen(client.player))
                 else
                     InventorioNetworking.INSTANCE.c2sOpenInventorioScreen()
             }
