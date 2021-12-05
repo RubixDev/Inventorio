@@ -22,10 +22,11 @@ repositories {
 dependencies {
     //Modding platform
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
     modImplementation "net.fabricmc:fabric-language-kotlin:${rootProject.fabric_kotlin_version}"
 
     //Other mods we do integration with
-    modCompileOnly "io.github.prospector:modmenu:2.0.0-beta.1+build.2"
+    modCompileOnly "com.terraformersmc:modmenu:${rootProject.modmenu_version}"
 
     //Other modules of this project
     implementation(project(path: ":common")) {

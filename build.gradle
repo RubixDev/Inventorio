@@ -1,6 +1,6 @@
 plugins {
-    id "architectury-plugin" version "3.2.112"
-    id "dev.architectury.loom" version "0.9.0.135" apply false
+    id "architectury-plugin" version "3.4.126"
+    id "dev.architectury.loom" version "0.10.0.195" apply false
     id "org.jetbrains.kotlin.jvm" version "1.5.0"
 }
 
@@ -15,7 +15,8 @@ def version_replaces = [
         "mod_description": rootProject.mod_description,
         "fabric_loader_version": rootProject.fabric_loader_version,
         "minecraft_version": rootProject.minecraft_version,
-        "forge_version": rootProject.forge_version
+        "forge_version": rootProject.forge_version,
+        "modmenu_version": rootProject.modmenu_version
 ]
 
 subprojects {
@@ -24,7 +25,6 @@ subprojects {
     dependencies {
         minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
         mappings "net.fabricmc:yarn:${rootProject.yarn_mappings}:v2"
-        modImplementation("me.shedaniel.cloth:cloth-config-fabric:${rootProject.cloth_config_version}")
     }
 
     processResources {

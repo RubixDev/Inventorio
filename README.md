@@ -6,7 +6,9 @@
 ## About
 This is my vision of the Inventory Update for Minecraft. Of [features](#Features) I believe are in line with Mojang's vision and could be potentially added to the game.
 
-Available for **1.16.3+** (Forge and Fabric) and **1.17+** (Fabric only - Forge 1.17 itself isn't out yet)
+Available for **MCJE 1.16.3+** (Forge and Fabric) and **MCJE 1.17+** (Forge and Fabric).
+
+A version for **MCJE 1.18** is in development.
 
 ## Installation
 Grab the jar file from the [Release page](https://github.com/Lizard-Of-Oz/Inventorio/releases/).
@@ -105,10 +107,10 @@ If you encounter bugs or compatibility issues with other mods, please report the
 If you want to request a feature or modification, please use an Issue Tracker or make a [Pull Request](https://github.com/Lizard-Of-Oz/Inventorio/pulls).  
 
 ## Inventorio as a Dependency for Your Mod
-Until this notice is removed (Summer 2021), the structure of the mod is still subject to change, but you can contact me if you need particular functionality or want something to stay consistent.
+The structure of this mod can be considered stable - I have some plans for future updates, but Inventorio is mostly in the life support mode - it will get ported to future versions of Minecraft, but with the bare minimum changes required.  
 
-If you want to use this mode as a dependency, I recommend using JitPack.<br/>
-Please note that me using Architectury plugin causes the gradle setup to be different that normal: 
+If you want to use this mode as a dependency, I recommend using JitPack as described below.<br/>
+Please note that me using Architectury plugin causes the gradle setup to be different that usual: 
 
 Fabric:
 ```
@@ -163,7 +165,7 @@ Any custom filters and tags can be added via `InventorioAPI`
 
 Note: `%item_type%` is always spelled in plural. Available item types: `pickaxes`, `swords`, `axes`, `shovels`, `hoes`.
 
-Note: Please ignore `InventorioModIntegration` and `ModIntegration` - they're intended for INVENTORIO to integrate with other mods, NOT for other mods to integrate with inventorio.
+Note: Please ignore `InventorioModIntegration` and `ModIntegration` - they're intended for INVENTORIO to integrate with other mods, NOT for other mods to integrate with Inventorio.
 
 ## ~~(Somewhat) Confirmed Compatible Mods~~
 
