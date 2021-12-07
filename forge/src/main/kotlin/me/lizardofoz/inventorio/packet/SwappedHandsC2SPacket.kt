@@ -2,7 +2,7 @@ package me.lizardofoz.inventorio.packet
 
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon.Companion.inventoryAddon
 import net.minecraft.network.PacketByteBuf
-import net.minecraftforge.fmllegacy.network.NetworkEvent
+import net.minecraftforge.network.NetworkEvent
 import java.util.function.Supplier
 
 class SwappedHandsC2SPacket

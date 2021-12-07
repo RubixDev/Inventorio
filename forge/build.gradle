@@ -2,23 +2,19 @@ plugins {
     id "com.github.johnrengelman.shadow" version "7.0.0"
 }
 
-archivesBaseName = "${rootProject.archives_base_name}-1.17-forge"
-
-configurations {
-    shadowCommon
-}
+archivesBaseName = "${rootProject.archives_base_name}-1.18-forge"
 
 architectury {
     platformSetupLoomIde()
     forge()
 }
 
-minecraft {
-    runs {
-        client {
-            property "forge.logging.console.level", "debug"
-        }
-    }
+configurations {
+    common
+    shadowCommon
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentFabric.extendsFrom common
 }
 
 loom {
@@ -38,11 +34,11 @@ dependencies {
     implementation "thedarkcolour:kotlinforforge:${rootProject.forge_kotlin_version}"
     implementation "me.shedaniel.cloth:cloth-config-forge:${rootProject.cloth_config_version}"
 
-    //Other modules of this project
-    implementation(project(path: ":common")) {
-        transitive = false
-    }
-    developmentForge(project(path: ":common")) {
+    //Other mods we do integration with
+    //<Not found>
+
+    //"Common" package
+    common(project(path: ":common", configuration: "namedElements")) {
         transitive = false
     }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) {

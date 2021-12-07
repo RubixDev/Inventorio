@@ -1,7 +1,7 @@
 package me.lizardofoz.inventorio.packet
 
 import me.lizardofoz.inventorio.player.InventorioScreenHandler
-import net.minecraftforge.fmllegacy.network.NetworkEvent
+import net.minecraftforge.network.NetworkEvent
 import java.util.function.Supplier
 
 class OpenInventorioScreenC2SPacket

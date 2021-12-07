@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import me.lizardofoz.inventorio.config.GlobalSettings
 import net.minecraft.network.PacketByteBuf
-import net.minecraftforge.fmllegacy.network.NetworkEvent
+import net.minecraftforge.network.NetworkEvent
 import java.util.function.Supplier
 
 class GlobalSettingsS2CPacket

@@ -19,6 +19,7 @@ import java.util.OptionalInt;
 @Mixin(value = EnderChestBlock.class)
 public class EnderChestBlockMinix
 {
+    //Developing for Forge and Fabric simultaneously causes this weird glitch where one mapping uses "onBlockActivated" and another uses "osUse"
     @SuppressWarnings("UnresolvedMixinReference")
     @Redirect(method = "onBlockActivated",
             at = @At(value = "INVOKE",

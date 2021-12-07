@@ -7,8 +7,8 @@ import net.minecraft.entity.EquipmentSlot
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.network.packet.s2c.play.EntityEquipmentUpdateS2CPacket
 import net.minecraft.server.world.ServerWorld
-import net.minecraftforge.fmllegacy.network.NetworkDirection
-import net.minecraftforge.fmllegacy.network.NetworkEvent
+import net.minecraftforge.network.NetworkDirection
+import net.minecraftforge.network.NetworkEvent
 import java.util.function.Supplier
 
 class SelectUtilitySlotPacket

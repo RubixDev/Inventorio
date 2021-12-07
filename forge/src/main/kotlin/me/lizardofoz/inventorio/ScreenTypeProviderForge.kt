@@ -4,14 +4,14 @@ import me.lizardofoz.inventorio.client.ui.InventorioScreen
 import me.lizardofoz.inventorio.player.InventorioScreenHandler
 import net.minecraft.client.gui.screen.ingame.HandledScreens
 import net.minecraft.screen.ScreenHandlerType
-import net.minecraftforge.common.extensions.IForgeContainerType
+import net.minecraftforge.common.extensions.IForgeMenuType
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 import thedarkcolour.kotlinforforge.KotlinModLoadingContext
 
 object ScreenTypeProviderForge : ScreenTypeProvider
 {
-    private val handlerProvider = IForgeContainerType.create { syncId, inv, buf ->
+    private val handlerProvider = IForgeMenuType.create { syncId, inv, buf ->
         InventorioScreenHandler(syncId, inv)
     }
 

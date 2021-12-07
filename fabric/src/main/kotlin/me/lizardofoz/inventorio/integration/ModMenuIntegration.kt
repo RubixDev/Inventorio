@@ -1,7 +1,7 @@
 package me.lizardofoz.inventorio.integration
 
-import io.github.prospector.modmenu.api.ConfigScreenFactory
-import io.github.prospector.modmenu.api.ModMenuApi
+import com.terraformersmc.modmenu.api.ConfigScreenFactory
+import com.terraformersmc.modmenu.api.ModMenuApi
 import me.lizardofoz.inventorio.client.configscreen.PlayerSettingsScreen
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment

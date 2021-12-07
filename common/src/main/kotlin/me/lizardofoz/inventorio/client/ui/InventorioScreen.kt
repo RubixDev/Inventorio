@@ -213,7 +213,6 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
     override fun render(matrices: MatrixStack, mouseX: Int, mouseY: Int, delta: Float)
     {
         this.renderBackground(matrices)
-        drawStatusEffects = !recipeBook.isOpen
         if (recipeBook.isOpen && narrow)
         {
             drawBackground(matrices, delta, mouseX, mouseY)

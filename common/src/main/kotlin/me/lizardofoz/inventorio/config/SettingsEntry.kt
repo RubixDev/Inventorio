@@ -9,7 +9,7 @@ open class SettingsEntry(
     @JvmField val displayText: String,
     @JvmField val tooltipText: String?,
     @JvmField val valueAsElement: (Any) -> JsonElement,
-    @JvmField private val elementAsValue: (JsonElement?) -> Any,
+    private val elementAsValue: (JsonElement?) -> Any,
     @JvmField val onChange: (Any) -> Unit = { }
 )
 {

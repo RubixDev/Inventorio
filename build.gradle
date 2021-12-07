@@ -1,7 +1,7 @@
 plugins {
     id "architectury-plugin" version "3.4.126"
-    id "dev.architectury.loom" version "0.10.0.195" apply false
-    id "org.jetbrains.kotlin.jvm" version "1.5.0"
+    id "dev.architectury.loom" version "0.10.0.205" apply false
+    id "org.jetbrains.kotlin.jvm" version "1.6.0"
 }
 
 architectury {
@@ -47,17 +47,14 @@ allprojects {
     archivesBaseName = rootProject.archives_base_name
     version = rootProject.mod_version
 
-    sourceCompatibility = JavaVersion.VERSION_16
-    targetCompatibility = JavaVersion.VERSION_16
-    compileKotlin.kotlinOptions.jvmTarget = "16"
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+    compileKotlin.kotlinOptions.jvmTarget = "17"
     compileKotlin.kotlinOptions.freeCompilerArgs = ["-Xlambdas=indy"]
 
     tasks.withType(JavaCompile) {
         options.encoding = "UTF-8"
-
-        if (JavaVersion.current().isJava9Compatible()) {
-            options.release.set(16)
-        }
+        options.release = 17
     }
 
     java {
