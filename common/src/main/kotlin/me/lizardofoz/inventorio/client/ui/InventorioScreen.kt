@@ -194,6 +194,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
     }
 
     //Yes, it's a vanilla method replicated here. 1.17 and 1.17.1 mapping differ and I don't want to have different versions of a mod
+    //todo this is a 1.18 branch!
     private fun findLeftEdge(widget: RecipeBookWidget, width: Int, parentWidth: Int): Int
     {
         return if (widget.isOpen && !narrow)

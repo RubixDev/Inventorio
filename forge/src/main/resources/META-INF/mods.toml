@@ -1,5 +1,5 @@
 modLoader = "kotlinforforge"
-loaderVersion = "[2,)"
+loaderVersion = "[3,)"
 issueTrackerURL = "https://github.com/Lizard-Of-Oz/Inventorio"
 license = "LGPLv3"
 
@@ -15,20 +15,20 @@ displayURL="https://github.com/Lizard-Of-Oz/Inventorio"
 [[dependencies.inventorio]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.17,)"
+versionRange = "[1.18,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.inventorio]]
 modId = "forge"
 mandatory = true
-versionRange = "[37,)"
+versionRange = "[38,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.inventorio]]
 modId = "cloth_config"
 mandatory = true
-versionRange = "[5,)"
+versionRange = "[6,)"
 ordering = "NONE"
 side = "CLIENT"
