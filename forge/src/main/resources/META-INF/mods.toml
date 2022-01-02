@@ -1,7 +1,7 @@
 modLoader = "kotlinforforge"
 loaderVersion = "[2,)"
 issueTrackerURL = "https://github.com/Lizard-Of-Oz/Inventorio"
-
+license = "Custom"
 
 [[mods]]
 modId = "${mod_id}"
