@@ -322,7 +322,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
             { button ->
                 val client = MinecraftClient.getInstance() ?: return@TexturedButtonWidget
                 val toVanilla = client.currentScreen is InventorioScreen
-                client.currentScreen?.onClose()
+                client.currentScreen?.close()
                 if (toVanilla)
                     client.setScreen(InventoryScreen(client.player))
                 else

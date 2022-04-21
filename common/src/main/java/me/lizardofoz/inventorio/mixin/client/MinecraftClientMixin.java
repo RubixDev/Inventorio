@@ -55,10 +55,10 @@ public class MinecraftClientMixin
         if (player.isSpectator())
             return true;
 
-        if (!player.isCreative() || currentScreen != null || (!options.keySaveToolbarActivator.isPressed() && !options.keyLoadToolbarActivator.isPressed()))
+        if (!player.isCreative() || currentScreen != null || (!options.saveToolbarActivatorKey.isPressed() && !options.loadToolbarActivatorKey.isPressed()))
             for (int i = 0; i < 9; ++i)
             {
-                if (keyBinding == options.keysHotbar[i])
+                if (keyBinding == options.hotbarKeys[i])
                     return !InventorioKeyHandler.INSTANCE.handleSegmentedHotbarSlotSelection(player.getInventory(), i);
             }
         return true;

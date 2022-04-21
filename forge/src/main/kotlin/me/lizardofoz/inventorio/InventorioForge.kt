@@ -39,7 +39,7 @@ class InventorioForge
         if (FMLEnvironment.dist == Dist.CLIENT)
         {
             MinecraftForge.EVENT_BUS.register(ForgeEvents)
-            MinecraftClient.getInstance().options.keysAll += InventorioControls.keys
+            MinecraftClient.getInstance().options.allKeys += InventorioControls.keys
             PlayerSettings.load(FMLPaths.CONFIGDIR.get().resolve("inventorio.json").toFile())
             ScreenTypeProviderForge.registerScreen()
         }

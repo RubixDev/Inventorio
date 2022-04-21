@@ -12,7 +12,7 @@ object InventorioControls
 {
     @JvmField val keyUseUtility = KeyCoBinding(
         "inventorio.keys.combined.with_use_item",
-        {MinecraftClient.getInstance()?.options?.keyUse},
+        {MinecraftClient.getInstance()?.options?.useKey },
         "inventorio.keys.use_utility",
         InputUtil.Type.KEYSYM,
         GLFW.GLFW_KEY_UNKNOWN,
@@ -42,7 +42,7 @@ object InventorioControls
 
     @JvmField val keyFireBoostRocket = KeyCoBinding(
         "inventorio.keys.combined.with_jump",
-        { MinecraftClient.getInstance()?.options?.keyJump },
+        { MinecraftClient.getInstance()?.options?.jumpKey },
         "inventorio.keys.rocket_boost",
         InputUtil.Type.KEYSYM,
         GLFW.GLFW_KEY_UNKNOWN,
