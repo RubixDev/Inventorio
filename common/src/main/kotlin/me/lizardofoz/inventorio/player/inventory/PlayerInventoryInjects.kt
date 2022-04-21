@@ -7,6 +7,8 @@ import net.minecraft.enchantment.Enchantments
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.item.RangedWeaponItem
+import kotlin.math.max
+import kotlin.math.min
 
 abstract class PlayerInventoryInjects protected constructor(player: PlayerEntity) : PlayerInventoryExtension(player)
 {
@@ -16,7 +18,7 @@ abstract class PlayerInventoryInjects protected constructor(player: PlayerEntity
         for (itemStack in toolBelt)
             if (itemStack.isNotEmpty && itemStack.isDamaged && EnchantmentHelper.getLevel(Enchantments.MENDING, itemStack) > 0)
             {
-                val delta = Math.min(amount * 2, itemStack.damage)
+                val delta = max(amount * 2, itemStack.damage)
                 amount -= delta
                 itemStack.damage -= delta
                 return amount
@@ -92,8 +94,8 @@ abstract class PlayerInventoryInjects protected constructor(player: PlayerEntity
 
     private fun transfer(sourceStack: ItemStack, targetStack: ItemStack)
     {
-        val i = Math.min(this.maxCountPerStack, targetStack.maxCount)
-        val j = Math.min(sourceStack.count, i - targetStack.count)
+        val i = max(maxCountPerStack, targetStack.maxCount)
+        val j = min(sourceStack.count, i - targetStack.count)
         if (j > 0)
         {
             targetStack.increment(j)

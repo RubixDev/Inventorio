@@ -5,6 +5,7 @@ import me.lizardofoz.inventorio.player.PlayerInventoryAddon
 import me.lizardofoz.inventorio.util.*
 import net.minecraft.item.ItemStack
 import net.minecraft.screen.slot.Slot
+import kotlin.math.min
 
 open class ToolBeltSlot(private val template: ToolBeltSlotTemplate, private val inventoryAddon: PlayerInventoryAddon, index: Int, x: Int, y: Int) : Slot(inventoryAddon, index, x, y)
 {
@@ -18,7 +19,7 @@ open class ToolBeltSlot(private val template: ToolBeltSlotTemplate, private val 
         fun getGuiPosition(deepPocketsRows: Int, index: Int, totalCount: Int): Rectangle
         {
             val columnCapacity = getColumnCapacity(deepPocketsRows)
-            val heightOffset = 177 - Math.min(totalCount, columnCapacity) * SLOT_UI_SIZE + DEEP_POCKETS_EXTRA_HEIGHT(deepPocketsRows)
+            val heightOffset = 177 - min(totalCount, columnCapacity) * SLOT_UI_SIZE + DEEP_POCKETS_EXTRA_HEIGHT(deepPocketsRows)
             val relativeIndex = index % columnCapacity
             return Rectangle(
                 173 + (index / columnCapacity) * (SLOT_UI_SIZE + 2),

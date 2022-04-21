@@ -72,15 +72,15 @@ class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory)
             addSlot(Slot(craftingInput, i, 118 + i % 2 * 18, 18 + i / 2 * 18))
 
         //Armor
-        for ((absoluteIndex, relativeIndex) in armorSlotsRange.withRelativeIndex())
+        for ((_, relativeIndex) in armorSlotsRange.withRelativeIndex())
             addSlot(ArmorSlot(inventory, 39 - relativeIndex, 8, 8 + relativeIndex * 18, armorSlots[relativeIndex]))
 
         //Main Inventory
-        for ((absoluteIndex, relativeIndex) in mainInventoryWithoutHotbarRange.withRelativeIndex())
+        for ((_, relativeIndex) in mainInventoryWithoutHotbarRange.withRelativeIndex())
             addSlot(Slot(inventory, relativeIndex + 9, 8 + (relativeIndex % 9) * 18, 84 + (relativeIndex / 9) * 18))
 
         //Hotbar
-        for ((absoluteIndex, relativeIndex) in hotbarRange.withRelativeIndex())
+        for ((_, relativeIndex) in hotbarRange.withRelativeIndex())
             addSlot(Slot(inventory, relativeIndex, 8 + relativeIndex * 18, 142))
 
         //Extended Inventory Section (Deep Pockets Enchantment)
