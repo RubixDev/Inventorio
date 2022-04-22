@@ -20,16 +20,13 @@ import java.util.OptionalInt;
 public class EnderChestBlockMinix
 {
     //Developing for Forge and Fabric simultaneously causes this weird glitch where one mapping uses "onBlockActivated" and another uses "osUse"
-    @SuppressWarnings("UnresolvedMixinReference")
     @Redirect(method = "onBlockActivated",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/entity/player/PlayerEntity;openHandledScreen(Lnet/minecraft/screen/NamedScreenHandlerFactory;)Ljava/util/OptionalInt;"),
             require = 0)
     private OptionalInt inventorioOnEnderChestOpenForge(PlayerEntity playerEntity, NamedScreenHandlerFactory factory)
     {
-        return playerEntity.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, playerInventory, playerEntityInner) ->
-                GenericContainerScreenHandler.createGeneric9x6(syncId, playerInventory, playerEntityInner.getEnderChestInventory()),
-                new TranslatableText("container.enderchest")));
+        return openHandledScreen(playerEntity);
     }
 
     @Redirect(method = "onUse",
@@ -37,6 +34,11 @@ public class EnderChestBlockMinix
                     target = "Lnet/minecraft/entity/player/PlayerEntity;openHandledScreen(Lnet/minecraft/screen/NamedScreenHandlerFactory;)Ljava/util/OptionalInt;"),
             require = 0)
     private OptionalInt inventorioOnEnderChestOpenFabric(PlayerEntity playerEntity, NamedScreenHandlerFactory factory)
+    {
+        return openHandledScreen(playerEntity);
+    }
+
+    private OptionalInt openHandledScreen(PlayerEntity playerEntity)
     {
         return playerEntity.openHandledScreen(new SimpleNamedScreenHandlerFactory((syncId, playerInventory, playerEntityInner) ->
                 GenericContainerScreenHandler.createGeneric9x6(syncId, playerInventory, playerEntityInner.getEnderChestInventory()),
