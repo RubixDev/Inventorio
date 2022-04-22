@@ -319,7 +319,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
                 GUI_TOGGLE_BUTTON_OFFSET.width, GUI_TOGGLE_BUTTON_OFFSET.height,
                 canvas.x, canvas.y,
                 CANVAS_TOGGLE_BUTTON_HOVER_SHIFT, BACKGROUND_TEXTURE)
-            { button ->
+            {
                 val client = MinecraftClient.getInstance() ?: return@TexturedButtonWidget
                 val toVanilla = client.currentScreen is InventorioScreen
                 client.currentScreen?.close()

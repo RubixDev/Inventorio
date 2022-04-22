@@ -47,6 +47,7 @@ object PlayerSettingsScreen
         return builder.build()
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : Enum<*>> addEnumEntry(category: ConfigCategory, entryBuilder: ConfigEntryBuilder, settingsEntry: SettingsEntry, requireRestart: Boolean, blocked: Boolean, enumClass: Class<T>, defaultValue: T)
     {
         if (blocked)

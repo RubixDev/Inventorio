@@ -426,7 +426,7 @@ class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory)
         fun open(player: PlayerEntity)
         {
             player.openHandledScreen(SimpleNamedScreenHandlerFactory(
-                { syncId, playerInventory, playerEntity -> InventorioScreenHandler(syncId, playerInventory!!) }, TranslatableText("container.crafting")))
+                { syncId, playerInventory, _ -> InventorioScreenHandler(syncId, playerInventory!!) }, TranslatableText("container.crafting")))
         }
     }
 }
