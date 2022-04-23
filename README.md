@@ -119,7 +119,7 @@ repositories {
 
 dependencies {
   ...
-  modCompileOnly ('com.github.Lizard-Of-Oz.Inventorio:inventorio-1.18-fabric:1.18-SNAPSHOT') { transitive = false }
+  modCompileOnly ('com.github.Lizard-Of-Oz.Inventorio:inventorio-1.18.2-fabric:1.18.2-SNAPSHOT') { transitive = false }
 }
 ```
 
@@ -132,7 +132,7 @@ repositories {
 
 dependencies {
   ...
-  compileOnly ('com.github.Lizard-Of-Oz.Inventorio:inventorio-1.18-forge:1.18-SNAPSHOT') { transitive = false }
+  compileOnly ('com.github.Lizard-Of-Oz.Inventorio:inventorio-1.18.2-forge:1.18.2-SNAPSHOT') { transitive = false }
 }
 ```
 
