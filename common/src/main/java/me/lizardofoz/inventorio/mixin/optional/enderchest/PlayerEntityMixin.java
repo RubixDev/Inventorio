@@ -6,6 +6,7 @@ import me.lizardofoz.inventorio.util.GeneralConstants;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EnderChestInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.encryption.PlayerPublicKey;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -24,7 +25,7 @@ public abstract class PlayerEntityMixin
      * This inject enlarges the Ender Chest's capacity to 6 rows.
      */
     @Inject(method = "<init>", at = @At(value = "RETURN"))
-    private void inventorioResizeEnderChest(World world, BlockPos pos, float yaw, GameProfile profile, CallbackInfo ci)
+    private void inventorioResizeEnderChest(World world, BlockPos pos, float yaw, GameProfile gameProfile, PlayerPublicKey publicKey, CallbackInfo ci)
     {
         SimpleInventoryAccessor accessor = ((SimpleInventoryAccessor) getEnderChestInventory());
         accessor.setSize(GeneralConstants.VANILLA_ROW_LENGTH * 6);

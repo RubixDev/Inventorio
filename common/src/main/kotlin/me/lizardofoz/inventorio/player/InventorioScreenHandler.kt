@@ -30,7 +30,7 @@ import net.minecraft.screen.SimpleNamedScreenHandlerFactory
 import net.minecraft.screen.slot.CraftingResultSlot
 import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
-import net.minecraft.text.TranslatableText
+import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import java.util.function.Consumer
 
@@ -426,7 +426,7 @@ class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory)
         fun open(player: PlayerEntity)
         {
             player.openHandledScreen(SimpleNamedScreenHandlerFactory(
-                { syncId, playerInventory, _ -> InventorioScreenHandler(syncId, playerInventory!!) }, TranslatableText("container.crafting")))
+                { syncId, playerInventory, _ -> InventorioScreenHandler(syncId, playerInventory!!) }, Text.translatable("container.crafting")))
         }
     }
 }

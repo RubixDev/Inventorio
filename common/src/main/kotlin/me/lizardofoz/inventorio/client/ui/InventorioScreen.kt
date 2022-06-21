@@ -28,13 +28,13 @@ import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
-import net.minecraft.text.TranslatableText
+import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import java.util.function.Consumer
 
 @Environment(EnvType.CLIENT)
 class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInventory)
-    : AbstractInventoryScreen<InventorioScreenHandler?>(handler, inventory, TranslatableText("container.crafting")), RecipeBookProvider
+    : AbstractInventoryScreen<InventorioScreenHandler?>(handler, inventory, Text.translatable("container.crafting")), RecipeBookProvider
 {
     private var mouseX = 0f
     private var mouseY = 0f

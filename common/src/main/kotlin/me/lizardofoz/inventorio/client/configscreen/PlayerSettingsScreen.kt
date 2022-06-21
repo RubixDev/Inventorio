@@ -12,7 +12,7 @@ import me.shedaniel.clothconfig2.api.ConfigEntryBuilder
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.gui.screen.Screen
-import net.minecraft.text.TranslatableText
+import net.minecraft.text.Text
 
 @Environment(EnvType.CLIENT)
 object PlayerSettingsScreen
@@ -22,9 +22,9 @@ object PlayerSettingsScreen
         val builder = ConfigBuilder.create()
             .setParentScreen(parent)
             .setSavingRunnable(PlayerSettings::save)
-            .setTitle(TranslatableText("inventorio.settings.player.title"))
+            .setTitle(Text.translatable("inventorio.settings.player.title"))
         val entryBuilder = builder.entryBuilder()
-        val category = builder.getOrCreateCategory(TranslatableText("inventorio.settings.player.title"))
+        val category = builder.getOrCreateCategory(Text.translatable("inventorio.settings.player.title"))
 
         if (GlobalSettings.allowSwappedHands.boolValue)
             addBoolEntry(category, entryBuilder, PlayerSettings.swappedHands, false, false)
@@ -40,8 +40,8 @@ object PlayerSettingsScreen
         if (!GlobalSettings.allowSwappedHands.boolValue)
             category.addEntry(
                 entryBuilder
-                    .startTextDescription(TranslatableText("inventorio.settings.player.swapped_hands.disabled"))
-                    .setTooltip(TranslatableText("inventorio.settings.player.swapped_hands.disabled.tooltip"))
+                    .startTextDescription(Text.translatable("inventorio.settings.player.swapped_hands.disabled"))
+                    .setTooltip(Text.translatable("inventorio.settings.player.swapped_hands.disabled.tooltip"))
                     .build()
             )
         return builder.build()
@@ -53,26 +53,26 @@ object PlayerSettingsScreen
         if (blocked)
         {
             category.addEntry(entryBuilder
-                .startTextDescription(TranslatableText(settingsEntry.displayText)
+                .startTextDescription(Text.translatable(settingsEntry.displayText)
                     .append(" = ")
-                    .append( TranslatableText("${settingsEntry.displayText}.${settingsEntry.value}")))
+                    .append( Text.translatable("${settingsEntry.displayText}.${settingsEntry.value}")))
                 .build())
             return
         }
 
         val builder = entryBuilder
             .startEnumSelector(
-                TranslatableText(settingsEntry.displayText),
+                Text.translatable(settingsEntry.displayText),
                 enumClass,
                 settingsEntry.value as T
             )
-            .setEnumNameProvider { TranslatableText("${settingsEntry.displayText}.${it.name}") }
+            .setEnumNameProvider { Text.translatable("${settingsEntry.displayText}.${it.name}") }
             .setDefaultValue(defaultValue)
             .setSaveConsumer { settingsEntry.value = it }
         if (requireRestart)
             builder.requireRestart()
         if (settingsEntry.tooltipText != null)
-            builder.setTooltip(TranslatableText(settingsEntry.tooltipText))
+            builder.setTooltip(Text.translatable(settingsEntry.tooltipText))
         category.addEntry(builder.build())
     }
 
@@ -81,16 +81,16 @@ object PlayerSettingsScreen
         if (blocked)
         {
             category.addEntry(entryBuilder
-                .startTextDescription(TranslatableText(settingsEntry.displayText)
+                .startTextDescription(Text.translatable(settingsEntry.displayText)
                     .append(" = ")
-                    .append(TranslatableText("text.cloth-config.boolean.value.${settingsEntry.boolValue}")))
+                    .append(Text.translatable("text.cloth-config.boolean.value.${settingsEntry.boolValue}")))
                 .build())
             return
         }
 
         val builder = entryBuilder
             .startBooleanToggle(
-                TranslatableText(settingsEntry.displayText),
+                Text.translatable(settingsEntry.displayText),
                 settingsEntry.boolValue
             )
             .setDefaultValue(settingsEntry.defaultValue == true)
@@ -98,7 +98,7 @@ object PlayerSettingsScreen
         if (requireRestart)
             builder.requireRestart()
         if (settingsEntry.tooltipText != null)
-            builder.setTooltip(TranslatableText(settingsEntry.tooltipText))
+            builder.setTooltip(Text.translatable(settingsEntry.tooltipText))
         category.addEntry(builder.build())
     }
 }

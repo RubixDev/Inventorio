@@ -22,6 +22,6 @@ object ForgeEvents
     fun onClientTick(event: RenderGameOverlayEvent.Post)
     {
         if (event.type == RenderGameOverlayEvent.ElementType.ALL)
-            renderHotbarAddons(event.matrixStack)
+            renderHotbarAddons(event.poseStack)
     }
 }

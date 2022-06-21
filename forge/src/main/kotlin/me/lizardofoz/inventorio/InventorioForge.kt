@@ -30,7 +30,7 @@ class InventorioForge
     {
         ScreenTypeProvider.INSTANCE = ScreenTypeProviderForge
         InventorioNetworking.INSTANCE = InventorioNetworkingForge
-        ForgeRegistries.ENCHANTMENTS.register((DeepPocketsEnchantment as Enchantment).setRegistryName(Identifier("inventorio", "deep_pockets")))
+        ForgeRegistries.ENCHANTMENTS.register(Identifier("inventorio", "deep_pockets"), DeepPocketsEnchantment)
         initToolBelt()
 
         if (FMLEnvironment.dist == Dist.CLIENT)

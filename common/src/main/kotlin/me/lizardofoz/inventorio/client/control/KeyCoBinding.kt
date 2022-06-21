@@ -5,7 +5,6 @@ import net.fabricmc.api.Environment
 import net.minecraft.client.option.KeyBinding
 import net.minecraft.client.util.InputUtil
 import net.minecraft.text.Text
-import net.minecraft.text.TranslatableText
 
 /**
  * The usecase: when you bind "Use Item" and "Use Utility" to the same key, the intended behavior is them merging together.
@@ -28,7 +27,7 @@ open class KeyCoBinding(protected val coBindTranslationKey: String, protected va
     override fun getBoundKeyLocalizedText(): Text
     {
         return if (isUnbound)
-            TranslatableText(coBindTranslationKey)
+            Text.translatable(coBindTranslationKey)
         else
             super.getBoundKeyLocalizedText()
     }

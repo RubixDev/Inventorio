@@ -1,8 +1,8 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.0.0"
+    id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
-archivesBaseName = "${rootProject.archives_base_name}-1.18-forge"
+archivesBaseName = "${rootProject.archives_base_name}-${rootProject.minecraft_version}-forge"
 
 architectury {
     platformSetupLoomIde()

@@ -12,6 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.encryption.PlayerPublicKey;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -32,7 +33,7 @@ public abstract class PlayerEntityMixin implements PlayerDuck
     @Unique public PlayerInventoryAddon inventorioAddon;
 
     @Inject(method = "<init>", at = @At(value = "RETURN"))
-    private void inventorioCreateAddon(World world, BlockPos pos, float yaw, GameProfile profile, CallbackInfo ci)
+    private void inventorioCreateAddon(World world, BlockPos pos, float yaw, GameProfile gameProfile, PlayerPublicKey publicKey, CallbackInfo ci)
     {
         PlayerEntity thisPlayer = (PlayerEntity) (Object) this;
         inventorioAddon = new PlayerInventoryAddon(thisPlayer);
@@ -64,7 +65,7 @@ public abstract class PlayerEntityMixin implements PlayerDuck
             inventorioAddon.setSelectedUtilityStack(itemStack);
         else
             getInventory().main.set(getInventory().selectedSlot, itemStack);
-        return null;
+        return (E) ItemStack.EMPTY;
     }
 
     @Redirect(method = "equipStack",
@@ -78,7 +79,7 @@ public abstract class PlayerEntityMixin implements PlayerDuck
             inventorioAddon.setSelectedHotbarStack(itemStack);
         else
             inventorioAddon.setSelectedUtilityStack(itemStack);
-        return null;
+        return (E) ItemStack.EMPTY;
     }
 
     /**

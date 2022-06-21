@@ -9,7 +9,7 @@ import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.Screen
-import net.minecraft.text.TranslatableText
+import net.minecraft.text.Text
 
 @Environment(EnvType.CLIENT)
 object GlobalSettingsScreen
@@ -19,15 +19,15 @@ object GlobalSettingsScreen
         val builder = ConfigBuilder.create()
             .setParentScreen(parent)
             .setSavingRunnable(GlobalSettings::save)
-            .setTitle(TranslatableText("inventorio.settings.global.title"))
+            .setTitle(Text.translatable("inventorio.settings.global.title"))
         val entryBuilder = builder.entryBuilder()
-        val category = builder.getOrCreateCategory(TranslatableText("inventorio.settings.global.title"))
+        val category = builder.getOrCreateCategory(Text.translatable("inventorio.settings.global.title"))
 
-        category.addEntry(entryBuilder.startTextDescription(TranslatableText("inventorio.settings.global.description")).build())
+        category.addEntry(entryBuilder.startTextDescription(Text.translatable("inventorio.settings.global.description")).build())
 
         val isNotLocal = MinecraftClient.getInstance().networkHandler?.connection?.isLocal != true
         if (isNotLocal)
-            category.addEntry(entryBuilder.startTextDescription(TranslatableText("inventorio.settings.global.disabled_by_server")).build())
+            category.addEntry(entryBuilder.startTextDescription(Text.translatable("inventorio.settings.global.disabled_by_server")).build())
 
         addBoolEntry(category, entryBuilder, GlobalSettings.expandedEnderChest, true, isNotLocal)
         addBoolEntry(category, entryBuilder, GlobalSettings.infinityBowNeedsNoArrow, true, isNotLocal)
