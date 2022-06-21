@@ -115,7 +115,10 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
 
         RenderSystem.setShader { GameRenderer.getPositionTexShader() }
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
-        RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE)
+        if (PlayerSettings.darkTheme.boolValue)
+            RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE_DARK)
+        else
+            RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE)
 
         val deepPocketsRowCount = inventoryAddon.getDeepPocketsRowCount()
 
@@ -296,6 +299,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
     {
         private val RECIPE_BUTTON_TEXTURE = Identifier("textures/gui/recipe_button.png")
         private val BACKGROUND_TEXTURE = Identifier("inventorio", "textures/gui/player_inventory.png")
+        private val BACKGROUND_TEXTURE_DARK = Identifier("inventorio", "textures/gui/player_inventory_dark.png")
 
         private val initConsumers = mutableMapOf<Identifier, Consumer<InventorioScreen>>()
 
@@ -318,7 +322,8 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
                 screenAccessor.x + screen.backgroundWidth + GUI_TOGGLE_BUTTON_OFFSET.x, screenAccessor.y + GUI_TOGGLE_BUTTON_OFFSET.y,
                 GUI_TOGGLE_BUTTON_OFFSET.width, GUI_TOGGLE_BUTTON_OFFSET.height,
                 canvas.x, canvas.y,
-                CANVAS_TOGGLE_BUTTON_HOVER_SHIFT, BACKGROUND_TEXTURE)
+                CANVAS_TOGGLE_BUTTON_HOVER_SHIFT,
+                if (PlayerSettings.darkTheme.boolValue) BACKGROUND_TEXTURE_DARK else BACKGROUND_TEXTURE)
             {
                 val client = MinecraftClient.getInstance() ?: return@TexturedButtonWidget
                 val toVanilla = client.currentScreen is InventorioScreen

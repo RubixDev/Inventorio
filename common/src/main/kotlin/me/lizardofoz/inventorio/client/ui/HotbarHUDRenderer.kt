@@ -20,19 +20,27 @@ import net.minecraft.world.GameMode
 object HotbarHUDRenderer
 {
     private val WIDGETS_TEXTURE = Identifier("inventorio", "textures/gui/widgets.png")
+    private val WIDGETS_TEXTURE_DARK = Identifier("inventorio", "textures/gui/widgets_dark.png")
     private val client = MinecraftClient.getInstance()!!
 
     fun renderSegmentedHotbar(matrices: MatrixStack): Boolean
     {
-        if (PlayerSettings.segmentedHotbar.value == SegmentedHotbar.OFF || isHidden())
+        if (PlayerSettings.segmentedHotbar.value == SegmentedHotbar.OFF
+            || PlayerSettings.segmentedHotbar.value == SegmentedHotbar.ONLY_FUNCTION
+            || isHidden())
             return false
 
         val playerEntity = client.cameraEntity as? PlayerEntity ?: return false
         val inventory = playerEntity.inventory
         val scaledWidthHalved = client.window.scaledWidth / 2 - 30
         val scaledHeight = client.window.scaledHeight
+        val selectedSection = PlayerInventoryAddon.Client.selectedHotbarSection
 
-        RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE)
+        if (PlayerSettings.darkTheme.boolValue)
+            RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE_DARK)
+        else
+            RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE)
+
         //Draw the hotbar itself
         DrawableHelper.drawTexture(matrices,
             scaledWidthHalved - HUD_SEGMENTED_HOTBAR.x,
@@ -43,7 +51,6 @@ object HotbarHUDRenderer
             HUD_SEGMENTED_HOTBAR.height,
             CANVAS_WIDGETS_TEXTURE_SIZE.x, CANVAS_WIDGETS_TEXTURE_SIZE.y)
 
-        val selectedSection = PlayerInventoryAddon.Client.selectedHotbarSection
         if (selectedSection == -1) //Draw the regular vanilla selection box
             DrawableHelper.drawTexture(matrices,
                 scaledWidthHalved - HUD_SECTION_SELECTION.x - HUD_SEGMENTED_HOTBAR_GAP
@@ -56,7 +63,7 @@ object HotbarHUDRenderer
                 CANVAS_WIDGETS_TEXTURE_SIZE.x, CANVAS_WIDGETS_TEXTURE_SIZE.y)
         else //Draw the section-wide selection box
             DrawableHelper.drawTexture(matrices,
-                scaledWidthHalved - HUD_SECTION_SELECTION.x - HUD_SEGMENTED_HOTBAR_GAP + (HUD_SECTION_SELECTION.width * selectedSection),
+                scaledWidthHalved - HUD_SECTION_SELECTION.x + (HUD_SECTION_SELECTION.width * selectedSection) - HUD_SEGMENTED_HOTBAR_GAP,
                 scaledHeight - HUD_SECTION_SELECTION.y,
                 CANVAS_SECTION_SELECTION_FRAME.x,
                 CANVAS_SECTION_SELECTION_FRAME.y,
@@ -102,8 +109,9 @@ object HotbarHUDRenderer
         val scaledWidthHalved = client.window.scaledWidth / 2 - 30
         val scaledHeight = client.window.scaledHeight
 
-        val segmentedHotbarMode = PlayerSettings.segmentedHotbar.value != SegmentedHotbar.OFF
-        val segmentedModeOffset = if (segmentedHotbarMode) HUD_SEGMENTED_HOTBAR_GAP else 0
+        val drawSegmentedHotbar = PlayerSettings.segmentedHotbar.value == SegmentedHotbar.ONLY_VISUAL
+                || PlayerSettings.segmentedHotbar.value == SegmentedHotbar.ON
+        val segmentedModeOffset = if (drawSegmentedHotbar) HUD_SEGMENTED_HOTBAR_GAP else 0
 
         var rightHanded = player.mainArm == Arm.RIGHT
         if (inventoryAddon.swappedHands)
@@ -112,7 +120,10 @@ object HotbarHUDRenderer
         val leftHandedUtilityBeltOffset = if (rightHanded) 0 else (LEFT_HANDED_UTILITY_BELT_OFFSET + segmentedModeOffset * 2)
         val leftHandedDisplayToolOffset = if (rightHanded) 0 else (LEFT_HANDED_DISPLAY_TOOL_OFFSET - segmentedModeOffset * 2)
 
-        RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE)
+        if (PlayerSettings.darkTheme.boolValue)
+            RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE_DARK)
+        else
+            RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE)
 
         //Draw the frame of a tool currently in use (one on the opposite side from the offhand)
 
@@ -164,7 +175,10 @@ object HotbarHUDRenderer
             RenderSystem.applyModelViewMatrix()
             RenderSystem.disableDepthTest()
             RenderSystem.enableBlend()
-            RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE)
+            if (PlayerSettings.darkTheme.boolValue)
+                RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE_DARK)
+            else
+                RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE)
 
             //Draw the utility belt frame
             DrawableHelper.drawTexture(matrices,
@@ -202,6 +216,29 @@ object HotbarHUDRenderer
         {
             client.itemRenderer.renderInGuiWithOverrides(stack, x, y)
             client.itemRenderer.renderGuiItemOverlay(client.textRenderer, stack, x, y)
+        }
+    }
+
+    fun renderFunctionOnlySelector(matrices: MatrixStack)
+    {
+        val selectedSection = PlayerInventoryAddon.Client.selectedHotbarSection
+        if (selectedSection != -1 && PlayerSettings.segmentedHotbar.value == SegmentedHotbar.ONLY_FUNCTION)
+        {
+            val scaledWidthHalved = client.window.scaledWidth / 2 - 30
+            val scaledHeight = client.window.scaledHeight
+
+            if (PlayerSettings.darkTheme.boolValue)
+                RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE_DARK)
+            else
+                RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE)
+            DrawableHelper.drawTexture(matrices,
+                scaledWidthHalved - HUD_SECTION_SELECTION.x + ((HUD_SECTION_SELECTION.width - HUD_SEGMENTED_HOTBAR_GAP) * selectedSection),
+                scaledHeight - HUD_SECTION_SELECTION.y,
+                CANVAS_SECTION_SELECTION_FRAME.x,
+                CANVAS_SECTION_SELECTION_FRAME.y,
+                HUD_SECTION_SELECTION.width,
+                HUD_SECTION_SELECTION.height,
+                CANVAS_WIDGETS_TEXTURE_SIZE.x, CANVAS_WIDGETS_TEXTURE_SIZE.y)
         }
     }
 }

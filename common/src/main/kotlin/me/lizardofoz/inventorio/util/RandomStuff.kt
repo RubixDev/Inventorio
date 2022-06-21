@@ -15,7 +15,7 @@ data class Rectangle(@JvmField val x: Int, @JvmField val y: Int, @JvmField val w
 
 enum class SegmentedHotbar
 {
-    OFF, ONLY_VISUAL, ON
+    OFF, ONLY_VISUAL, ON, ONLY_FUNCTION
 }
 
 enum class ScrollWheelUtilityBeltMode

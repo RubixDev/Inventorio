@@ -33,6 +33,12 @@ public class InGameHudMixinLP
             ci.cancel();
     }
 
+    @Inject(method = "renderHotbar", at = @At(value = "RETURN"), require = 0)
+    private void inventorioRenderFunctionOnlySelector(float tickDelta, MatrixStack matrixStack, CallbackInfo ci)
+    {
+        HotbarHUDRenderer.INSTANCE.renderFunctionOnlySelector(matrixStack);
+    }
+
     /**
      * In vanilla, when you look at an entity with a sword, it shows an attack indicator.
      * This mixin restores this feature if you have a sword in your toolbelt.

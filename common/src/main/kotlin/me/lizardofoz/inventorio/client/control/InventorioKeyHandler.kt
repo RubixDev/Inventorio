@@ -51,7 +51,8 @@ object InventorioKeyHandler
      */
     fun handleSegmentedHotbarSlotSelection(inventory: PlayerInventory, slotToSelect: Int): Boolean
     {
-        if (PlayerSettings.segmentedHotbar.value != SegmentedHotbar.ON)
+        if (PlayerSettings.segmentedHotbar.value == SegmentedHotbar.OFF
+            || PlayerSettings.segmentedHotbar.value == SegmentedHotbar.ONLY_VISUAL)
             return false
         if (slotToSelect > 2)
             return true

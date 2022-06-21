@@ -24,7 +24,7 @@ Dependencies for Forge:
 * [Kotlin for Forge](https://www.curseforge.com/minecraft/mc-mods/kotlin-for-forge)
 * [Cloth Config (Forge)](https://www.curseforge.com/minecraft/mc-mods/cloth-config-forge)
 
-![Features](https://user-images.githubusercontent.com/701551/118837735-4fc5f500-b8ef-11eb-92a0-f50698e04edf.png)
+![Features](https://user-images.githubusercontent.com/701551/174822000-afce35b6-b6e2-4580-b428-715a764b64a3.png)
 
 ## Features 
 #### Toolbelt
@@ -73,6 +73,9 @@ By default, scrolling and displaying the Utility Belt skips the empty slots, but
 
 #### Rebind Scroll Wheel to the Utility Belt
 You can rebind the Scroll Wheel to scroll through the Utility Belt, while using the number keys to chose from the Hotbar slots.   
+
+#### Dark Inventorio Player UI
+Compatibility with dark theme mods and resource packs.
 
 #### Swapped Hands
 This option allows to assign the vanilla Hotbar to your Offhand, and the Utility Belt to your Main Hand.

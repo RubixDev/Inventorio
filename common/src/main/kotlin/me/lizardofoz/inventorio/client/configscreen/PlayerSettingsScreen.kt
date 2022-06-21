@@ -34,6 +34,7 @@ object PlayerSettingsScreen
         addBoolEntry(category, entryBuilder, PlayerSettings.skipEmptyUtilitySlots, false, false)
         addBoolEntry(category, entryBuilder, PlayerSettings.useItemAppliesToOffhand, false, false)
         addBoolEntry(category, entryBuilder, PlayerSettings.canThrowUnloyalTrident, false, false)
+        addBoolEntry(category, entryBuilder, PlayerSettings.darkTheme, false, false)
         addBoolEntry(category, entryBuilder, PlayerSettings.aggressiveButtonRemoval, false, false)
         addBoolEntry(category, entryBuilder, PlayerSettings.toggleButton, false, false)
 

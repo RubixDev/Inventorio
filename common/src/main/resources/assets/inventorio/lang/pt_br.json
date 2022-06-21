@@ -19,6 +19,7 @@
   "inventorio.settings.player.segmented_hotbar_mode.OFF": "§cNão",
   "inventorio.settings.player.segmented_hotbar_mode.ONLY_VISUAL": "§dApenas visual",
   "inventorio.settings.player.segmented_hotbar_mode.ON": "§aSim",
+  "inventorio.settings.player.segmented_hotbar_mode.ONLY_FUNCTION": "§bApenas função",
   "inventorio.settings.player.scroll_wheel_utility_belt_mode": "Vincular a roda do mouse para o cinto de utilidades",
   "inventorio.settings.player.scroll_wheel_utility_belt_mode.OFF": "§cNão",
   "inventorio.settings.player.scroll_wheel_utility_belt_mode.REGULAR": "§aOrdem normal",
