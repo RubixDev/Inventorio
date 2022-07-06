@@ -45,7 +45,7 @@ allprojects {
     apply plugin: "org.jetbrains.kotlin.jvm"
 
     archivesBaseName = rootProject.archives_base_name
-    group = 'me.lizardofoz'
+    group = 'me.lizardofoz.inventorio'
     version = rootProject.mod_version
 
     sourceCompatibility = JavaVersion.VERSION_17
