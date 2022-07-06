@@ -15,7 +15,7 @@ displayURL="https://github.com/Lizard-Of-Oz/Inventorio"
 [[dependencies.inventorio]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.18,1.29)"
+versionRange = "[1.19,1.20)"
 ordering = "NONE"
 side = "BOTH"
 
