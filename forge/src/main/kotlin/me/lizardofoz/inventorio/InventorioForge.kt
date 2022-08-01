@@ -1,6 +1,7 @@
 package me.lizardofoz.inventorio
 
 import me.lizardofoz.inventorio.api.InventorioAPI
+import me.lizardofoz.inventorio.client.configscreen.PlayerSettingsScreen
 import me.lizardofoz.inventorio.client.control.InventorioControls
 import me.lizardofoz.inventorio.config.PlayerSettings
 import me.lizardofoz.inventorio.enchantment.DeepPocketsEnchantment
@@ -9,13 +10,15 @@ import me.lizardofoz.inventorio.integration.ModIntegration
 import me.lizardofoz.inventorio.packet.InventorioNetworking
 import me.lizardofoz.inventorio.packet.InventorioNetworkingForge
 import net.minecraft.client.MinecraftClient
-import net.minecraft.enchantment.Enchantment
+import net.minecraft.client.gui.screen.Screen
 import net.minecraft.item.ItemStack
 import net.minecraft.util.Identifier
 import net.minecraftforge.api.distmarker.Dist
+import net.minecraftforge.client.ConfigScreenHandler
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.common.ToolAction
 import net.minecraftforge.common.ToolActions
+import net.minecraftforge.fml.ModLoadingContext
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.loading.FMLEnvironment
 import net.minecraftforge.fml.loading.FMLPaths
@@ -39,6 +42,9 @@ class InventorioForge
             MinecraftClient.getInstance().options.allKeys += InventorioControls.keys
             PlayerSettings.load(FMLPaths.CONFIGDIR.get().resolve("inventorio.json").toFile())
             ScreenTypeProviderForge.registerScreen()
+            ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory::class.java) {
+                ConfigScreenHandler.ConfigScreenFactory { client: MinecraftClient, parent: Screen -> PlayerSettingsScreen.get(parent) }
+            }
         }
 
         InventorioModIntegration.addModIntegrations(forgeModIntegrations)

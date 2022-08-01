@@ -17,7 +17,7 @@ object ScreenTypeProviderForge : ScreenTypeProvider
 
     init
     {
-        val registry = DeferredRegister.create(ForgeRegistries.CONTAINERS, "inventorio")
+        val registry = DeferredRegister.create(ForgeRegistries.MENU_TYPES, "inventorio")
         registry.register(KotlinModLoadingContext.get().getKEventBus())
         registry.register("player_screen") { handlerProvider }
     }

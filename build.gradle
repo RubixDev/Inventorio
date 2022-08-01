@@ -16,6 +16,7 @@ def version_replaces = [
         "fabric_loader_version": rootProject.fabric_loader_version,
         "minecraft_version": rootProject.minecraft_version,
         "forge_version": rootProject.forge_version,
+        "archive_version": rootProject.archive_version,
         "modmenu_version": rootProject.modmenu_version
 ]
 
