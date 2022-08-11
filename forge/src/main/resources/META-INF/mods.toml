@@ -22,7 +22,7 @@ side = "BOTH"
 [[dependencies.inventorio]]
 modId = "forge"
 mandatory = true
-versionRange = "[41,)"
+versionRange = "[41.1,)"
 ordering = "NONE"
 side = "BOTH"
 
