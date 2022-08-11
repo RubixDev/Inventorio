@@ -125,8 +125,8 @@ repositories {
 }
 
 dependencies {
-  modCompileOnly "curse.maven:inventorio-491073:3842567" //Fabric
-  modCompileOnly "curse.maven:inventorio-497122:3910780" //Forge
+  modCompileOnly "curse.maven:inventorio-491073:3929579" //Fabric
+  modCompileOnly "curse.maven:inventorio-497122:3929571" //Forge
 }
 ```
 
