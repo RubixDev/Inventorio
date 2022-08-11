@@ -12,18 +12,21 @@ import kotlin.math.min
 
 abstract class PlayerInventoryInjects protected constructor(player: PlayerEntity) : PlayerInventoryExtension(player)
 {
-    fun mendToolBeltItems(experience: Int): Int
+    fun mendToolBeltItems(xpAmount: Int): Int
     {
-        var amount = experience
+        var xpLeft = xpAmount
         for (itemStack in toolBelt)
             if (itemStack.isNotEmpty && itemStack.isDamaged && EnchantmentHelper.getLevel(Enchantments.MENDING, itemStack) > 0)
             {
-                val delta = max(amount * 2, itemStack.damage)
-                amount -= delta
-                itemStack.damage -= delta
-                return amount
+                val damageRestored = min(xpAmount * 2, itemStack.damage)
+                itemStack.damage -= damageRestored
+                xpLeft = xpAmount - damageRestored / 2
+                if (xpLeft > 0)
+                    return mendToolBeltItems(xpLeft)
+                else
+                    return 0
             }
-        return amount
+        return xpLeft
     }
 
     /**
