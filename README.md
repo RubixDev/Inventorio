@@ -2,9 +2,11 @@
 
 ## Showcase Video
 [![Video Demonstration](https://img.youtube.com/vi/ZXQb49LaC30/maxresdefault.jpg)](https://youtu.be/ZXQb49LaC30)
- 
+
 ## About
 This is my vision of the Inventory Update for Minecraft. Of [features](#Features) I believe are in line with Mojang's vision and could be potentially added to the game.
+
+Available for both Forge and Fabric.
 
 ## Installation
 Grab the jar file from the [Release page](https://github.com/Lizard-Of-Oz/Inventorio/releases/).
@@ -22,9 +24,9 @@ Dependencies for Forge:
 * [Kotlin for Forge](https://www.curseforge.com/minecraft/mc-mods/kotlin-for-forge)
 * [Cloth Config (Forge)](https://www.curseforge.com/minecraft/mc-mods/cloth-config-forge)
 
-![Features](https://user-images.githubusercontent.com/701551/118837735-4fc5f500-b8ef-11eb-92a0-f50698e04edf.png)
+![Features](https://user-images.githubusercontent.com/701551/174822000-afce35b6-b6e2-4580-b428-715a764b64a3.png)
 
-## Features 
+## Features
 #### Toolbelt
 Instead of taking space in the Hotbar, tools are now stored in their own place.
 When you mine a block, a correct tool gets passively applied from the said Toolbelt.
@@ -60,17 +62,17 @@ There's a "Visual Only" option that keeps the default selection schema.
 #### Firework Rocket Boost Button
 A dedicated button to fire a boost rocket directly from your inventory while flying. Can be co-bound to Jump.
 
-#### Trident Loyalty Check 
+#### Trident Loyalty Check
 This option prevents you from throwing a Trident without Loyalty.
 
 #### "Use Item" Applies To Offhand
-The original idea was to bind each hand to its own dedicated button, but some people found it confusing, and this option restores the vanilla behavior of vanilla "Use Item", while "Use Utility" applies only to the Utility Belt / Offhand.     
+The original idea was to bind each hand to its own dedicated button, but some people found it confusing, and this option restores the vanilla behavior of vanilla "Use Item", while "Use Utility" applies only to the Utility Belt / Offhand.
 
-#### Skip Empty Utility Slots 
-By default, scrolling and displaying the Utility Belt skips the empty slots, but you can set this behavior to false. There's also a keybind (not bound by default) that allows to scroll to the first empty Utility Belt slot.   
+#### Skip Empty Utility Slots
+By default, scrolling and displaying the Utility Belt skips the empty slots, but you can set this behavior to false. There's also a keybind (not bound by default) that allows to scroll to the first empty Utility Belt slot.
 
 #### Rebind Scroll Wheel to the Utility Belt
-You can rebind the Scroll Wheel to scroll through the Utility Belt, while using the number keys to chose from the Hotbar slots.   
+You can rebind the Scroll Wheel to scroll through the Utility Belt, while using the number keys to chose from the Hotbar slots.
 
 #### Swapped Hands
 This option allows to assign the vanilla Hotbar to your Offhand, and the Utility Belt to your Main Hand.
@@ -78,9 +80,9 @@ This option allows to assign the vanilla Hotbar to your Offhand, and the Utility
 ![image](https://user-images.githubusercontent.com/701551/120894901-e828dd00-c644-11eb-86aa-6935ad71002a.png)
 
 ## Global Settings
-To improve mod compatibility, some features can be disabled on a game-wide level for all players. 
+To improve mod compatibility, some features can be disabled on a game-wide level for all players.
 
-Global settings can be accessed by a keybind (only in a single player world) or directly at `%root_folder%/config/inventorio_shared.json`. 
+Global settings can be accessed by a keybind (only in a single player world) or directly at `%root_folder%/config/inventorio_shared.json`.
 
 Joining a server (either dedicated or hosted from another client) with mismatching global settings will prompt a request to sync your settings and restart the game, but sharing the config beforehand is recommended.
 
@@ -95,51 +97,40 @@ Joining a server (either dedicated or hosted from another client) with mismatchi
 * `DeepPocketsInTrades (default: true)` - Can a Deep Pockets Book be obtained in a villager trade<br/>
 * `DeepPocketsInRandomSelection (default: true)` - Can a Deep Pockets Book be obtained in random selection (Enchanting Table and mob loot)
 
-## Feedback, Use in Modpacks and Mod Compatibility
-Feel free to use this mod in a modpack.
+## Use in modpacks and with other mods
+You can include this mod in a modpack or as a dependency for your own mod.
 
-If you encounter bugs or compatibility issues with other mods, please report them on the [Issue Tracker](https://github.com/Lizard-Of-Oz/Inventorio/issues).
+I just ask you to respect my work and include it in a way that would count as a download of my mod by CurseForge and its Reward Program.
 
-If you want to request a feature or modification, please use an Issue Tracker or make a [Pull Request](https://github.com/Lizard-Of-Oz/Inventorio/pulls).  
+* For Modpacks, CurseForge by default links a mod in the modpack manifest when you add it. Use _that_ instead of embedding the mod's jar into the modpack.
+* For Mods, don't embed the mod's jar inside your mod, but mark it as a dependency.
 
-## Inventorio as a Dependency for Your Mod
-Until this notice is removed (Summer 2021), the structure of the mod is still subject to change, but you can contact me if you need particular functionality or want something to stay consistent.
+If you want to use this mode as a dependency, I recommend using [CurseMaven](https://www.cursemaven.com/).
 
-If you want to use this mode as a dependency, I recommend using JitPack.<br/>
-Please note that me using Architectury plugin causes the gradle setup to be different that normal: 
+**Something might be in the works, so, I wouldn't recommend to depend on this mod too much just yet.**
 
-Fabric:
+Be advised that you need to manually keep track of the latest version available.
+
 ```
 repositories {
-  ...
-  maven { url 'https://jitpack.io' }
+  maven {
+    url "https://cursemaven.com"
+    content {
+      includeGroup "curse.maven"
+    }
+  }
 }
 
 dependencies {
-  ...
-  modCompileOnly ('com.github.Lizard-Of-Oz.Inventorio:inventorio-1.16-fabric:1.16-SNAPSHOT') { transitive = false }
+  modCompileOnly "curse.maven:inventorio-491073:3929505" //Fabric
+  modCompileOnly "curse.maven:inventorio-497122:3929506" //Forge
 }
 ```
-
-Forge:
-```
-repositories {
-  ...
-  maven { url 'https://jitpack.io' }
-}
-
-dependencies {
-  ...
-  compileOnly ('com.github.Lizard-Of-Oz.Inventorio:inventorio-1.16-forge:1.16-SNAPSHOT') { transitive = false }
-}
-```
-
-Note: I haven't figured out how to include documentation into the jar file generated by JitPack. Please read the [source code of InventorioAPI](https://github.com/Lizard-Of-Oz/Inventorio/blob/1.16/common/src/main/java/me/lizardofoz/inventorio/api/InventorioAPI.java)
 
 ### Addon Slots, Toolbelt & Item Tags
 `InventorioAPI` allows your mod to add custom Toolbelt slots and add custom allowing and disallowing tags and conditions to toolbelt slots, including existing ones.
 
-Note: when working with the Toolbelt, please consider that its size may vary depending on the mods and settings installed.<br> 
+Note: when working with the Toolbelt, please consider that its size may vary depending on the mods and settings installed.<br>
 Don't assume any particular size of the Toolbelt or the slot order across multiple play sessions. ToolBelt size is the same for all players within the same play session.<br>
 Slot indices of the Deep Pockets and the Utility Belt are persistent.
 
@@ -161,13 +152,4 @@ Any custom filters and tags can be added via `InventorioAPI`
 
 Note: `%item_type%` is always spelled in plural. Available item types: `pickaxes`, `swords`, `axes`, `shovels`, `hoes`.
 
-## (Somewhat) Confirmed Compatible Mods
-Fabric:
-* [BetterGraves](https://github.com/CerulanLumina/better-graves) <br/>
-* [Gravestones](https://github.com/Geometrically/Gravestones) <br/>
-* [REI](https://github.com/shedaniel/RoughlyEnoughItems) <br/>
-
-Forge:
-* [GraveStone Mod](https://www.curseforge.com/minecraft/mc-mods/gravestone-mod) <br/>
-* [Quark](https://www.curseforge.com/minecraft/mc-mods/quark) <br/>
-* [JEI](https://www.curseforge.com/minecraft/mc-mods/jei) <br/>
+Note: Please ignore `InventorioModIntegration` and `ModIntegration` - they're intended for INVENTORIO to integrate with other mods, NOT for other mods to integrate with Inventorio.

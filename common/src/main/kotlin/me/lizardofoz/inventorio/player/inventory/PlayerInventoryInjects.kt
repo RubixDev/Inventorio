@@ -7,21 +7,25 @@ import net.minecraft.enchantment.Enchantments
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.item.RangedWeaponItem
+import kotlin.math.min
 
 abstract class PlayerInventoryInjects protected constructor(player: PlayerEntity) : PlayerInventoryExtension(player)
 {
-    fun mendToolBeltItems(experience: Int): Int
+    fun mendToolBeltItems(xpAmount: Int): Int
     {
-        var amount = experience
+        var xpLeft = xpAmount
         for (itemStack in toolBelt)
             if (itemStack.isNotEmpty && itemStack.isDamaged && EnchantmentHelper.getLevel(Enchantments.MENDING, itemStack) > 0)
             {
-                val delta = Math.min(amount * 2, itemStack.damage)
-                amount -= delta
-                itemStack.damage -= delta
-                return amount
+                val damageRestored = min(xpAmount * 2, itemStack.damage)
+                itemStack.damage -= damageRestored
+                xpLeft = xpAmount - damageRestored / 2
+                if (xpLeft > 0)
+                    return mendToolBeltItems(xpLeft)
+                else
+                    return 0
             }
-        return amount
+        return xpLeft
     }
 
     /**
