@@ -6,7 +6,7 @@ import net.minecraft.enchantment.Enchantment
 import net.minecraft.enchantment.EnchantmentTarget
 import net.minecraft.entity.EquipmentSlot
 
-object DeepPocketsEnchantment : Enchantment(Rarity.RARE, EnchantmentTarget.ARMOR_LEGS, arrayOf(EquipmentSlot.LEGS))
+object DeepPocketsEnchantment : Enchantment(Rarity.UNCOMMON, EnchantmentTarget.ARMOR_LEGS, arrayOf(EquipmentSlot.LEGS))
 {
     override fun getMinLevel(): Int
     {
@@ -20,17 +20,17 @@ object DeepPocketsEnchantment : Enchantment(Rarity.RARE, EnchantmentTarget.ARMOR
 
     override fun getMinPower(level: Int): Int
     {
-        return level * 25
+        return 5 + (level - 1) * 8
     }
 
     override fun getMaxPower(level: Int): Int
     {
-        return getMinPower(level) + 50
+        return super.getMinPower(level) + 50
     }
 
     override fun isTreasure(): Boolean
     {
-        return GlobalSettings.deepPocketsInTrades.boolValue
+        return GlobalSettings.deepPocketsInTreasures.boolValue
     }
 
     override fun isAvailableForEnchantedBookOffer(): Boolean
