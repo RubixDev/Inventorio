@@ -1,6 +1,7 @@
 package me.lizardofoz.inventorio
 
 import me.lizardofoz.inventorio.api.InventorioAPI
+import me.lizardofoz.inventorio.client.configscreen.PlayerSettingsScreen
 import me.lizardofoz.inventorio.client.control.InventorioControls
 import me.lizardofoz.inventorio.config.PlayerSettings
 import me.lizardofoz.inventorio.enchantment.DeepPocketsEnchantment
@@ -15,10 +16,13 @@ import net.minecraft.util.Identifier
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.common.ToolType
+import net.minecraftforge.fml.ExtensionPoint
+import net.minecraftforge.fml.ModLoadingContext
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.loading.FMLEnvironment
 import net.minecraftforge.fml.loading.FMLPaths
 import net.minecraftforge.registries.ForgeRegistries
+import java.util.function.BiFunction
 
 @Mod("inventorio")
 class InventorioForge
@@ -38,6 +42,9 @@ class InventorioForge
             MinecraftClient.getInstance().options.keysAll += InventorioControls.keys
             PlayerSettings.load(FMLPaths.CONFIGDIR.get().resolve("inventorio.json").toFile())
             ScreenTypeProviderForge.registerScreen()
+            ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.CONFIGGUIFACTORY) {
+                BiFunction { client, parent -> PlayerSettingsScreen.get(parent) }
+            }
         }
 
         InventorioModIntegration.addModIntegrations(forgeModIntegrations)
@@ -65,6 +72,7 @@ class InventorioForge
             testToolType(itemStack, ToolType.HOE, ToolType.get("shears"))
         }
     }
+
     private fun testToolType(itemStack: ItemStack, vararg entries: ToolType): Boolean
     {
         return itemStack.toolTypes.any { entries.contains(it) }

@@ -1,6 +1,7 @@
 package me.lizardofoz.inventorio.mixin.client;
 
 import me.lizardofoz.inventorio.client.control.InventorioKeyHandler;
+import me.lizardofoz.inventorio.client.ui.InventorioScreen;
 import me.lizardofoz.inventorio.packet.InventorioNetworking;
 import me.lizardofoz.inventorio.util.MixinHelpers;
 import net.fabricmc.api.EnvType;
@@ -38,6 +39,8 @@ public class MinecraftClientMixin
             cancellable = true)
     private void inventorioOpenReplacingScreen(CallbackInfo ci)
     {
+        if (InventorioScreen.shouldOpenVanillaInventory)
+            return;
         InventorioNetworking.getInstance().c2sOpenInventorioScreen();
         ci.cancel();
     }

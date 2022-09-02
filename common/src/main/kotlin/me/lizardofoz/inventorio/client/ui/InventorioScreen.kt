@@ -20,7 +20,6 @@ import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen
 import net.minecraft.client.gui.screen.ingame.InventoryScreen
 import net.minecraft.client.gui.screen.recipebook.RecipeBookProvider
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget
-import net.minecraft.client.gui.widget.AbstractButtonWidget
 import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.gui.widget.TexturedButtonWidget
 import net.minecraft.client.util.math.MatrixStack
@@ -118,7 +117,10 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
 
         RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f)
         val textureManager = client!!.textureManager
-        textureManager.bindTexture(BACKGROUND_TEXTURE)
+        if (PlayerSettings.darkTheme.boolValue)
+            textureManager.bindTexture(BACKGROUND_TEXTURE_DARK)
+        else
+            textureManager.bindTexture(BACKGROUND_TEXTURE)
 
         val deepPocketsRowCount = inventoryAddon.getDeepPocketsRowCount()
 
@@ -290,8 +292,11 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
     {
         private val RECIPE_BUTTON_TEXTURE = Identifier("textures/gui/recipe_button.png")
         private val BACKGROUND_TEXTURE = Identifier("inventorio", "textures/gui/player_inventory.png")
+        private val BACKGROUND_TEXTURE_DARK = Identifier("inventorio", "textures/gui/player_inventory_dark.png")
 
         private val initConsumers = mutableMapOf<Identifier, Consumer<InventorioScreen>>()
+
+        @JvmField var shouldOpenVanillaInventory = false
 
         @JvmStatic
         fun registerInitConsumer(customIdentifier: Identifier, uiConsumer: Consumer<InventorioScreen>)
@@ -312,12 +317,13 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
                 screenAccessor.x + screen.backgroundWidth + GUI_TOGGLE_BUTTON_OFFSET.x, screenAccessor.y + GUI_TOGGLE_BUTTON_OFFSET.y,
                 GUI_TOGGLE_BUTTON_OFFSET.width, GUI_TOGGLE_BUTTON_OFFSET.height,
                 canvas.x, canvas.y,
-                CANVAS_TOGGLE_BUTTON_HOVER_SHIFT, BACKGROUND_TEXTURE)
-            { button ->
+                CANVAS_TOGGLE_BUTTON_HOVER_SHIFT,
+                if (PlayerSettings.darkTheme.boolValue) BACKGROUND_TEXTURE_DARK else BACKGROUND_TEXTURE)
+            {
                 val client = MinecraftClient.getInstance() ?: return@TexturedButtonWidget
-                val toVanilla = client.currentScreen is InventorioScreen
+                shouldOpenVanillaInventory = client.currentScreen is InventorioScreen
                 client.currentScreen?.onClose()
-                if (toVanilla)
+                if (shouldOpenVanillaInventory)
                     client.openScreen(InventoryScreen(client.player))
                 else
                     InventorioNetworking.INSTANCE.c2sOpenInventorioScreen()
