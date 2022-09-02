@@ -303,6 +303,8 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
 
         private val initConsumers = mutableMapOf<Identifier, Consumer<InventorioScreen>>()
 
+        @JvmField var shouldOpenVanillaInventory = false
+
         @JvmStatic
         fun registerInitConsumer(customIdentifier: Identifier, uiConsumer: Consumer<InventorioScreen>)
         {
@@ -326,9 +328,9 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
                 if (PlayerSettings.darkTheme.boolValue) BACKGROUND_TEXTURE_DARK else BACKGROUND_TEXTURE)
             {
                 val client = MinecraftClient.getInstance() ?: return@TexturedButtonWidget
-                val toVanilla = client.currentScreen is InventorioScreen
+                shouldOpenVanillaInventory = client.currentScreen is InventorioScreen
                 client.currentScreen?.close()
-                if (toVanilla)
+                if (shouldOpenVanillaInventory)
                     client.setScreen(InventoryScreen(client.player))
                 else
                     InventorioNetworking.INSTANCE.c2sOpenInventorioScreen()

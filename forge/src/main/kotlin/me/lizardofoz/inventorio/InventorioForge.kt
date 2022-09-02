@@ -10,7 +10,6 @@ import me.lizardofoz.inventorio.integration.ModIntegration
 import me.lizardofoz.inventorio.packet.InventorioNetworking
 import me.lizardofoz.inventorio.packet.InventorioNetworkingForge
 import net.minecraft.client.MinecraftClient
-import net.minecraft.client.gui.screen.Screen
 import net.minecraft.item.ItemStack
 import net.minecraft.util.Identifier
 import net.minecraftforge.api.distmarker.Dist
@@ -43,7 +42,7 @@ class InventorioForge
             PlayerSettings.load(FMLPaths.CONFIGDIR.get().resolve("inventorio.json").toFile())
             ScreenTypeProviderForge.registerScreen()
             ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory::class.java) {
-                ConfigScreenHandler.ConfigScreenFactory { client: MinecraftClient, parent: Screen -> PlayerSettingsScreen.get(parent) }
+                ConfigScreenHandler.ConfigScreenFactory { client, parent -> PlayerSettingsScreen.get(parent) }
             }
         }
 
