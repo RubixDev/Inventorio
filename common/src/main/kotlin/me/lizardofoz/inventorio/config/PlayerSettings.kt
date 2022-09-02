@@ -53,6 +53,12 @@ object PlayerSettings : AbstractSettings()
         "inventorio.settings.player.can_throw_unloyal_trident")
 
     @JvmField
+    val darkTheme = SettingsEntryBoolean(false,
+        "DarkTheme",
+        "inventorio.settings.player.dark_theme",
+        "inventorio.settings.player.dark_theme.tooltip")
+
+    @JvmField
     val aggressiveButtonRemoval = SettingsEntryBoolean(false,
         "AggressiveButtonRemoval",
         "inventorio.settings.player.aggressive_button_removal",
@@ -69,6 +75,7 @@ object PlayerSettings : AbstractSettings()
             segmentedHotbar,
             scrollWheelUtilityBelt,
             canThrowUnloyalTrident,
+            darkTheme,
             useItemAppliesToOffhand,
             skipEmptyUtilitySlots,
             swappedHands,

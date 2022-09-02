@@ -20,6 +20,7 @@ import net.minecraft.world.GameMode
 object HotbarHUDRenderer
 {
     private val WIDGETS_TEXTURE = Identifier("inventorio", "textures/gui/widgets.png")
+    private val WIDGETS_TEXTURE_DARK = Identifier("inventorio", "textures/gui/widgets_dark.png")
     private val client = MinecraftClient.getInstance()!!
 
     fun renderSegmentedHotbar(matrices: MatrixStack): Boolean
@@ -32,7 +33,11 @@ object HotbarHUDRenderer
         val scaledWidthHalved = client.window.scaledWidth / 2 - 30
         val scaledHeight = client.window.scaledHeight
 
-        RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE)
+        if (PlayerSettings.darkTheme.boolValue)
+            RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE_DARK)
+        else
+            RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE)
+
         //Draw the hotbar itself
         DrawableHelper.drawTexture(matrices,
             scaledWidthHalved - HUD_SEGMENTED_HOTBAR.x,
@@ -112,7 +117,10 @@ object HotbarHUDRenderer
         val leftHandedUtilityBeltOffset = if (rightHanded) 0 else (LEFT_HANDED_UTILITY_BELT_OFFSET + segmentedModeOffset * 2)
         val leftHandedDisplayToolOffset = if (rightHanded) 0 else (LEFT_HANDED_DISPLAY_TOOL_OFFSET - segmentedModeOffset * 2)
 
-        RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE)
+        if (PlayerSettings.darkTheme.boolValue)
+            RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE_DARK)
+        else
+            RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE)
 
         //Draw the frame of a tool currently in use (one on the opposite side from the offhand)
 
@@ -164,7 +172,10 @@ object HotbarHUDRenderer
             RenderSystem.applyModelViewMatrix()
             RenderSystem.disableDepthTest()
             RenderSystem.enableBlend()
-            RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE)
+            if (PlayerSettings.darkTheme.boolValue)
+                RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE_DARK)
+            else
+                RenderSystem.setShaderTexture(0, WIDGETS_TEXTURE)
 
             //Draw the utility belt frame
             DrawableHelper.drawTexture(matrices,

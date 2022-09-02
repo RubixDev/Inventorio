@@ -23,6 +23,8 @@
   "inventorio.settings.player.scroll_wheel_utility_belt_mode.OFF": "§cNo",
   "inventorio.settings.player.scroll_wheel_utility_belt_mode.REGULAR": "§aRegular Order",
   "inventorio.settings.player.scroll_wheel_utility_belt_mode.REVERSE": "§dReverse Order",
+  "inventorio.settings.player.dark_theme": "Dark Inventorio Player UI",
+  "inventorio.settings.player.dark_theme.tooltip": "Compatibility with dark theme mods and resource packs",
   "inventorio.settings.player.can_throw_unloyal_trident": "Throwing Trident without Loyalty",
   "inventorio.settings.player.use_item_applies_to_offhand": "\"Use Item\" Applies To Offhand",
   "inventorio.settings.player.use_item_applies_to_offhand.tooltip": "Allow the Vanilla \"Use Item\" to use the Offhand.\nDisabled by default due to \"Use Utility\" button.\nNot mutually exclusive with \"Use Utility\" keybinding.",
