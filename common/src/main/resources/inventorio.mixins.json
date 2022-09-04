@@ -5,6 +5,7 @@
   "plugin": "me.lizardofoz.inventorio.InventorioMixinPlugin",
   "mixins": [
     "ExperienceOrbEntityMixin",
+    "InputSlotFilterMixin",
     "PlayerEntityMixin",
     "PlayerInventoryMixin",
     "PlayerManagerMixin",

@@ -33,6 +33,8 @@ abstract class PlayerInventoryInjects protected constructor(player: PlayerEntity
      */
     fun getActiveArrowType(bowStack: ItemStack): ItemStack?
     {
+        if (bowStack.item !is RangedWeaponItem)
+            return null
         val predicate = (bowStack.item as RangedWeaponItem).heldProjectiles
         return stacks.firstOrNull { predicate.test(it) }
     }
