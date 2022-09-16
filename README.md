@@ -8,6 +8,14 @@ This is my vision of the Inventory Update for Minecraft. Of [features](#Features
 
 Available for both Forge and Fabric.
 
+## Major Overhaul is in the [Slow] Works
+
+If you want to support the further development of this mod and efforts to make it compatible with other popular mods, you can do it [here](https://boosty.to/lizardofoz/posts/2564ef09-39bf-4f82-8b2f-82dce5a95901?share=post_link).
+
+[![Support me](https://static.boosty.to/assets/images/boostyLogo.WbAVE.svg)](https://boosty.to/lizardofoz/posts/2564ef09-39bf-4f82-8b2f-82dce5a95901?share=post_link).
+
+Every dollar (or, in this case, ruble) counts and allows me to spend more time making projects like this for your enjoyment. I have some exciting new ideas and with your support we could make them happen sooner!
+
 ## Installation
 Grab the jar file from the [Release page](https://github.com/Lizard-Of-Oz/Inventorio/releases/).
 
