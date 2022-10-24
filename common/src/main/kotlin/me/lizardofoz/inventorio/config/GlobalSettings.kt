@@ -25,7 +25,7 @@ object GlobalSettings : AbstractSettings()
         "UtilityBeltShortDefaultSize",
         "inventorio.settings.global.utility_belt_short_default_size",
         "inventorio.settings.global.utility_belt_short_default_size.tooltip")
-    @JvmField val deepPocketsInTreasures = SettingsEntryBoolean(true, "DeepPocketsInTreasures", "inventorio.settings.global.deep_pockets_in_treasures")
+    @JvmField val deepPocketsBookCraft = SettingsEntryBoolean(true, "DeepPocketsBookCraft", "inventorio.settings.global.deep_pockets_book_craft")
     @JvmField val deepPocketsInTrades = SettingsEntryBoolean(true, "DeepPocketsInTrades", "inventorio.settings.global.deep_pockets_in_trades")
     @JvmField val deepPocketsInRandomSelection = SettingsEntryBoolean(true, "DeepPocketsInRandomSelection", "inventorio.settings.global.deep_pockets_in_random_selection")
 
@@ -39,7 +39,7 @@ object GlobalSettings : AbstractSettings()
 
             toolBeltMode,
             utilityBeltShortDefaultSize,
-            deepPocketsInTreasures,
+            deepPocketsBookCraft,
             deepPocketsInTrades,
             deepPocketsInRandomSelection)
         load(File(".").resolve("config/inventorio_shared.json"))
