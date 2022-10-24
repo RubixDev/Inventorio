@@ -36,7 +36,7 @@ object GlobalSettingsScreen
 
         addEnumEntry(category, entryBuilder, GlobalSettings.toolBeltMode, true, isNotLocal, ToolBeltMode::class.java, ToolBeltMode.ENABLED)
         addBoolEntry(category, entryBuilder, GlobalSettings.utilityBeltShortDefaultSize, true, isNotLocal)
-        addBoolEntry(category, entryBuilder, GlobalSettings.deepPocketsInTreasures, true, isNotLocal)
+        addBoolEntry(category, entryBuilder, GlobalSettings.deepPocketsBookCraft, true, isNotLocal)
         addBoolEntry(category, entryBuilder, GlobalSettings.deepPocketsInTrades, true, isNotLocal)
         addBoolEntry(category, entryBuilder, GlobalSettings.deepPocketsInRandomSelection, true, isNotLocal)
 

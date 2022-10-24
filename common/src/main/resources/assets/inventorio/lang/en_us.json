@@ -55,8 +55,8 @@
   "inventorio.settings.global.tool_belt_mode.NO_VANILLA_SLOTS_ONLY": "§dModded Slots Only",
   "inventorio.settings.global.tool_belt_mode.DISABLED": "§cNo",
 
-  "inventorio.settings.global.deep_pockets_in_treasures": "Deep Pockets Book in Treasure Chests",
   "inventorio.settings.global.deep_pockets_in_trades": "Deep Pockets Book in Villager Trades",
+  "inventorio.settings.global.deep_pockets_book_craft": "Deep Pockets Book Crafting Recipe",
   "inventorio.settings.global.deep_pockets_in_random_selection": "Deep Pockets Book in Random Selection",
 
   "inventorio.settings.global.sync_restart_prompt": "§eWarning!\n§eThis server uses different global settings than you do:§7\n%s\n§7It's strongly recommended to sync your global settings and restart the game.",

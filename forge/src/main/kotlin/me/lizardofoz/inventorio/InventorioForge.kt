@@ -4,6 +4,7 @@ import me.lizardofoz.inventorio.api.InventorioAPI
 import me.lizardofoz.inventorio.client.configscreen.PlayerSettingsScreen
 import me.lizardofoz.inventorio.client.control.InventorioControls
 import me.lizardofoz.inventorio.config.PlayerSettings
+import me.lizardofoz.inventorio.enchantment.DeepPocketsBookRecipe
 import me.lizardofoz.inventorio.enchantment.DeepPocketsEnchantment
 import me.lizardofoz.inventorio.integration.InventorioModIntegration
 import me.lizardofoz.inventorio.integration.ModIntegration
@@ -11,6 +12,7 @@ import me.lizardofoz.inventorio.packet.InventorioNetworking
 import me.lizardofoz.inventorio.packet.InventorioNetworkingForge
 import net.minecraft.client.MinecraftClient
 import net.minecraft.item.ItemStack
+import net.minecraft.recipe.SpecialRecipeSerializer
 import net.minecraft.util.Identifier
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.ConfigScreenHandler
@@ -33,6 +35,9 @@ class InventorioForge
         ScreenTypeProvider.INSTANCE = ScreenTypeProviderForge
         InventorioNetworking.INSTANCE = InventorioNetworkingForge
         ForgeRegistries.ENCHANTMENTS.register(Identifier("inventorio", "deep_pockets"), DeepPocketsEnchantment)
+        val serializer = SpecialRecipeSerializer { DeepPocketsBookRecipe(it) }
+        DeepPocketsBookRecipe.SERIALIZER = serializer
+        ForgeRegistries.RECIPE_SERIALIZERS.register(Identifier("inventorio", "deep_pockets_book"), serializer)
         initToolBelt()
 
         if (FMLEnvironment.dist == Dist.CLIENT)

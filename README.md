@@ -10,11 +10,13 @@ Available for both Forge and Fabric.
 
 ## Major Overhaul is in the [Slow] Works
 
-If you want to support the further development of this mod and efforts to make it compatible with other popular mods, you can do it [here](https://boosty.to/lizardofoz/posts/2564ef09-39bf-4f82-8b2f-82dce5a95901?share=post_link).
+If you want to support the further development of this mod and efforts to make it compatible with other popular mods, you can do it on [Patreon](https://patreon.com/LizardOfOz?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=creatorshare_creator) or [Boosty](https://boosty.to/lizardofoz/posts/2564ef09-39bf-4f82-8b2f-82dce5a95901?share=post_link).
 
-[![Support me](https://static.boosty.to/assets/images/boostyLogo.WbAVE.svg)](https://boosty.to/lizardofoz/posts/2564ef09-39bf-4f82-8b2f-82dce5a95901?share=post_link).
+[<img src="https://user-images.githubusercontent.com/701551/197443351-d42d2bd4-a527-4405-83d5-f07814a47637.png" width="233" height="64">](https://patreon.com/LizardOfOz?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=creatorshare_creator)
 
-Every dollar (or, in this case, ruble) counts and allows me to spend more time making projects like this for your enjoyment. I have some exciting new ideas and with your support we could make them happen sooner!
+[![Support me](https://static.boosty.to/assets/images/boostyLogo.WbAVE.svg)](https://boosty.to/lizardofoz/posts/2564ef09-39bf-4f82-8b2f-82dce5a95901?share=post_link)
+
+Every dollar counts and allows me to spend more time making projects like this for your enjoyment. I have some exciting new ideas and with your support we could make them happen sooner!
 
 ## Installation
 Grab the jar file from the [Release page](https://github.com/Lizard-Of-Oz/Inventorio/releases/).
@@ -50,6 +52,10 @@ You can use the selected Utility independently, which allows you to akimbo two t
 #### Deep Pockets Enchantment
 Each level of this enchantment adds an additional row to your inventory, up to 3 at max level.
 In addition, the first level adds 4 extra slots to the Utility Belt (from 4 to 8)
+
+The Enchanted Book can be crafted from 2 shulker shells and a book, as well as traded from villagers or found in treasure chests.
+
+![Crafting Recipe: 2 Shulker Shells + Book](https://user-images.githubusercontent.com/701551/197444061-ede483b9-eba4-4f85-901e-f3215f92b792.png)
 
 #### Increased Ender Chest Capacity
 The capacity of the Ender Chest has been doubled.
@@ -104,7 +110,7 @@ Joining a server (either dedicated or hosted from another client) with mismatchi
 
 * `ToolBeltMode (default: ENABLED)` -  Allows to disable the Toolbelt a)completely b)allow only the Toolbelt slots added by other mods<br/>
 * `UtilityBeltShortDefaultSize (default: true)` - By default, the Deep Pockets Enchantment increases the Utility Belt capacity from 4 to 8. When set to false, the full capacity is given unconditionally.<br/>
-* `DeepPocketsInTreasures (default: true)` - Can a Deep Pockets Book be obtained in treasure chests<br/>
+* `DeepPocketsBookCraft (default: true)` - Can a Deep Pockets Book be crafted<br/>
 * `DeepPocketsInTrades (default: true)` - Can a Deep Pockets Book be obtained in a villager trade<br/>
 * `DeepPocketsInRandomSelection (default: true)` - Can a Deep Pockets Book be obtained in random selection (Enchanting Table and mob loot)
 

@@ -4,6 +4,7 @@ import me.lizardofoz.inventorio.api.InventorioAPI
 import me.lizardofoz.inventorio.client.control.InventorioControls
 import me.lizardofoz.inventorio.client.control.InventorioKeyHandler
 import me.lizardofoz.inventorio.config.PlayerSettings
+import me.lizardofoz.inventorio.enchantment.DeepPocketsBookRecipe
 import me.lizardofoz.inventorio.enchantment.DeepPocketsEnchantment
 import me.lizardofoz.inventorio.integration.InventorioModIntegration
 import me.lizardofoz.inventorio.integration.ModIntegration
@@ -14,6 +15,7 @@ import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.recipe.SpecialRecipeSerializer
 import net.minecraft.util.Identifier
 import net.minecraft.util.registry.Registry
 
@@ -26,6 +28,11 @@ open class InventorioFabric : ModInitializer
         ScreenTypeProvider.INSTANCE = ScreenTypeProviderFabric
         InventorioNetworking.INSTANCE = InventorioNetworkingFabric
         Registry.register(Registry.ENCHANTMENT, Identifier("inventorio", "deep_pockets"), DeepPocketsEnchantment)
+        DeepPocketsBookRecipe.SERIALIZER = Registry.register(
+            Registry.RECIPE_SERIALIZER,
+            Identifier("inventorio", "deep_pockets_book"),
+            SpecialRecipeSerializer { DeepPocketsBookRecipe(it) })
+
         initToolBelt()
 
         if (FabricLoader.getInstance().environmentType == EnvType.CLIENT)
