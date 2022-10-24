@@ -1,0 +1,18 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "inventorio:deep_pockets_book"
+    ]
+  },
+  "criteria": {
+    "exists": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "requirements": [
+    [
+      "exists"
+    ]
+  ]
+}

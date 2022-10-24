@@ -28,11 +28,6 @@ object DeepPocketsEnchantment : Enchantment(Rarity.UNCOMMON, EnchantmentTarget.A
         return super.getMinPower(level) + 50
     }
 
-    override fun isTreasure(): Boolean
-    {
-        return GlobalSettings.deepPocketsInTreasures.boolValue
-    }
-
     override fun isAvailableForEnchantedBookOffer(): Boolean
     {
         return GlobalSettings.deepPocketsInTrades.boolValue
