@@ -19,8 +19,6 @@ import kotlin.math.sign
 abstract class PlayerInventoryExtension protected constructor(val player: PlayerEntity)
     : SimpleInventory(DEEP_POCKETS_MAX_SIZE + UTILITY_BELT_FULL_SIZE + PlayerInventoryAddon.toolBeltTemplates.size)
 {
-    /** Warning! The length of [toolBelt], and thus [stacks], may differ across play sessions depending on the mods installed */
-    @JvmField val stacks: MutableList<ItemStack>
     @JvmField val deepPockets: MutableList<ItemStack>
     @JvmField val utilityBelt: MutableList<ItemStack>
     /** Warning! The length of [toolBelt], and thus [stacks], may differ across play sessions depending on the mods installed */
@@ -36,7 +34,6 @@ abstract class PlayerInventoryExtension protected constructor(val player: Player
 
     init
     {
-        stacks = (this as SimpleInventoryAccessor).stacks!!
         deepPockets = stacks.subList(INVENTORY_ADDON_DEEP_POCKETS_RANGE.first, INVENTORY_ADDON_DEEP_POCKETS_RANGE.last + 1)
         utilityBelt = stacks.subList(INVENTORY_ADDON_UTILITY_BELT_RANGE.first, INVENTORY_ADDON_UTILITY_BELT_RANGE.last + 1)
         toolBelt = stacks.subList(INVENTORY_ADDON_TOOL_BELT_INDEX_OFFSET, INVENTORY_ADDON_TOOL_BELT_INDEX_OFFSET + PlayerInventoryAddon.toolBeltTemplates.size)

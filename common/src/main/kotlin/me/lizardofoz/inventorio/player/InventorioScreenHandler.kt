@@ -122,11 +122,11 @@ class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory)
         }
     }
 
-    override fun transferSlot(player: PlayerEntity, sourceIndex: Int): ItemStack
+    override fun quickMove(player: PlayerEntity, sourceIndex: Int): ItemStack
     {
         val sourceSlot = slots[sourceIndex]
         val itemStackDynamic = sourceSlot.stack
-        val itemStackStaticCopy = transferSlotInner(sourceIndex)
+        val itemStackStaticCopy = quickMoveInner(sourceIndex)
         if (itemStackStaticCopy.isNotEmpty)
         {
             if (itemStackDynamic.isEmpty)
@@ -142,7 +142,7 @@ class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory)
         return itemStackStaticCopy
     }
 
-    private fun transferSlotInner(sourceIndex: Int): ItemStack
+    private fun quickMoveInner(sourceIndex: Int): ItemStack
     {
         val sourceSlot = slots[sourceIndex]
         val itemStackDynamic = sourceSlot.stack

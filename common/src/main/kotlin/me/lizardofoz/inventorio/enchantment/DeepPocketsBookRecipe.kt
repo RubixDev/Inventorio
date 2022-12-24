@@ -8,6 +8,7 @@ import net.minecraft.inventory.CraftingInventory
 import net.minecraft.item.EnchantedBookItem
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
+import net.minecraft.recipe.book.CraftingRecipeCategory
 import net.minecraft.recipe.Ingredient
 import net.minecraft.recipe.RecipeSerializer
 import net.minecraft.recipe.SpecialCraftingRecipe
@@ -16,7 +17,7 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.collection.DefaultedList
 import net.minecraft.world.World
 
-class DeepPocketsBookRecipe(identifier: Identifier) : SpecialCraftingRecipe(identifier)
+class DeepPocketsBookRecipe(identifier: Identifier, category: CraftingRecipeCategory) : SpecialCraftingRecipe(identifier, category)
 {
     override fun matches(craftingInventory: CraftingInventory, world: World?): Boolean
     {

@@ -25,7 +25,7 @@ public abstract class PlayerEntityMixin
      * This inject enlarges the Ender Chest's capacity to 6 rows.
      */
     @Inject(method = "<init>", at = @At(value = "RETURN"))
-    private void inventorioResizeEnderChest(World world, BlockPos pos, float yaw, GameProfile gameProfile, PlayerPublicKey publicKey, CallbackInfo ci)
+    private void inventorioResizeEnderChest(World world, BlockPos pos, float yaw, GameProfile gameProfile, CallbackInfo ci)
     {
         SimpleInventoryAccessor accessor = ((SimpleInventoryAccessor) getEnderChestInventory());
         accessor.setSize(GeneralConstants.VANILLA_ROW_LENGTH * 6);
