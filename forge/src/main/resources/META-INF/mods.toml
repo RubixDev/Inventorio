@@ -15,20 +15,20 @@ displayURL="https://github.com/Lizard-Of-Oz/Inventorio"
 [[dependencies.inventorio]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.19,1.20)"
+versionRange = "[1.19.3,1.20)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.inventorio]]
 modId = "forge"
 mandatory = true
-versionRange = "[41.1,)"
+versionRange = "[44,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.inventorio]]
 modId = "cloth_config"
 mandatory = true
-versionRange = "[8,)"
+versionRange = "[9,)"
 ordering = "NONE"
 side = "CLIENT"

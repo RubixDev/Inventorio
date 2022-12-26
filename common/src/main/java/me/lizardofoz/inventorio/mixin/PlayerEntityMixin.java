@@ -33,7 +33,7 @@ public abstract class PlayerEntityMixin implements PlayerDuck
     @Unique public PlayerInventoryAddon inventorioAddon;
 
     @Inject(method = "<init>", at = @At(value = "RETURN"))
-    private void inventorioCreateAddon(World world, BlockPos pos, float yaw, GameProfile gameProfile, PlayerPublicKey publicKey, CallbackInfo ci)
+    private void inventorioCreateAddon(World world, BlockPos pos, float yaw, GameProfile gameProfile, CallbackInfo ci)
     {
         PlayerEntity thisPlayer = (PlayerEntity) (Object) this;
         inventorioAddon = new PlayerInventoryAddon(thisPlayer);

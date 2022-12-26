@@ -15,9 +15,11 @@ import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.recipe.book.CraftingRecipeCategory
 import net.minecraft.recipe.SpecialRecipeSerializer
+import net.minecraft.registry.Registry
+import net.minecraft.registry.Registries
 import net.minecraft.util.Identifier
-import net.minecraft.util.registry.Registry
 
 open class InventorioFabric : ModInitializer
 {
@@ -27,11 +29,11 @@ open class InventorioFabric : ModInitializer
     {
         ScreenTypeProvider.INSTANCE = ScreenTypeProviderFabric
         InventorioNetworking.INSTANCE = InventorioNetworkingFabric
-        Registry.register(Registry.ENCHANTMENT, Identifier("inventorio", "deep_pockets"), DeepPocketsEnchantment)
+        Registry.register(Registries.ENCHANTMENT, Identifier("inventorio", "deep_pockets"), DeepPocketsEnchantment)
         DeepPocketsBookRecipe.SERIALIZER = Registry.register(
-            Registry.RECIPE_SERIALIZER,
+            Registries.RECIPE_SERIALIZER,
             Identifier("inventorio", "deep_pockets_book"),
-            SpecialRecipeSerializer { DeepPocketsBookRecipe(it) })
+            SpecialRecipeSerializer { identifier, category -> DeepPocketsBookRecipe(identifier, category) })
 
         initToolBelt()
 

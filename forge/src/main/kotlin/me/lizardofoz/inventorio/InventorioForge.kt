@@ -12,6 +12,7 @@ import me.lizardofoz.inventorio.packet.InventorioNetworking
 import me.lizardofoz.inventorio.packet.InventorioNetworkingForge
 import net.minecraft.client.MinecraftClient
 import net.minecraft.item.ItemStack
+import net.minecraft.recipe.book.CraftingRecipeCategory
 import net.minecraft.recipe.SpecialRecipeSerializer
 import net.minecraft.util.Identifier
 import net.minecraftforge.api.distmarker.Dist
@@ -35,7 +36,7 @@ class InventorioForge
         ScreenTypeProvider.INSTANCE = ScreenTypeProviderForge
         InventorioNetworking.INSTANCE = InventorioNetworkingForge
         ForgeRegistries.ENCHANTMENTS.register(Identifier("inventorio", "deep_pockets"), DeepPocketsEnchantment)
-        val serializer = SpecialRecipeSerializer { DeepPocketsBookRecipe(it) }
+        val serializer = SpecialRecipeSerializer { identifier, category -> DeepPocketsBookRecipe(identifier, category) }
         DeepPocketsBookRecipe.SERIALIZER = serializer
         ForgeRegistries.RECIPE_SERIALIZERS.register(Identifier("inventorio", "deep_pockets_book"), serializer)
         initToolBelt()
@@ -47,7 +48,7 @@ class InventorioForge
             PlayerSettings.load(FMLPaths.CONFIGDIR.get().resolve("inventorio.json").toFile())
             ScreenTypeProviderForge.registerScreen()
             ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory::class.java) {
-                ConfigScreenHandler.ConfigScreenFactory { client, parent -> PlayerSettingsScreen.get(parent) }
+                ConfigScreenHandler.ConfigScreenFactory { _, parent -> PlayerSettingsScreen.get(parent) }
             }
         }
 

@@ -61,7 +61,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
         val client = this.client!!
         if (client.interactionManager!!.hasCreativeInventory())
         {
-            client.setScreen(CreativeInventoryScreen(client.player))
+            client.setScreen(CreativeInventoryScreen(client.player, client.player!!.networkHandler.getEnabledFeatures(), client.options.getOperatorItemsTab().getValue()))
             return
         }
         onRefresh()
@@ -113,7 +113,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
         }
         toggleButton?.setPos(x + backgroundWidth + GUI_TOGGLE_BUTTON_OFFSET.x, y + GUI_TOGGLE_BUTTON_OFFSET.y)
 
-        RenderSystem.setShader { GameRenderer.getPositionTexShader() }
+        RenderSystem.setShader { GameRenderer.getPositionTexProgram() }
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
         if (PlayerSettings.darkTheme.boolValue)
             RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE_DARK)
@@ -275,7 +275,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
     override fun removed()
     {
         if (open)
-            recipeBook.close()
+            recipeBook.toggleOpen()
         super.removed()
     }
 
@@ -287,7 +287,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
     override fun handledScreenTick()
     {
         if (client!!.interactionManager!!.hasCreativeInventory())
-            client!!.setScreen(CreativeInventoryScreen(client!!.player))
+            client!!.setScreen(CreativeInventoryScreen(client!!.player, client!!.player!!.networkHandler.getEnabledFeatures(), client!!.options.getOperatorItemsTab().getValue()))
         else
             recipeBook.update()
     }
