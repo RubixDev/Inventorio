@@ -12,7 +12,6 @@ import me.lizardofoz.inventorio.packet.InventorioNetworking
 import me.lizardofoz.inventorio.packet.InventorioNetworkingForge
 import net.minecraft.client.MinecraftClient
 import net.minecraft.item.ItemStack
-import net.minecraft.recipe.book.CraftingRecipeCategory
 import net.minecraft.recipe.SpecialRecipeSerializer
 import net.minecraft.util.Identifier
 import net.minecraftforge.api.distmarker.Dist

@@ -19,12 +19,16 @@ import kotlin.math.sign
 abstract class PlayerInventoryExtension protected constructor(val player: PlayerEntity)
     : SimpleInventory(DEEP_POCKETS_MAX_SIZE + UTILITY_BELT_FULL_SIZE + PlayerInventoryAddon.toolBeltTemplates.size)
 {
-    @JvmField val deepPockets: MutableList<ItemStack>
-    @JvmField val utilityBelt: MutableList<ItemStack>
-    /** Warning! The length of [toolBelt], and thus [stacks], may differ across play sessions depending on the mods installed */
-    @JvmField val toolBelt: MutableList<ItemStack>
+    /** Warning! The length of [toolBelt], and thus [stacks], may differ across play sessions depending on the mods installed
+     * We DO need this variable because on Forge the parent `stacks` is private. */
+    @JvmField val stacks = (this as SimpleInventoryAccessor).stacks!!
+    @JvmField val deepPockets = stacks.subList(INVENTORY_ADDON_DEEP_POCKETS_RANGE.first, INVENTORY_ADDON_DEEP_POCKETS_RANGE.last + 1)
+    @JvmField val utilityBelt = stacks.subList(INVENTORY_ADDON_UTILITY_BELT_RANGE.first, INVENTORY_ADDON_UTILITY_BELT_RANGE.last + 1)
 
-    private val lastTrackedStacksState: MutableList<ItemStack>
+    /** Warning! The length of [toolBelt], and thus [stacks], may differ across play sessions depending on the mods installed */
+    @JvmField val toolBelt = stacks.subList(INVENTORY_ADDON_TOOL_BELT_INDEX_OFFSET, INVENTORY_ADDON_TOOL_BELT_INDEX_OFFSET + PlayerInventoryAddon.toolBeltTemplates.size)
+
+    private val lastTrackedStacksState = DefaultedList.ofSize(stacks.size, ItemStack.EMPTY)
 
     var selectedUtility = 0
         set(value)
@@ -32,13 +36,6 @@ abstract class PlayerInventoryExtension protected constructor(val player: Player
             field = value.coerceIn(0, 7)
         }
 
-    init
-    {
-        deepPockets = stacks.subList(INVENTORY_ADDON_DEEP_POCKETS_RANGE.first, INVENTORY_ADDON_DEEP_POCKETS_RANGE.last + 1)
-        utilityBelt = stacks.subList(INVENTORY_ADDON_UTILITY_BELT_RANGE.first, INVENTORY_ADDON_UTILITY_BELT_RANGE.last + 1)
-        toolBelt = stacks.subList(INVENTORY_ADDON_TOOL_BELT_INDEX_OFFSET, INVENTORY_ADDON_TOOL_BELT_INDEX_OFFSET + PlayerInventoryAddon.toolBeltTemplates.size)
-        lastTrackedStacksState = DefaultedList.ofSize(stacks.size, ItemStack.EMPTY)
-    }
 
     //=========================
     //Boring Inventory Stuff
