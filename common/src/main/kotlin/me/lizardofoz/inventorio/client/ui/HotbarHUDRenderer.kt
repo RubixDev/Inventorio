@@ -77,8 +77,8 @@ object HotbarHUDRenderer
             val x = scaledWidthHalved - HUD_SECTION_SELECTION.x + (slotNum * SLOT_HOTBAR_SIZE.width) + (HUD_SEGMENTED_HOTBAR_GAP * (slotNum / 3))
             val y = scaledHeight - SLOT_HOTBAR_SIZE.height
             val itemStack = inventory.getStack(slotNum)
-            client.itemRenderer.renderInGuiWithOverrides(itemStack, x, y)
-            client.itemRenderer.renderGuiItemOverlay(client.textRenderer, itemStack, x, y)
+            client.itemRenderer.renderInGuiWithOverrides(matrices, itemStack, x, y)
+            client.itemRenderer.renderGuiItemOverlay(matrices, client.textRenderer, itemStack, x, y)
         }
         return true
     }
@@ -162,11 +162,11 @@ object HotbarHUDRenderer
             viewModelStack.scale(0.8f, 0.8f, 0.8f)
 
             //Draw next and prev utility belt items
-            client.itemRenderer.renderInGuiWithOverrides(utilBeltDisplay[0],
+            client.itemRenderer.renderInGuiWithOverrides(matrices, utilBeltDisplay[0],
                 (scaledWidthHalved + leftHandedUtilityBeltOffset - segmentedModeOffset) * 10 / 8 - SLOT_UTILITY_BELT_1.x,
                 MathHelper.ceil((scaledHeight - SLOT_UTILITY_BELT_1.y) / 0.8))
 
-            client.itemRenderer.renderInGuiWithOverrides(utilBeltDisplay[2],
+            client.itemRenderer.renderInGuiWithOverrides(matrices, utilBeltDisplay[2],
                 (scaledWidthHalved + leftHandedUtilityBeltOffset - segmentedModeOffset) * 10 / 8 - SLOT_UTILITY_BELT_2.x,
                 MathHelper.ceil((scaledHeight - SLOT_UTILITY_BELT_2.y) / 0.8))
 
@@ -191,7 +191,7 @@ object HotbarHUDRenderer
                 CANVAS_WIDGETS_TEXTURE_SIZE.x, CANVAS_WIDGETS_TEXTURE_SIZE.y)
 
             //Draw the active utility item
-            renderItem(player,
+            renderItem(matrices, player,
                 utilBeltDisplay[1],
                 scaledWidthHalved + leftHandedUtilityBeltOffset - SLOT_UTILITY_BELT_3.x - segmentedModeOffset,
                 scaledHeight - SLOT_UTILITY_BELT_3.y)
@@ -200,7 +200,7 @@ object HotbarHUDRenderer
         //Draw the active tool item itself
         if (inventoryAddon.displayTool.isNotEmpty && inventoryAddon.displayTool != selectedHotbarItem)
         {
-            renderItem(
+            renderItem(matrices,
                 player,
                 inventoryAddon.displayTool,
                 scaledWidthHalved + leftHandedDisplayToolOffset + SLOT_ACTIVE_TOOL_FRAME.x + segmentedModeOffset,
@@ -210,12 +210,12 @@ object HotbarHUDRenderer
         RenderSystem.enableBlend()
     }
 
-    private fun renderItem(player: PlayerEntity, stack: ItemStack, x: Int, y: Int)
+    private fun renderItem(matrices: MatrixStack, player: PlayerEntity, stack: ItemStack, x: Int, y: Int)
     {
         if (stack.isNotEmpty)
         {
-            client.itemRenderer.renderInGuiWithOverrides(stack, x, y)
-            client.itemRenderer.renderGuiItemOverlay(client.textRenderer, stack, x, y)
+            client.itemRenderer.renderInGuiWithOverrides(matrices, stack, x, y)
+            client.itemRenderer.renderGuiItemOverlay(matrices, client.textRenderer, stack, x, y)
         }
     }
 

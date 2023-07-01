@@ -2,12 +2,14 @@ package me.lizardofoz.inventorio.player
 
 import me.lizardofoz.inventorio.ScreenTypeProvider
 import me.lizardofoz.inventorio.client.ui.InventorioScreen
+import me.lizardofoz.inventorio.config.GlobalSettings
 import me.lizardofoz.inventorio.mixin.accessor.CraftingScreenHandlerAccessor
 import me.lizardofoz.inventorio.mixin.accessor.SlotAccessor
 import me.lizardofoz.inventorio.packet.InventorioNetworking
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon.Companion.inventoryAddon
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon.Companion.toolBeltTemplates
 import me.lizardofoz.inventorio.slot.ArmorSlot
+import me.lizardofoz.inventorio.slot.BlockedSlot
 import me.lizardofoz.inventorio.slot.DeepPocketsSlot
 import me.lizardofoz.inventorio.slot.ToolBeltSlot
 import me.lizardofoz.inventorio.util.*
@@ -67,9 +69,18 @@ class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory)
         hotbarRange = mainInventoryWithoutHotbarRange.last + 1..mainInventoryRange.last
 
         //Crafting Grid
-        addSlot(CraftingResultSlot(inventory.player, craftingInput, craftingResult, 0, 174, 28))
-        for (i in 0..3)
-            addSlot(Slot(craftingInput, i, 118 + i % 2 * 18, 18 + i / 2 * 18))
+        if (GlobalSettings.allow2x2CraftingGrid.boolValue)
+        {
+            addSlot(CraftingResultSlot(inventory.player, craftingInput, craftingResult, 0, 174, 28))
+            for (i in 0..3)
+                addSlot(Slot(craftingInput, i, 118 + i % 2 * 18, 18 + i / 2 * 18))
+        }
+        else
+        {
+            addSlot(BlockedSlot(inventory, 0, 174, 28))
+            for (i in 0..3)
+                addSlot(BlockedSlot(craftingInput, i, 118 + i % 2 * 18, 18 + i / 2 * 18))
+        }
 
         //Armor
         for ((_, relativeIndex) in armorSlotsRange.withRelativeIndex())
@@ -359,9 +370,9 @@ class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory)
         CraftingScreenHandlerAccessor.updateTheResult(this, this.inventory.player.world, this.inventory.player, this.craftingInput, this.craftingResult)
     }
 
-    override fun close(player: PlayerEntity)
+    override fun onClosed(player: PlayerEntity)
     {
-        super.close(player)
+        super.onClosed(player)
         craftingResult.clear()
         if (!player.world.isClient)
             dropInventory(player, craftingInput)

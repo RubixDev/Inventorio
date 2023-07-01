@@ -95,7 +95,7 @@ public abstract class PlayerEntityMixin implements PlayerDuck
     /**
      * This mixin allows arrows stored in the addon slots to be used by a bow
      */
-    @Inject(method = "getArrowType", at = @At(value = "RETURN"), cancellable = true)
+    @Inject(method = "getProjectileType", at = @At(value = "RETURN"), cancellable = true)
     private void inventorioGetArrowType(ItemStack bowStack, CallbackInfoReturnable<ItemStack> cir)
     {
         if (!cir.getReturnValue().isEmpty())

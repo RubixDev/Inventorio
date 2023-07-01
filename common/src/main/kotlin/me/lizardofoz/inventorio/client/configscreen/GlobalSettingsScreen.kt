@@ -33,6 +33,7 @@ object GlobalSettingsScreen
         addBoolEntry(category, entryBuilder, GlobalSettings.infinityBowNeedsNoArrow, true, isNotLocal)
         addBoolEntry(category, entryBuilder, GlobalSettings.totemFromUtilityBelt, true, isNotLocal)
         addBoolEntry(category, entryBuilder, GlobalSettings.allowSwappedHands, true, isNotLocal)
+        addBoolEntry(category, entryBuilder, GlobalSettings.allow2x2CraftingGrid, true, isNotLocal)
 
         addEnumEntry(category, entryBuilder, GlobalSettings.toolBeltMode, true, isNotLocal, ToolBeltMode::class.java, ToolBeltMode.ENABLED)
         addBoolEntry(category, entryBuilder, GlobalSettings.utilityBeltShortDefaultSize, true, isNotLocal)

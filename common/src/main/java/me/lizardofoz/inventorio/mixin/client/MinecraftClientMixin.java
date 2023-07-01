@@ -3,7 +3,6 @@ package me.lizardofoz.inventorio.mixin.client;
 import me.lizardofoz.inventorio.client.control.InventorioKeyHandler;
 import me.lizardofoz.inventorio.client.ui.InventorioScreen;
 import me.lizardofoz.inventorio.packet.InventorioNetworking;
-import me.lizardofoz.inventorio.util.MixinHelpers;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -77,10 +76,8 @@ public class MinecraftClientMixin
             cancellable = true)
     private void inventorioPreventOffhandSwapForDisplayTool(CallbackInfo ci)
     {
-        MixinHelpers.withInventoryAddon(player, addon -> {
-            if (!addon.getDisplayTool().isEmpty())
-                ci.cancel();
-        });
+        ci.cancel();
+        InventorioNetworking.getInstance().c2sSwapItemsInHands();
     }
 
     /**

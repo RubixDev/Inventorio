@@ -1,6 +1,7 @@
 package me.lizardofoz.inventorio.client.ui
 
 import com.mojang.blaze3d.systems.RenderSystem
+import me.lizardofoz.inventorio.config.GlobalSettings
 import me.lizardofoz.inventorio.config.PlayerSettings
 import me.lizardofoz.inventorio.mixin.client.accessor.HandledScreenAccessor
 import me.lizardofoz.inventorio.packet.InventorioNetworking
@@ -41,6 +42,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
     private val recipeBook = RecipeBookWidget()
     private var recipeButton : TexturedButtonWidget? = null
     private var toggleButton : TexturedButtonWidget? = null
+    private var lockedCraftButton : TexturedButtonWidget? = null
     private var open = false
     private var narrow = false
     private var mouseDown = false
@@ -71,6 +73,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
         open = true
         x = findLeftEdge(recipeBook, width, backgroundWidth - 19 - 19 * ((inventoryAddon.toolBelt.size - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())))
         toggleButton = addToggleButton(this)
+        lockedCraftButton = addLockedCraftButton(this)
         recipeButton = addDrawableChild(TexturedButtonWidget(
             x + GUI_RECIPE_WIDGET_BUTTON.x, y + GUI_RECIPE_WIDGET_BUTTON.y,
             GUI_RECIPE_WIDGET_BUTTON.width, GUI_RECIPE_WIDGET_BUTTON.height,
@@ -79,7 +82,8 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
         { buttonWidget: ButtonWidget ->
             recipeBook.toggleOpen()
             x = findLeftEdge(recipeBook, width, backgroundWidth - 19 - 19 * ((inventoryAddon.toolBelt.size - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())))
-            (buttonWidget as TexturedButtonWidget).setPos(x + GUI_RECIPE_WIDGET_BUTTON.x, y + GUI_RECIPE_WIDGET_BUTTON.y)
+            (buttonWidget as TexturedButtonWidget).x = x + GUI_RECIPE_WIDGET_BUTTON.x
+            (buttonWidget as TexturedButtonWidget).y = y + GUI_RECIPE_WIDGET_BUTTON.y
             mouseDown = true
         })
         addSelectableChild(recipeBook)
@@ -108,10 +112,17 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
     {
         if (PlayerSettings.aggressiveButtonRemoval.boolValue)
         {
-            for (child in children().filter { it is Drawable && it != recipeButton && it != toggleButton })
+            for (child in children().filter {
+                it is Drawable
+                        && it != recipeButton
+                        && it != toggleButton
+                        && it != lockedCraftButton })
                 remove(child)
         }
-        toggleButton?.setPos(x + backgroundWidth + GUI_TOGGLE_BUTTON_OFFSET.x, y + GUI_TOGGLE_BUTTON_OFFSET.y)
+        toggleButton?.x = x + backgroundWidth + GUI_TOGGLE_BUTTON_OFFSET.x
+        toggleButton?.y = y + GUI_TOGGLE_BUTTON_OFFSET.y
+        lockedCraftButton?.x = x + GUI_LOCKED_CRAFTING_POS.x
+        lockedCraftButton?.y = y + GUI_LOCKED_CRAFTING_POS.y
 
         RenderSystem.setShader { GameRenderer.getPositionTexProgram() }
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
@@ -193,7 +204,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
                 )
             }
 
-        InventoryScreen.drawEntity(x + 51, y + 75, 30, (x + 51).toFloat() - this.mouseX, (y + 75 - 50).toFloat() - this.mouseY, client!!.player)
+        InventoryScreen.drawEntity(matrices, x + 51, y + 75, 30, (x + 51).toFloat() - this.mouseX, (y + 75 - 50).toFloat() - this.mouseY, client!!.player)
     }
 
     //Yes, it's a vanilla method replicated here. 1.17 and 1.17.1 mapping differ and I don't want to have different versions of a mod
@@ -272,13 +283,6 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
         recipeBook.refresh()
     }
 
-    override fun removed()
-    {
-        if (open)
-            recipeBook.toggleOpen()
-        super.removed()
-    }
-
     override fun getRecipeBookWidget(): RecipeBookWidget
     {
         return recipeBook
@@ -335,6 +339,29 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
                     client.setScreen(InventoryScreen(client.player))
                 else
                     InventorioNetworking.INSTANCE.c2sOpenInventorioScreen()
+            }
+            screenAccessor.selectables.add(button)
+            screenAccessor.drawables.add(button)
+            screenAccessor.children.add(button)
+            return button
+        }
+
+        @JvmStatic
+        fun addLockedCraftButton(screen: Screen): TexturedButtonWidget?
+        {
+            if (GlobalSettings.allow2x2CraftingGrid.boolValue)
+                return null
+            val screenAccessor = screen as HandledScreenAccessor
+            val button = TexturedButtonWidget(
+                screenAccessor.x + GUI_LOCKED_CRAFTING_POS.x, screenAccessor.y + GUI_LOCKED_CRAFTING_POS.y,
+                GUI_LOCKED_CRAFTING_POS.width, GUI_LOCKED_CRAFTING_POS.height,
+                CANVAS_LOCKED_CRAFT_BUTTON.x, CANVAS_LOCKED_CRAFT_BUTTON.y,
+                GUI_LOCKED_CRAFTING_POS.height,
+                if (PlayerSettings.darkTheme.boolValue) BACKGROUND_TEXTURE_DARK else BACKGROUND_TEXTURE)
+            {
+                val client = MinecraftClient.getInstance() ?: return@TexturedButtonWidget
+                client.currentScreen?.close()
+                client.setScreen(InventoryScreen(client.player))
             }
             screenAccessor.selectables.add(button)
             screenAccessor.drawables.add(button)
