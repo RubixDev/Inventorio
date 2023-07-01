@@ -5,7 +5,7 @@ import net.minecraft.network.PacketByteBuf
 import net.minecraftforge.network.NetworkEvent
 import java.util.function.Supplier
 
-class SwappedHandsC2SPacket
+class SwappedHandsModeC2SPacket
 {
     private var swappedHands = false
 

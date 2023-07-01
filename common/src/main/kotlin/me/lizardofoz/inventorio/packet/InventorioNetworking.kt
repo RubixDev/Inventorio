@@ -20,13 +20,16 @@ interface InventorioNetworking
     fun c2sUseBoostRocket()
 
     @Environment(EnvType.CLIENT)
-    fun c2sSetSwappedHands(swappedHands: Boolean)
+    fun c2sSetSwappedHandsMode(swappedHands: Boolean)
 
     @Environment(EnvType.CLIENT)
     fun c2sMoveItemToUtilityBelt(sourceSlot: Int)
 
     @Environment(EnvType.CLIENT)
     fun c2sOpenInventorioScreen()
+
+    @Environment(EnvType.CLIENT)
+    fun c2sSwapItemsInHands()
 
     companion object
     {

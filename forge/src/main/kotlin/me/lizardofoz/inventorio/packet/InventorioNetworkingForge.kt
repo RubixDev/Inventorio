@@ -13,7 +13,7 @@ import net.minecraftforge.network.NetworkRegistry
 @Suppress("INACCESSIBLE_TYPE", "UNUSED_ANONYMOUS_PARAMETER")
 object InventorioNetworkingForge : InventorioNetworking
 {
-    private const val PROTOCOL_VERSION = "1.6"
+    private const val PROTOCOL_VERSION = "1.7"
 
     private val INSTANCE = NetworkRegistry.newSimpleChannel(
             Identifier("inventorio", "packets"),
@@ -44,9 +44,9 @@ object InventorioNetworkingForge : InventorioNetworking
                 { buf -> UseBoostRocketC2SPacket() },
                 { packet, supplier -> packet.consume(supplier) })
 
-        INSTANCE.registerMessage(4, SwappedHandsC2SPacket::class.java,
+        INSTANCE.registerMessage(4, SwappedHandsModeC2SPacket::class.java,
             { packet, buf -> packet.write(buf) },
-            { buf -> SwappedHandsC2SPacket(buf) },
+            { buf -> SwappedHandsModeC2SPacket(buf) },
             { packet, supplier -> packet.consume(supplier) })
 
         INSTANCE.registerMessage(5, MoveItemToUtilityBeltC2SPacket::class.java,
@@ -57,6 +57,11 @@ object InventorioNetworkingForge : InventorioNetworking
         INSTANCE.registerMessage(6, OpenInventorioScreenC2SPacket::class.java,
             { packet, buf -> },
             { buf -> OpenInventorioScreenC2SPacket() },
+            { packet, supplier -> packet.consume(supplier) })
+
+        INSTANCE.registerMessage(7, SwapItemsInHandsKeyC2SPacket::class.java,
+            { packet, buf -> },
+            { buf -> SwapItemsInHandsKeyC2SPacket() },
             { packet, supplier -> packet.consume(supplier) })
     }
 
@@ -89,10 +94,10 @@ object InventorioNetworkingForge : InventorioNetworking
     }
 
     @OnlyIn(Dist.CLIENT)
-    override fun c2sSetSwappedHands(swappedHands: Boolean)
+    override fun c2sSetSwappedHandsMode(swappedHands: Boolean)
     {
         if (MinecraftClient.getInstance().networkHandler != null)
-            INSTANCE.sendToServer(SwappedHandsC2SPacket(swappedHands))
+            INSTANCE.sendToServer(SwappedHandsModeC2SPacket(swappedHands))
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -105,5 +110,11 @@ object InventorioNetworkingForge : InventorioNetworking
     override fun c2sOpenInventorioScreen()
     {
         INSTANCE.sendToServer(OpenInventorioScreenC2SPacket())
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    override fun c2sSwapItemsInHands()
+    {
+        INSTANCE.sendToServer(SwapItemsInHandsKeyC2SPacket())
     }
 }

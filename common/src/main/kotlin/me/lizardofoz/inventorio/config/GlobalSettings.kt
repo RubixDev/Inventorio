@@ -13,6 +13,7 @@ object GlobalSettings : AbstractSettings()
     @JvmField val infinityBowNeedsNoArrow = SettingsEntryBoolean(true, "InfinityBowNeedsNoArrow", "inventorio.settings.global.infinity_bow_no_arrows")
     @JvmField val totemFromUtilityBelt = SettingsEntryBoolean(true, "TotemFromUtilityBelt", "inventorio.settings.global.totem_from_utility_belt")
     @JvmField val allowSwappedHands = SettingsEntryBoolean(true, "AllowSwappedHands", "inventorio.settings.global.allow_swapped_hands")
+    @JvmField val allow2x2CraftingGrid = SettingsEntryBoolean(true, "2x2CraftingGrid", "inventorio.settings.global.2x2_crafting_grid", "inventorio.settings.global.2x2_crafting_grid.tooltip")
 
     @JvmField val toolBeltMode =
         SettingsEntry(ToolBeltMode.ENABLED,
@@ -36,6 +37,7 @@ object GlobalSettings : AbstractSettings()
             infinityBowNeedsNoArrow,
             totemFromUtilityBelt,
             allowSwappedHands,
+            allow2x2CraftingGrid,
 
             toolBeltMode,
             utilityBeltShortDefaultSize,

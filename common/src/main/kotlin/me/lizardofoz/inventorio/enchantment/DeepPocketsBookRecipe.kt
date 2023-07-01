@@ -43,7 +43,6 @@ class DeepPocketsBookRecipe(identifier: Identifier) : SpecialCraftingRecipe(iden
         return bookItem
     }
 
-    @Environment(EnvType.CLIENT)
     override fun fits(width: Int, height: Int): Boolean
     {
         return width >= 2 && height >= 2
