@@ -9,6 +9,7 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,7 +31,7 @@ public class LivingEntityMixin
     private void inventorioGetTotemFromUtilityBar(DamageSource source, CallbackInfoReturnable<Boolean> cir)
     {
         //noinspection ConstantConditions
-        if (cir.getReturnValue() || source.isOutOfWorld() || !((Object) this instanceof PlayerEntity))
+        if (cir.getReturnValue() || source.isIn(DamageTypeTags.BYPASSES_INVULNERABILITY) || !((Object) this instanceof PlayerEntity))
             return;
 
         MixinHelpers.withInventoryAddon((PlayerEntity) (Object) this , addon -> {
@@ -49,7 +50,7 @@ public class LivingEntityMixin
                     addon.getPlayer().addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 900, 1));
                     addon.getPlayer().addStatusEffect(new StatusEffectInstance(StatusEffects.ABSORPTION, 100, 1));
                     addon.getPlayer().addStatusEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, 800, 0));
-                    addon.getPlayer().world.sendEntityStatus(addon.getPlayer(), (byte) 35);
+                    addon.getPlayer().getWorld().sendEntityStatus(addon.getPlayer(), (byte) 35);
                     cir.setReturnValue(true);
                     return;
                 }

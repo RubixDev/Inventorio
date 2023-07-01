@@ -12,7 +12,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.encryption.PlayerPublicKey;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -95,7 +94,7 @@ public abstract class PlayerEntityMixin implements PlayerDuck
     /**
      * This mixin allows arrows stored in the addon slots to be used by a bow
      */
-    @Inject(method = "getArrowType", at = @At(value = "RETURN"), cancellable = true)
+    @Inject(method = "getProjectileType", at = @At(value = "RETURN"), cancellable = true)
     private void inventorioGetArrowType(ItemStack bowStack, CallbackInfoReturnable<ItemStack> cir)
     {
         if (!cir.getReturnValue().isEmpty())

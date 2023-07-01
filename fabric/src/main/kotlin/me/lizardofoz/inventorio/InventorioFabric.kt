@@ -6,6 +6,7 @@ import me.lizardofoz.inventorio.client.control.InventorioKeyHandler
 import me.lizardofoz.inventorio.config.PlayerSettings
 import me.lizardofoz.inventorio.enchantment.DeepPocketsBookRecipe
 import me.lizardofoz.inventorio.enchantment.DeepPocketsEnchantment
+import me.lizardofoz.inventorio.integration.ClumpsIntegration
 import me.lizardofoz.inventorio.integration.InventorioModIntegration
 import me.lizardofoz.inventorio.integration.ModIntegration
 import me.lizardofoz.inventorio.packet.InventorioNetworking
@@ -23,7 +24,7 @@ import net.minecraft.util.Identifier
 
 open class InventorioFabric : ModInitializer
 {
-    private val fabricModIntegrations = listOf<ModIntegration>()
+    private val fabricModIntegrations = listOf<ModIntegration>(ClumpsIntegration)
 
     override fun onInitialize()
     {

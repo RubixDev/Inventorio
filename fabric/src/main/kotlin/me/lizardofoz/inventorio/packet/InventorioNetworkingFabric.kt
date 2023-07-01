@@ -26,7 +26,8 @@ object InventorioNetworkingFabric : InventorioNetworking
 
         ServerPlayNetworking.registerGlobalReceiver(UseBoostRocketC2SPacket.identifier, UseBoostRocketC2SPacket::consume)
         ServerPlayNetworking.registerGlobalReceiver(SelectUtilitySlotPacket.identifier, SelectUtilitySlotPacket::consume)
-        ServerPlayNetworking.registerGlobalReceiver(SwappedHandsC2SPacket.identifier, SwappedHandsC2SPacket::consume)
+        ServerPlayNetworking.registerGlobalReceiver(SwapItemsInHandsKeyC2SPacket.identifier, SwapItemsInHandsKeyC2SPacket::consume)
+        ServerPlayNetworking.registerGlobalReceiver(SwappedHandsModeC2SPacket.identifier, SwappedHandsModeC2SPacket::consume)
         ServerPlayNetworking.registerGlobalReceiver(MoveItemToUtilityBeltC2SPacket.identifier, MoveItemToUtilityBeltC2SPacket::consume)
         ServerPlayNetworking.registerGlobalReceiver(OpenInventorioScreenC2SPacket.identifier, OpenInventorioScreenC2SPacket::consume)
     }
@@ -68,11 +69,11 @@ object InventorioNetworkingFabric : InventorioNetworking
     }
 
     @Environment(EnvType.CLIENT)
-    override fun c2sSetSwappedHands(swappedHands: Boolean)
+    override fun c2sSetSwappedHandsMode(swappedHands: Boolean)
     {
         if (MinecraftClient.getInstance().networkHandler != null)
-            sendC2S(SwappedHandsC2SPacket.identifier) {
-                SwappedHandsC2SPacket.write(it, swappedHands)
+            sendC2S(SwappedHandsModeC2SPacket.identifier) {
+                SwappedHandsModeC2SPacket.write(it, swappedHands)
             }
     }
 
@@ -90,6 +91,11 @@ object InventorioNetworkingFabric : InventorioNetworking
         sendC2S(OpenInventorioScreenC2SPacket.identifier) {
             OpenInventorioScreenC2SPacket.write(it)
         }
+    }
+
+    override fun c2sSwapItemsInHands()
+    {
+        sendC2S(SwapItemsInHandsKeyC2SPacket.identifier) { }
     }
 
     @Environment(EnvType.CLIENT)

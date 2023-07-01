@@ -1,6 +1,7 @@
 package me.lizardofoz.inventorio.client.ui
 
 import com.mojang.blaze3d.systems.RenderSystem
+import me.lizardofoz.inventorio.config.GlobalSettings
 import me.lizardofoz.inventorio.config.PlayerSettings
 import me.lizardofoz.inventorio.mixin.client.accessor.HandledScreenAccessor
 import me.lizardofoz.inventorio.packet.InventorioNetworking
@@ -13,8 +14,8 @@ import me.lizardofoz.inventorio.util.*
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
+import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.Drawable
-import net.minecraft.client.gui.DrawableHelper
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen
@@ -24,7 +25,6 @@ import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget
 import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.gui.widget.TexturedButtonWidget
 import net.minecraft.client.render.GameRenderer
-import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
@@ -41,6 +41,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
     private val recipeBook = RecipeBookWidget()
     private var recipeButton : TexturedButtonWidget? = null
     private var toggleButton : TexturedButtonWidget? = null
+    private var lockedCraftButton : TexturedButtonWidget? = null
     private var open = false
     private var narrow = false
     private var mouseDown = false
@@ -49,7 +50,6 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
 
     init
     {
-        passEvents = true
         titleX = INVENTORY_TITLE_X + CRAFTING_GRID_OFFSET_X
     }
 
@@ -71,6 +71,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
         open = true
         x = findLeftEdge(recipeBook, width, backgroundWidth - 19 - 19 * ((inventoryAddon.toolBelt.size - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())))
         toggleButton = addToggleButton(this)
+        lockedCraftButton = addLockedCraftButton(this)
         recipeButton = addDrawableChild(TexturedButtonWidget(
             x + GUI_RECIPE_WIDGET_BUTTON.x, y + GUI_RECIPE_WIDGET_BUTTON.y,
             GUI_RECIPE_WIDGET_BUTTON.width, GUI_RECIPE_WIDGET_BUTTON.height,
@@ -79,7 +80,8 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
         { buttonWidget: ButtonWidget ->
             recipeBook.toggleOpen()
             x = findLeftEdge(recipeBook, width, backgroundWidth - 19 - 19 * ((inventoryAddon.toolBelt.size - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())))
-            (buttonWidget as TexturedButtonWidget).setPos(x + GUI_RECIPE_WIDGET_BUTTON.x, y + GUI_RECIPE_WIDGET_BUTTON.y)
+            (buttonWidget as TexturedButtonWidget).x = x + GUI_RECIPE_WIDGET_BUTTON.x
+            (buttonWidget as TexturedButtonWidget).y = y + GUI_RECIPE_WIDGET_BUTTON.y
             mouseDown = true
         })
         addSelectableChild(recipeBook)
@@ -104,26 +106,33 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
         backgroundHeight = INVENTORY_HEIGHT + inventoryAddon.getDeepPocketsRowCount() * SLOT_UI_SIZE
     }
 
-    override fun drawBackground(matrices: MatrixStack, delta: Float, mouseX: Int, mouseY: Int)
+    override fun drawBackground(drawContext: DrawContext, delta: Float, mouseX: Int, mouseY: Int)
     {
         if (PlayerSettings.aggressiveButtonRemoval.boolValue)
         {
-            for (child in children().filter { it is Drawable && it != recipeButton && it != toggleButton })
+            for (child in children().filter {
+                it is Drawable
+                        && it != recipeButton
+                        && it != toggleButton
+                        && it != lockedCraftButton })
                 remove(child)
         }
-        toggleButton?.setPos(x + backgroundWidth + GUI_TOGGLE_BUTTON_OFFSET.x, y + GUI_TOGGLE_BUTTON_OFFSET.y)
+        toggleButton?.x = x + backgroundWidth + GUI_TOGGLE_BUTTON_OFFSET.x
+        toggleButton?.y = y + GUI_TOGGLE_BUTTON_OFFSET.y
+        lockedCraftButton?.x = x + GUI_LOCKED_CRAFTING_POS.x
+        lockedCraftButton?.y = y + GUI_LOCKED_CRAFTING_POS.y
 
         RenderSystem.setShader { GameRenderer.getPositionTexProgram() }
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
-        if (PlayerSettings.darkTheme.boolValue)
-            RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE_DARK)
+        val texture = if (PlayerSettings.darkTheme.boolValue)
+            BACKGROUND_TEXTURE_DARK
         else
-            RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE)
+            BACKGROUND_TEXTURE
 
         val deepPocketsRowCount = inventoryAddon.getDeepPocketsRowCount()
 
         //Top Part
-        DrawableHelper.drawTexture(matrices,
+        drawContext.drawTexture(texture,
             x + GUI_INVENTORY_TOP.x, y + GUI_INVENTORY_TOP.y,
             CANVAS_INVENTORY_TOP.x, CANVAS_INVENTORY_TOP.y,
             GUI_INVENTORY_TOP.width, GUI_INVENTORY_TOP.height,
@@ -131,7 +140,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
 
         //Main Rows
         val guiMainRect = GUI_INVENTORY_MAIN(deepPocketsRowCount)
-        DrawableHelper.drawTexture(matrices,
+        drawContext.drawTexture(texture,
             x + guiMainRect.x, y + guiMainRect.y,
             CANVAS_INVENTORY_MAIN.x, CANVAS_INVENTORY_MAIN.y,
             guiMainRect.width, guiMainRect.height,
@@ -141,13 +150,13 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
         if (inventoryAddon.getAvailableUtilityBeltSize() == UTILITY_BELT_FULL_SIZE)
         {
             val guiDeepPocketsRect = GUI_INVENTORY_DEEP_POCKETS(deepPocketsRowCount)
-            DrawableHelper.drawTexture(matrices,
+            drawContext.drawTexture(texture,
                 x + guiDeepPocketsRect.x, y + guiDeepPocketsRect.y,
                 CANVAS_INVENTORY_DEEP_POCKETS.x, CANVAS_INVENTORY_DEEP_POCKETS.y,
                 guiDeepPocketsRect.width, guiDeepPocketsRect.height,
                 CANVAS_INVENTORY_TEXTURE_SIZE.x, CANVAS_INVENTORY_TEXTURE_SIZE.y)
 
-            DrawableHelper.drawTexture(matrices,
+            drawContext.drawTexture(texture,
                 x + GUI_UTILITY_BELT_COLUMN_2.x, y + GUI_UTILITY_BELT_COLUMN_2.y,
                 CANVAS_UTILITY_BELT_COLUMN_2.x, CANVAS_UTILITY_BELT_COLUMN_2.y,
                 GUI_UTILITY_BELT_COLUMN_2.width, GUI_UTILITY_BELT_COLUMN_2.height,
@@ -155,7 +164,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
         }
 
         //Utility Belt Selection Frame
-        DrawableHelper.drawTexture(matrices,
+        drawContext.drawTexture(texture,
             x + GUI_UTILITY_BELT_FRAME_ORIGIN.x + (inventoryAddon.selectedUtility / UTILITY_BELT_SMALL_SIZE) * SLOT_UI_SIZE,
             y + GUI_UTILITY_BELT_FRAME_ORIGIN.y + (inventoryAddon.selectedUtility % UTILITY_BELT_SMALL_SIZE) * SLOT_UI_SIZE,
             CANVAS_UTILITY_BELT_FRAME.x.toFloat(), CANVAS_UTILITY_BELT_FRAME.y.toFloat(),
@@ -167,7 +176,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
         //If Tool Belt is 2+ columns wide, draw extra background pieces
         val size = inventoryAddon.toolBelt.size
         for (column in 0 until (size - 1) / ToolBeltSlot.getColumnCapacity(deepPocketsRowCount))
-            DrawableHelper.drawTexture(matrices,
+            drawContext.drawTexture(texture,
                 x + GUI_TOOL_BELT_UI_EXTENSION.x + column * 20, y + GUI_TOOL_BELT_UI_EXTENSION.y,
                 CANVAS_TOOL_BELT_UI_EXTENSION.x.toFloat(), CANVAS_TOOL_BELT_UI_EXTENSION.y.toFloat(),
                 CANVAS_TOOL_BELT_UI_EXTENSION.width, CANVAS_TOOL_BELT_UI_EXTENSION.height,
@@ -175,7 +184,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
 
         //Draw a slot background per each tool belt slot
         for (index in inventoryAddon.toolBelt.indices)
-            DrawableHelper.drawTexture(matrices,
+            drawContext.drawTexture(texture,
                 x + ToolBeltSlot.getGuiPosition(deepPocketsRowCount, index, size).x, y + ToolBeltSlot.getGuiPosition(deepPocketsRowCount, index, size).y,
                 CANVAS_TOOL_BELT.x, CANVAS_TOOL_BELT.y,
                 SLOT_UI_SIZE, SLOT_UI_SIZE,
@@ -185,15 +194,14 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
         for ((index, stack) in inventoryAddon.toolBelt.withIndex())
             if (stack.isEmpty)
             {
-                RenderSystem.setShaderTexture(0, PlayerInventoryAddon.toolBeltTemplates[index].emptyIcon)
-                DrawableHelper.drawTexture(matrices,
+                drawContext.drawTexture(PlayerInventoryAddon.toolBeltTemplates[index].emptyIcon,
                     x + ToolBeltSlot.getSlotPosition(deepPocketsRowCount, index, size).x,
                     y + ToolBeltSlot.getSlotPosition(deepPocketsRowCount, index, size).y,
                     0f, 0f, 16, 16, 16, 16
                 )
             }
 
-        InventoryScreen.drawEntity(x + 51, y + 75, 30, (x + 51).toFloat() - this.mouseX, (y + 75 - 50).toFloat() - this.mouseY, client!!.player)
+        InventoryScreen.drawEntity(drawContext, x + 51, y + 75, 30, (x + 51).toFloat() - this.mouseX, (y + 75 - 50).toFloat() - this.mouseY, client!!.player)
     }
 
     //Yes, it's a vanilla method replicated here. 1.17 and 1.17.1 mapping differ and I don't want to have different versions of a mod
@@ -209,27 +217,27 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
     //===================================================
     //Unmodified methods lifted from InventoryScreen
     //===================================================
-    override fun drawForeground(matrices: MatrixStack, mouseX: Int, mouseY: Int)
+    override fun drawForeground(drawContext: DrawContext, mouseX: Int, mouseY: Int)
     {
-        textRenderer.draw(matrices, title, titleX.toFloat(), titleY.toFloat(), 4210752)
+        drawContext.drawText(textRenderer, title, titleX, titleY, 4210752, false)
     }
 
-    override fun render(matrices: MatrixStack, mouseX: Int, mouseY: Int, delta: Float)
+    override fun render(drawContext: DrawContext, mouseX: Int, mouseY: Int, delta: Float)
     {
-        this.renderBackground(matrices)
+        this.renderBackground(drawContext)
         if (recipeBook.isOpen && narrow)
         {
-            drawBackground(matrices, delta, mouseX, mouseY)
-            recipeBook.render(matrices, mouseX, mouseY, delta)
+            drawBackground(drawContext, delta, mouseX, mouseY)
+            recipeBook.render(drawContext, mouseX, mouseY, delta)
         }
         else
         {
-            recipeBook.render(matrices, mouseX, mouseY, delta)
-            super.render(matrices, mouseX, mouseY, delta)
-            recipeBook.drawGhostSlots(matrices, x, y, false, delta)
+            recipeBook.render(drawContext, mouseX, mouseY, delta)
+            super.render(drawContext, mouseX, mouseY, delta)
+            recipeBook.drawGhostSlots(drawContext, x, y, false, delta)
         }
-        drawMouseoverTooltip(matrices, mouseX, mouseY)
-        recipeBook.drawTooltip(matrices, x, y, mouseX, mouseY)
+        drawMouseoverTooltip(drawContext, mouseX, mouseY)
+        recipeBook.drawTooltip(drawContext, x, y, mouseX, mouseY)
         this.mouseX = mouseX.toFloat()
         this.mouseY = mouseY.toFloat()
     }
@@ -270,13 +278,6 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
     override fun refreshRecipeBook()
     {
         recipeBook.refresh()
-    }
-
-    override fun removed()
-    {
-        if (open)
-            recipeBook.toggleOpen()
-        super.removed()
     }
 
     override fun getRecipeBookWidget(): RecipeBookWidget
@@ -335,6 +336,29 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
                     client.setScreen(InventoryScreen(client.player))
                 else
                     InventorioNetworking.INSTANCE.c2sOpenInventorioScreen()
+            }
+            screenAccessor.selectables.add(button)
+            screenAccessor.drawables.add(button)
+            screenAccessor.children.add(button)
+            return button
+        }
+
+        @JvmStatic
+        fun addLockedCraftButton(screen: Screen): TexturedButtonWidget?
+        {
+            if (GlobalSettings.allow2x2CraftingGrid.boolValue)
+                return null
+            val screenAccessor = screen as HandledScreenAccessor
+            val button = TexturedButtonWidget(
+                screenAccessor.x + GUI_LOCKED_CRAFTING_POS.x, screenAccessor.y + GUI_LOCKED_CRAFTING_POS.y,
+                GUI_LOCKED_CRAFTING_POS.width, GUI_LOCKED_CRAFTING_POS.height,
+                CANVAS_LOCKED_CRAFT_BUTTON.x, CANVAS_LOCKED_CRAFT_BUTTON.y,
+                GUI_LOCKED_CRAFTING_POS.height,
+                if (PlayerSettings.darkTheme.boolValue) BACKGROUND_TEXTURE_DARK else BACKGROUND_TEXTURE)
+            {
+                val client = MinecraftClient.getInstance() ?: return@TexturedButtonWidget
+                client.currentScreen?.close()
+                client.setScreen(InventoryScreen(client.player))
             }
             screenAccessor.selectables.add(button)
             screenAccessor.drawables.add(button)

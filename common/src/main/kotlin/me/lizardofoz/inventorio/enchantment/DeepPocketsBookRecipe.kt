@@ -1,25 +1,24 @@
 package me.lizardofoz.inventorio.enchantment
 
 import me.lizardofoz.inventorio.config.GlobalSettings
-import net.fabricmc.api.EnvType
-import net.fabricmc.api.Environment
 import net.minecraft.enchantment.EnchantmentLevelEntry
-import net.minecraft.inventory.CraftingInventory
+import net.minecraft.inventory.RecipeInputInventory
 import net.minecraft.item.EnchantedBookItem
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
-import net.minecraft.recipe.book.CraftingRecipeCategory
 import net.minecraft.recipe.Ingredient
 import net.minecraft.recipe.RecipeSerializer
 import net.minecraft.recipe.SpecialCraftingRecipe
 import net.minecraft.recipe.SpecialRecipeSerializer
+import net.minecraft.recipe.book.CraftingRecipeCategory
+import net.minecraft.registry.DynamicRegistryManager
 import net.minecraft.util.Identifier
 import net.minecraft.util.collection.DefaultedList
 import net.minecraft.world.World
 
 class DeepPocketsBookRecipe(identifier: Identifier, category: CraftingRecipeCategory) : SpecialCraftingRecipe(identifier, category)
 {
-    override fun matches(craftingInventory: CraftingInventory, world: World?): Boolean
+    override fun matches(craftingInventory: RecipeInputInventory, world: World): Boolean
     {
         if (!GlobalSettings.deepPocketsBookCraft.boolValue)
             return false
@@ -37,7 +36,7 @@ class DeepPocketsBookRecipe(identifier: Identifier, category: CraftingRecipeCate
         return shells == 2 && books == 1
     }
 
-    override fun craft(craftingInventory: CraftingInventory): ItemStack
+    override fun craft(inventory: RecipeInputInventory, registryManager: DynamicRegistryManager): ItemStack
     {
         val bookItem = ItemStack(Items.ENCHANTED_BOOK, 1)
         EnchantedBookItem.addEnchantment(bookItem, EnchantmentLevelEntry(DeepPocketsEnchantment, 1))
@@ -64,7 +63,7 @@ class DeepPocketsBookRecipe(identifier: Identifier, category: CraftingRecipeCate
         return DefaultedList.copyOf(SHULKER_SHELL, SHULKER_SHELL, BOOKS, SHULKER_SHELL)
     }
 
-    override fun getOutput(): ItemStack
+    override fun getOutput(registryManager: DynamicRegistryManager): ItemStack
     {
         if (!GlobalSettings.deepPocketsBookCraft.boolValue)
             ItemStack.EMPTY

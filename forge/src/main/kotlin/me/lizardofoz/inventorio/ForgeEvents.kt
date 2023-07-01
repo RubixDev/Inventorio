@@ -21,6 +21,6 @@ object ForgeEvents
     @OnlyIn(Dist.CLIENT)
     fun onClientTick(event: CustomizeGuiOverlayEvent)
     {
-        renderHotbarAddons(event.poseStack)
+        renderHotbarAddons(event.guiGraphics)
     }
 }

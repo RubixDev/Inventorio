@@ -6,6 +6,7 @@ import me.lizardofoz.inventorio.client.control.InventorioControls
 import me.lizardofoz.inventorio.config.PlayerSettings
 import me.lizardofoz.inventorio.enchantment.DeepPocketsBookRecipe
 import me.lizardofoz.inventorio.enchantment.DeepPocketsEnchantment
+import me.lizardofoz.inventorio.integration.ClumpsIntegration
 import me.lizardofoz.inventorio.integration.InventorioModIntegration
 import me.lizardofoz.inventorio.integration.ModIntegration
 import me.lizardofoz.inventorio.packet.InventorioNetworking
@@ -28,7 +29,7 @@ import net.minecraftforge.registries.ForgeRegistries
 @Mod("inventorio")
 class InventorioForge
 {
-    private val forgeModIntegrations = listOf<ModIntegration>()
+    private val forgeModIntegrations = listOf<ModIntegration>(ClumpsIntegration)
 
     init
     {

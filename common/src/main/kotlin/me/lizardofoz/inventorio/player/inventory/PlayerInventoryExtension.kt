@@ -181,7 +181,7 @@ abstract class PlayerInventoryExtension protected constructor(val player: Player
 
     protected fun areItemsSimilar(stack1: ItemStack, stack2: ItemStack): Boolean
     {
-        return stack1.isNotEmpty && stack1.item === stack2.item && ItemStack.areNbtEqual(stack1, stack2)
+        return stack1.isNotEmpty && stack1.item === stack2.item && ItemStack.areEqual(stack1, stack2)
     }
 
     fun findFittingToolBeltStack(sampleStack: ItemStack): ItemStack

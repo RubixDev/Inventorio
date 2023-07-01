@@ -4,9 +4,9 @@ import me.lizardofoz.inventorio.client.ui.HotbarHUDRenderer;
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,16 +27,16 @@ public class InGameHudMixinLP
      * P.S. Forge's event for hotbar rendering is uncancellable, thus, not an option.
      */
     @Inject(method = "renderHotbar", at = @At(value = "HEAD"), cancellable = true, require = 0)
-    private void inventorioRenderSegmentedHotbar(float tickDelta, MatrixStack matrixStack, CallbackInfo ci)
+    private void inventorioRenderSegmentedHotbar(float tickDelta, DrawContext context, CallbackInfo ci)
     {
-        if (HotbarHUDRenderer.INSTANCE.renderSegmentedHotbar(matrixStack))
+        if (HotbarHUDRenderer.INSTANCE.renderSegmentedHotbar(context))
             ci.cancel();
     }
 
     @Inject(method = "renderHotbar", at = @At(value = "RETURN"), require = 0)
-    private void inventorioRenderFunctionOnlySelector(float tickDelta, MatrixStack matrixStack, CallbackInfo ci)
+    private void inventorioRenderFunctionOnlySelector(float tickDelta, DrawContext context, CallbackInfo ci)
     {
-        HotbarHUDRenderer.INSTANCE.renderFunctionOnlySelector(matrixStack);
+        HotbarHUDRenderer.INSTANCE.renderFunctionOnlySelector(context);
     }
 
     /**
