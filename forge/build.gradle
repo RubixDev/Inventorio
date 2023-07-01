@@ -25,6 +25,12 @@ loom {
 
 repositories {
     maven { url "https://thedarkcolour.github.io/KotlinForForge/" }
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 dependencies {
@@ -35,7 +41,7 @@ dependencies {
     implementation "me.shedaniel.cloth:cloth-config-forge:${rootProject.cloth_config_version}"
 
     //Other mods we do integration with
-    //<Not found>
+    modCompileOnly "curse.maven:clumps-256717:4552340"
 
     //"Common" package
     common(project(path: ":common", configuration: "namedElements")) {

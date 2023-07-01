@@ -20,6 +20,12 @@ configurations {
 repositories {
     maven { url "https://maven.terraformersmc.com/" } //ModMenu
     maven { url "https://jitpack.io" }
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 dependencies {
@@ -30,6 +36,7 @@ dependencies {
 
     //Other mods we do integration with
     modCompileOnly "com.terraformersmc:modmenu:${rootProject.modmenu_version}"
+    modCompileOnly "curse.maven:clumps-256717:4552339"
 
     //"Common" package
     common(project(path: ":common", configuration: "namedElements")) {
