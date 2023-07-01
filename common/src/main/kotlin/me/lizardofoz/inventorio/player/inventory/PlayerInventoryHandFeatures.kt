@@ -3,6 +3,7 @@ package me.lizardofoz.inventorio.player.inventory
 import me.lizardofoz.inventorio.config.PlayerSettings
 import me.lizardofoz.inventorio.config.GlobalSettings
 import me.lizardofoz.inventorio.packet.InventorioNetworking
+import me.lizardofoz.inventorio.player.PlayerInventoryAddon.Companion.inventoryAddon
 import me.lizardofoz.inventorio.util.isNotEmpty
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
@@ -26,7 +27,7 @@ abstract class PlayerInventoryHandFeatures protected constructor(player: PlayerE
         {
             field = GlobalSettings.allowSwappedHands.boolValue && value
             if (player.world.isClient)
-                InventorioNetworking.INSTANCE.c2sSetSwappedHands(value)
+                InventorioNetworking.INSTANCE.c2sSetSwappedHandsMode(value)
         }
 
     init
@@ -121,5 +122,14 @@ abstract class PlayerInventoryHandFeatures protected constructor(player: PlayerE
     {
         val skipEmptySlots = PlayerSettings.skipEmptyUtilitySlots.boolValue
         return arrayOf(findNextUtility(-1, skipEmptySlots).first, getSelectedUtilityStack(), findNextUtility(1, skipEmptySlots).first)
+    }
+
+    fun swapItemsInHands()
+    {
+        if (player.inventoryAddon?.displayTool?.isEmpty != true)
+            return
+        val offHandStack = getSelectedUtilityStack()
+        setSelectedUtilityStack(getSelectedHotbarStack())
+        setSelectedHotbarStack(offHandStack)
     }
 }

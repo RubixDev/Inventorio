@@ -13,6 +13,8 @@ import net.minecraft.item.*;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Consumer;
 
 public final class InventorioAPI

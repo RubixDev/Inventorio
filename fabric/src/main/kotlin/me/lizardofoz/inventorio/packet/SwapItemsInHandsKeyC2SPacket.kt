@@ -9,20 +9,14 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 
 @Suppress("UNUSED_PARAMETER")
-object SwappedHandsC2SPacket
+object SwapItemsInHandsKeyC2SPacket
 {
-    val identifier = Identifier("inventorio", "swapped_hands")
+    val identifier = Identifier("inventorio", "swap_items_in_hands")
 
     fun consume(server: MinecraftServer, player: ServerPlayerEntity, handler: ServerPlayNetworkHandler, buf: PacketByteBuf, responseSender: PacketSender)
     {
-        val swappedHands = buf.readBoolean()
         server.execute {
-            player.inventoryAddon?.swappedHands = swappedHands
+            player.inventoryAddon?.swapItemsInHands()
         }
-    }
-
-    fun write(buf: PacketByteBuf, swappedHands: Boolean = false)
-    {
-        buf.writeBoolean(swappedHands)
     }
 }

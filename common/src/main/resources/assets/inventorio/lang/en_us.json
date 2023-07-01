@@ -45,6 +45,9 @@
   "inventorio.settings.global.infinity_bow_no_arrows": "Infinity Bow Requires No Arrows",
   "inventorio.settings.global.totem_from_utility_belt": "Totem Activates from the Utility Belt",
   "inventorio.settings.global.allow_swapped_hands": "Allow Swapped Hands",
+  "inventorio.settings.global.2x2_crafting_grid": "Enable Player's Crafting Grid",
+  "inventorio.settings.global.2x2_crafting_grid.tooltip": "Some mods cause Player's 2x2 crafting grid to duplicate items.\nIf nothing else helps, turning it off could be an option.",
+
   "inventorio.settings.global.utility_belt_short_default_size": "Extra Utility Belt Slots Require Deep Pockets",
   "inventorio.settings.global.utility_belt_short_default_size.tooltip": "By default, the Deep Pockets Enchantment increases\nthe Utility Belt capacity from 4 to 8.\nWhen disabled, the full capacity is given unconditionally.",
 
