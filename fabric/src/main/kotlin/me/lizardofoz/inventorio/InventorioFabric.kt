@@ -34,7 +34,7 @@ open class InventorioFabric : ModInitializer
         DeepPocketsBookRecipe.SERIALIZER = Registry.register(
             Registries.RECIPE_SERIALIZER,
             Identifier("inventorio", "deep_pockets_book"),
-            SpecialRecipeSerializer { identifier, category -> DeepPocketsBookRecipe(identifier, category) })
+            SpecialRecipeSerializer { category -> DeepPocketsBookRecipe(Identifier("inventorio", "deep_pockets_book"), category) })
 
         initToolBelt()
 

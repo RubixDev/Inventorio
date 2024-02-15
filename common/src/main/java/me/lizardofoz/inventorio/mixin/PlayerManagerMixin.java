@@ -4,6 +4,7 @@ import me.lizardofoz.inventorio.packet.InventorioNetworking;
 import me.lizardofoz.inventorio.util.MixinHelpers;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.PlayerManager;
+import net.minecraft.server.network.ConnectedClientData;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,7 +19,7 @@ public class PlayerManagerMixin
      * This inject sends the last utility slot, saved by the server, from the server to the client
      */
     @Inject(method = "onPlayerConnect", at = @At(value = "RETURN"), require = 0)
-    private void inventorioSetPlayerSettings(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci)
+    private void inventorioSetPlayerSettings(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci)
     {
         InventorioNetworking.getInstance().s2cSelectUtilitySlot(player);
         InventorioNetworking.getInstance().s2cGlobalSettings(player);
