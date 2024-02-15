@@ -16,17 +16,14 @@ import net.minecraft.util.Identifier
 import net.minecraft.util.collection.DefaultedList
 import net.minecraft.world.World
 
-class DeepPocketsBookRecipe(identifier: Identifier, category: CraftingRecipeCategory) : SpecialCraftingRecipe(identifier, category)
-{
-    override fun matches(craftingInventory: RecipeInputInventory, world: World): Boolean
-    {
+class DeepPocketsBookRecipe(identifier: Identifier, category: CraftingRecipeCategory) : SpecialCraftingRecipe(category) {
+    override fun matches(craftingInventory: RecipeInputInventory, world: World): Boolean {
         if (!GlobalSettings.deepPocketsBookCraft.boolValue)
             return false
         var shells = 0
         var books = 0
 
-        for (i in 0 until craftingInventory.size())
-        {
+        for (i in 0 until craftingInventory.size()) {
             val itemStack = craftingInventory.getStack(i)
             if (SHULKER_SHELL.test(itemStack))
                 shells++
@@ -36,35 +33,29 @@ class DeepPocketsBookRecipe(identifier: Identifier, category: CraftingRecipeCate
         return shells == 2 && books == 1
     }
 
-    override fun craft(inventory: RecipeInputInventory, registryManager: DynamicRegistryManager): ItemStack
-    {
+    override fun craft(inventory: RecipeInputInventory, registryManager: DynamicRegistryManager): ItemStack {
         val bookItem = ItemStack(Items.ENCHANTED_BOOK, 1)
         EnchantedBookItem.addEnchantment(bookItem, EnchantmentLevelEntry(DeepPocketsEnchantment, 1))
         return bookItem
     }
 
-    override fun fits(width: Int, height: Int): Boolean
-    {
+    override fun fits(width: Int, height: Int): Boolean {
         return width >= 2 && height >= 2
     }
 
-    override fun getSerializer(): RecipeSerializer<*>
-    {
+    override fun getSerializer(): RecipeSerializer<*> {
         return SERIALIZER
     }
 
-    override fun isIgnoredInRecipeBook(): Boolean
-    {
+    override fun isIgnoredInRecipeBook(): Boolean {
         return !GlobalSettings.deepPocketsBookCraft.boolValue
     }
 
-    override fun getIngredients(): DefaultedList<Ingredient>
-    {
+    override fun getIngredients(): DefaultedList<Ingredient> {
         return DefaultedList.copyOf(SHULKER_SHELL, SHULKER_SHELL, BOOKS, SHULKER_SHELL)
     }
 
-    override fun getOutput(registryManager: DynamicRegistryManager): ItemStack
-    {
+    fun getOutput(registryManager: DynamicRegistryManager): ItemStack {
         if (!GlobalSettings.deepPocketsBookCraft.boolValue)
             ItemStack.EMPTY
         val bookItem = ItemStack(Items.ENCHANTED_BOOK, 1)
@@ -72,8 +63,7 @@ class DeepPocketsBookRecipe(identifier: Identifier, category: CraftingRecipeCate
         return bookItem
     }
 
-    companion object
-    {
+    companion object {
         private val SHULKER_SHELL = Ingredient.ofItems(Items.SHULKER_SHELL)
         private val BOOKS = Ingredient.ofItems(Items.BOOK, Items.WRITABLE_BOOK)
 

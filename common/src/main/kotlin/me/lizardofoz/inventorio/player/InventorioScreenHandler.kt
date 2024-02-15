@@ -25,6 +25,7 @@ import net.minecraft.inventory.CraftingResultInventory
 import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
 import net.minecraft.recipe.Recipe
+import net.minecraft.recipe.RecipeEntry
 import net.minecraft.recipe.RecipeMatcher
 import net.minecraft.recipe.book.RecipeBookCategory
 import net.minecraft.screen.AbstractRecipeScreenHandler
@@ -360,7 +361,14 @@ class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory)
         craftingInput.clear()
     }
 
-    override fun matches(recipe: Recipe<in CraftingInventory?>): Boolean
+    override fun matches(recipe: RecipeEntry<out Recipe<CraftingInventory?>>?): Boolean {
+        if (recipe != null) {
+            return recipe.value.matches(craftingInput,inventory.player.world)
+        }
+        return false
+    }
+
+    fun matches(recipe: Recipe<in CraftingInventory?>): Boolean
     {
         return recipe.matches(craftingInput, inventory.player.world)
     }
