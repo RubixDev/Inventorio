@@ -101,7 +101,6 @@ object HotbarHUDRenderer
         return player == null || !player.isAlive || player.playerScreenHandler == null
     }
 
-    @Suppress("DEPRECATION")
     fun renderHotbarAddons(drawContext: DrawContext)
     {
         if (isHidden())

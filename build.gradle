@@ -1,7 +1,7 @@
 plugins {
-    id "architectury-plugin" version "3.4.143"
-    id "dev.architectury.loom" version "0.12.0.301" apply false
-    id "org.jetbrains.kotlin.jvm" version "1.7.22"
+    id "architectury-plugin" version "3.4-SNAPSHOT"
+    id "dev.architectury.loom" version "1.5-SNAPSHOT" apply false
+    id "org.jetbrains.kotlin.jvm" version "1.9.22"
 }
 
 architectury {
@@ -15,7 +15,7 @@ def version_replaces = [
         "mod_description": rootProject.mod_description,
         "fabric_loader_version": rootProject.fabric_loader_version,
         "minecraft_version": rootProject.minecraft_version,
-        "forge_version": rootProject.forge_version,
+        "neoforge_version": rootProject.neoforge_version,
         "archive_version": rootProject.archive_version,
         "modmenu_version": rootProject.modmenu_version
 ]

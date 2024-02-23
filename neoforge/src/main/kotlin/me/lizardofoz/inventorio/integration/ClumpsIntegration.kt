@@ -2,15 +2,15 @@ package me.lizardofoz.inventorio.integration
 
 import com.blamejared.clumps.api.events.RepairEvent
 import me.lizardofoz.inventorio.api.InventorioAPI
-import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.fml.ModList
+import net.neoforged.fml.ModList
+import net.neoforged.neoforge.common.NeoForge
 
 object ClumpsIntegration : ModIntegration()
 {
     override val name = "clumps"
     override val displayName = "Clumps"
 
-    override fun testForge(): Boolean
+    override fun testNeoForge(): Boolean
     {
         return ModList.get().isLoaded("clumps")
     }
@@ -19,7 +19,7 @@ object ClumpsIntegration : ModIntegration()
     {
         try
         {
-            MinecraftForge.EVENT_BUS.addListener { event: RepairEvent ->
+            NeoForge.EVENT_BUS.addListener { event: RepairEvent ->
                 event.value = InventorioAPI.getInventoryAddon(event.player)!!.mendToolBeltItems(event.value)
             }
         }

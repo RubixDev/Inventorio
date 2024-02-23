@@ -17,14 +17,14 @@ import java.util.OptionalInt;
  * To enlarge the actual storage, {@link PlayerEntityMixin#inventorioResizeEnderChest} is used
  */
 @Mixin(value = EnderChestBlock.class)
-public class EnderChestBlockMinix
+public class EnderChestBlockMixin
 {
-    //Developing for Forge and Fabric simultaneously causes this weird glitch where one mapping uses "onBlockActivated" and another uses "osUse"
+    //Developing for NeoForge and Fabric simultaneously causes this weird glitch where one mapping uses "onBlockActivated" and another uses "osUse"
     @Redirect(method = "onBlockActivated",
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/entity/player/PlayerEntity;openHandledScreen(Lnet/minecraft/screen/NamedScreenHandlerFactory;)Ljava/util/OptionalInt;"),
             require = 0)
-    private OptionalInt inventorioOnEnderChestOpenForge(PlayerEntity playerEntity, NamedScreenHandlerFactory factory)
+    private OptionalInt inventorioOnEnderChestOpenNeoForge(PlayerEntity playerEntity, NamedScreenHandlerFactory factory)
     {
         return openHandledScreen(playerEntity);
     }

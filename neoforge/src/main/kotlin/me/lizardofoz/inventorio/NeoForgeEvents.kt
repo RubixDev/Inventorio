@@ -2,13 +2,13 @@ package me.lizardofoz.inventorio
 
 import me.lizardofoz.inventorio.client.control.InventorioKeyHandler
 import me.lizardofoz.inventorio.client.ui.HotbarHUDRenderer.renderHotbarAddons
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.api.distmarker.OnlyIn
-import net.minecraftforge.client.event.CustomizeGuiOverlayEvent
-import net.minecraftforge.event.TickEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.api.distmarker.OnlyIn
+import net.neoforged.bus.api.SubscribeEvent
+import net.neoforged.neoforge.client.event.RenderGuiEvent
+import net.neoforged.neoforge.event.TickEvent
 
-object ForgeEvents
+object NeoForgeEvents
 {
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
@@ -19,7 +19,7 @@ object ForgeEvents
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
-    fun onClientTick(event: CustomizeGuiOverlayEvent)
+    fun onClientTick(event: RenderGuiEvent.Pre)
     {
         renderHotbarAddons(event.guiGraphics)
     }

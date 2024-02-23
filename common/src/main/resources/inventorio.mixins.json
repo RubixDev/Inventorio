@@ -14,7 +14,7 @@
     "accessor.SimpleInventoryAccessor",
     "accessor.SlotAccessor",
     "optional.bowfix.BowItemMixin",
-    "optional.enderchest.EnderChestBlockMinix",
+    "optional.enderchest.EnderChestBlockMixin",
     "optional.enderchest.PlayerEntityMixin",
     "optional.totem.LivingEntityMixin"
   ],

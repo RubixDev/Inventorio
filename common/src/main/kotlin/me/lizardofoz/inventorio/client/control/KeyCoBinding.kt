@@ -8,7 +8,7 @@ import net.minecraft.text.Text
 
 /**
  * The usecase: when you bind "Use Item" and "Use Utility" to the same key, the intended behavior is them merging together.
- * It works on Forge, but FABRIC allows only one bindings per key.
+ * It works on NeoForge, but FABRIC allows only one bindings per key.
  * This is the fix: the co-bound binding will unbind itself if binded to the same key.
  */
 @Environment(EnvType.CLIENT)

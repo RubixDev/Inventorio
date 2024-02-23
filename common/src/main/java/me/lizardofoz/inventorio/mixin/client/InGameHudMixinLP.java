@@ -22,9 +22,9 @@ public class InGameHudMixinLP
     /**
      * This mixin redirects rendering the hotbar itself in case if Segmented Hotbar is selected.
      *
-     * Forge has something going on with the "InGameHud#render" method that excludes the ability to inject into it.
-     * While injecting there is better for mod compatibility than this solution, Forge forces my hand to do THIS.
-     * P.S. Forge's event for hotbar rendering is uncancellable, thus, not an option.
+     * NeoForge has something going on with the "InGameHud#render" method that excludes the ability to inject into it.
+     * While injecting there is better for mod compatibility than this solution, NeoForge forces my hand to do THIS.
+     * P.S. NeoForge's event for hotbar rendering is uncancellable, thus, not an option.
      */
     @Inject(method = "renderHotbar", at = @At(value = "HEAD"), cancellable = true, require = 0)
     private void inventorioRenderSegmentedHotbar(float tickDelta, DrawContext context, CallbackInfo ci)

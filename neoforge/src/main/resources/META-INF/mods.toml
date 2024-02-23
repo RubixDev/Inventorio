@@ -1,5 +1,5 @@
 modLoader = "kotlinforforge"
-loaderVersion = "[4,)"
+loaderVersion = "[4.10,)"
 issueTrackerURL = "https://github.com/Lizard-Of-Oz/Inventorio"
 license = "Custom"
 
@@ -12,23 +12,26 @@ description = "${mod_description}"
 logoFile = "icon.png"
 displayURL="https://github.com/Lizard-Of-Oz/Inventorio"
 
-[[dependencies.inventorio]]
+[[mixins]]
+config = "inventorio.mixins.json"
+
+[[dependencies."${mod_id}"]]
 modId = "minecraft"
-mandatory = true
-versionRange = "[1.20,)"
+type = "required"
+versionRange = "[1.20.3,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.inventorio]]
-modId = "forge"
-mandatory = true
-versionRange = "[46,)"
+[[dependencies."${mod_id}"]]
+modId = "neoforge"
+type = "required"
+versionRange = "[20,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.inventorio]]
+[[dependencies."${mod_id}"]]
 modId = "cloth_config"
-mandatory = true
-versionRange = "[11,)"
+type = "required"
+versionRange = "[13,)"
 ordering = "NONE"
 side = "CLIENT"

@@ -19,7 +19,7 @@ public class InGameHudMixinHP
 {
     /**
      * This mixin calls the renderer of hotbar addons.
-     * Note: this mixin doesn't work in Forge and substituted with a Forge event.
+     * Note: this mixin doesn't work in NeoForge and substituted with a NeoForge event.
      */
     @Inject(method = "render", at = @At(value = "RETURN"))
     private void inventorioRenderHotbarAddons(DrawContext context, float tickDelta, CallbackInfo ci)

@@ -3,11 +3,15 @@ package me.lizardofoz.inventorio.packet
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon
 import net.minecraft.item.ItemStack
 import net.minecraft.network.PacketByteBuf
-import net.minecraftforge.network.NetworkEvent
-import java.util.function.Supplier
+import net.minecraft.network.packet.CustomPayload
+import net.minecraft.util.Identifier
+import net.neoforged.neoforge.network.handling.PlayPayloadContext
 
-class UpdateAddonStacksS2CPacket
+class UpdateAddonStacksS2CPacket: CustomPayload
 {
+    companion object {
+        val identifier = Identifier("inventorio", "update_addon_stacks")
+    }
     private var updatedStacks: Map<Int, ItemStack>
 
     //Sender's constructor
@@ -26,8 +30,10 @@ class UpdateAddonStacksS2CPacket
         this.updatedStacks = updatedStacks
     }
 
+    override fun id(): Identifier = identifier
+
     //Sender's writer
-    fun write(buf: PacketByteBuf)
+    override fun write(buf: PacketByteBuf)
     {
         buf.writeInt(updatedStacks.size)
         for((index, stack) in updatedStacks)
@@ -38,11 +44,10 @@ class UpdateAddonStacksS2CPacket
     }
 
     //Receiver's consumer
-    fun consume(supplier: Supplier<NetworkEvent.Context>)
+    fun consume(context: PlayPayloadContext)
     {
-        supplier.get().enqueueWork {
+        context.workHandler.execute {
             PlayerInventoryAddon.Client.local?.receiveStacksUpdateS2C(updatedStacks)
         }
-        supplier.get().packetHandled = true
     }
 }
