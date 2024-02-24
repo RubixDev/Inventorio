@@ -3,23 +3,23 @@ package me.lizardofoz.inventorio
 import me.lizardofoz.inventorio.client.ui.InventorioScreen
 import me.lizardofoz.inventorio.player.InventorioScreenHandler
 import net.minecraft.client.gui.screen.ingame.HandledScreens
+import net.minecraft.registry.Registries
 import net.minecraft.screen.ScreenHandlerType
-import net.minecraftforge.common.extensions.IForgeMenuType
-import net.minecraftforge.registries.DeferredRegister
-import net.minecraftforge.registries.ForgeRegistries
-import thedarkcolour.kotlinforforge.KotlinModLoadingContext
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension
+import net.neoforged.neoforge.registries.DeferredRegister
+import thedarkcolour.kotlinforforge.neoforge.KotlinModLoadingContext
 
-object ScreenTypeProviderForge : ScreenTypeProvider
+object ScreenTypeProviderNeoForge : ScreenTypeProvider
 {
-    private val handlerProvider = IForgeMenuType.create { syncId, inv, _ ->
+    private val handlerProvider = IMenuTypeExtension.create { syncId, inv, _ ->
         InventorioScreenHandler(syncId, inv)
     }
 
     init
     {
-        val registry = DeferredRegister.create(ForgeRegistries.MENU_TYPES, "inventorio")
+        val registry = DeferredRegister.create(Registries.SCREEN_HANDLER, "inventorio")
         registry.register(KotlinModLoadingContext.get().getKEventBus())
-        registry.register("player_screen") { handlerProvider }
+        registry.register("player_screen") { -> handlerProvider }
     }
     override fun getScreenHandlerType(): ScreenHandlerType<InventorioScreenHandler>
     {

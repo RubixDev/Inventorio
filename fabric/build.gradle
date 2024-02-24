@@ -21,9 +21,9 @@ repositories {
     maven { url "https://maven.terraformersmc.com/" } //ModMenu
     maven { url "https://jitpack.io" }
     maven {
-        url "https://cursemaven.com"
+        url "https://api.modrinth.com/maven"
         content {
-            includeGroup "curse.maven"
+            includeGroup "maven.modrinth"
         }
     }
 }
@@ -35,8 +35,8 @@ dependencies {
     modImplementation "net.fabricmc:fabric-language-kotlin:${rootProject.fabric_kotlin_version}"
 
     //Other mods we do integration with
-    modCompileOnly "com.terraformersmc:modmenu:${rootProject.modmenu_version}"
-    modCompileOnly "curse.maven:clumps-256717:4552339"
+    modImplementation "com.terraformersmc:modmenu:${rootProject.modmenu_version}"
+    modCompileOnly "maven.modrinth:clumps:jdeTwq6v"
 
     //"Common" package
     common(project(path: ":common", configuration: "namedElements")) {
@@ -49,7 +49,7 @@ dependencies {
 
 shadowJar {
     configurations = [project.configurations.shadowCommon]
-    classifier "dev-shadow"
+    archiveClassifier = "dev-shadow"
 }
 
 remapJar {
@@ -58,7 +58,7 @@ remapJar {
 }
 
 jar {
-    classifier "dev"
+    archiveClassifier = "dev"
 }
 
 sourcesJar {

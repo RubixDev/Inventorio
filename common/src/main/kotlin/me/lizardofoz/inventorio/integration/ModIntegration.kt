@@ -14,7 +14,7 @@ abstract class ModIntegration
 
     open fun test(): Boolean
     {
-        isActive = if (InventorioModIntegration.isFabric) testFabric() else testForge()
+        isActive = if (InventorioModIntegration.isFabric) testFabric() else testNeoForge()
         return isActive
     }
 
@@ -37,9 +37,9 @@ abstract class ModIntegration
         throw IllegalStateException("Test Fabric has not been implemented or ran in incorrect environment for $displayName")
     }
 
-    protected open fun testForge(): Boolean
+    protected open fun testNeoForge(): Boolean
     {
-        throw IllegalStateException("Test Forge has not been implemented or ran in incorrect environment for $displayName")
+        throw IllegalStateException("Test NeoForge has not been implemented or ran in incorrect environment for $displayName")
     }
 
     protected open fun applyOnLaunchInner() { }

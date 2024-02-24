@@ -12,11 +12,10 @@ import net.minecraft.recipe.SpecialCraftingRecipe
 import net.minecraft.recipe.SpecialRecipeSerializer
 import net.minecraft.recipe.book.CraftingRecipeCategory
 import net.minecraft.registry.DynamicRegistryManager
-import net.minecraft.util.Identifier
 import net.minecraft.util.collection.DefaultedList
 import net.minecraft.world.World
 
-class DeepPocketsBookRecipe(identifier: Identifier, category: CraftingRecipeCategory) : SpecialCraftingRecipe(category) {
+class DeepPocketsBookRecipe(category: CraftingRecipeCategory) : SpecialCraftingRecipe(category) {
     override fun matches(craftingInventory: RecipeInputInventory, world: World): Boolean {
         if (!GlobalSettings.deepPocketsBookCraft.boolValue)
             return false

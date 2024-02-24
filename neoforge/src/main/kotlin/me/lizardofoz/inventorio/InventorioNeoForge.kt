@@ -10,49 +10,56 @@ import me.lizardofoz.inventorio.integration.ClumpsIntegration
 import me.lizardofoz.inventorio.integration.InventorioModIntegration
 import me.lizardofoz.inventorio.integration.ModIntegration
 import me.lizardofoz.inventorio.packet.InventorioNetworking
-import me.lizardofoz.inventorio.packet.InventorioNetworkingForge
+import me.lizardofoz.inventorio.packet.InventorioNetworkingNeoForge
 import net.minecraft.client.MinecraftClient
 import net.minecraft.item.ItemStack
 import net.minecraft.recipe.SpecialRecipeSerializer
-import net.minecraft.util.Identifier
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.client.ConfigScreenHandler
-import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.common.ToolAction
-import net.minecraftforge.common.ToolActions
-import net.minecraftforge.fml.ModLoadingContext
-import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.fml.loading.FMLEnvironment
-import net.minecraftforge.fml.loading.FMLPaths
-import net.minecraftforge.registries.ForgeRegistries
+import net.minecraft.registry.Registries
+import net.neoforged.api.distmarker.Dist
+import net.neoforged.fml.ModLoadingContext
+import net.neoforged.fml.common.Mod
+import net.neoforged.fml.loading.FMLEnvironment
+import net.neoforged.fml.loading.FMLPaths
+import net.neoforged.neoforge.client.ConfigScreenHandler
+import net.neoforged.neoforge.common.NeoForge
+import net.neoforged.neoforge.common.ToolAction
+import net.neoforged.neoforge.common.ToolActions
+import net.neoforged.neoforge.registries.DeferredRegister
+import thedarkcolour.kotlinforforge.neoforge.KotlinModLoadingContext
 
 @Mod("inventorio")
-class InventorioForge
+class InventorioNeoForge
 {
-    private val forgeModIntegrations = listOf<ModIntegration>(ClumpsIntegration)
+    private val neoForgeModIntegrations = listOf<ModIntegration>(ClumpsIntegration)
 
     init
     {
-        ScreenTypeProvider.INSTANCE = ScreenTypeProviderForge
-        InventorioNetworking.INSTANCE = InventorioNetworkingForge
-        ForgeRegistries.ENCHANTMENTS.register(Identifier("inventorio", "deep_pockets"), DeepPocketsEnchantment)
-        val serializer = SpecialRecipeSerializer { identifier, category -> DeepPocketsBookRecipe(identifier, category) }
-        DeepPocketsBookRecipe.SERIALIZER = serializer
-        ForgeRegistries.RECIPE_SERIALIZERS.register(Identifier("inventorio", "deep_pockets_book"), serializer)
+        ScreenTypeProvider.INSTANCE = ScreenTypeProviderNeoForge
+        InventorioNetworking.INSTANCE = InventorioNetworkingNeoForge
+
+        val enchantmentRegistry = DeferredRegister.create(Registries.ENCHANTMENT, "inventorio")
+        enchantmentRegistry.register(KotlinModLoadingContext.get().getKEventBus())
+        enchantmentRegistry.register("deep_pockets") { -> DeepPocketsEnchantment }
+
+        val recipeRegistry = DeferredRegister.create(Registries.RECIPE_SERIALIZER, "inventorio")
+        recipeRegistry.register(KotlinModLoadingContext.get().getKEventBus())
+        recipeRegistry.register("deep_pockets_book") { -> SpecialRecipeSerializer { category -> DeepPocketsBookRecipe(category) } }
+
         initToolBelt()
+        KotlinModLoadingContext.get().getKEventBus().register(InventorioNetworkingNeoForge)
 
         if (FMLEnvironment.dist == Dist.CLIENT)
         {
-            MinecraftForge.EVENT_BUS.register(ForgeEvents)
+            NeoForge.EVENT_BUS.register(NeoForgeEvents)
             MinecraftClient.getInstance().options.allKeys += InventorioControls.keys
             PlayerSettings.load(FMLPaths.CONFIGDIR.get().resolve("inventorio.json").toFile())
-            ScreenTypeProviderForge.registerScreen()
+            ScreenTypeProviderNeoForge.registerScreen()
             ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory::class.java) {
                 ConfigScreenHandler.ConfigScreenFactory { _, parent -> PlayerSettingsScreen.get(parent) }
             }
         }
 
-        InventorioModIntegration.addModIntegrations(forgeModIntegrations)
+        InventorioModIntegration.addModIntegrations(neoForgeModIntegrations)
         InventorioModIntegration.apply()
     }
 
@@ -60,7 +67,7 @@ class InventorioForge
     {
         //What this actually does is loads the [InventorioAPI] which creates the ToolBelt
         //The reason why we do it this way is because we can't guarantee that other mods
-        //  won't call [InventorioAPI] BEFORE [InventorioForge#onInitialize] has been invoked
+        //  won't call [InventorioAPI] BEFORE [InventorioNeoForge#onInitialize] has been invoked
         InventorioAPI.getToolBeltSlotTemplate(InventorioAPI.SLOT_PICKAXE)?.addAllowingCondition { itemStack, _ ->
             testToolType(itemStack, ToolActions.PICKAXE_DIG)
         }

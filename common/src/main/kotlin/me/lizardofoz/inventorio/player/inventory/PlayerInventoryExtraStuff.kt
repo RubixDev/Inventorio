@@ -2,8 +2,9 @@ package me.lizardofoz.inventorio.player.inventory
 
 import me.lizardofoz.inventorio.mixin.client.accessor.MinecraftClientAccessor
 import me.lizardofoz.inventorio.packet.InventorioNetworking
-import net.minecraft.block.AbstractGlassBlock
 import net.minecraft.block.BlockState
+import net.minecraft.block.Blocks
+import net.minecraft.block.StainedGlassBlock
 import net.minecraft.client.MinecraftClient
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.enchantment.Enchantments
@@ -39,7 +40,7 @@ abstract class PlayerInventoryExtraStuff protected constructor(player: PlayerEnt
         val result = toolBelt.maxByOrNull { it.getMiningSpeedMultiplier(block) } ?: ItemStack.EMPTY
         if (result.getMiningSpeedMultiplier(block) > 1.0f)
             return result
-        if (block.block is AbstractGlassBlock)
+        if (block.block is StainedGlassBlock || block.isOf(Blocks.GLASS))
             return toolBelt.firstOrNull { EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, it) > 0 } ?: ItemStack.EMPTY
         return ItemStack.EMPTY
     }

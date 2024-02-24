@@ -4,11 +4,15 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import me.lizardofoz.inventorio.config.GlobalSettings
 import net.minecraft.network.PacketByteBuf
-import net.minecraftforge.network.NetworkEvent
-import java.util.function.Supplier
+import net.minecraft.network.packet.CustomPayload
+import net.minecraft.util.Identifier
+import net.neoforged.neoforge.network.handling.PlayPayloadContext
 
-class GlobalSettingsS2CPacket
-{
+class GlobalSettingsS2CPacket : CustomPayload {
+    companion object {
+        val identifier = Identifier("inventorio", "global_settings")
+    }
+
     private var settingsJson: JsonObject
 
     //Sender's constructor
@@ -23,18 +27,19 @@ class GlobalSettingsS2CPacket
         this.settingsJson = Gson().fromJson(buf.readString(), JsonObject::class.java)
     }
 
+    override fun id(): Identifier = identifier
+
     //Sender's writer
-    fun write(buf: PacketByteBuf)
+    override fun write(buf: PacketByteBuf)
     {
         buf.writeString(settingsJson.toString())
     }
 
     //Receiver's consumer
-    fun consume(supplier: Supplier<NetworkEvent.Context>)
+    fun consume(context: PlayPayloadContext)
     {
-        supplier.get().enqueueWork {
+        context.workHandler.execute {
             GlobalSettings.syncFromServer(settingsJson)
         }
-        supplier.get().packetHandled = true
     }
 }

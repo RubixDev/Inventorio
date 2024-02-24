@@ -6,7 +6,6 @@ import me.lizardofoz.inventorio.util.GeneralConstants;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EnderChestInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.encryption.PlayerPublicKey;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -29,6 +28,6 @@ public abstract class PlayerEntityMixin
     {
         SimpleInventoryAccessor accessor = ((SimpleInventoryAccessor) getEnderChestInventory());
         accessor.setSize(GeneralConstants.VANILLA_ROW_LENGTH * 6);
-        accessor.setStacks(DefaultedList.ofSize(GeneralConstants.VANILLA_ROW_LENGTH * 6, ItemStack.EMPTY));
+        accessor.setHeldStacks(DefaultedList.ofSize(GeneralConstants.VANILLA_ROW_LENGTH * 6, ItemStack.EMPTY));
     }
 }
