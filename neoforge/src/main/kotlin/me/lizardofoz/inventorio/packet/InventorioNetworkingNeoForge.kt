@@ -64,7 +64,7 @@ object InventorioNetworkingNeoForge : InventorioNetworking
     override fun c2sSetSwappedHandsMode(swappedHands: Boolean)
     {
         if (MinecraftClient.getInstance().networkHandler != null)
-            PacketDistributor.SERVER.noArg().send()
+            PacketDistributor.SERVER.noArg().send(SwappedHandsModeC2SPacket(swappedHands))
     }
 
     @OnlyIn(Dist.CLIENT)

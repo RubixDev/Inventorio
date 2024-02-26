@@ -43,7 +43,9 @@ class InventorioNeoForge
 
         val recipeRegistry = DeferredRegister.create(Registries.RECIPE_SERIALIZER, "inventorio")
         recipeRegistry.register(KotlinModLoadingContext.get().getKEventBus())
-        recipeRegistry.register("deep_pockets_book") { -> SpecialRecipeSerializer { category -> DeepPocketsBookRecipe(category) } }
+        val serializer = SpecialRecipeSerializer { category -> DeepPocketsBookRecipe(category) }
+        DeepPocketsBookRecipe.SERIALIZER = serializer
+        recipeRegistry.register("deep_pockets_book") { -> serializer }
 
         initToolBelt()
         KotlinModLoadingContext.get().getKEventBus().register(InventorioNetworkingNeoForge)
