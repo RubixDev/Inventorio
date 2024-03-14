@@ -3,6 +3,11 @@
 .gradle/
 build/
 out/
+classes/
+
+# eclipse
+
+*.launch
 
 # idea
 
@@ -11,7 +16,18 @@ out/
 *.ipr
 *.iws
 
+# vscode
+
+.settings/
+.vscode/
+bin/
+.classpath
+.project
+
+# macos
+
+*.DS_Store
+
 # fabric
 
-run/
-/minecraft/
+run*/

@@ -1,0 +1,218 @@
+name: Release
+
+on:
+  release:
+    types:
+      - published
+  workflow_dispatch:
+    inputs:
+      target_subproject:
+        description: |-
+          The subproject name(s) of the specified Minecraft version to be released, seperated with ",".
+          By default all subprojects will be released
+        type: string
+        required: false
+        default: ''
+      target_release_tag:
+        description: The tag of the release you want to append the artifact to
+        type: string
+        required: true
+
+jobs:
+  show_action_parameters:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show action parameters
+        run: |
+          cat <<EOF > "$GITHUB_STEP_SUMMARY"
+          ## Action Parameters
+          - target_subproject: \`${{ github.event.inputs.target_subproject }}\`
+          - target_release_tag: \`${{ github.event.inputs.target_release_tag }}\`
+          EOF
+
+  matrix_prep:
+    uses: ./.github/workflows/matrix_prep.yml
+    with:
+      target_subproject: ${{ github.event.inputs.target_subproject }}
+
+  build:
+    uses: ./.github/workflows/build.yml
+    with:
+      target_subproject: ${{ github.event.inputs.target_subproject }}
+      release: true
+
+  release:
+    needs:
+      - matrix_prep
+      - build
+    runs-on: ubuntu-latest
+
+    # allow the mod publish step to add asserts to release
+    # https://docs.github.com/en/actions/security-guides/automatic-token-authentication#permissions-for-the-github_token
+    permissions:
+      contents: write
+
+    strategy:
+      matrix: ${{ fromJson(needs.matrix_prep.outputs.matrix) }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Display context
+        run: |
+          echo ref_name = ${{ github.ref_name }}
+          echo target_subproject = ${{ github.event.inputs.target_subproject }}
+          echo target_release_tag = ${{ github.event.inputs.target_release_tag }}
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: build-artifacts
+
+      - name: Get github release information
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        id: get_release
+        uses: cardinalby/git-get-release-action@1.2.4
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          tag: ${{ github.event.inputs.target_release_tag }}
+
+      - name: Generate publish related information
+        id: release_info
+        run: |
+          if [ "$GITHUB_EVENT_NAME" == 'release' ]
+          then
+              # Leave an empty value here, so Kir-Antipov/mc-publish will infer the tag from the action context
+              echo "tag_name=" >> "$GITHUB_OUTPUT"
+          elif [ "$GITHUB_EVENT_NAME" == 'workflow_dispatch' ]
+          then
+              echo "tag_name=${{ github.event.inputs.target_release_tag }}" >> "$GITHUB_OUTPUT"
+          else
+              echo Unknown github event name "$GITHUB_EVENT_NAME"
+              exit 1
+          fi
+
+      - name: Read common properties
+        id: properties_g
+        uses: christian-draeger/read-properties@1.1.1
+        with:
+          path: gradle.properties
+          properties: 'mod_name mod_version'
+
+      - name: Read version-specific properties
+        id: properties_v
+        uses: christian-draeger/read-properties@1.1.1
+        with:
+          path: ${{ format('versions/{0}/gradle.properties', matrix.subproject) }}
+          properties: 'minecraft_version game_versions'
+
+      - name: Fix game version
+        id: game_versions
+        run: |
+          # Fixed \n in game_versions isn't parsed by christian-draeger/read-properties as a line separator
+          # shellcheck disable=SC2129
+          echo 'value<<EOF' >> "$GITHUB_OUTPUT"
+          echo -e "${{ steps.properties_v.outputs.game_versions }}" >> "$GITHUB_OUTPUT"
+          echo 'EOF' >> "$GITHUB_OUTPUT"
+
+      - name: Prepare file information
+        id: file_info
+        run: |
+          shopt -s extglob
+          FILE_PATHS=$(ls ${{ format('build-artifacts/{0}/build/libs/!(*-@(dev|sources)).jar', matrix.subproject) }})
+          if (( ${#FILE_PATHS[@]} != 1 )); then
+              echo "Error: Found ${#FILE_PATHS[@]} files, expected exactly 1"
+              exit 1
+          else
+              FILE_PATH=${FILE_PATHS[0]}
+          fi
+          FILE_PATHS=$(ls ${{ format('build-artifacts/{0}/build/libs/*-sources.jar', matrix.subproject) }})
+          if (( ${#FILE_PATHS[@]} != 1 )); then
+              echo "Error: Found ${#FILE_PATHS[@]} files, expected exactly 1"
+              exit 1
+          else
+              FILE_PATH_SOURCES=${FILE_PATHS[0]}
+          fi
+
+          FILE_NAME=$(basename "$FILE_PATH")
+          FILE_HASH=$(sha256sum "$FILE_PATH" | awk '{ print $1 }')
+          # shellcheck disable=SC2129
+          echo "path=$FILE_PATH" >> "$GITHUB_OUTPUT"
+          echo "path_sources=$FILE_PATH_SOURCES" >> "$GITHUB_OUTPUT"
+          echo "name=$FILE_NAME" >> "$GITHUB_OUTPUT"
+          echo "hash=$FILE_HASH" >> "$GITHUB_OUTPUT"
+          cat "$GITHUB_OUTPUT"
+
+      - name: Prepare changelog
+        uses: actions/github-script@v6
+        id: changelog
+        with:
+          script: return process.env.CHANGELOG
+          result-encoding: string
+        env:
+          CHANGELOG: |-
+            ${{ format('{0}{1}', github.event.release.body, steps.get_release.outputs.body) }}
+
+            -------
+
+            Build Information
+
+            - File name: `${{ steps.file_info.outputs.name }}`
+            - SHA-256: `${{ steps.file_info.outputs.hash }}`
+            - Built from: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Prepare dependencies
+        id: dependencies
+        run: |
+          echo 'value<<EOF' >> "$GITHUB_OUTPUT"
+          echo 'cloth-config(required){modrinth:9s6osm5g}{curseforge:348521}' >> "$GITHUB_OUTPUT"
+          if [ "${{ endsWith(matrix.subproject, '-fabric') }}" = "true" ]; then
+              # shellcheck disable=SC2129
+              echo 'fabric-api(required){modrinth:P7dR8mSH}{curseforge:306612}' >> "$GITHUB_OUTPUT"
+              echo 'fabric-language-kotlin(required){modrinth:Ha28R6CL}{curseforge:308769}' >> "$GITHUB_OUTPUT"
+              echo 'modmenu(optional){modrinth:mOgUt4GM}{curseforge:308702}' >> "$GITHUB_OUTPUT"
+          else
+              echo 'kotlin-for-forge(required){modrinth:ordsPcFz}{curseforge:351264}' >> "$GITHUB_OUTPUT"
+          fi
+          echo 'EOF' >> "$GITHUB_OUTPUT"
+
+      - name: Publish Minecraft Mods
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          # https://modrinth.com/settings/pats
+          modrinth-id: LcafSQPm
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+          # https://legacy.curseforge.com/account/api-tokens
+          curseforge-id: ${{ endsWith(matrix.subproject, '-fabric') && 491073 || 497122 }}
+          curseforge-token: ${{ secrets.CF_API_TOKEN }}
+
+          github-tag: ${{ steps.release_info.outputs.tag_name }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+          files: |
+            ${{ steps.file_info.outputs.path }}
+            ${{ steps.file_info.outputs.path_sources }}
+
+          name:
+            ${{ format('[{3}] [{2}] {0} v{1}', steps.properties_g.outputs.mod_name,
+            steps.properties_g.outputs.mod_version, steps.properties_v.outputs.minecraft_version,
+            (endsWith(matrix.subproject, '-fabric') && 'Fabric' || (endsWith(matrix.subproject, '-forge') && 'Forge' || 'NeoForge'))) }}
+          version:
+            ${{ format('{1}+{0}', steps.properties_v.outputs.minecraft_version,
+            steps.properties_g.outputs.mod_version) }}
+          version-type: release
+
+          loaders: ${{ endsWith(matrix.subproject, '-fabric') && 'fabric' || (endsWith(matrix.subproject, '-forge') && 'forge' || 'neoforge') }}
+          game-versions: ${{ steps.game_versions.outputs.value }}
+          game-version-filter: any
+          # declare the dependencies explicitly, so mc-publish won't try to load from fabric.mod.json
+          dependencies: ${{ steps.dependencies.outputs.value }}
+
+          modrinth-changelog: ${{ steps.changelog.outputs.result }}
+          curseforge-changelog: ${{ steps.changelog.outputs.result }}
+
+          retry-attempts: 3
+          retry-delay: 10000
