@@ -47,7 +47,9 @@ class InventorioNeoForge {
         recipeRegistry.register("deep_pockets_book") { -> serializer }
 
         initToolBelt()
+        //#if MC >= 12004
         KotlinModLoadingContext.get().getKEventBus().register(InventorioNetworkingNeoForge)
+        //#endif
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
             NeoForge.EVENT_BUS.register(NeoForgeEvents)
