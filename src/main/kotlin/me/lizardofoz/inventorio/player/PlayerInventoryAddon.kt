@@ -14,7 +14,11 @@ import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.item.CompassItem
+import net.minecraft.item.FilledMapItem
 import net.minecraft.item.ItemStack
+import net.minecraft.item.NetworkSyncedItem
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 import net.minecraft.util.Util
 
@@ -38,6 +42,7 @@ class PlayerInventoryAddon internal constructor(player: PlayerEntity) : PlayerIn
             displayTool = ItemStack.EMPTY
         }
 
+        stacks.forEach { syncItems(player, it) }
         for (tickHandler in tickHandlers.entries) {
             for ((index, item) in deepPockets.withIndex())
                 tickMe(tickHandler, this, InventorioAddonSection.DEEP_POCKETS, item, index)
@@ -51,11 +56,25 @@ class PlayerInventoryAddon internal constructor(player: PlayerEntity) : PlayerIn
         }
     }
 
-    private fun tickMe(tickHandler: MutableMap.MutableEntry<Identifier, InventorioTickHandler>, playerInventoryAddon: PlayerInventoryAddon, deepPockets: InventorioAddonSection, item: ItemStack, index: Int) {
+    private fun tickMe(
+        tickHandler: Map.Entry<Identifier, InventorioTickHandler>,
+        playerInventoryAddon: PlayerInventoryAddon,
+        deepPockets: InventorioAddonSection,
+        item: ItemStack,
+        index: Int,
+    ) {
         try {
             tickHandler.value.tick(playerInventoryAddon, deepPockets, item, index)
         } catch (e: Throwable) {
             logger.error("Inventory Tick Handler '${tickHandler.key}' has failed: ", e)
+        }
+    }
+
+    private fun syncItems(player: PlayerEntity, stack: ItemStack) {
+        if (stack.item.isNetworkSynced && player is ServerPlayerEntity) {
+            (stack.item as? NetworkSyncedItem)?.createSyncPacket(stack, player.world, player)?.let { packet ->
+                player.networkHandler.sendPacket(packet)
+            }
         }
     }
 
@@ -79,7 +98,17 @@ class PlayerInventoryAddon internal constructor(player: PlayerEntity) : PlayerIn
         val PlayerEntity.inventoryAddon: PlayerInventoryAddon?
             get() = (this as PlayerDuck).inventorioAddon
 
-        private val tickHandlers = mutableMapOf<Identifier, InventorioTickHandler>()
+        private val vanillaTickHandlers = mapOf(
+            "map" to FilledMapItem::class,
+            "compass" to CompassItem::class,
+        )
+        private val tickHandlers = vanillaTickHandlers.map { (id, clazz) ->
+            Identifier(id) to InventorioTickHandler { addon, _, stack, _ ->
+                if (clazz.isInstance(stack.item)) {
+                    stack.inventoryTick(addon.player.world, addon.player, -1, false)
+                }
+            }
+        }.toMap().toMutableMap()
         internal val toolBeltTemplates = mutableListOf<ToolBeltSlotTemplate>()
         private var bNoMoreToolBeltSlots = false
 

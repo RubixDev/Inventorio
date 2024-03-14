@@ -55,6 +55,7 @@ class Props {
 
     val fabric_kotlin_version: String by prop
     val forge_kotlin_version: String by prop
+    val mixinextras_version: String by prop
 
     //// Version Specific Properties ////
     val minecraft_version: String by prop
@@ -95,19 +96,23 @@ loom {
 }
 
 repositories {
-    if (modBrand == "neoforge") {
-        // NeoForge
-        maven("https://maven.neoforged.net/releases")
+    when (modBrand) {
+        "fabric" -> {
+            // Mod Menu
+            maven("https://maven.terraformersmc.com/releases/")
+        }
+        "neoforge" -> {
+            // NeoForge
+            maven("https://maven.neoforged.net/releases")
+        }
+        "forge" -> {
+            // MixinExtras
+            mavenCentral()
+        }
     }
-
     if (modBrand != "fabric") {
         // Kotlin for Forge
         maven("https://thedarkcolour.github.io/KotlinForForge/")
-    }
-
-    if (modBrand == "fabric") {
-        // Mod Menu
-        maven("https://maven.terraformersmc.com/releases/")
     }
 
     // Cloth Config
@@ -143,6 +148,9 @@ dependencies {
 
             implementation("thedarkcolour:kotlinforforge:${props.forge_kotlin_version}")
             modImplementation("me.shedaniel.cloth:cloth-config-forge:${props.cloth_version}")
+
+            compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.3.5")!!)
+            implementation(include("io.github.llamalad7:mixinextras-forge:0.3.5")!!)
         }
         "neoforge" -> {
             "neoForge"("net.neoforged:neoforge:${props.neoforge_version}")

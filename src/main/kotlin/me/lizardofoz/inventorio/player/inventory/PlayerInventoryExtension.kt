@@ -12,7 +12,9 @@ import net.fabricmc.api.Environment
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.inventory.SimpleInventory
+import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
+import net.minecraft.registry.tag.TagKey
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.collection.DefaultedList
 
@@ -172,6 +174,10 @@ abstract class PlayerInventoryExtension protected constructor(val player: Player
     protected fun areItemsSimilar(stack1: ItemStack, stack2: ItemStack): Boolean {
         return stack1.isNotEmpty && ItemStack.canCombine(stack1, stack2)
     }
+
+    fun contains(stack: ItemStack): Boolean = stacks.any { areItemsSimilar(it, stack) }
+
+    fun contains(tag: TagKey<Item>): Boolean = stacks.any { it.isNotEmpty && it.isIn(tag) }
 
     fun findFittingToolBeltStack(sampleStack: ItemStack): ItemStack {
         val index = findFittingToolBeltIndex(sampleStack)
