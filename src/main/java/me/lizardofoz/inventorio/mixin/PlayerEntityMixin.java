@@ -1,5 +1,8 @@
 package me.lizardofoz.inventorio.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.authlib.GameProfile;
 import me.lizardofoz.inventorio.player.InventorioScreenHandler;
 import me.lizardofoz.inventorio.player.PlayerAddonSerializer;
@@ -39,8 +42,8 @@ public abstract class PlayerEntityMixin implements PlayerDuck {
     }
 
     /**
-     * This inject causes the selected UtilityBelt item to be displayed in the
-     * offhand
+     * This injection causes the selected UtilityBelt item to be displayed in
+     * the offhand
      */
     @Inject(method = "getEquippedStack", at = @At(value = "HEAD"), cancellable = true)
     private void inventorioDisplayOffhand(EquipmentSlot slot, CallbackInfoReturnable<ItemStack> cir) {
@@ -52,7 +55,8 @@ public abstract class PlayerEntityMixin implements PlayerDuck {
      * hands. First, the offhand is attached to the utility belt, rather than a
      * vanilla slot. Second, a player can swap the main hand and the offhand.
      */
-    @Redirect(
+    @SuppressWarnings({ "unchecked", "MixinExtrasOperationParameters" })
+    @WrapOperation(
         method = "equipStack",
         at = @At(
             value = "INVOKE",
@@ -60,13 +64,16 @@ public abstract class PlayerEntityMixin implements PlayerDuck {
             ordinal = 0
         )
     )
-    private <E> E inventorioEquipMainHand(DefaultedList<E> defaultedList, int index, E stack) {
-        ItemStack itemStack = (ItemStack) stack;
-        if (inventorioAddon.getSwappedHands()) inventorioAddon.setSelectedUtilityStack(itemStack);
-        else getInventory().main.set(getInventory().selectedSlot, itemStack);
-        return (E) ItemStack.EMPTY;
+    private <E> E inventorioEquipMainHand(DefaultedList<E> instance, int index, E element, Operation<E> original) {
+        if (inventorioAddon.getSwappedHands()) {
+            inventorioAddon.setSelectedUtilityStack((ItemStack) element);
+            // TODO: should this return something else?
+            return (E) ItemStack.EMPTY;
+        }
+        return original.call(instance, index, element);
     }
 
+    @SuppressWarnings("unchecked")
     @Redirect(
         method = "equipStack",
         at = @At(
@@ -79,12 +86,13 @@ public abstract class PlayerEntityMixin implements PlayerDuck {
         ItemStack itemStack = (ItemStack) stack;
         if (inventorioAddon.getSwappedHands()) inventorioAddon.setSelectedHotbarStack(itemStack);
         else inventorioAddon.setSelectedUtilityStack(itemStack);
+        // TODO: should this return something else?
         return (E) ItemStack.EMPTY;
     }
 
     /**
      * This mixin refreshes the available slots when we equip armor through
-     * right clicking or a dispenser
+     * right-clicking or a dispenser
      */
     @Inject(method = "equipStack", at = @At(value = "RETURN"))
     private void inventorioOnEquipArmor(EquipmentSlot slot, ItemStack stack, CallbackInfo ci) {
@@ -95,16 +103,16 @@ public abstract class PlayerEntityMixin implements PlayerDuck {
     /**
      * This mixin allows arrows stored in the addon slots to be used by a bow
      */
-    @Inject(method = "getProjectileType", at = @At(value = "RETURN"), cancellable = true)
-    private void inventorioGetArrowType(ItemStack bowStack, CallbackInfoReturnable<ItemStack> cir) {
-        if (!cir.getReturnValue().isEmpty()) return;
+    @ModifyReturnValue(method = "getProjectileType", at = @At("RETURN"))
+    private ItemStack inventorioGetArrowType(ItemStack original, ItemStack bowStack) {
+        if (!original.isEmpty()) return original;
         ItemStack arrowStack = inventorioAddon.getActiveArrowType(bowStack);
-        if (arrowStack != null) cir.setReturnValue(arrowStack);
+        return arrowStack != null ? arrowStack : original;
     }
 
     /**
-     * These 2 injects cause a correct weapon to be automatically selected and
-     * withdrawn upon attack
+     * These 2 injections cause a correct weapon to be automatically selected
+     * and withdrawn upon attack
      */
     @Inject(method = "attack", at = @At(value = "HEAD"))
     private void inventorioPreAttack(Entity target, CallbackInfo ci) {
@@ -117,7 +125,7 @@ public abstract class PlayerEntityMixin implements PlayerDuck {
     }
 
     /**
-     * These 2 injects read and write additional data into Player's NBT
+     * These 2 injections read and write additional data into Player's NBT
      */
     @Inject(method = "readCustomDataFromNbt", at = @At(value = "RETURN"))
     private void inventorioDeserializePlayerAddon(NbtCompound tag, CallbackInfo ci) {
@@ -137,5 +145,7 @@ public abstract class PlayerEntityMixin implements PlayerDuck {
     }
 
     @Nullable @Override
-    public PlayerInventoryAddon getInventorioAddon() { return inventorioAddon; }
+    public PlayerInventoryAddon inventorio$getInventorioAddon() {
+        return inventorioAddon;
+    }
 }

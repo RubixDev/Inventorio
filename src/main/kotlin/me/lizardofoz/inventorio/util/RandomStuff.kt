@@ -4,6 +4,7 @@ package me.lizardofoz.inventorio.util
 
 import me.lizardofoz.inventorio.config.PlayerSettings
 import me.lizardofoz.inventorio.player.PlayerInventoryAddon
+import net.minecraft.enchantment.Enchantment
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.item.ItemStack
 import net.minecraft.item.TridentItem
@@ -33,6 +34,8 @@ enum class ToolBeltMode {
 }
 
 interface PlayerDuck {
+    @Suppress("INAPPLICABLE_JVM_NAME") // see https://stackoverflow.com/questions/47504279/java-interop-apply-jvmname-to-getters-of-properties-in-interface-or-abstract-c
+    @get:JvmName("inventorio${'$'}getInventorioAddon")
     val inventorioAddon: PlayerInventoryAddon?
 }
 
@@ -46,4 +49,14 @@ fun canRMBItem(itemStack: ItemStack): Boolean {
         || itemStack.item !is TridentItem
         || EnchantmentHelper.getLoyalty(itemStack) > 0
         || EnchantmentHelper.getRiptide(itemStack) > 0
+}
+
+fun getEnchantmentLevel(stack: ItemStack, enchantment: Enchantment): Int {
+    //#if FORGE
+    //$$ return stack.getEnchantmentLevel(enchantment)
+    //#elseif NEOFORGE
+    //$$ return stack.getEnchantmentLevel(enchantment)
+    //#else
+    return EnchantmentHelper.getLevel(enchantment, stack)
+    //#endif
 }

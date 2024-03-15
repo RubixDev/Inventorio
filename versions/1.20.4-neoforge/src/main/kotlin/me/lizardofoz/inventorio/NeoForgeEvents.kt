@@ -17,7 +17,7 @@ object NeoForgeEvents {
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
-    fun onClientTick(event: RenderGuiEvent.Pre) {
+    fun preGuiRender(event: RenderGuiEvent.Pre) {
         renderHotbarAddons(event.guiGraphics)
     }
 }

@@ -19,8 +19,8 @@ public class ServerPlayNetworkHandlerMixin {
     public ServerPlayerEntity player;
 
     /**
-     * These 3 injects remove the display tool (server-side) when a player tries
-     * to use (right-click) something from the main hand, so that the item
+     * These two injections remove the display tool (server-side) when a player
+     * tries to use (right-click) something from the main hand, so that the item
      * that's ACTUALLY in the main hand can be used immediately
      */
     @Inject(method = "onPlayerInteractBlock", at = @At(value = "HEAD"))

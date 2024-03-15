@@ -15,8 +15,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientPlayNetworkHandler.class)
 public class ClientPlayNetworkHandlerMixin {
     /**
-     * When a player joins, this mixin sends a packet to the server, telling if
-     * the player uses Swapped Hands or not
+     * When a player joins, this mixin sends a packet to the server, telling
+     * whether the player uses Swapped Hands or not
      */
     @Inject(method = "onGameJoin", at = @At(value = "RETURN"))
     private void inventorioSendSwappedHandsStatus(GameJoinS2CPacket packet, CallbackInfo ci) {

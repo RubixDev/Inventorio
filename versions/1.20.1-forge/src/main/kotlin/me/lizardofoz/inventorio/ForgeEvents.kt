@@ -17,7 +17,7 @@ object ForgeEvents {
 
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
-    fun onClientTick(event: CustomizeGuiOverlayEvent) {
+    fun onGuiRender(event: CustomizeGuiOverlayEvent) {
         renderHotbarAddons(event.guiGraphics)
     }
 }

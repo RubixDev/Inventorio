@@ -10,20 +10,41 @@ import net.minecraft.entity.player.PlayerEntity
 object MixinHelpers {
     @JvmStatic
     @JvmOverloads
-    fun withInventoryAddon(playerEntity: PlayerEntity?, consumer: Consumer<PlayerInventoryAddon>, ifNotPresent: Consumer<PlayerEntity?> = Consumer { }) {
+    fun <T> withInventoryAddonReturning(
+        playerEntity: PlayerEntity?,
+        consumer: (PlayerInventoryAddon) -> T?,
+        ifNotPresent: (PlayerEntity?) -> T? = { null },
+    ): T? {
         val addon = playerEntity?.inventoryAddon
-        if (addon != null) {
-            consumer.accept(addon)
+        return if (addon != null) {
+            consumer(addon)
         } else {
-            ifNotPresent.accept(playerEntity)
+            ifNotPresent(playerEntity)
         }
     }
 
     @JvmStatic
-    fun withScreenHandler(playerEntity: PlayerEntity?, consumer: Consumer<InventorioScreenHandler>) {
+    @JvmOverloads
+    fun withInventoryAddon(
+        playerEntity: PlayerEntity?,
+        consumer: Consumer<PlayerInventoryAddon>,
+        ifNotPresent: Consumer<PlayerEntity?> = Consumer {},
+    ) {
+        withInventoryAddonReturning(playerEntity, { addon -> consumer.accept(addon) }, { player -> ifNotPresent.accept(player) })
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun withScreenHandler(
+        playerEntity: PlayerEntity?,
+        consumer: Consumer<InventorioScreenHandler>,
+        ifNotPresent: Consumer<PlayerEntity?> = Consumer {},
+    ) {
         val addon = playerEntity?.inventorioScreenHandler
         if (addon != null) {
             consumer.accept(addon)
+        } else {
+            ifNotPresent.accept(playerEntity)
         }
     }
 }

@@ -1,5 +1,8 @@
 package me.lizardofoz.inventorio.mixin.client;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import me.lizardofoz.inventorio.client.control.InventorioKeyHandler;
 import me.lizardofoz.inventorio.client.ui.InventorioScreen;
 import me.lizardofoz.inventorio.packet.InventorioNetworking;
@@ -8,16 +11,14 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.option.KeyBinding;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.Hand;
-import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = MinecraftClient.class, priority = 9999)
@@ -25,56 +26,52 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MinecraftClientMixin {
     @Shadow
     public ClientPlayerEntity player;
-    @Shadow
-    @Final
-    public GameOptions options;
-    @Shadow
-    @Nullable public Screen currentScreen;
 
     /**
-     * This inject opens the Inventorio Screen instead of the Vanilla Player
+     * This injection opens the Inventorio Screen instead of the Vanilla Player
      * Screen
      */
-    @Inject(
+    @WrapOperation(
         method = "handleInputEvents",
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/client/MinecraftClient;setScreen(Lnet/minecraft/client/gui/screen/Screen;)V",
-            ordinal = 1
+            ordinal = 0
         ),
-        cancellable = true
+        slice = @Slice(
+            from = @At(value = "INVOKE", target = "Lnet/minecraft/client/tutorial/TutorialManager;onInventoryOpened()V")
+        )
     )
-    private void inventorioOpenReplacingScreen(CallbackInfo ci) {
-        if (InventorioScreen.shouldOpenVanillaInventory) return;
-        InventorioNetworking.getInstance().c2sOpenInventorioScreen();
-        ci.cancel();
-    }
-
-    /**
-     * This inject replaces vanilla Hotbar slot selection with ours (Segmented
-     * Hotbar)
-     */
-    @Redirect(
-        method = "handleInputEvents",
-        at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/KeyBinding;wasPressed()Z", ordinal = 2)
-    )
-    private boolean inventorioHandleHotbarSlotSelection(KeyBinding keyBinding) {
-        if (!keyBinding.wasPressed()) return false;
-        if (player.isSpectator()) return true;
-
-        if (
-            !player.isCreative()
-                || currentScreen != null
-                || (!options.saveToolbarActivatorKey.isPressed() && !options.loadToolbarActivatorKey.isPressed())
-        ) for (int i = 0; i < 9; ++i) {
-            if (keyBinding == options.hotbarKeys[i])
-                return !InventorioKeyHandler.INSTANCE.handleSegmentedHotbarSlotSelection(player.getInventory(), i);
+    private void inventorioOpenReplacingScreen(MinecraftClient instance, Screen old, Operation<Void> original) {
+        if (InventorioScreen.shouldOpenVanillaInventory) {
+            original.call(instance, old);
+        } else {
+            InventorioNetworking.getInstance().c2sOpenInventorioScreen();
         }
-        return true;
     }
 
     /**
-     * This inject prevents swapping the items between hands while there is a
+     * This injection replaces vanilla Hotbar slot selection with ours
+     * (Segmented Hotbar)
+     */
+    @SuppressWarnings("InvalidInjectorMethodSignature")
+    @WrapOperation(
+        method = "handleInputEvents",
+        at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerInventory;selectedSlot:I")
+    )
+    private void inventorioHandleHotbarSlotSelection(
+        PlayerInventory instance,
+        int value,
+        Operation<Integer> original,
+        @Local int i
+    ) {
+        if (!InventorioKeyHandler.INSTANCE.handleSegmentedHotbarSlotSelection(instance, i)) {
+            original.call(instance, value);
+        }
+    }
+
+    /**
+     * This injection prevents swapping the items between hands while there is a
      * display tool active, because that causes a non-duping glitch when a tool
      * in-use gets pulled off from a tool belt
      */
@@ -95,7 +92,7 @@ public class MinecraftClientMixin {
      * This redirect enables the ability to bind the Offhand/Utility to a
      * separate button.
      * <p>
-     * If option is enabled, a regular RightClick won't attempt to use an
+     * If the option is enabled, a regular right click won't attempt to use an
      * Offhand item, but a dedicated key will attempt to use ONLY an Offhand
      * item.
      */

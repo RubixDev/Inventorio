@@ -28,9 +28,9 @@ public abstract class PlayerInventoryMixin {
     public PlayerEntity player;
 
     /**
-     * This mixin causes inventory addon to get copied when the main inventory
-     * is (e.g. playing dying with /gamerule keepInventory true or going from
-     * the End to the Overworld)
+     * This mixin also copies inventory addon when the main inventory is copied
+     * (e.g. when playing with `/gamerule keepInventory true` or going from the
+     * End to the Overworld)
      */
     @Inject(method = "clone", at = @At(value = "RETURN"))
     private void inventorioClonePlayerInventory(PlayerInventory sourceInventory, CallbackInfo ci) {
@@ -57,11 +57,11 @@ public abstract class PlayerInventoryMixin {
     }
 
     /**
-     * Here's how it works: when an item is getting inserted into player's
+     * Here's how it works: when an item is getting inserted into a player's
      * inventory (e.g. by picking up an item from the ground), it will find a
      * similar incomplete stack in the Deep Pockets and Utility Belt first. If
      * none is present, it will go through vanilla logic, and if the Main
-     * Inventory is full, it will find a free slot in the Deep Pockets
+     * Inventory is full, it will find a free slot in the Deep Pockets.
      */
     @Inject(method = "insertStack(ILnet/minecraft/item/ItemStack;)Z", at = @At(value = "HEAD"), cancellable = true)
     private void inventorioInsertSimilarStackIntoAddon(
@@ -75,20 +75,15 @@ public abstract class PlayerInventoryMixin {
         });
     }
 
-    @Inject(method = "insertStack(ILnet/minecraft/item/ItemStack;)Z", at = @At(value = "RETURN"), cancellable = true)
-    private void inventorioInsertStackIntoAddon(
-        int slot,
-        ItemStack originalStack,
-        CallbackInfoReturnable<Boolean> cir
-    ) {
-        MixinHelpers.withInventoryAddon(player, inventorioAddon -> {
-            if (
-                slot == -1
-                    && !cir.getReturnValue()
-                    && inventorioAddon != null
-                    && inventorioAddon.insertStackIntoEmptySlot(originalStack)
-            ) cir.setReturnValue(true);
-        });
+    @ModifyReturnValue(method = "insertStack(ILnet/minecraft/item/ItemStack;)Z", at = @At("RETURN"))
+    private boolean inventorioInsertStackIntoAddon(boolean original, int slot, ItemStack originalStack) {
+        return original
+            || Boolean.TRUE.equals(
+                MixinHelpers.withInventoryAddonReturning(
+                    player,
+                    addon -> (slot == -1 && addon.insertStackIntoEmptySlot(originalStack))
+                )
+            );
     }
 
     @Inject(method = "removeOne", at = @At(value = "HEAD"), cancellable = true)
@@ -111,8 +106,8 @@ public abstract class PlayerInventoryMixin {
     /**
      * If player has a "scroll utility belt with a mouse wheel" setting enabled,
      * hijack the vanilla hotbar scrolling and scroll the utility belt instead.
-     * Otherwise, set the selected hotbar segment value to -1 in case if a
-     * player scrolls a mouse wheel while using Segmented Hotbar
+     * Otherwise, set the selected hotbar segment value to -1 in case a player
+     * scrolls a mouse wheel while using Segmented Hotbar
      */
     @Inject(method = "scrollInHotbar", at = @At(value = "HEAD"), cancellable = true)
     @Environment(EnvType.CLIENT)
@@ -122,17 +117,13 @@ public abstract class PlayerInventoryMixin {
 
     @ModifyReturnValue(method = "contains(Lnet/minecraft/item/ItemStack;)Z", at = @At("RETURN"))
     private boolean searchAddon(boolean original, ItemStack stack) {
-        if (original) return true;
-        PlayerInventoryAddon addon = PlayerInventoryAddon.getInventoryAddon(player);
-        if (addon == null) return false;
-        return addon.contains(stack);
+        return original
+            || Boolean.TRUE.equals(MixinHelpers.withInventoryAddonReturning(player, addon -> addon.contains(stack)));
     }
 
     @ModifyReturnValue(method = "contains(Lnet/minecraft/registry/tag/TagKey;)Z", at = @At("RETURN"))
     private boolean searchAddon(boolean original, TagKey<Item> tag) {
-        if (original) return true;
-        PlayerInventoryAddon addon = PlayerInventoryAddon.getInventoryAddon(player);
-        if (addon == null) return false;
-        return addon.contains(tag);
+        return original
+            || Boolean.TRUE.equals(MixinHelpers.withInventoryAddonReturning(player, addon -> addon.contains(tag)));
     }
 }

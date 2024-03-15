@@ -67,8 +67,8 @@ class InventorioNeoForge {
 
     private fun initToolBelt() {
         // What this actually does is loads the [InventorioAPI] which creates the ToolBelt
-        // The reason why we do it this way is because we can't guarantee that other mods
-        //  won't call [InventorioAPI] BEFORE [InventorioNeoForge#onInitialize] has been invoked
+        // The reason why we do it this way is that we can't guarantee that other mods
+        // won't call [InventorioAPI] BEFORE [InventorioNeoForge#onInitialize] has been invoked
         InventorioAPI.getToolBeltSlotTemplate(InventorioAPI.SLOT_PICKAXE)?.addAllowingCondition { itemStack, _ ->
             testToolType(itemStack, ToolActions.PICKAXE_DIG)
         }

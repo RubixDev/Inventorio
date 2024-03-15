@@ -235,7 +235,7 @@ class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory) :
         val beltRange = getAvailableUtilityBeltRange()
         // If this is true, we send an item to the utility belt
         if (sourceSlot.id !in beltRange) {
-            if (insertItem(itemStackDynamic, beltRange.first, beltRange.last + 1, true)) {
+            if (insertItem(itemStackDynamic, beltRange.first, beltRange.last + 1, false)) {
                 if (inventoryAddon.player.world.isClient) {
                     InventorioNetworking.INSTANCE.c2sMoveItemToUtilityBelt(sourceSlot.id)
                 }
@@ -245,8 +245,8 @@ class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory) :
         }
         // If we're here, we're sending an item FROM the utility belt to the rest of the inventory
         val deepPocketsRange = getAvailableDeepPocketsRange()
-        if (insertItem(itemStackDynamic, mainInventoryRange.first, mainInventoryRange.last + 1, true)
-            || insertItem(itemStackDynamic, deepPocketsRange.first, deepPocketsRange.last + 1, true)
+        if (insertItem(itemStackDynamic, mainInventoryRange.first, mainInventoryRange.last + 1, false)
+            || insertItem(itemStackDynamic, deepPocketsRange.first, deepPocketsRange.last + 1, false)
         ) {
             if (inventoryAddon.player.world.isClient) {
                 InventorioNetworking.INSTANCE.c2sMoveItemToUtilityBelt(sourceSlot.id)

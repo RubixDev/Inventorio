@@ -70,7 +70,7 @@ object InventorioKeyHandler {
     }
 
     /**
-     * Returns [true] if vanilla hotbar scrolling has to be cancelled.
+     * Returns `true` if vanilla hotbar scrolling has to be cancelled.
      */
     fun scrollInHotbar(player: PlayerEntity, scrollAmount: Double): Boolean {
         val scrollMode = PlayerSettings.scrollWheelUtilityBelt.value as ScrollWheelUtilityBeltMode

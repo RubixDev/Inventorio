@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class InGameHudMixinHP {
     /**
      * This mixin calls the renderer of hotbar addons. Note: this mixin doesn't
-     * work in NeoForge and substituted with a NeoForge event.
+     * work in (Neo)Forge and is substituted with a (Neo)Forge event.
      */
     @Inject(method = "render", at = @At(value = "RETURN"))
     private void inventorioRenderHotbarAddons(DrawContext context, float tickDelta, CallbackInfo ci) {

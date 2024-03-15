@@ -45,12 +45,10 @@ public class PlayerManagerMixin {
         CallbackInfoReturnable<ServerPlayerEntity> cir
     ) {
         ServerPlayerEntity newPlayer = cir.getReturnValue();
-        MixinHelpers.withInventoryAddon(newPlayer, newAddon -> {
-            MixinHelpers.withInventoryAddon(oldPlayer, oldAddon -> {
-                newAddon.setSwappedHands(oldAddon.getSwappedHands());
-                newAddon.setSelectedUtility(oldAddon.getSelectedUtility());
-            });
-        });
+        MixinHelpers.withInventoryAddon(newPlayer, newAddon -> MixinHelpers.withInventoryAddon(oldPlayer, oldAddon -> {
+            newAddon.setSwappedHands(oldAddon.getSwappedHands());
+            newAddon.setSelectedUtility(oldAddon.getSelectedUtility());
+        }));
         InventorioNetworking.getInstance().s2cSelectUtilitySlot(newPlayer);
     }
 }

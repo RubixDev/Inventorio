@@ -16,8 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ClientPlayerInteractionManagerMixin {
     /**
      * The default implementation stops an item from being used if the vanilla
-     * "use" key isn't pressed. This mods adds an optional secondary use key,
-     * and this prevents the secondary item usage from being cancelled
+     * "use" key isn't pressed. This mod adds an optional secondary use key, and
+     * this prevents the secondary item usage from being cancelled
      */
     @Inject(method = "stopUsingItem", at = @At(value = "HEAD"), cancellable = true)
     private void inventorioStopUsingItem(PlayerEntity player, CallbackInfo ci) {
