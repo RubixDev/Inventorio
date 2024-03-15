@@ -1,0 +1,113 @@
+enchantment.inventorio:
+  deep_pockets: Grandes Poches
+  deep_pockets.desc: Ajoute une ligne d'inventaire au joueur par niveau.
+
+inventorio:
+  keys:
+    category: Inventorio
+    next_utility: Prochaine case de la main secondaire
+    prev_utility: Précédente case de la main secondaire
+    use_utility: Utiliser avec la main secondaire
+    empty_utility: Ne rien sélectionner dans la main secondaire
+    open_player_settings: Ouvrir les paramères Paramètres Inventorio du Joueur
+    open_global_settings: Ouvrir les paramères Paramètres Inventorio Globaux
+    rocket_boost: Déclencher une propusion aux feux d'artifice
+    combined:
+      with_use_item: 'Rattacher à: Utiliser un objet'
+      with_jump: 'Rattacher à: Sauter'
+
+  settings:
+    player:
+      title: Inventorio (Paramètres du Joueur)
+
+      can_throw_unloyal_trident: Peut lancer un Trident sans Loyauté
+      skip_empty_utility_slots: '"Prochaine/Précédente case de la main secondaire" saute les cases vides'
+      toggle_button: Bouton bascule d'inventaire Inventorio
+
+      dark_theme: Interface Inventorio sombre
+      dark_theme.tooltip: Compatibilité avec les mods et packs de ressources de thèmes sombres
+
+      use_item_applies_to_offhand: "\"Utiliser un objet\" s'applique à la main secondaire"
+      use_item_applies_to_offhand.tooltip: |-
+        Autoriser "Utiliser un objet" Vanilla à utiliser la main secondaire.
+        Désactivé par défaut a cause du bouton "Utiliser avec la main secondaire".
+        N'est pas mutuellement exclusif avec la touche pour "Utiliser avec la main secondaire".
+
+      aggressive_button_removal: Forcer a retirer les boutons d'inventaire
+      aggressive_button_removal.tooltip: |-
+        Certains mods peuvent trouver un moyen d'ajouter leurs boutons
+        d'inventaires dans l'inventaire Inventorio.
+        Si ils causent des problèmes, cette option elèvera les boutons.
+
+      segmented_hotbar_mode: Mode barre d'action segmentée
+      segmented_hotbar_mode.OFF: §cDésactivé
+      segmented_hotbar_mode.ONLY_VISUAL: §dVisuel Seulement
+      segmented_hotbar_mode.ON: §aActivé
+      segmented_hotbar_mode.ONLY_FUNCTION: §bFonction seulement
+
+      scroll_wheel_utility_belt_mode: Relierla molette barre de la barre d'action de la seconde main
+      scroll_wheel_utility_belt_mode.OFF: §cDésactivé
+      scroll_wheel_utility_belt_mode.REGULAR: §aSens par défaut
+      scroll_wheel_utility_belt_mode.REVERSE: §dSens inversé
+
+      swapped_hands: Inverser la main Principale et Secondaire
+      swapped_hands.tooltip: |-
+        Assigne la barre la barre d'action à la
+        main secondaire, et vice-versa.
+      swapped_hands.disabled: §cInverser la main Principale et Secondaire [Désactivé]
+      swapped_hands.disabled.tooltip: |-
+        Assigne la barre la barre d'action à la
+        main secondaire, et vice-versa.
+        §cActuellement désactivé per les Paramètres Globaux!
+
+    global:
+      title: Inventorio (Paramètres Globaux)
+      description: |-
+        §fChanger ces paramètres modifira profondément le fonctionnement du mod/jeu.
+        L'utilisation prévue est pour rendre ce mod plus compatible.
+        Rejoindre un serveur moddé peut passer outre ces paramètres.
+        §cIl est fortement recommandé de redémarrer Minecraft après avoir changé ces paramètres.
+      disabled_by_server: §cImpossible de définir les Paramètres Globaux en étant sur un serveur.
+
+      expanded_ender_chest: Coffre de L'Ender Étendu
+      infinity_bow_no_arrows: Les Arcs Infinité ne requièrent pas de flèches
+      totem_from_utility_belt: Les Totemes peuvent s'activer depuis la barre d'action de la seconde main
+      allow_swapped_hands: Autoriser les mains inversés
+
+      2x2_crafting_grid: Activer la grille de fabrication du Joueur
+      2x2_crafting_grid.tooltip: |-
+        Certain mods font que la grille de fabrication 2x2 de l'inventaire
+        des joueurs duplique des objets. Si rien d'autre ne fonctionne,
+        désactiver la grille de fabrication d'inventaire pourrait être une option.
+
+      utility_belt_short_default_size: Des cases supplémentaires de barre d'action secondaire requièrent Grandes Poches
+      utility_belt_short_default_size.tooltip: |-
+        Par défaut, l'enchantement grandes poches augmente
+        la capacité de la barre d'action secondaire de 4 à 8.
+        Quand désactivée, cette option donne la capacité maximale inconditionellement.
+
+      tool_belt_mode: Activer le mode Ceinture à Outils
+      tool_belt_mode.tooltip: |-
+        D'autre mods pouvent ajouter leurs cases d'outils
+        et peuvent avoir besoin de leur existance.
+        §dCases Moddés Seulement§r est une option pour ces cas ci.
+        Sans ce type de mods, ce paramètres agit comme §cDésactivé §ret préféré par dessus.
+      tool_belt_mode.ENABLED: §aActivé
+      tool_belt_mode.NO_VANILLA_SLOTS_ONLY: §dCases Moddés Seulement
+      tool_belt_mode.DISABLED: §cDésactivé
+
+      deep_pockets_in_trades: Livre enchanté Grandes Poches dans les échanges avec villageois
+      deep_pockets_book_craft: Recette de fabrication pour un Livre enchanté Grandes Poches
+      deep_pockets_in_random_selection: Livre enchanté Grandes Poches dans une sélection aléatoire
+
+      sync_restart_prompt: |-
+        §eAttention!
+        §eCe serveur utilise des Paramètres Globaux différents des votres:§7
+        %s
+        §7il est fortement recommandé de syncroniser vos Paramètres Globaux et de redémarrer le jeu.
+      sync_restart_prompt.hint: §cNe pas redémarrer le jeu causera des problèmes!
+      sync_restart_toggle: Syncroniser mes paramètres?
+      sync_restart_toggle.SYNC_AND_EXIT: §aSyncroniser & Quitter le jeu
+      sync_restart_toggle.SYNC_WITHOUT_EXIT: §cSyncroniser, Ne pas Quitter le jeu
+      sync_restart_toggle.DO_NOTHING: §cNe rien faire
+      sync_restart_toggle.PLACEHOLDER: §7CLIQUE ICI

@@ -1,0 +1,111 @@
+enchantment.inventorio:
+  deep_pockets: Deep Pockets
+  deep_pockets.desc: Adds an additional player inventory row per level.
+
+inventorio:
+  keys:
+    category: Inventorio
+    next_utility: Next Utility
+    prev_utility: Previous Utility
+    use_utility: Use Utility
+    empty_utility: Switch to Empty Utility Slot
+    open_player_settings: Open Inventorio Player Settings
+    open_global_settings: Open Inventorio Global Settings
+    rocket_boost: Firework Rocket Boost
+    combined:
+      with_use_item: 'Co-Bind: Use Item'
+      with_jump: 'Co-Bind: Jump'
+
+  settings:
+    player:
+      title: Inventorio (Player Settings)
+
+      can_throw_unloyal_trident: Throwing Trident without Loyalty
+      skip_empty_utility_slots: '"Prev/Next Utility" Skips Empty Slots'
+      toggle_button: Inventory Screen Toggle Button
+
+      dark_theme: Dark Inventorio Player UI
+      dark_theme.tooltip: Compatibility with dark theme mods and resource packs
+
+      use_item_applies_to_offhand: '"Use Item" Applies To Offhand'
+      use_item_applies_to_offhand.tooltip: |-
+        Allow the Vanilla "Use Item" to use the Offhand.
+        Disabled by default due to "Use Utility" button.
+        Not mutually exclusive with "Use Utility" keybinding.
+
+      aggressive_button_removal: Aggressive Button Removal
+      aggressive_button_removal.tooltip: |-
+        Some mods may find their way to modify Inventorio Screen.
+        If it causes issues, this setting will remove them.
+
+      segmented_hotbar_mode: Segmented Hotbar Mode
+      segmented_hotbar_mode.OFF: §cNo
+      segmented_hotbar_mode.ONLY_VISUAL: §dVisual Only
+      segmented_hotbar_mode.ON: §aYes
+      segmented_hotbar_mode.ONLY_FUNCTION: §bFunction Only
+
+      scroll_wheel_utility_belt_mode: Rebind Scroll Wheel to the Utility Belt
+      scroll_wheel_utility_belt_mode.OFF: §cNo
+      scroll_wheel_utility_belt_mode.REGULAR: §aRegular Order
+      scroll_wheel_utility_belt_mode.REVERSE: §dReverse Order
+
+      swapped_hands: Swap Main- and Offhand
+      swapped_hands.tooltip: |-
+        Assign the Hotbar to the Offhand,
+        and the Utility Belt to the Main Hand.
+      swapped_hands.disabled: §cSwap Main- and Offhand [Disabled]
+      swapped_hands.disabled.tooltip: |-
+        Assign the Hotbar to the Offhand,
+        and the Utility Belt to the Main Hand.
+        §cCurrently disabled by Global Settings!
+
+    global:
+      title: Inventorio (Global Settings)
+      description: |-
+        §fChanging these settings will have a game-wide effect.
+        The intended use is mod compatibility.
+        Joining a modded server may override these settings.
+        §cIt's strongly recommended to restart Minecraft after changing these settings.
+      disabled_by_server: §cCan't set Global Settings while playing on a server.
+
+      expanded_ender_chest: Expanded Ender Chest
+      infinity_bow_no_arrows: Infinity Bow Requires No Arrows
+      totem_from_utility_belt: Totem Activates from the Utility Belt
+      allow_swapped_hands: Allow Swapped Hands
+
+      2x2_crafting_grid: Enable Player's Crafting Grid
+      2x2_crafting_grid.tooltip: |-
+        Some mods cause Player's 2x2 crafting grid to duplicate items.
+        If nothing else helps, turning it off could be an option.
+
+      utility_belt_short_default_size: Extra Utility Belt Slots Require Deep Pockets
+      utility_belt_short_default_size.tooltip: |-
+        By default, the Deep Pockets Enchantment increases
+        the Utility Belt capacity from 4 to 8.
+        When disabled, the full capacity is given unconditionally.
+
+      tool_belt_mode: Enable Toolbelt
+      tool_belt_mode.tooltip: |-
+        Other mods may add their own Toolbelt slots
+        and may rely on its presence.
+        §dModded Slots Only§r is an option for such a case.
+        With no such mods, acts identical to §cNo §rand preferred over it.
+      tool_belt_mode.ENABLED: §aYes
+      tool_belt_mode.NO_VANILLA_SLOTS_ONLY: §dModded Slots Only
+      tool_belt_mode.DISABLED: §cNo
+
+      deep_pockets_in_trades: Deep Pockets Book in Villager Trades
+      deep_pockets_book_craft: Deep Pockets Book Crafting Recipe
+      deep_pockets_in_random_selection: Deep Pockets Book in Random Selection
+
+      sync_restart_prompt: |-
+        §eWarning!
+        §eThis server uses different global settings than you do:§7
+        %s
+        §7It's strongly recommended to sync your global settings and restart the game.
+      sync_restart_prompt.hint: §cNot restarting the game will cause bugs!
+      sync_restart_toggle: Sync my settings?
+      sync_restart_toggle.SYNC_AND_EXIT: §aSync & Exit
+      sync_restart_toggle.SYNC_WITHOUT_EXIT: §cSync, Don't Exit
+      sync_restart_toggle.DO_NOTHING: §cDo Nothing
+      sync_restart_toggle.PLACEHOLDER: §7CLICK HERE

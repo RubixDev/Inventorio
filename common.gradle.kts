@@ -217,6 +217,12 @@ tasks.named<ProcessResources>("processResources") {
     }
 }
 
+// https://github.com/Fallen-Breath/yamlang
+yamlang {
+    targetSourceSets = listOf(sourceSets.main.get())
+    inputDir = "assets/${props.mod_id}/lang"
+}
+
 base {
     archivesName = "${props.archives_base_name}-mc${props.minecraft_version}-$modBrand"
 }

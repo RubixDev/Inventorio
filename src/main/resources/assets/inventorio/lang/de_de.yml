@@ -1,0 +1,112 @@
+enchantment.inventorio:
+  deep_pockets: Tiefe Taschen
+  deep_pockets.desc: Fügt eine zusätzliche Spielerinventarreihe pro Stufe hinzu.
+
+inventorio:
+  keys:
+    category: Inventorio
+    next_utility: Nächste Utensilie
+    prev_utility: Vorherige Utensilie
+    use_utility: Utensilie verwenden
+    empty_utility: Zu leerem Utensilien-Slot wechseln
+    open_player_settings: Inventorio-Player-Einstellungen öffnen
+    open_global_settings: Globale Inventorio-Einstellungen öffnen
+    rocket_boost: Feuerwerk-Raketen-Boost
+    combined:
+      with_use_item: 'Kombiniert: Benutzen'
+      with_jump: 'Kombiniert: Springen'
+
+  settings:
+    player:
+      title: Inventorio (Spielereinstellungen)
+
+      can_throw_unloyal_trident: Dreizack ohne Loyalität werfen
+      skip_empty_utility_slots: '"Vorherige/Nächste Utensilie" überspringt leere Slots'
+      toggle_button: Umschalttaste für Inventarbildschirm
+
+      dark_theme: Dunkle Inventorio Spieler Oberfläche
+      dark_theme.tooltip: Kompatibilität mit Mods und Ressourcenpaketen für dunkle Nutzeroberflächen
+
+      use_item_applies_to_offhand: '"Benutzen" gilt für Zweithand'
+      use_item_applies_to_offhand.tooltip: |-
+        Erlaubt dem Vanilla "Benutzen" die Nebenhand zu verwenden.
+        Standardmäßig deaktiviert aufgrund der Tastenbindung "Utensilie verwenden".
+        Nicht gegenseitig ausschließend mit der Tastenbindung "Utensilie verwenden".
+
+      aggressive_button_removal: Aggressive Schaltflächenentfernung
+      aggressive_button_removal.tooltip: |-
+        Einige Mods können einen Weg finden den Inventorio-Bildschirm zu modifizieren.
+        Wenn dies Probleme verursacht, werden sie mit dieser Einstellung entfernt.
+
+      segmented_hotbar_mode: Segmentierter Hotbar-Modus
+      segmented_hotbar_mode.OFF: §cNein
+      segmented_hotbar_mode.ONLY_VISUAL: §dNur visuell
+      segmented_hotbar_mode.ON: §aJa
+      segmented_hotbar_mode.ONLY_FUNCTION: §bNur Funktion
+
+      scroll_wheel_utility_belt_mode: Scrollrad an den Utensiliengürtel binden
+      scroll_wheel_utility_belt_mode.OFF: §cNein
+      scroll_wheel_utility_belt_mode.REGULAR: §aNormale Reihenfolge
+      scroll_wheel_utility_belt_mode.REVERSE: §dUmgekehrte Reihenfolge
+
+      swapped_hands: Tausche Haupt- und Zweithand
+      swapped_hands.tooltip: |-
+        Weisen Sie die Hotbar der Zweithand
+        und den Utensiliengürtel der Haupthand zu.
+      swapped_hands.disabled: §cTausche Haupt- und Zweithand [Deaktiviert]
+      swapped_hands.disabled.tooltip: |-
+        Weisen Sie die Hotbar der Zweithand
+        und den Utensiliengürtel der Haupthand zu.
+        §cAktuell deaktiviert in den gloabalen Einstellungen!
+
+    global:
+      title: Inventorio (Globale Einstellungen)
+      description: |-
+        §fDie Änderung dieser Einstellungen wirkt sich auf das gesamte Spiel aus.
+        Der Verwendungszweck ist Mod-Kompatibilität.
+        Der Beitritt zu einem modifizierten Server kann diese Einstellungen außer Kraft setzen.
+        §cEs wird dringend empfohlen, Minecraft neu zu starten, nachdem diese Einstellungen geändert wurden.
+      disabled_by_server: §Globale Einstellungen können beim Spielen auf einem Server nicht gesetzt werden.
+
+      expanded_ender_chest: Erweiterte Ender-Truhe
+      infinity_bow_no_arrows: Unendlichkeitsbogen benötigt keine Pfeile
+      totem_from_utility_belt: Totem wird durch den Utensiliengürtel aktiviert
+      allow_swapped_hands: Vertauschte Hände zulassen
+
+      2x2_crafting_grid: Enable Player's Crafting Grid
+      2x2_crafting_grid.tooltip: |-
+        Some mods cause Player's 2x2 crafting grid to duplicate items.
+        If nothing else helps, turning it off could be an option.
+
+      utility_belt_short_default_size: Extra Utensiliengürtel Slots erfordern "Tiefe Taschen"
+      utility_belt_short_default_size.tooltip: |-
+        Standardmäßig erhöht die Verzauberung "Tiefe Taschen"
+        die Kapazität des Utensiliengürtels von 4 auf 8.
+        Wenn deaktiviert, wird die volle Kapazität bedingungslos gewährt.
+
+      tool_belt_mode: Aktiviere Werkzeuggürtel
+      tool_belt_mode.tooltip: |-
+        Andere Mods fügen möglicherweise eigene Werkzeuggürtel-Slots
+        hinzu und sind auf dessen Vorhandensein angewiesen.
+        §dNur modifizierte Slots§r ist eine Option für einen solchen Fall.
+        Ohne solche Mods verhält es sich identisch zu §cNein §rund ist bevorzugt.
+      tool_belt_mode.ENABLED: §aJa
+      tool_belt_mode.NO_VANILLA_SLOTS_ONLY: §dNur modifizierte Slots
+      tool_belt_mode.DISABLED: §cNein
+
+      deep_pockets_in_trades: '"Tiefe Taschen" Buch bei Villager Handel'
+      deep_pockets_book_craft: '"Tiefe Taschen" Buch Handwerksrezept'
+      deep_pockets_in_random_selection: '"Tiefe Taschen" Buch in zufälliger Auswahl'
+
+      sync_restart_prompt: |-
+        §eWarnung!
+        §eDieser Server verwendet andere globale Einstellungen als Sie:§7
+        %s
+        §7Es wird dringend empfohlen, Ihre globalen Einstellungen zu
+        synchronisieren und das Spiel neu zu starten.
+      sync_restart_prompt.hint: §cDas Spiel nicht neu zu starten, führt zu Fehlern!
+      sync_restart_toggle: Meine Einstellungen synchronisieren?
+      sync_restart_toggle.SYNC_AND_EXIT: §aSynchronisieren und Schließen
+      sync_restart_toggle.SYNC_WITHOUT_EXIT: §cSynchronisieren
+      sync_restart_toggle.DO_NOTHING: §cNichts tun
+      sync_restart_toggle.PLACEHOLDER: §7HIER KLICKEN

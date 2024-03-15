@@ -1,0 +1,111 @@
+enchantment.inventorio:
+  deep_pockets: Bolsos fundos
+  deep_pockets.desc: Adiciona uma linha de inventário a cada nível.
+
+inventorio:
+  keys:
+    category: Inventorio
+    next_utility: Próxima utilidade
+    prev_utility: Utilidade anterior
+    use_utility: Usar utilidade
+    empty_utility: Trocar para um espaço de utilidade vazio
+    open_player_settings: Abrir as configurações do jogador
+    open_global_settings: Abrir as configuraões globais
+    rocket_boost: Impulso dos fogos de artifício
+    combined:
+      with_use_item: 'Co-vincular: Usar utilidade'
+      with_jump: 'Co-vincular: Pulo'
+
+  settings:
+    player:
+      title: Configurações do jogador
+
+      can_throw_unloyal_trident: Lançar tridente sem lealdade
+      skip_empty_utility_slots: '"Anterior/Próxima utilidade" ignora espaços vazios'
+      toggle_button: Botão de alternar a tela de inventário
+
+      # dark_theme: Dark Inventorio Player UI
+      # dark_theme.tooltip: Compatibility with dark theme mods and resource packs
+
+      use_item_applies_to_offhand: '"Usar item" também se aplica à mão secundária'
+      use_item_applies_to_offhand.tooltip: |-
+        Permite que a ação padrão de "Usar item" seja desbloqueada para a mão secundária.
+        Desabilitado por padrão por causa do botão "Usar utilidade".
+        Não é multuamente exclusive com o atalho de teclado do "Usar utilidade".
+
+      aggressive_button_removal: Remoção agressiva do botão
+      aggressive_button_removal.tooltip: |-
+        Alguns mods conseguem chegar a modificar a tela do Inventorio.
+        Caso isso gere problemas, esta opção removerá estas modificações.
+
+      segmented_hotbar_mode: Modo de barra rápida segmentada
+      segmented_hotbar_mode.OFF: §cNão
+      segmented_hotbar_mode.ONLY_VISUAL: §dApenas visual
+      segmented_hotbar_mode.ON: §aSim
+      segmented_hotbar_mode.ONLY_FUNCTION: §bApenas função
+
+      scroll_wheel_utility_belt_mode: Vincular a roda do mouse para o cinto de utilidades
+      scroll_wheel_utility_belt_mode.OFF: §cNão
+      scroll_wheel_utility_belt_mode.REGULAR: §aOrdem normal
+      scroll_wheel_utility_belt_mode.REVERSE: §dOrdem reversa
+
+      swapped_hands: Alterna entre mão principal e secundária
+      swapped_hands.tooltip: |-
+        Designa a barra rápida para a mão secundária
+        e o cinto de utilidades para a mão principal.
+      swapped_hands.disabled: §cAlterna entre mão principal e secundária [desabilitado]
+      swapped_hands.disabled.tooltip: |-
+        Designa a barra rápida para a mão secundária,
+        e o cinto de utilidades para a mão principal.
+        §cAtualmente desabilitado nas configuraões globais!
+
+    global:
+      title: Configurações globais
+      description: |-
+        §fAlterar estas opções poderá gerar efeitos profundos no jogo.
+        A intenção aqui é maior compatibilidade.
+        Juntar-se a um servidor com mods pode sobrepor estas configurações.
+        §cÉ altamente recomendável que se reinicie o Minecraft após alterá-las.
+      disabled_by_server: §cNão é possível alterar as configurações globais estando num servidor.
+
+      expanded_ender_chest: Baú de Ender expandido
+      infinity_bow_no_arrows: Arcos com Infinidade não precisam de flechas
+      totem_from_utility_belt: Totens são ativados pelo cinto de utilidades
+      allow_swapped_hands: Permitir mãos trocadas
+
+      # 2x2_crafting_grid: Enable Player's Crafting Grid
+      # 2x2_crafting_grid.tooltip: |-
+      #   Some mods cause Player's 2x2 crafting grid to duplicate items.
+      #   If nothing else helps, turning it off could be an option.
+
+      utility_belt_short_default_size: Espaços adicionais no cinto de utilidades requerem Bolsos fundos
+      utility_belt_short_default_size.tooltip: |-
+        Por padrão, o encantamento Bolsos fundos aumenta
+        a capacidade do cinto de utilidades de 4 para 8.
+        Ao desabilitar, ele sempre terá a máxima capacidade.
+
+      tool_belt_mode: Habiliar o cinto de utilidades
+      tool_belt_mode.tooltip: |-
+        Outros mods podem adicionar seus próprios espaços de cinto de utilidades
+        e podem depender da sua presença.
+        §dEspaços de mods, apenas§r esta é uma opção para esses casos.
+        Sem esses mods, é idêntico ao §cNão §re é a opção preferida ao invés da outra.
+      tool_belt_mode.ENABLED: §aSim
+      tool_belt_mode.NO_VANILLA_SLOTS_ONLY: §dEspaços de mods, apenas
+      tool_belt_mode.DISABLED: §cNão
+
+      deep_pockets_in_trades: Livros encatnados com Bolsos fundos em trocas com aldeões
+      # deep_pockets_book_craft: Deep Pockets Book Crafting Recipe
+      deep_pockets_in_random_selection: Livros encantados com Bolsos fundos em seleções automáticas
+
+      sync_restart_prompt: |-
+        Atenção!
+        §eEste servidor utiliza configuraões globais diferentes das suas:§7
+        %s
+        §7É altamente recomendável que você sincronize as suas configuraões globais e reinicie seu jogo.
+      sync_restart_prompt.hint: §cNão reiniciar o jogo pode acarretar em erros!
+      sync_restart_toggle: Sincronizar minhas configurações?
+      sync_restart_toggle.SYNC_AND_EXIT: §aSincornizar e sair
+      sync_restart_toggle.SYNC_WITHOUT_EXIT: §cSincronizar, mas não sair
+      sync_restart_toggle.DO_NOTHING: §cFazer nada
+      sync_restart_toggle.PLACEHOLDER: §7CLIQUE AQUI
