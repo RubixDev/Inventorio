@@ -1,9 +1,9 @@
 {
   "required": true,
-  "package": "me.lizardofoz.inventorio.mixin",
+  "package": "de.rubixdev.inventorio.mixin",
   "compatibilityLevel": "JAVA_17",
   "minVersion": "0.8",
-  "plugin": "me.lizardofoz.inventorio.InventorioMixinPlugin",
+  "plugin": "de.rubixdev.inventorio.InventorioMixinPlugin",
   "mixins": [
     "ExperienceOrbEntityMixin",
     "PlayerEntityMixin",

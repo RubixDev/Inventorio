@@ -1,9 +1,14 @@
 package me.lizardofoz.inventorio.api;
 
-import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
+import de.rubixdev.inventorio.player.PlayerInventoryAddon;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * @deprecated Use {@link de.rubixdev.inventorio.api.InventorioTickHandler}
+ *             instead.
+ */
+@Deprecated(forRemoval = true, since = "1.10.0")
 @FunctionalInterface
 public interface InventorioTickHandler {
     /**
@@ -11,7 +16,12 @@ public interface InventorioTickHandler {
      * within the current play session.<br>
      * The size of the ToolBelt may depend on the mods currently installed and
      * can change across restarts.
+     * 
+     * @deprecated Use
+     *             {@link de.rubixdev.inventorio.api.InventorioTickHandler#tick}
+     *             instead.
      */
+    @Deprecated(forRemoval = true, since = "1.10.0")
     void tick(
         @NotNull PlayerInventoryAddon playerInventoryAddon,
         @NotNull InventorioAddonSection addonSection,

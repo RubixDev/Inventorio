@@ -14,11 +14,11 @@
     "icon": "icon.png",
     "entrypoints": {
         "main": [{
-            "value": "me.lizardofoz.inventorio.InventorioFabric",
+            "value": "de.rubixdev.inventorio.InventorioFabric",
             "adapter": "kotlin"
         }],
         "modmenu": [{
-            "value": "me.lizardofoz.inventorio.integration.ModMenuIntegration",
+            "value": "de.rubixdev.inventorio.integration.ModMenuIntegration",
             "adapter": "kotlin"
         }]
     },

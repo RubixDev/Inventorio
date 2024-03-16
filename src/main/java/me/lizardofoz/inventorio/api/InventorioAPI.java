@@ -1,11 +1,10 @@
 package me.lizardofoz.inventorio.api;
 
 import com.google.common.collect.ImmutableList;
-import me.lizardofoz.inventorio.client.ui.InventorioScreen;
-import me.lizardofoz.inventorio.config.GlobalSettings;
-import me.lizardofoz.inventorio.player.InventorioScreenHandler;
-import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
-import me.lizardofoz.inventorio.util.ToolBeltMode;
+import de.rubixdev.inventorio.client.ui.InventorioScreen;
+import de.rubixdev.inventorio.config.GlobalSettings;
+import de.rubixdev.inventorio.player.InventorioScreenHandler;
+import de.rubixdev.inventorio.player.PlayerInventoryAddon;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,69 +14,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
-@SuppressWarnings("unused")
+/**
+ * @deprecated Use {@link de.rubixdev.inventorio.api.InventorioAPI} instead.
+ */
+@SuppressWarnings({ "unused", "removal" })
+@Deprecated(forRemoval = true, since = "1.10.0")
 public final class InventorioAPI {
-    public static final String SLOT_PICKAXE = "pickaxe";
-    public static final String SLOT_SWORD = "sword";
-    public static final String SLOT_AXE = "axe";
-    public static final String SLOT_SHOVEL = "shovel";
-    public static final String SLOT_HOE = "hoe";
-
-    static {
-        if (GlobalSettings.toolBeltMode.getValue() == ToolBeltMode.ENABLED) {
-            InventorioAPI
-                .registerToolBeltSlotIfNotExists(
-                    InventorioAPI.SLOT_PICKAXE,
-                    new Identifier("inventorio", "textures/gui/empty/pickaxe.png")
-                )
-                .addAllowingCondition(((itemStack, addon) -> itemStack.getItem() instanceof PickaxeItem))
-                .addAllowingTag(new Identifier("inventorio", "pickaxes"))
-                .addDenyingTag(new Identifier("inventorio", "pickaxes_blacklist"));
-
-            InventorioAPI
-                .registerToolBeltSlotIfNotExists(
-                    InventorioAPI.SLOT_SWORD,
-                    new Identifier("inventorio", "textures/gui/empty/sword.png")
-                )
-                .addAllowingCondition(
-                    ((itemStack, addon) -> itemStack.getItem() instanceof SwordItem
-                        || itemStack.getItem() instanceof TridentItem)
-                )
-                .addAllowingTag(new Identifier("inventorio", "swords"))
-                .addDenyingTag(new Identifier("inventorio", "swords_blacklist"));
-
-            InventorioAPI
-                .registerToolBeltSlotIfNotExists(
-                    InventorioAPI.SLOT_AXE,
-                    new Identifier("inventorio", "textures/gui/empty/axe.png")
-                )
-                .addAllowingCondition(((itemStack, addon) -> itemStack.getItem() instanceof AxeItem))
-                .addAllowingTag(new Identifier("inventorio", "axes"))
-                .addDenyingTag(new Identifier("inventorio", "axes_blacklist"));
-
-            InventorioAPI
-                .registerToolBeltSlotIfNotExists(
-                    InventorioAPI.SLOT_SHOVEL,
-                    new Identifier("inventorio", "textures/gui/empty/shovel.png")
-                )
-                .addAllowingCondition(((itemStack, addon) -> itemStack.getItem() instanceof ShovelItem))
-                .addAllowingTag(new Identifier("inventorio", "shovels"))
-                .addDenyingTag(new Identifier("inventorio", "shovels_blacklist"));
-
-            InventorioAPI
-                .registerToolBeltSlotIfNotExists(
-                    InventorioAPI.SLOT_HOE,
-                    new Identifier("inventorio", "textures/gui/empty/hoe.png")
-                )
-                .addAllowingCondition(
-                    ((itemStack, addon) -> itemStack.getItem() instanceof HoeItem
-                        || itemStack.getItem() instanceof ShearsItem)
-                )
-                .addAllowingTag(new Identifier("inventorio", "hoes"))
-                .addDenyingTag(new Identifier("inventorio", "hoes_blacklist"));
-        }
-    }
-
     private InventorioAPI() {}
 
     /**
@@ -89,29 +31,53 @@ public final class InventorioAPI {
      * Unfortunately, because the vanilla ticking needs to be supplied with a
      * VANILLA slot id, it denies the possibility to inject Inventorio ticking
      * into it.
+     *
+     * @deprecated Use
+     *             {@link de.rubixdev.inventorio.api.InventorioAPI#registerInventoryTickHandler}
+     *             instead
      */
+    @Deprecated(forRemoval = true, since = "1.10.0")
     public static void registerInventoryTickHandler(
         @NotNull Identifier customIdentifier,
         @NotNull InventorioTickHandler tickHandler
     ) {
-        PlayerInventoryAddon.registerTickHandler(customIdentifier, tickHandler);
+        de.rubixdev.inventorio.api.InventorioAPI.registerInventoryTickHandler(
+            customIdentifier,
+            (addon, section, stack, index) -> tickHandler
+                .tick(addon, InventorioAddonSection.from(section), stack, index)
+        );
     }
 
-    /** Note: each consumer get ran within its own try-catch block */
+    /**
+     * Note: each consumer get ran within its own try-catch block
+     * 
+     * @deprecated Use
+     *             {@link de.rubixdev.inventorio.api.InventorioAPI#registerScreenHandlerOpenConsumer}
+     *             instead
+     */
+    @Deprecated(forRemoval = true, since = "1.10.0")
     public static void registerScreenHandlerOpenConsumer(
         @NotNull Identifier customIdentifier,
         Consumer<InventorioScreenHandler> screenHandlerConsumer
     ) {
-        InventorioScreenHandler.registerOpenConsumer(customIdentifier, screenHandlerConsumer);
+        de.rubixdev.inventorio.api.InventorioAPI
+            .registerScreenHandlerOpenConsumer(customIdentifier, screenHandlerConsumer);
     }
 
-    /** Note: each consumer get ran within its own try-catch block */
+    /**
+     * Note: each consumer get ran within its own try-catch block
+     * 
+     * @deprecated Use
+     *             {@link de.rubixdev.inventorio.api.InventorioAPI#registerInventoryUIInitConsumer}
+     *             instead
+     */
+    @Deprecated(forRemoval = true, since = "1.10.0")
     @Environment(EnvType.CLIENT)
     public static void registerInventoryUIInitConsumer(
         @NotNull Identifier customIdentifier,
         Consumer<InventorioScreen> uiConsumer
     ) {
-        InventorioScreen.registerInitConsumer(customIdentifier, uiConsumer);
+        de.rubixdev.inventorio.api.InventorioAPI.registerInventoryUIInitConsumer(customIdentifier, uiConsumer);
     }
 
     /**
@@ -128,13 +94,17 @@ public final class InventorioAPI {
      *                               initialization.<br>
      *                               No new ToolBelt slots can be added after
      *                               the first player has been spawned.
+     * @deprecated Use
+     *             {@link de.rubixdev.inventorio.api.InventorioAPI#registerToolBeltSlotIfNotExists}
+     *             instead
      */
+    @Deprecated(forRemoval = true, since = "1.10.0")
     @Nullable public static ToolBeltSlotTemplate registerToolBeltSlotIfNotExists(
         @NotNull String slotName,
         @NotNull Identifier emptyIcon
     ) {
-        return PlayerInventoryAddon
-            .registerToolBeltTemplateIfNotExists(slotName, new ToolBeltSlotTemplate(slotName, emptyIcon));
+        return ToolBeltSlotTemplate
+            .of(de.rubixdev.inventorio.api.InventorioAPI.registerToolBeltSlotIfNotExists(slotName, emptyIcon));
     }
 
     /**
@@ -145,9 +115,13 @@ public final class InventorioAPI {
      * 
      * @param slotName Unique string id for the slot. Default slots available at
      *                 {@link InventorioAPI} constants.
+     * @deprecated Use
+     *             {@link de.rubixdev.inventorio.api.InventorioAPI#getToolBeltSlotTemplate}
+     *             instead
      */
+    @Deprecated(forRemoval = true, since = "1.10.0")
     @Nullable public static ToolBeltSlotTemplate getToolBeltSlotTemplate(@NotNull String slotName) {
-        return PlayerInventoryAddon.getToolBeltTemplate(slotName);
+        return ToolBeltSlotTemplate.of(de.rubixdev.inventorio.api.InventorioAPI.getToolBeltSlotTemplate(slotName));
     }
 
     /**
@@ -157,12 +131,16 @@ public final class InventorioAPI {
      * slots might be missing.
      * 
      * @return ItemStack.Empty if no fitting slot was found
+     * @deprecated Use
+     *             {@link de.rubixdev.inventorio.api.InventorioAPI#findFittingToolBeltStack}
+     *             instead
      */
+    @Deprecated(forRemoval = true, since = "1.10.0")
     @NotNull public static ItemStack findFittingToolBeltStack(
         @NotNull PlayerInventoryAddon playerInventoryAddon,
         @NotNull ItemStack sampleStack
     ) {
-        return playerInventoryAddon.findFittingToolBeltStack(sampleStack);
+        return de.rubixdev.inventorio.api.InventorioAPI.findFittingToolBeltStack(playerInventoryAddon, sampleStack);
     }
 
     /**
@@ -172,22 +150,41 @@ public final class InventorioAPI {
      * slots might be missing.
      * 
      * @return -1 if no fitting slot was found
+     * @deprecated Use
+     *             {@link de.rubixdev.inventorio.api.InventorioAPI#findFittingToolBeltIndex}
+     *             instead
      */
+    @Deprecated(forRemoval = true, since = "1.10.0")
     public static int findFittingToolBeltIndex(
         @NotNull PlayerInventoryAddon playerInventoryAddon,
         @NotNull ItemStack sampleStack
     ) {
-        return playerInventoryAddon.findFittingToolBeltIndex(sampleStack);
+        return de.rubixdev.inventorio.api.InventorioAPI.findFittingToolBeltIndex(playerInventoryAddon, sampleStack);
     }
 
     /**
      * @see InventorioAPI#registerToolBeltSlotIfNotExists
+     * @deprecated Use
+     *             {@link de.rubixdev.inventorio.api.InventorioAPI#getToolBeltTemplates}
+     *             instead
      */
+    @Deprecated(forRemoval = true, since = "1.10.0")
     @NotNull public static ImmutableList<ToolBeltSlotTemplate> getToolBeltTemplates() {
-        return PlayerInventoryAddon.getToolBeltTemplates();
+        return ImmutableList.copyOf(
+            de.rubixdev.inventorio.api.InventorioAPI.getToolBeltTemplates()
+                .stream()
+                .map(ToolBeltSlotTemplate::of)
+                .toList()
+        );
     }
 
+    /**
+     * @deprecated Use
+     *             {@link de.rubixdev.inventorio.api.InventorioAPI#getInventoryAddon}
+     *             instead
+     */
+    @Deprecated(forRemoval = true, since = "1.10.0")
     @Nullable public static PlayerInventoryAddon getInventoryAddon(@NotNull PlayerEntity playerEntity) {
-        return PlayerInventoryAddon.getInventoryAddon(playerEntity);
+        return de.rubixdev.inventorio.api.InventorioAPI.getInventoryAddon(playerEntity);
     }
 }
