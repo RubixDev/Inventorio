@@ -10,6 +10,7 @@
     "PlayerInventoryMixin",
     "PlayerManagerMixin",
     "ServerPlayNetworkHandlerMixin",
+    "ServerPlayerInventory_ScreenHandlerSyncHandlerMixin",
     "accessor.CraftingScreenHandlerAccessor",
     "accessor.SimpleInventoryAccessor",
     "accessor.SlotAccessor",

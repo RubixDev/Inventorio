@@ -52,6 +52,11 @@ abstract class PlayerInventoryExtension protected constructor(val player: Player
         }
     }
 
+    fun updateState() {
+        val stacksToUpdate = stacks.withIndex().associate { (index, stack) -> index to stack }
+        InventorioNetworking.INSTANCE.s2cUpdateAddonStacks(player as ServerPlayerEntity, stacksToUpdate)
+    }
+
     @Environment(EnvType.CLIENT)
     fun receiveStacksUpdateS2C(updatedStacks: Map<Int, ItemStack>) {
         for ((index, stack) in updatedStacks)
@@ -59,8 +64,10 @@ abstract class PlayerInventoryExtension protected constructor(val player: Player
     }
 
     fun cloneFrom(oldAddon: PlayerInventoryAddon) {
-        for ((index, stack) in oldAddon.stacks.withIndex())
+        for ((index, stack) in oldAddon.stacks.withIndex()) {
             this.setStack(index, stack)
+        }
+        this.selectedUtility = oldAddon.selectedUtility
     }
 
     fun dropAll() {

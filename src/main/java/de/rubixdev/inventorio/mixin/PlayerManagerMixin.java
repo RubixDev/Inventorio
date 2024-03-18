@@ -51,4 +51,9 @@ public class PlayerManagerMixin {
         }));
         InventorioNetworking.getInstance().s2cSelectUtilitySlot(newPlayer);
     }
+
+    @Inject(method = "sendPlayerStatus", at = @At("RETURN"))
+    private void sendSelectedUtility(ServerPlayerEntity player, CallbackInfo ci) {
+        InventorioNetworking.getInstance().s2cSelectUtilitySlot(player);
+    }
 }
