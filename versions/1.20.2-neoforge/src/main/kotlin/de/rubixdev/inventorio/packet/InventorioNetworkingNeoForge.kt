@@ -21,8 +21,7 @@ object InventorioNetworkingNeoForge : InventorioNetworking {
         { PROTOCOL_VERSION == it },
     )
 
-    init
-    {
+    init {
         INSTANCE.registerMessage(
             0,
             SelectUtilitySlotPacket::class.java,

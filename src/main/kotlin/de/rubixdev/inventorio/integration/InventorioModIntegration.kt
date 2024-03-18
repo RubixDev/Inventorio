@@ -3,39 +3,22 @@ package de.rubixdev.inventorio.integration
 import de.rubixdev.inventorio.util.logger
 
 /**
- * This class is intended for INVENTORIO to integrate with other mods,
- * NOT for other mods to integrate with inventorio.
+ * This class is intended for Inventorio to integrate with other mods,
+ * _not_ for other mods to integrate with Inventorio.
  */
+@Suppress("unused")
 object InventorioModIntegration {
-    var isFabric = false
-        private set
-    private val modIntegrations = arrayListOf<ModIntegration>()
-
-    init
-    {
-        try {
-            isFabric = this.javaClass.classLoader.loadClass("de.rubixdev.inventorio.InventorioFabric") != null
-        } catch (ignored: Throwable) { }
-    }
-
-    fun addModIntegrations(modIntegrations: Collection<ModIntegration>) {
-        this.modIntegrations.addAll(modIntegrations)
-    }
-
-    fun getModIntegrationByName(name: String): ModIntegration? {
-        return modIntegrations.firstOrNull { it.name == name }
-    }
-
-    fun apply() {
+    fun applyModIntegrations(modIntegrations: Collection<ModIntegration>) {
         for (modIntegration in modIntegrations) {
             try {
-                val testResult = modIntegration.test()
-                if (testResult) {
-                    modIntegration.applyOnLaunch()
-                    logger.info("Mod integration ${if (testResult) "succeeded" else "failed"}: ${modIntegration.displayName}")
+                if (modIntegration.shouldApply()) {
+                    modIntegration.apply()
+                    logger.info("Mod integration succeeded for ${modIntegration.displayName}")
+                } else {
+                    logger.info("Skipping mod integration for ${modIntegration.displayName}")
                 }
             } catch (e: Throwable) {
-                logger.error("Failed to apply a mod integration module ${modIntegration.displayName} (${modIntegration.name})", e)
+                logger.error("Failed to apply mod integration for ${modIntegration.displayName} (${modIntegration.name})", e)
             }
         }
     }

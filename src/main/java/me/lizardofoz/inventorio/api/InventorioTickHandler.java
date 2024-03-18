@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
  * @deprecated Use {@link de.rubixdev.inventorio.api.InventorioTickHandler}
  *             instead.
  */
+@SuppressWarnings("removal")
 @Deprecated(forRemoval = true, since = "1.10.0")
 @FunctionalInterface
 public interface InventorioTickHandler {

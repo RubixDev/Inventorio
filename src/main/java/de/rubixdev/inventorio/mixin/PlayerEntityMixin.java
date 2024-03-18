@@ -140,7 +140,7 @@ public abstract class PlayerEntityMixin implements PlayerDuck {
     }
 
     @Inject(method = "tickMovement", at = @At(value = "RETURN"))
-    private void inventorioEmptyMainHandDisplayTool(CallbackInfo ci) {
+    private void inventorioTick(CallbackInfo ci) {
         inventorioAddon.tick();
     }
 

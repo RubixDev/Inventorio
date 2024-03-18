@@ -28,8 +28,7 @@ abstract class PlayerInventoryHandFeatures protected constructor(player: PlayerE
             }
         }
 
-    init
-    {
+    init {
         if (player.world.isClient) {
             swappedHands = PlayerSettings.swappedHands.boolValue
         }

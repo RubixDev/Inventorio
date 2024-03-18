@@ -51,12 +51,10 @@ fun canRMBItem(itemStack: ItemStack): Boolean {
         || EnchantmentHelper.getRiptide(itemStack) > 0
 }
 
-fun getEnchantmentLevel(stack: ItemStack, enchantment: Enchantment): Int {
-    //#if FORGE
-    //$$ return stack.getEnchantmentLevel(enchantment)
-    //#elseif NEOFORGE
-    //$$ return stack.getEnchantmentLevel(enchantment)
+fun Enchantment.getLevelOn(stack: ItemStack): Int {
+    //#if FORGELIKE
+    //$$ return stack.getEnchantmentLevel(this)
     //#else
-    return EnchantmentHelper.getLevel(enchantment, stack)
+    return EnchantmentHelper.getLevel(this, stack)
     //#endif
 }

@@ -22,6 +22,7 @@ abstract class PlayerInventoryExtension protected constructor(val player: Player
     SimpleInventory(DEEP_POCKETS_MAX_SIZE + UTILITY_BELT_FULL_SIZE + PlayerInventoryAddon.toolBeltTemplates.size) {
     /** Warning! The length of [toolBelt], and thus [stacks], may differ across play sessions depending on the mods installed
      * We DO need this variable because on NeoForge the parent `stacks` is private. */
+    @Suppress("LeakingThis")
     @JvmField val stacks = (this as SimpleInventoryAccessor).heldStacks!!
     @JvmField val deepPockets = stacks.subList(INVENTORY_ADDON_DEEP_POCKETS_RANGE.first, INVENTORY_ADDON_DEEP_POCKETS_RANGE.last + 1)
     @JvmField val utilityBelt = stacks.subList(INVENTORY_ADDON_UTILITY_BELT_RANGE.first, INVENTORY_ADDON_UTILITY_BELT_RANGE.last + 1)
@@ -59,8 +60,9 @@ abstract class PlayerInventoryExtension protected constructor(val player: Player
 
     @Environment(EnvType.CLIENT)
     fun receiveStacksUpdateS2C(updatedStacks: Map<Int, ItemStack>) {
-        for ((index, stack) in updatedStacks)
+        for ((index, stack) in updatedStacks) {
             stacks[index] = stack
+        }
     }
 
     fun cloneFrom(oldAddon: PlayerInventoryAddon) {
@@ -113,10 +115,11 @@ abstract class PlayerInventoryExtension protected constructor(val player: Player
             (selectedUtility - 1 downTo 0) + (getAvailableUtilityBeltSize() - 1 downTo selectedUtility + 1)
         }
 
-        for (i in range)
+        for (i in range) {
             if (!skipEmptySlots || utilityBelt[i].isNotEmpty) {
                 return Pair(utilityBelt[i], i)
             }
+        }
 
         return Pair(ItemStack.EMPTY, -1)
     }
@@ -134,7 +137,7 @@ abstract class PlayerInventoryExtension protected constructor(val player: Player
     /**
      * Returns -1 if no empty utility slot was found
      */
-    fun findEmptyUtility(direction: Int): Int {
+    private fun findEmptyUtility(direction: Int): Int {
         val range = if (direction.sign >= 0) {
             (selectedUtility + 1 until getAvailableUtilityBeltSize()) + (0 until selectedUtility)
         } else {

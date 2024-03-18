@@ -9,17 +9,12 @@ object ClumpsIntegration : ModIntegration() {
     override val name = "clumps"
     override val displayName = "Clumps"
 
-    override fun testFabric(): Boolean {
-        return FabricLoader.getInstance().isModLoaded("clumps")
-    }
+    override fun shouldApply() = FabricLoader.getInstance().isModLoaded("clumps")
 
-    override fun applyOnLaunchInner() {
-        try {
-            ClumpsEvents.REPAIR_EVENT.register { event: RepairEvent ->
-                event.value = InventorioAPI.getInventoryAddon(event.player)!!.mendToolBeltItems(event.value)
-                null
-            }
-        } catch (ignored: Throwable) {
+    override fun apply() {
+        ClumpsEvents.REPAIR_EVENT.register { event ->
+            event.value = InventorioAPI.getInventoryAddon(event.player)!!.mendToolBeltItems(event.value)
+            null
         }
     }
 }

@@ -84,8 +84,7 @@ object PlayerSettings : AbstractSettings() {
         "inventorio.settings.player.toggle_button",
     )
 
-    init
-    {
+    init {
         entries = listOf(
             segmentedHotbar,
             scrollWheelUtilityBelt,

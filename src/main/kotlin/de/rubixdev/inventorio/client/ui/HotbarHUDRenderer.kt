@@ -214,7 +214,6 @@ object HotbarHUDRenderer {
             // Draw the active utility item
             renderItem(
                 drawContext,
-                player,
                 utilBeltDisplay[1],
                 scaledWidthHalved + leftHandedUtilityBeltOffset - SLOT_UTILITY_BELT_3.x - segmentedModeOffset,
                 scaledHeight - SLOT_UTILITY_BELT_3.y,
@@ -225,7 +224,6 @@ object HotbarHUDRenderer {
         if (inventoryAddon.displayTool.isNotEmpty && inventoryAddon.displayTool != selectedHotbarItem) {
             renderItem(
                 drawContext,
-                player,
                 inventoryAddon.displayTool,
                 scaledWidthHalved + leftHandedDisplayToolOffset + SLOT_ACTIVE_TOOL_FRAME.x + segmentedModeOffset,
                 scaledHeight - SLOT_ACTIVE_TOOL_FRAME.y,
@@ -234,7 +232,7 @@ object HotbarHUDRenderer {
         RenderSystem.enableBlend()
     }
 
-    private fun renderItem(drawContext: DrawContext, player: PlayerEntity, stack: ItemStack, x: Int, y: Int) {
+    private fun renderItem(drawContext: DrawContext, stack: ItemStack, x: Int, y: Int) {
         if (stack.isNotEmpty) {
             drawContext.drawItem(stack, x, y)
             drawContext.drawItemInSlot(client.textRenderer, stack, x, y)

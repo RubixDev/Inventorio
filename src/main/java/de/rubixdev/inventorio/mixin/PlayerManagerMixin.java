@@ -18,7 +18,7 @@ import net.minecraft.server.network.ConnectedClientData;
 @Mixin(PlayerManager.class)
 public class PlayerManagerMixin {
     /**
-     * This inject sends the last utility slot, saved by the server, from the
+     * This injection sends the last utility slot, saved by the server, from the
      * server to the client
      */
     @Inject(method = "onPlayerConnect", at = @At(value = "RETURN"), require = 0)

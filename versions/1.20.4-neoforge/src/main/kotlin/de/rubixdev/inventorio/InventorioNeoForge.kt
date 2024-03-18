@@ -31,8 +31,7 @@ import thedarkcolour.kotlinforforge.neoforge.KotlinModLoadingContext
 class InventorioNeoForge {
     private val neoForgeModIntegrations = listOf<ModIntegration>(ClumpsIntegration)
 
-    init
-    {
+    init {
         ScreenTypeProvider.INSTANCE = ScreenTypeProviderNeoForge
         InventorioNetworking.INSTANCE = InventorioNetworkingNeoForge
 
@@ -55,14 +54,17 @@ class InventorioNeoForge {
             NeoForge.EVENT_BUS.register(NeoForgeEvents)
             MinecraftClient.getInstance().options.allKeys += InventorioControls.keys
             PlayerSettings.load(FMLPaths.CONFIGDIR.get().resolve("inventorio.json").toFile())
-            ScreenTypeProviderNeoForge.registerScreen()
+            //#if MC >= 12004
+            KotlinModLoadingContext.get().getKEventBus().register(ScreenTypeProviderNeoForge)
+            //#else
+            //$$ ScreenTypeProviderNeoForge.registerScreen()
+            //#endif
             ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory::class.java) {
                 ConfigScreenHandler.ConfigScreenFactory { _, parent -> PlayerSettingsScreen.get(parent) }
             }
         }
 
-        InventorioModIntegration.addModIntegrations(neoForgeModIntegrations)
-        InventorioModIntegration.apply()
+        InventorioModIntegration.applyModIntegrations(neoForgeModIntegrations)
     }
 
     private fun initToolBelt() {

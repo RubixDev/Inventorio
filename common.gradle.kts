@@ -22,6 +22,7 @@ preprocess {
     vars.put("FABRIC", if (modBrand == "fabric") 1 else 0)
     vars.put("FORGE", if (modBrand == "forge") 1 else 0)
     vars.put("NEOFORGE", if (modBrand == "neoforge") 1 else 0)
+    vars.put("FORGELIKE", if (modBrand == "neoforge" || modBrand == "forge") 1 else 0)
 }
 
 @Suppress("PropertyName")

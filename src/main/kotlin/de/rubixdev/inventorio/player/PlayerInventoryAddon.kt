@@ -28,8 +28,7 @@ import net.minecraft.util.Util
  * and [InventorioScreenHandler] is responsible for the slots and player interacting with the slots
  */
 class PlayerInventoryAddon internal constructor(player: PlayerEntity) : PlayerInventoryExtraStuff(player) {
-    init
-    {
+    init {
         bNoMoreToolBeltSlots = true
     }
 

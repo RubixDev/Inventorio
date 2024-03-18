@@ -2,10 +2,10 @@ package de.rubixdev.inventorio.player.inventory
 
 import de.rubixdev.inventorio.mixin.client.accessor.MinecraftClientAccessor
 import de.rubixdev.inventorio.packet.InventorioNetworking
+import de.rubixdev.inventorio.util.getLevelOn
 import kotlin.math.max
 import net.minecraft.block.BlockState
 import net.minecraft.client.MinecraftClient
-import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.enchantment.Enchantments
 import net.minecraft.entity.EquipmentSlot
 import net.minecraft.entity.player.PlayerEntity
@@ -51,7 +51,7 @@ abstract class PlayerInventoryExtraStuff protected constructor(player: PlayerEnt
         //$$ val isGlass = block.block is AbstractGlassBlock
         //#endif
         if (isGlass) {
-            return toolBelt.firstOrNull { EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, it) > 0 } ?: ItemStack.EMPTY
+            return toolBelt.firstOrNull { Enchantments.SILK_TOUCH.getLevelOn(it) > 0 } ?: ItemStack.EMPTY
         }
         return ItemStack.EMPTY
     }

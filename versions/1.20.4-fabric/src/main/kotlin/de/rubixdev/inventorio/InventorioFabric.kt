@@ -47,14 +47,13 @@ open class InventorioFabric : ModInitializer {
             ScreenTypeProviderFabric.registerScreen()
         }
 
-        InventorioModIntegration.addModIntegrations(fabricModIntegrations)
-        InventorioModIntegration.apply()
+        InventorioModIntegration.applyModIntegrations(fabricModIntegrations)
     }
 
     private fun initToolBelt() {
         // What this actually does is loads the [InventorioAPI] which creates the ToolBelt
-        // The reason why we do it this way is because we can't guarantee that other mods
-        //  won't call [InventorioAPI] BEFORE [InventorioFabric#onInitialize] has been invoked
+        // The reason why we do it this way is that we can't guarantee that other mods
+        // won't call [InventorioAPI] BEFORE [InventorioFabric#onInitialize] has been invoked
         InventorioAPI.getToolBeltSlotTemplate(InventorioAPI.SLOT_PICKAXE)
             ?.addAllowingTag(Identifier("fabric", "pickaxes"))
             ?.addAllowingTag(Identifier("fabric", "hammers"))

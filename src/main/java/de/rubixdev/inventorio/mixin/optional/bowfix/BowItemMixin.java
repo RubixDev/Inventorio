@@ -21,6 +21,6 @@ public class BowItemMixin {
         at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerAbilities;creativeMode:Z")
     )
     private boolean inventorioFixInfinityBow(boolean original, @Local ItemStack bow) {
-        return original || RandomStuff.getEnchantmentLevel(bow, Enchantments.INFINITY) > 0;
+        return original || RandomStuff.getLevelOn(Enchantments.INFINITY, bow) > 0;
     }
 }

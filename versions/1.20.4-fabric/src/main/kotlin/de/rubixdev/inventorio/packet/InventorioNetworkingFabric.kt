@@ -14,8 +14,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.Identifier
 
 object InventorioNetworkingFabric : InventorioNetworking {
-    init
-    {
+    init {
         if (FabricLoader.getInstance().environmentType == EnvType.CLIENT) {
             ClientPlayNetworking.registerGlobalReceiver(SelectUtilitySlotPacket.identifier, SelectUtilitySlotPacket::consume)
             ClientPlayNetworking.registerGlobalReceiver(GlobalSettingsS2CPacket.identifier, GlobalSettingsS2CPacket::consume)

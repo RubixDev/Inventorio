@@ -33,8 +33,7 @@ object GlobalSettings : AbstractSettings() {
     @JvmField val deepPocketsInTrades = SettingsEntryBoolean(true, "DeepPocketsInTrades", "inventorio.settings.global.deep_pockets_in_trades")
     @JvmField val deepPocketsInRandomSelection = SettingsEntryBoolean(true, "DeepPocketsInRandomSelection", "inventorio.settings.global.deep_pockets_in_random_selection")
 
-    init
-    {
+    init {
         entries = listOf(
             expandedEnderChest,
             infinityBowNeedsNoArrow,

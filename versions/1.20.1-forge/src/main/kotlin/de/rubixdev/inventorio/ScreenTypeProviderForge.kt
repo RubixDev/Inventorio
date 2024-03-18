@@ -14,12 +14,12 @@ object ScreenTypeProviderForge : ScreenTypeProvider {
         InventorioScreenHandler(syncId, inv)
     }
 
-    init
-    {
+    init {
         val registry = DeferredRegister.create(ForgeRegistries.MENU_TYPES, "inventorio")
         registry.register(KotlinModLoadingContext.get().getKEventBus())
         registry.register("player_screen") { handlerProvider }
     }
+
     override fun getScreenHandlerType(): ScreenHandlerType<InventorioScreenHandler> {
         return handlerProvider
     }

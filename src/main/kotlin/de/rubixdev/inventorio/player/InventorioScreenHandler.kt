@@ -60,8 +60,7 @@ class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory) :
     // ===================================================
     // Modified methods
     // ===================================================
-    init
-    {
+    init {
         // Crafting Grid
         if (GlobalSettings.allow2x2CraftingGrid.boolValue) {
             addSlot(CraftingResultSlot(inventory.player, craftingInput, craftingResult, 0, 174, 28))

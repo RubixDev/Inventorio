@@ -9,16 +9,11 @@ object ClumpsIntegration : ModIntegration() {
     override val name = "clumps"
     override val displayName = "Clumps"
 
-    override fun testNeoForge(): Boolean {
-        return ModList.get().isLoaded("clumps")
-    }
+    override fun shouldApply() = ModList.get().isLoaded("clumps")
 
-    override fun applyOnLaunchInner() {
-        try {
-            NeoForge.EVENT_BUS.addListener { event: RepairEvent ->
-                event.value = InventorioAPI.getInventoryAddon(event.player)!!.mendToolBeltItems(event.value)
-            }
-        } catch (ignored: Throwable) {
+    override fun apply() {
+        NeoForge.EVENT_BUS.addListener { event: RepairEvent ->
+            event.value = InventorioAPI.getInventoryAddon(event.player)!!.mendToolBeltItems(event.value)
         }
     }
 }
