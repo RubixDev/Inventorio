@@ -10,9 +10,12 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.Hand;
+import org.jetbrains.annotations.Nullable;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,6 +29,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MinecraftClientMixin {
     @Shadow
     public ClientPlayerEntity player;
+
+    @Shadow
+    @Nullable public Screen currentScreen;
 
     /**
      * This injection opens the Inventorio Screen instead of the Vanilla Player
@@ -103,5 +109,28 @@ public class MinecraftClientMixin {
     private Hand[] inventorioDoItemUse() {
         if (player == null) return new Hand[] {};
         return InventorioKeyHandler.INSTANCE.handleItemUsage(player);
+    }
+
+    /**
+     * This injection stops the game from locking the cursor back to 0,0 when
+     * swapping between the Inventorio and vanilla Inventory screens.
+     */
+    @Inject(
+        method = "setScreen",
+        at = @At(
+            value = "FIELD",
+            target = "Lnet/minecraft/client/MinecraftClient;currentScreen:Lnet/minecraft/client/gui/screen/Screen;",
+            opcode = Opcodes.PUTFIELD
+        ),
+        cancellable = true
+    )
+    private void seamlessScreenTransition(Screen screen, CallbackInfo ci) {
+        if (
+            InventorioScreen.isSwappingInvScreens
+                && screen == null
+                && (currentScreen instanceof InventorioScreen || currentScreen instanceof InventoryScreen)
+        ) {
+            ci.cancel();
+        }
     }
 }

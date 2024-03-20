@@ -10,7 +10,6 @@
     "PlayerInventoryMixin",
     "PlayerManagerMixin",
     "ServerPlayerEntity_ScreenHandlerSyncHandlerMixin",
-    "ServerPlayerEntityMixin",
     "ServerPlayNetworkHandlerMixin",
     "accessor.CraftingScreenHandlerAccessor",
     "accessor.SimpleInventoryAccessor",

@@ -330,6 +330,8 @@ abstract class AbstractInventorioScreen protected constructor(handler: Inventori
 
         @JvmField
         var shouldOpenVanillaInventory = false
+        @JvmField
+        var isSwappingInvScreens = false
 
         @JvmStatic
         fun registerInitConsumer(customIdentifier: Identifier, uiConsumer: Consumer<AbstractInventorioScreen>) {
@@ -365,11 +367,14 @@ abstract class AbstractInventorioScreen protected constructor(handler: Inventori
             ) {
                 val client = MinecraftClient.getInstance() ?: return@TexturedButtonWidget
                 shouldOpenVanillaInventory = client.currentScreen is InventorioScreen
+                isSwappingInvScreens = true
+                client.currentScreen?.close()
                 if (shouldOpenVanillaInventory) {
                     client.setScreen(InventoryScreen(client.player))
                 } else {
                     InventorioNetworking.INSTANCE.c2sOpenInventorioScreen()
                 }
+                isSwappingInvScreens = false
             }
             screenAccessor.selectables.add(button)
             screenAccessor.drawables.add(button)
@@ -397,8 +402,10 @@ abstract class AbstractInventorioScreen protected constructor(handler: Inventori
                 //#endif
             ) {
                 val client = MinecraftClient.getInstance() ?: return@TexturedButtonWidget
+                isSwappingInvScreens = true
                 client.currentScreen?.close()
                 client.setScreen(InventoryScreen(client.player))
+                isSwappingInvScreens = false
             }
             screenAccessor.selectables.add(button)
             screenAccessor.drawables.add(button)
