@@ -8,11 +8,32 @@ import java.io.File
 import net.minecraft.client.MinecraftClient
 
 object GlobalSettings : AbstractSettings() {
-    @JvmField val expandedEnderChest = SettingsEntryBoolean(true, "ExpandedEnderChest", "inventorio.settings.global.expanded_ender_chest")
-    @JvmField val infinityBowNeedsNoArrow = SettingsEntryBoolean(true, "InfinityBowNeedsNoArrow", "inventorio.settings.global.infinity_bow_no_arrows")
-    @JvmField val totemFromUtilityBelt = SettingsEntryBoolean(true, "TotemFromUtilityBelt", "inventorio.settings.global.totem_from_utility_belt")
-    @JvmField val allowSwappedHands = SettingsEntryBoolean(true, "AllowSwappedHands", "inventorio.settings.global.allow_swapped_hands")
-    @JvmField val allow2x2CraftingGrid = SettingsEntryBoolean(true, "2x2CraftingGrid", "inventorio.settings.global.2x2_crafting_grid", "inventorio.settings.global.2x2_crafting_grid.tooltip")
+    @JvmField val expandedEnderChest = SettingsEntryBoolean(
+        true,
+        "ExpandedEnderChest",
+        "inventorio.settings.global.expanded_ender_chest",
+    )
+    @JvmField val infinityBowNeedsNoArrow = SettingsEntryBoolean(
+        true,
+        "InfinityBowNeedsNoArrow",
+        "inventorio.settings.global.infinity_bow_no_arrows",
+    )
+    @JvmField val totemFromUtilityBelt = SettingsEntryBoolean(
+        true,
+        "TotemFromUtilityBelt",
+        "inventorio.settings.global.totem_from_utility_belt",
+    )
+    @JvmField val allowSwappedHands = SettingsEntryBoolean(
+        true,
+        "AllowSwappedHands",
+        "inventorio.settings.global.allow_swapped_hands",
+    )
+    @JvmField val allow2x2CraftingGrid = SettingsEntryBoolean(
+        true,
+        "2x2CraftingGrid",
+        "inventorio.settings.global.2x2_crafting_grid",
+        "inventorio.settings.global.2x2_crafting_grid.tooltip",
+    )
 
     @JvmField val toolBeltMode =
         SettingsEntry(
@@ -29,9 +50,21 @@ object GlobalSettings : AbstractSettings() {
         "inventorio.settings.global.utility_belt_short_default_size",
         "inventorio.settings.global.utility_belt_short_default_size.tooltip",
     )
-    @JvmField val deepPocketsBookCraft = SettingsEntryBoolean(true, "DeepPocketsBookCraft", "inventorio.settings.global.deep_pockets_book_craft")
-    @JvmField val deepPocketsInTrades = SettingsEntryBoolean(true, "DeepPocketsInTrades", "inventorio.settings.global.deep_pockets_in_trades")
-    @JvmField val deepPocketsInRandomSelection = SettingsEntryBoolean(true, "DeepPocketsInRandomSelection", "inventorio.settings.global.deep_pockets_in_random_selection")
+    @JvmField val deepPocketsBookCraft = SettingsEntryBoolean(
+        true,
+        "DeepPocketsBookCraft",
+        "inventorio.settings.global.deep_pockets_book_craft",
+    )
+    @JvmField val deepPocketsInTrades = SettingsEntryBoolean(
+        true,
+        "DeepPocketsInTrades",
+        "inventorio.settings.global.deep_pockets_in_trades",
+    )
+    @JvmField val deepPocketsInRandomSelection = SettingsEntryBoolean(
+        true,
+        "DeepPocketsInRandomSelection",
+        "inventorio.settings.global.deep_pockets_in_random_selection",
+    )
 
     init {
         entries = listOf(

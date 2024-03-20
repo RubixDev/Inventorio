@@ -15,11 +15,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(targets = "net.minecraft.server.network.ServerPlayerEntity$1")
 public class ServerPlayerInventory_ScreenHandlerSyncHandlerMixin {
-    @Shadow @Final
+    @Shadow
+    @Final
     ServerPlayerEntity field_29182;
 
     @Inject(method = "updateState", at = @At("HEAD"))
-    private void updateAddonState(ScreenHandler handler, DefaultedList<ItemStack> stacks, ItemStack cursorStack, int[] properties, CallbackInfo ci) {
+    private void updateAddonState(
+        ScreenHandler handler,
+        DefaultedList<ItemStack> stacks,
+        ItemStack cursorStack,
+        int[] properties,
+        CallbackInfo ci
+    ) {
         MixinHelpers.withInventoryAddon(this.field_29182, PlayerInventoryExtension::updateState);
     }
 }

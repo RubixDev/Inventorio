@@ -23,7 +23,8 @@ abstract class PlayerInventoryExtension protected constructor(val player: Player
     /** Warning! The length of [toolBelt], and thus [stacks], may differ across play sessions depending on the mods installed
      * We DO need this variable because on NeoForge the parent `stacks` is private. */
     @Suppress("LeakingThis")
-    @JvmField val stacks = (this as SimpleInventoryAccessor).heldStacks!!
+    @JvmField
+    val stacks = (this as SimpleInventoryAccessor).heldStacks!!
     @JvmField val deepPockets = stacks.subList(INVENTORY_ADDON_DEEP_POCKETS_RANGE.first, INVENTORY_ADDON_DEEP_POCKETS_RANGE.last + 1)
     @JvmField val utilityBelt = stacks.subList(INVENTORY_ADDON_UTILITY_BELT_RANGE.first, INVENTORY_ADDON_UTILITY_BELT_RANGE.last + 1)
 

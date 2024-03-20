@@ -1,7 +1,6 @@
 package de.rubixdev.inventorio.integration
 
 import com.blamejared.clumps.api.events.ClumpsEvents
-import com.blamejared.clumps.api.events.RepairEvent
 import de.rubixdev.inventorio.api.InventorioAPI
 import net.fabricmc.loader.api.FabricLoader
 
