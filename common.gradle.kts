@@ -11,18 +11,40 @@ plugins {
     id("me.fallenbreath.yamlang")
 }
 
-val modBrand = if (project.name.endsWith("-common")) "common" else loom.platform.get().name.lowercase()
-assert(modBrand in listOf("common", "fabric", "forge", "neoforge"))
-assert(project.name.endsWith("-$modBrand"))
+val loaderName = if (project.name.endsWith("-common")) "common" else loom.platform.get().name.lowercase()
+assert(loaderName in listOf("common", "fabric", "forge", "neoforge"))
+assert(project.name.endsWith("-$loaderName"))
+enum class Loader {
+    COMMON,
+    FABRIC,
+    FORGE,
+    NEOFORGE,
+    ;
+
+    val isCommon get() = this == COMMON
+    val isFabric get() = this == FABRIC
+    val isForge get() = this == FORGE
+    val isNeoForge get() = this == NEOFORGE
+    val isForgeLike get() = this == FORGE || this == NEOFORGE
+}
+val loader = when (loaderName) {
+    "common" -> Loader.COMMON
+    "fabric" -> Loader.FABRIC
+    "forge" -> Loader.FORGE
+    "neoforge" -> Loader.NEOFORGE
+    else -> throw AssertionError("invalid loader '$loaderName'")
+}
+
+fun Boolean.toInt() = if (this) 1 else 0
 
 val mcVersion: Int by project.extra
 
 preprocess {
     vars.put("MC", mcVersion)
-    vars.put("FABRIC", if (modBrand == "fabric") 1 else 0)
-    vars.put("FORGE", if (modBrand == "forge") 1 else 0)
-    vars.put("NEOFORGE", if (modBrand == "neoforge") 1 else 0)
-    vars.put("FORGELIKE", if (modBrand == "neoforge" || modBrand == "forge") 1 else 0)
+    vars.put("FABRIC", loader.isFabric.toInt())
+    vars.put("FORGE", loader.isForge.toInt())
+    vars.put("NEOFORGE", loader.isNeoForge.toInt())
+    vars.put("FORGELIKE", loader.isForgeLike.toInt())
 }
 
 @Suppress("PropertyName")
@@ -81,12 +103,12 @@ val props: Props = Props()
 loom {
     runConfigs.all {
         // to make sure it generates all "Minecraft Client (:subproject_name)" applications
-        isIdeConfigGenerated = modBrand != "common"
-        runDir = "../../run-$modBrand"
+        isIdeConfigGenerated = !loader.isCommon
+        runDir = "../../run-$loaderName"
         vmArg("-Dmixin.debug.export=true")
     }
 
-    if (modBrand == "forge") {
+    if (loader.isForge) {
         forge.mixinConfigs = listOf("${props.mod_id}.mixins.json")
         // workaround for https://github.com/SpongePowered/Mixin/issues/560
         // TODO: remove this when Mixin 0.8.6 is out or you find another proper fix
@@ -103,21 +125,22 @@ loom {
 }
 
 repositories {
-    when (modBrand) {
-        "fabric" -> {
+    when (loader) {
+        Loader.COMMON -> {}
+        Loader.FABRIC -> {
             // Mod Menu
             maven("https://maven.terraformersmc.com/releases/")
         }
-        "neoforge" -> {
+        Loader.NEOFORGE -> {
             // NeoForge
             maven("https://maven.neoforged.net/releases")
         }
-        "forge" -> {
+        Loader.FORGE -> {
             // MixinExtras
             mavenCentral()
         }
     }
-    if (modBrand != "fabric") {
+    if (!loader.isFabric) {
         // Kotlin for Forge
         maven("https://thedarkcolour.github.io/KotlinForForge/")
     }
@@ -137,14 +160,14 @@ dependencies {
     // outside the fabric specific projects this should only be used for the @Environment annotation
     modImplementation("net.fabricmc:fabric-loader:${props.fabric_loader_version}")
 
-    when (modBrand) {
-        "common" -> {
+    when (loader) {
+        Loader.COMMON -> {
             modCompileOnly("me.shedaniel.cloth:cloth-config-fabric:${props.cloth_version}") {
                 exclude(group = "net.fabricmc.fabric-api")
             }
             modCompileOnly("com.github.RubixDev.conditional-mixin:conditional-mixin-common:${props.conditional_mixin_version}")
         }
-        "fabric" -> {
+        Loader.FABRIC -> {
             modImplementation("net.fabricmc.fabric-api:fabric-api:${props.fabric_api_version}")
 
             include(modImplementation("com.github.RubixDev.conditional-mixin:conditional-mixin-fabric:${props.conditional_mixin_version}")!!)
@@ -155,7 +178,7 @@ dependencies {
                 exclude(group = "net.fabricmc.fabric-api")
             }
         }
-        "forge" -> {
+        Loader.FORGE -> {
             "forge"("net.minecraftforge:forge:${props.forge_version}")
 
             include(modImplementation("com.github.RubixDev.conditional-mixin:conditional-mixin-forge:${props.conditional_mixin_version}")!!)
@@ -166,7 +189,7 @@ dependencies {
             compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.3.5")!!)
             implementation(include("io.github.llamalad7:mixinextras-forge:0.3.5")!!)
         }
-        "neoforge" -> {
+        Loader.NEOFORGE -> {
             "neoForge"("net.neoforged:neoforge:${props.neoforge_version}")
 
             include(modImplementation("com.github.RubixDev.conditional-mixin:conditional-mixin-neoforge:${props.conditional_mixin_version}")!!)
@@ -192,7 +215,7 @@ val fullModVersion = props.mod_version + versionSuffix
 tasks.named<ProcessResources>("processResources") {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-    val authors = props.mod_authors.joinToString(if (modBrand == "fabric") "\",\"" else ", ")
+    val authors = props.mod_authors.joinToString(if (loader.isFabric) "\",\"" else ", ")
 
     val versionsMap = mapOf(
         11904 to 13,
@@ -226,7 +249,7 @@ tasks.named<ProcessResources>("processResources") {
         expand(replaceProperties + mapOf("project" to project))
     }
 
-    if (modBrand != "fabric") {
+    if (!loader.isFabric) {
         exclude {
             it.file.name == "fabric.mod.json"
         }
@@ -240,7 +263,7 @@ yamlang {
 }
 
 base {
-    archivesName = "${props.archives_base_name}-mc${props.minecraft_version}-$modBrand"
+    archivesName = "${props.archives_base_name}-mc${props.minecraft_version}-$loaderName"
 }
 
 version = "v$fullModVersion"
