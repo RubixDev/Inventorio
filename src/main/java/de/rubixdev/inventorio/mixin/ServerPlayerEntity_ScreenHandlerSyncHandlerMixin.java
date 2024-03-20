@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(targets = "net.minecraft.server.network.ServerPlayerEntity$1")
-public class ServerPlayerInventory_ScreenHandlerSyncHandlerMixin {
+public class ServerPlayerEntity_ScreenHandlerSyncHandlerMixin {
     @Shadow
     @Final
     ServerPlayerEntity field_29182;

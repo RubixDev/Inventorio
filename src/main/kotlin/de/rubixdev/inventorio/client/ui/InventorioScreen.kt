@@ -69,7 +69,11 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
         narrow = width < 379
         recipeBook.initialize(width, height, client, narrow, handler)
         open = true
-        x = recipeBook.findLeftEdge(width, backgroundWidth - 19 - 19 * ((inventoryAddon.toolBelt.size - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())))
+        x = recipeBook.findLeftEdge(
+            width,
+            backgroundWidth - 19 - 19
+                * ((inventoryAddon.toolBelt.size - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())),
+        )
         toggleButton = addToggleButton(this)
         lockedCraftButton = addLockedCraftButton(this)
         recipeButton = addDrawableChild(
@@ -85,7 +89,11 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
                 //#endif
             ) { buttonWidget: ButtonWidget ->
                 recipeBook.toggleOpen()
-                x = recipeBook.findLeftEdge(width, backgroundWidth - 19 - 19 * ((inventoryAddon.toolBelt.size - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())))
+                x = recipeBook.findLeftEdge(
+                    width,
+                    backgroundWidth - 19 - 19
+                        * ((inventoryAddon.toolBelt.size - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())),
+                )
                 (buttonWidget as TexturedButtonWidget).x = x + GUI_RECIPE_WIDGET_BUTTON.x
                 buttonWidget.y = y + GUI_RECIPE_WIDGET_BUTTON.y
                 mouseDown = true
@@ -357,7 +365,6 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
             ) {
                 val client = MinecraftClient.getInstance() ?: return@TexturedButtonWidget
                 shouldOpenVanillaInventory = client.currentScreen is InventorioScreen
-                client.currentScreen?.close()
                 if (shouldOpenVanillaInventory) {
                     client.setScreen(InventoryScreen(client.player))
                 } else {
