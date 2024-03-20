@@ -57,6 +57,7 @@ class Props {
     val fabric_kotlin_version: String by prop
     val forge_kotlin_version: String by prop
     val mixinextras_version: String by prop
+    val conditional_mixin_version: String by prop
 
     //// Version Specific Properties ////
     val minecraft_version: String by prop
@@ -123,6 +124,8 @@ repositories {
 
     // Cloth Config
     maven("https://maven.shedaniel.me/")
+    // Conditional Mixin
+    maven("https://jitpack.io")
     // Other mods from Modrinth
     maven("https://api.modrinth.com/maven")
 }
@@ -139,9 +142,12 @@ dependencies {
             modCompileOnly("me.shedaniel.cloth:cloth-config-fabric:${props.cloth_version}") {
                 exclude(group = "net.fabricmc.fabric-api")
             }
+            modCompileOnly("com.github.RubixDev.conditional-mixin:conditional-mixin-common:${props.conditional_mixin_version}")
         }
         "fabric" -> {
             modImplementation("net.fabricmc.fabric-api:fabric-api:${props.fabric_api_version}")
+
+            include(modImplementation("com.github.RubixDev.conditional-mixin:conditional-mixin-fabric:${props.conditional_mixin_version}")!!)
 
             modImplementation("net.fabricmc:fabric-language-kotlin:${props.fabric_kotlin_version}")
             modImplementation("com.terraformersmc:modmenu:${props.modmenu_version}")
@@ -152,6 +158,8 @@ dependencies {
         "forge" -> {
             "forge"("net.minecraftforge:forge:${props.forge_version}")
 
+            include(modImplementation("com.github.RubixDev.conditional-mixin:conditional-mixin-forge:${props.conditional_mixin_version}")!!)
+
             implementation("thedarkcolour:kotlinforforge:${props.forge_kotlin_version}")
             modImplementation("me.shedaniel.cloth:cloth-config-forge:${props.cloth_version}")
 
@@ -160,6 +168,8 @@ dependencies {
         }
         "neoforge" -> {
             "neoForge"("net.neoforged:neoforge:${props.neoforge_version}")
+
+            include(modImplementation("com.github.RubixDev.conditional-mixin:conditional-mixin-neoforge:${props.conditional_mixin_version}")!!)
 
             implementation("thedarkcolour:kotlinforforge-neoforge:${props.forge_kotlin_version}")
             modImplementation("me.shedaniel.cloth:cloth-config-neoforge:${props.cloth_version}")

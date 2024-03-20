@@ -1,6 +1,9 @@
 package de.rubixdev.inventorio.mixin.optional.totem;
 
 import de.rubixdev.inventorio.util.MixinHelpers;
+import de.rubixdev.inventorio.util.TotemTester;
+import me.fallenbreath.conditionalmixin.api.annotation.Condition;
+import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -14,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Slice;
 
+@Restriction(require = @Condition(type = Condition.Type.TESTER, tester = TotemTester.class))
 @Mixin(value = LivingEntity.class, priority = 500)
 public abstract class LivingEntityMixin extends Entity {
     public LivingEntityMixin(EntityType<?> type, World world) {
