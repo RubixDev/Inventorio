@@ -81,6 +81,8 @@ class Props {
     val mixinextras_version: String by prop
     val conditional_mixin_version: String by prop
 
+    val run_with_compat_mods: Boolean by prop
+
     //// Version Specific Properties ////
     val minecraft_version: String by prop
     val yarn_mappings: String by prop
@@ -97,6 +99,8 @@ class Props {
 
     val fabric_api_version: String by prop
     val modmenu_version: String by prop
+    val trinkets_version: String by prop
+    val cca_version: String by prop
 }
 val props: Props = Props()
 
@@ -128,8 +132,10 @@ repositories {
     when (loader) {
         Loader.COMMON -> {}
         Loader.FABRIC -> {
-            // Mod Menu
+            // Mod Menu and Trinkets
             maven("https://maven.terraformersmc.com/releases/")
+            // Cardinal Components (for Trinkets)
+            maven("https://maven.ladysnake.org/releases")
         }
         Loader.NEOFORGE -> {
             // NeoForge
@@ -160,6 +166,13 @@ dependencies {
     // outside the fabric specific projects this should only be used for the @Environment annotation
     modImplementation("net.fabricmc:fabric-loader:${props.fabric_loader_version}")
 
+    fun modCompat(dependencyNotation: String, dependencyConfiguration: ExternalModuleDependency.() -> Unit = {}) =
+        if (props.run_with_compat_mods) {
+            modImplementation(dependencyNotation, dependencyConfiguration)
+        } else {
+            modCompileOnly(dependencyNotation, dependencyConfiguration)
+        }
+
     when (loader) {
         Loader.COMMON -> {
             modCompileOnly("me.shedaniel.cloth:cloth-config-fabric:${props.cloth_version}") {
@@ -176,6 +189,15 @@ dependencies {
             modImplementation("com.terraformersmc:modmenu:${props.modmenu_version}")
             modImplementation("me.shedaniel.cloth:cloth-config-fabric:${props.cloth_version}") {
                 exclude(group = "net.fabricmc.fabric-api")
+            }
+
+            // other mods we do integration with
+            // - Trinkets
+            modCompat("dev.emi:trinkets:${props.trinkets_version}")
+            // before 3.8.1 these weren't included as modApi but as modImplementation in Trinkets, so we must add them ourselves
+            if (mcVersion < 12004) {
+                modCompileOnly("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${props.cca_version}")
+                modCompileOnly("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${props.cca_version}")
             }
         }
         Loader.FORGE -> {
@@ -200,7 +222,7 @@ dependencies {
     }
 
     // other mods we do integration with
-    modCompileOnly("maven.modrinth:clumps:${props.clumps_version}")
+    modCompat("maven.modrinth:clumps:${props.clumps_version}")
 }
 
 var versionSuffix = ""

@@ -1,6 +1,6 @@
 package de.rubixdev.inventorio.packet
 
-import de.rubixdev.inventorio.player.InventorioScreenHandler
+import de.rubixdev.inventorio.player.AbstractInventorioScreenHandler
 import net.fabricmc.fabric.api.networking.v1.PacketSender
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.server.MinecraftServer
@@ -14,7 +14,7 @@ object OpenInventorioScreenC2SPacket {
 
     fun consume(server: MinecraftServer, player: ServerPlayerEntity, handler: ServerPlayNetworkHandler, buf: PacketByteBuf, responseSender: PacketSender) {
         server.execute {
-            InventorioScreenHandler.open(player)
+            AbstractInventorioScreenHandler.open(player)
         }
     }
 

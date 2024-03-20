@@ -1,7 +1,7 @@
 package de.rubixdev.inventorio.util
 
+import de.rubixdev.inventorio.player.AbstractInventorioScreenHandler.Companion.inventorioScreenHandler
 import de.rubixdev.inventorio.player.InventorioScreenHandler
-import de.rubixdev.inventorio.player.InventorioScreenHandler.Companion.inventorioScreenHandler
 import de.rubixdev.inventorio.player.PlayerInventoryAddon
 import de.rubixdev.inventorio.player.PlayerInventoryAddon.Companion.inventoryAddon
 import java.util.function.Consumer

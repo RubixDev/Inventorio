@@ -1,6 +1,6 @@
 package de.rubixdev.inventorio.packet
 
-import de.rubixdev.inventorio.player.InventorioScreenHandler.Companion.inventorioScreenHandler
+import de.rubixdev.inventorio.player.AbstractInventorioScreenHandler.Companion.inventorioScreenHandler
 import java.util.function.Supplier
 import net.minecraft.network.PacketByteBuf
 import net.minecraftforge.network.NetworkEvent
