@@ -141,6 +141,9 @@ class TrinketsInventorioScreenHandler(syncId: Int, inventory: PlayerInventory) :
             TrinketsClient.activeType = null
             TrinketsClient.quickMoveGroup = null
         }
+        if (!player.world.isClient) {
+            (player.playerScreenHandler as TrinketPlayerScreenHandler).`trinkets$updateTrinketSlots`(true)
+        }
         super.onClosed(player)
     }
 
