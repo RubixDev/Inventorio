@@ -115,7 +115,10 @@ loom {
     }
 
     if (loader.isForge) {
-        forge.mixinConfigs = listOf("${props.mod_id}.mixins.json")
+        forge.mixinConfigs = listOf(
+            "${props.mod_id}.mixins.json",
+            "${props.mod_id}-forge.mixins.json",
+        )
         // workaround for https://github.com/SpongePowered/Mixin/issues/560
         // TODO: remove this when Mixin 0.8.6 is out or you find another proper fix
         forge.useCustomMixin = false
