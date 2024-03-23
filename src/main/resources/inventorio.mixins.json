@@ -12,6 +12,7 @@
     "ServerPlayerEntity_ScreenHandlerSyncHandlerMixin",
     "ServerPlayNetworkHandlerMixin",
     "accessor.CraftingScreenHandlerAccessor",
+    "accessor.ScreenHandlerAccessor",
     "accessor.SimpleInventoryAccessor",
     "accessor.SlotAccessor",
     "optional.bowfix.BowItemMixin",

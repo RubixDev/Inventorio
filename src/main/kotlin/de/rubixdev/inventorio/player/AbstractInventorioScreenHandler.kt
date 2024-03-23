@@ -321,7 +321,8 @@ abstract class AbstractInventorioScreenHandler protected constructor(syncId: Int
     }
 
     // Note: this class returns the range within the SCREEN HANDLER, which is different from the range within the inventory
-    protected fun getAvailableDeepPocketsRange(): IntRange {
+    @Suppress("MemberVisibilityCanBePrivate") // used in non-common package
+    fun getAvailableDeepPocketsRange(): IntRange {
         return deepPocketsRange.first expandBy inventoryAddon.getDeepPocketsRowCount() * VANILLA_ROW_LENGTH
     }
 
@@ -397,6 +398,10 @@ abstract class AbstractInventorioScreenHandler protected constructor(syncId: Int
 
     override fun getCategory(): RecipeBookCategory {
         return RecipeBookCategory.CRAFTING
+    }
+
+    override fun setStackInSlot(slot: Int, revision: Int, stack: ItemStack?) {
+        super.setStackInSlot(slot, revision, stack)
     }
 
     // ===================================================

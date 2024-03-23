@@ -23,7 +23,6 @@ import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen
 import net.minecraft.client.gui.screen.ingame.InventoryScreen
 import net.minecraft.client.gui.screen.recipebook.RecipeBookProvider
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget
-import net.minecraft.client.gui.widget.ButtonWidget
 import net.minecraft.client.gui.widget.TexturedButtonWidget
 import net.minecraft.client.render.GameRenderer
 import net.minecraft.entity.player.PlayerInventory
@@ -69,11 +68,6 @@ abstract class AbstractInventorioScreen protected constructor(handler: Inventori
         narrow = width < 379
         recipeBook.initialize(width, height, client, narrow, handler)
         open = true
-        x = recipeBook.findLeftEdge(
-            width,
-            backgroundWidth - 19 - 19
-                * ((inventoryAddon.toolBelt.size - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())),
-        )
         toggleButton = addToggleButton(this)
         lockedCraftButton = addLockedCraftButton(this)
         recipeButton = addDrawableChild(
@@ -87,20 +81,14 @@ abstract class AbstractInventorioScreen protected constructor(handler: Inventori
                 //#else
                 //$$ 0, 0, 19, RECIPE_BUTTON_TEXTURE,
                 //#endif
-            ) { buttonWidget: ButtonWidget ->
+            ) {
                 recipeBook.toggleOpen()
-                x = recipeBook.findLeftEdge(
-                    width,
-                    backgroundWidth - 19 - 19
-                        * ((inventoryAddon.toolBelt.size - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())),
-                )
-                (buttonWidget as TexturedButtonWidget).x = x + GUI_RECIPE_WIDGET_BUTTON.x
-                buttonWidget.y = y + GUI_RECIPE_WIDGET_BUTTON.y
-                mouseDown = true
+                updateScreenPosition()
             },
         )
         addSelectableChild(recipeBook)
         setInitialFocus(recipeBook)
+        updateScreenPosition()
         client.player?.inventorioScreenHandler?.updateDeepPocketsCapacity()
 
         initConsumers.forEach {
@@ -115,6 +103,18 @@ abstract class AbstractInventorioScreen protected constructor(handler: Inventori
     fun onRefresh() {
         backgroundWidth = GUI_INVENTORY_TOP.width + ((inventoryAddon.toolBelt.size - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())) * 20
         backgroundHeight = INVENTORY_HEIGHT + inventoryAddon.getDeepPocketsRowCount() * SLOT_UI_SIZE
+    }
+
+    @Suppress("MemberVisibilityCanBePrivate") // used from non-common package
+    fun updateScreenPosition() {
+        x = recipeBook.findLeftEdge(
+            width,
+            backgroundWidth - 19 - 19
+                * ((inventoryAddon.toolBelt.size - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())),
+        )
+        recipeButton?.x = x + GUI_RECIPE_WIDGET_BUTTON.x
+        recipeButton?.y = y + GUI_RECIPE_WIDGET_BUTTON.y
+        mouseDown = true
     }
 
     override fun drawBackground(drawContext: DrawContext, delta: Float, mouseX: Int, mouseY: Int) {
@@ -309,6 +309,25 @@ abstract class AbstractInventorioScreen protected constructor(handler: Inventori
         }
     }
 
+    override fun drawMouseoverTooltip(context: DrawContext, x: Int, y: Int) {
+        super.drawMouseoverTooltip(context, x, y)
+    }
+
+    @Suppress("RedundantOverride") // this makes it easier to add functionality for mod compat via mixin
+    override fun mouseDragged(mouseX: Double, mouseY: Double, button: Int, deltaX: Double, deltaY: Double): Boolean {
+        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY)
+    }
+
+    @Suppress("RedundantOverride") // this makes it easier to add functionality for mod compat via mixin
+    override fun mouseScrolled(
+        mouseX: Double,
+        mouseY: Double,
+        horizontalAmount: Double,
+        verticalAmount: Double,
+    ): Boolean {
+        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)
+    }
+
     // ===================================================
     // Companion Object
     // ===================================================
@@ -352,7 +371,7 @@ abstract class AbstractInventorioScreen protected constructor(handler: Inventori
             //#else
             //$$ val canvas = if (screen is InventorioScreen) CANVAS_TOGGLE_BUTTON_ON else CANVAS_TOGGLE_BUTTON_OFF
             //#endif
-            val screenAccessor = screen as HandledScreenAccessor
+            val screenAccessor = screen as HandledScreenAccessor<*>
             val button = TexturedButtonWidget(
                 screenAccessor.x + screen.backgroundWidth + GUI_TOGGLE_BUTTON_OFFSET.x,
                 screenAccessor.y + GUI_TOGGLE_BUTTON_OFFSET.y,
@@ -387,7 +406,7 @@ abstract class AbstractInventorioScreen protected constructor(handler: Inventori
             if (GlobalSettings.allow2x2CraftingGrid.boolValue) {
                 return null
             }
-            val screenAccessor = screen as HandledScreenAccessor
+            val screenAccessor = screen as HandledScreenAccessor<*>
             val button = TexturedButtonWidget(
                 screenAccessor.x + GUI_LOCKED_CRAFTING_POS.x,
                 screenAccessor.y + GUI_LOCKED_CRAFTING_POS.y,

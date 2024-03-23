@@ -101,6 +101,8 @@ class Props {
     val modmenu_version: String by prop
     val trinkets_version: String by prop
     val cca_version: String by prop
+
+    val curios_version: String by prop
 }
 val props: Props = Props()
 
@@ -149,6 +151,8 @@ repositories {
     if (!loader.isFabric) {
         // Kotlin for Forge
         maven("https://thedarkcolour.github.io/KotlinForForge/")
+        // Curios API
+        maven("https://maven.theillusivec4.top/")
     }
 
     // Cloth Config
@@ -210,6 +214,10 @@ dependencies {
 
             compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.3.5")!!)
             implementation(include("io.github.llamalad7:mixinextras-forge:0.3.5")!!)
+
+            // other mods we do integration with
+            // - Curios API
+            modCompat("top.theillusivec4.curios:curios-forge:${props.curios_version}")
         }
         Loader.NEOFORGE -> {
             "neoForge"("net.neoforged:neoforge:${props.neoforge_version}")
@@ -218,6 +226,10 @@ dependencies {
 
             implementation("thedarkcolour:kotlinforforge-neoforge:${props.forge_kotlin_version}")
             modImplementation("me.shedaniel.cloth:cloth-config-neoforge:${props.cloth_version}")
+
+            // other mods we do integration with
+            // - Curios API
+            modCompat("top.theillusivec4.curios:curios-neoforge:${props.curios_version}")
         }
     }
 

@@ -81,7 +81,7 @@ spotless {
         toggleOffOnRegex("([ \\t]*//#if[\\s\\S]*?[ \\t]*//#endif)")
         // TODO: importOrder()
         removeUnusedImports()
-        eclipse("4.30").configFile("eclipse-prefs.xml")
+        eclipse("4.31").configFile("eclipse-prefs.xml")
         formatAnnotations()
     }
 }
