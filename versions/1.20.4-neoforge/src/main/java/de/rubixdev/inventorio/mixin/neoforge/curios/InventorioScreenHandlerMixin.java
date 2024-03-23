@@ -2,7 +2,7 @@ package de.rubixdev.inventorio.mixin.neoforge.curios;
 
 import de.rubixdev.inventorio.integration.curios.ICuriosContainer;
 import de.rubixdev.inventorio.integration.curios.InventorioScreenHandlerMixinHelper;
-import de.rubixdev.inventorio.player.AbstractInventorioScreenHandler;
+import de.rubixdev.inventorio.player.InventorioScreenHandler;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.entity.player.PlayerInventory;
@@ -23,7 +23,7 @@ import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
                                               // doesn't seem to like Kotlin
                                               // target classes
 @Restriction(require = @Condition("curios"))
-@Mixin(AbstractInventorioScreenHandler.class)
+@Mixin(InventorioScreenHandler.class)
 public abstract class InventorioScreenHandlerMixin extends AbstractRecipeScreenHandler<CraftingInventory>
     implements ICuriosContainer {
     public InventorioScreenHandlerMixin(ScreenHandlerType<?> arg, int i) {
@@ -31,8 +31,7 @@ public abstract class InventorioScreenHandlerMixin extends AbstractRecipeScreenH
     }
 
     @SuppressWarnings("DataFlowIssue")
-    @Unique private final AbstractInventorioScreenHandler thiz =
-        (AbstractInventorioScreenHandler) (AbstractRecipeScreenHandler<?>) this;
+    @Unique private final InventorioScreenHandler thiz = (InventorioScreenHandler) (AbstractRecipeScreenHandler<?>) this;
 
     @Unique private InventorioScreenHandlerMixinHelper helper;
 

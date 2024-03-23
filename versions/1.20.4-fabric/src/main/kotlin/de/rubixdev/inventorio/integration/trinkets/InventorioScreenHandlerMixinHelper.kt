@@ -1,9 +1,11 @@
 package de.rubixdev.inventorio.integration.trinkets
 
 import de.rubixdev.inventorio.config.GlobalSettings
+import de.rubixdev.inventorio.mixin.accessor.ScreenHandlerAccessor
 import de.rubixdev.inventorio.player.InventorioScreenHandler
 import de.rubixdev.inventorio.player.PlayerInventoryAddon.Companion.toolBeltTemplates
 import de.rubixdev.inventorio.slot.ToolBeltSlot
+import de.rubixdev.inventorio.util.insertItem
 import dev.emi.trinkets.Point
 import dev.emi.trinkets.SurvivalTrinketSlot
 import dev.emi.trinkets.TrinketPlayerScreenHandler
@@ -14,19 +16,22 @@ import dev.emi.trinkets.api.SlotType
 import dev.emi.trinkets.api.TrinketComponent
 import dev.emi.trinkets.api.TrinketInventory
 import dev.emi.trinkets.api.TrinketsApi
-import dev.emi.trinkets.mixin.accessor.ScreenHandlerAccessor
 import kotlin.math.max
 import kotlin.math.pow
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.item.ItemStack
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 
 /**
  * This is basically a re-implementation of https://github.com/emilyploszaj/trinkets/blob/3e9747f95890501e1fed8c84e1f3a413647370e8/src/main/java/dev/emi/trinkets/mixin/PlayerScreenHandlerMixin.java
  * with some adjustments for the Inventorio screen (and in Kotlin).
  */
-class TrinketsInventorioScreenHandler(syncId: Int, inventory: PlayerInventory) :
-    InventorioScreenHandler(syncId, inventory), TrinketPlayerScreenHandler {
+@Suppress("FunctionName")
+class InventorioScreenHandlerMixinHelper(
+    private val thiz: InventorioScreenHandler,
+) : TrinketPlayerScreenHandler {
+    @Suppress("CAST_NEVER_SUCCEEDS")
+    private val thiss = thiz as ScreenHandlerAccessor
 
     private val groupNums = mutableMapOf<SlotGroup, Int>()
     private val groupPos = mutableMapOf<SlotGroup, Point>()
@@ -37,21 +42,15 @@ class TrinketsInventorioScreenHandler(syncId: Int, inventory: PlayerInventory) :
     private var trinketSlotEnd = 0
     private var groupCount = 0
 
-    init {
-        `trinkets$updateTrinketSlots`(true)
-    }
-
-    override fun `trinkets$updateTrinketSlots`(slotsChanged: Boolean) {
+    override fun `trinkets$updateTrinketSlots`(slotsChanged: Boolean): Unit = thiz.run {
         TrinketsApi.getTrinketComponent(inventory.player).ifPresent { trinkets ->
             if (slotsChanged) trinkets.update()
             val groups = trinkets.groups
             groupPos.clear()
             while (trinketSlotStart < trinketSlotEnd) {
                 slots.removeAt(trinketSlotStart)
-                @Suppress("CAST_NEVER_SUCCEEDS")
-                (this as ScreenHandlerAccessor).trackedStacks.removeAt(trinketSlotStart)
-                @Suppress("CAST_NEVER_SUCCEEDS")
-                (this as ScreenHandlerAccessor).previousTrackedStacks.removeAt(trinketSlotStart)
+                thiss.trackedStacks.removeAt(trinketSlotStart)
+                thiss.previousTrackedStacks.removeAt(trinketSlotStart)
                 trinketSlotEnd--
             }
 
@@ -109,7 +108,9 @@ class TrinketsInventorioScreenHandler(syncId: Int, inventory: PlayerInventory) :
                     slotTypes.computeIfAbsent(group) { mutableListOf() }.add(stacks.slotType)
                     for (i in 0 until stacks.size()) {
                         val y = (pos.y + (slotOffset / 2) * 18 * (-1.0).pow(slotOffset)).toInt()
-                        addSlot(SurvivalTrinketSlot(stacks, i, x + pos.x, y, group, stacks.slotType, i, groupOffset == 1 && i == 0))
+                        thiss.callAddSlot(
+                            SurvivalTrinketSlot(stacks, i, x + pos.x, y, group, stacks.slotType, i, groupOffset == 1 && i == 0),
+                        )
                         slotOffset++
                     }
                     groupOffset++
@@ -135,7 +136,7 @@ class TrinketsInventorioScreenHandler(syncId: Int, inventory: PlayerInventory) :
     override fun `trinkets$getTrinketSlotStart`(): Int = trinketSlotStart
     override fun `trinkets$getTrinketSlotEnd`(): Int = trinketSlotEnd
 
-    override fun onClosed(player: PlayerEntity) {
+    fun onClosed(player: PlayerEntity) {
         if (player.world.isClient) {
             TrinketsClient.activeGroup = null
             TrinketsClient.activeType = null
@@ -144,21 +145,21 @@ class TrinketsInventorioScreenHandler(syncId: Int, inventory: PlayerInventory) :
         if (!player.world.isClient) {
             (player.playerScreenHandler as TrinketPlayerScreenHandler).`trinkets$updateTrinketSlots`(true)
         }
-        super.onClosed(player)
     }
 
-    override fun quickMove(player: PlayerEntity, sourceIndex: Int): ItemStack {
+    fun InventorioScreenHandler.`trinkets$quickMove`(
+        player: PlayerEntity,
+        sourceIndex: Int,
+        cir: CallbackInfoReturnable<ItemStack>,
+    ) {
         val slot = slots[sourceIndex]
 
         if (slot.hasStack()) {
             val stack = slot.stack
             if (sourceIndex in trinketSlotStart until trinketSlotEnd) {
                 val availableDeepPocketsRange = getAvailableDeepPocketsRange()
-                return if (!insertItem(stack, mainInventoryRange.first, mainInventoryRange.last + 1, false)
-                    && !(
-                        !availableDeepPocketsRange.isEmpty()
-                            && insertItem(stack, availableDeepPocketsRange.first, availableDeepPocketsRange.last + 1, false)
-                        )
+                cir.returnValue = if (!insertItem(stack, mainInventoryRange)
+                    && !(!availableDeepPocketsRange.isEmpty() && insertItem(stack, availableDeepPocketsRange))
                 ) {
                     ItemStack.EMPTY
                 } else {
@@ -174,7 +175,7 @@ class TrinketsInventorioScreenHandler(syncId: Int, inventory: PlayerInventory) :
                         val ref = SlotReference(s.inventory as TrinketInventory, s.index)
 
                         val res = TrinketsApi.evaluatePredicateSet(type.quickMovePredicates, stack, ref, player)
-                        if (res && insertItem(stack, i, i + 1, false) && player.world.isClient) {
+                        if (res && insertItem(stack, i..i) && player.world.isClient) {
                             TrinketsClient.quickMoveTimer = 20
                             TrinketsClient.quickMoveGroup = TrinketsApi.getPlayerSlots(inventory.player)[type.group]
                             TrinketsClient.quickMoveType = if (ref.index > 0) {
@@ -187,7 +188,5 @@ class TrinketsInventorioScreenHandler(syncId: Int, inventory: PlayerInventory) :
                 }
             }
         }
-
-        return super.quickMove(player, sourceIndex)
     }
 }

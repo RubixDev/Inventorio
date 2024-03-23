@@ -1,6 +1,6 @@
 package de.rubixdev.inventorio.mixin.neoforge.curios;
 
-import de.rubixdev.inventorio.client.ui.AbstractInventorioScreen;
+import de.rubixdev.inventorio.client.ui.InventorioScreen;
 import de.rubixdev.inventorio.integration.curios.ICuriosScreen;
 import de.rubixdev.inventorio.integration.curios.InventorioScreenMixinHelper;
 import de.rubixdev.inventorio.player.InventorioScreenHandler;
@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
                                               // doesn't seem to like Kotlin
                                               // target classes
 @Restriction(require = @Condition("curios"))
-@Mixin(AbstractInventorioScreen.class)
+@Mixin(InventorioScreen.class)
 public abstract class InventorioScreenMixin extends AbstractInventoryScreen<InventorioScreenHandler>
     implements ICuriosScreen {
     public InventorioScreenMixin(InventorioScreenHandler arg, PlayerInventory arg2, Text arg3) {
@@ -36,7 +36,7 @@ public abstract class InventorioScreenMixin extends AbstractInventoryScreen<Inve
     private RecipeBookWidget recipeBook;
 
     @SuppressWarnings("DataFlowIssue")
-    @Unique private final AbstractInventorioScreen thiz = (AbstractInventorioScreen) (AbstractInventoryScreen<?>) this;
+    @Unique private final InventorioScreen thiz = (InventorioScreen) (AbstractInventoryScreen<?>) this;
 
     @Unique private InventorioScreenMixinHelper helper;
 
@@ -124,7 +124,7 @@ public abstract class InventorioScreenMixin extends AbstractInventoryScreen<Inve
         )
     )
     private static void curios$hideCuriosWhenOpeningRecipeBook(
-        AbstractInventorioScreen instance,
+        InventorioScreen instance,
         ButtonWidget it,
         CallbackInfo ci
     ) {

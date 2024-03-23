@@ -1,6 +1,6 @@
 package de.rubixdev.inventorio.packet
 
-import de.rubixdev.inventorio.player.AbstractInventorioScreenHandler.Companion.inventorioScreenHandler
+import de.rubixdev.inventorio.player.InventorioScreenHandler.Companion.inventorioScreenHandler
 import kotlin.jvm.optionals.getOrNull
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.network.packet.CustomPayload

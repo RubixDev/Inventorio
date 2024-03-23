@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "de.rubixdev.inventorio.mixin.fabric",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "plugin": "de.rubixdev.inventorio.InventorioMixinPlugin",
+  "mixins": [
+    "trinkets.InventorioScreenHandlerMixin"
+  ],
+  "client": [
+    "trinkets.InventorioScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

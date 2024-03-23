@@ -1,9 +1,9 @@
 package me.lizardofoz.inventorio.api;
 
 import com.google.common.collect.ImmutableList;
-import de.rubixdev.inventorio.client.ui.AbstractInventorioScreen;
+import de.rubixdev.inventorio.client.ui.InventorioScreen;
 import de.rubixdev.inventorio.config.GlobalSettings;
-import de.rubixdev.inventorio.player.AbstractInventorioScreenHandler;
+import de.rubixdev.inventorio.player.InventorioScreenHandler;
 import de.rubixdev.inventorio.player.PlayerInventoryAddon;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -58,7 +58,7 @@ public final class InventorioAPI {
     @Deprecated(forRemoval = true, since = "1.10.0")
     public static void registerScreenHandlerOpenConsumer(
         @NotNull Identifier customIdentifier,
-        Consumer<AbstractInventorioScreenHandler> screenHandlerConsumer
+        Consumer<InventorioScreenHandler> screenHandlerConsumer
     ) {
         de.rubixdev.inventorio.api.InventorioAPI
             .registerScreenHandlerOpenConsumer(customIdentifier, screenHandlerConsumer);
@@ -75,7 +75,7 @@ public final class InventorioAPI {
     @Environment(EnvType.CLIENT)
     public static void registerInventoryUIInitConsumer(
         @NotNull Identifier customIdentifier,
-        Consumer<AbstractInventorioScreen> uiConsumer
+        Consumer<InventorioScreen> uiConsumer
     ) {
         de.rubixdev.inventorio.api.InventorioAPI.registerInventoryUIInitConsumer(customIdentifier, uiConsumer);
     }

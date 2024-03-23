@@ -1,10 +1,8 @@
 package de.rubixdev.inventorio.api;
 
 import com.google.common.collect.ImmutableList;
-import de.rubixdev.inventorio.client.ui.AbstractInventorioScreen;
 import de.rubixdev.inventorio.client.ui.InventorioScreen;
 import de.rubixdev.inventorio.config.GlobalSettings;
-import de.rubixdev.inventorio.player.AbstractInventorioScreenHandler;
 import de.rubixdev.inventorio.player.InventorioScreenHandler;
 import de.rubixdev.inventorio.player.PlayerInventoryAddon;
 import de.rubixdev.inventorio.util.ToolBeltMode;
@@ -102,7 +100,7 @@ public final class InventorioAPI {
     /** Note: each consumer get ran within its own try-catch block */
     public static void registerScreenHandlerOpenConsumer(
         @NotNull Identifier customIdentifier,
-        Consumer<AbstractInventorioScreenHandler> screenHandlerConsumer
+        Consumer<InventorioScreenHandler> screenHandlerConsumer
     ) {
         InventorioScreenHandler.registerOpenConsumer(customIdentifier, screenHandlerConsumer);
     }
@@ -111,7 +109,7 @@ public final class InventorioAPI {
     @Environment(EnvType.CLIENT)
     public static void registerInventoryUIInitConsumer(
         @NotNull Identifier customIdentifier,
-        Consumer<AbstractInventorioScreen> uiConsumer
+        Consumer<InventorioScreen> uiConsumer
     ) {
         InventorioScreen.registerInitConsumer(customIdentifier, uiConsumer);
     }

@@ -1,7 +1,7 @@
 package de.rubixdev.inventorio.integration.curios
 
 import de.rubixdev.inventorio.mixin.accessor.ScreenHandlerAccessor
-import de.rubixdev.inventorio.player.AbstractInventorioScreenHandler
+import de.rubixdev.inventorio.player.InventorioScreenHandler
 import de.rubixdev.inventorio.util.insertItem
 import de.rubixdev.inventorio.util.subList
 import kotlin.math.max
@@ -48,7 +48,7 @@ fun sendToPlayer(player: ServerPlayerEntity, packet: CustomPayload) {
  */
 @Suppress("FunctionName")
 class InventorioScreenHandlerMixinHelper(
-    thiz: AbstractInventorioScreenHandler,
+    thiz: InventorioScreenHandler,
 ) {
     val player: PlayerEntity = thiz.inventory.player
     val curiosHandler: ICuriosItemHandler? = CuriosApi.getCuriosInventory(player).orElse(null)
@@ -60,15 +60,16 @@ class InventorioScreenHandlerMixinHelper(
     var hasCosmeticColumn = false
         private set
 
+    @Suppress("CAST_NEVER_SUCCEEDS")
     private val thiss = thiz as ScreenHandlerAccessor
 
-    fun AbstractInventorioScreenHandler.`curios$init`() {
+    fun InventorioScreenHandler.`curios$init`() {
         `curios$scrollToIndex`(0)
     }
 
-    fun AbstractInventorioScreenHandler.`curios$resetSlots`() = `curios$scrollToIndex`(lastScrollIndex)
+    fun InventorioScreenHandler.`curios$resetSlots`() = `curios$scrollToIndex`(lastScrollIndex)
 
-    fun AbstractInventorioScreenHandler.`curios$scrollToIndex`(indexIn: Int) {
+    fun InventorioScreenHandler.`curios$scrollToIndex`(indexIn: Int) {
         val curioMap = curiosHandler?.curios ?: return
         var slotCount = 0
         var yOffset = 12
@@ -149,7 +150,7 @@ class InventorioScreenHandlerMixinHelper(
         curiosSlotRange = curiosSlotStart until slots.size
     }
 
-    fun AbstractInventorioScreenHandler.`curios$scrollTo`(pos: Float) {
+    fun InventorioScreenHandler.`curios$scrollTo`(pos: Float) {
         if (curiosHandler != null) {
             val k = curiosHandler.visibleSlots - 8
             val j = (pos * k + 0.5).toInt().coerceAtLeast(0)
@@ -163,11 +164,11 @@ class InventorioScreenHandlerMixinHelper(
     @get:JvmName("canScroll")
     val canScroll get() = (curiosHandler?.visibleSlots ?: 0) > 8
 
-    fun AbstractInventorioScreenHandler.`curios$setStackInSlot`(slot: Int, ci: CallbackInfo) {
+    fun InventorioScreenHandler.`curios$setStackInSlot`(slot: Int, ci: CallbackInfo) {
         if (slots.size <= slot) ci.cancel()
     }
 
-    fun AbstractInventorioScreenHandler.`curios$quickMoveInner`(sourceIndex: Int, cir: CallbackInfoReturnable<ItemStack>) {
+    fun InventorioScreenHandler.`curios$quickMoveInner`(sourceIndex: Int, cir: CallbackInfoReturnable<ItemStack>) {
         // TODO: quick move also works while the client has the curios stuff closed, but to fix that I'd have to sync the
         //  open status using custom packets which is a bit too much for just mod compat
         val slot = slots[sourceIndex]

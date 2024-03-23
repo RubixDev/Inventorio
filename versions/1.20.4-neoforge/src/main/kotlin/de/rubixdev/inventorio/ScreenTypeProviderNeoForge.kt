@@ -17,7 +17,7 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent
 
 object ScreenTypeProviderNeoForge : ScreenTypeProvider {
     private val handlerProvider = IMenuTypeExtension.create { syncId, inv, _ ->
-        InventorioScreenHandler.create(syncId, inv)
+        InventorioScreenHandler(syncId, inv)
     }
 
     init {
@@ -33,11 +33,11 @@ object ScreenTypeProviderNeoForge : ScreenTypeProvider {
     //#if MC >= 12004
     @SubscribeEvent
     fun registerScreen(event: RegisterMenuScreensEvent) {
-        event.register(handlerProvider) { handler, inventory, _ -> InventorioScreen.create(handler, inventory) }
+        event.register(handlerProvider) { handler, inventory, _ -> InventorioScreen(handler, inventory) }
     }
     //#else
     //$$ fun registerScreen() {
-    //$$     HandledScreens.register(handlerProvider) { handler, inventory, _ -> InventorioScreen.create(handler, inventory) }
+    //$$     HandledScreens.register(handlerProvider) { handler, inventory, _ -> InventorioScreen(handler, inventory) }
     //$$ }
     //#endif
 }

@@ -11,7 +11,7 @@ import thedarkcolour.kotlinforforge.KotlinModLoadingContext
 
 object ScreenTypeProviderForge : ScreenTypeProvider {
     private val handlerProvider = IForgeMenuType.create { syncId, inv, _ ->
-        InventorioScreenHandler.create(syncId, inv)
+        InventorioScreenHandler(syncId, inv)
     }
 
     init {
@@ -25,6 +25,6 @@ object ScreenTypeProviderForge : ScreenTypeProvider {
     }
 
     fun registerScreen() {
-        HandledScreens.register(handlerProvider) { handler, inventory, _ -> InventorioScreen.create(handler, inventory) }
+        HandledScreens.register(handlerProvider) { handler, inventory, _ -> InventorioScreen(handler, inventory) }
     }
 }

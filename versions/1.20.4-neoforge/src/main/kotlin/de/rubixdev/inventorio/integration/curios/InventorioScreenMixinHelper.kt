@@ -1,6 +1,6 @@
 package de.rubixdev.inventorio.integration.curios
 
-import de.rubixdev.inventorio.client.ui.AbstractInventorioScreen
+import de.rubixdev.inventorio.client.ui.InventorioScreen
 import de.rubixdev.inventorio.mixin.client.accessor.HandledScreenAccessor
 import de.rubixdev.inventorio.util.MixinDelegate
 import kotlin.math.min
@@ -25,7 +25,7 @@ import top.theillusivec4.curios.common.network.client.CPacketToggleRender
  */
 @Suppress("FunctionName")
 class InventorioScreenMixinHelper(
-    private val thiz: AbstractInventorioScreen,
+    private val thiz: InventorioScreen,
     private val recipeBook: RecipeBookWidget,
 ) {
     companion object {
@@ -49,13 +49,14 @@ class InventorioScreenMixinHelper(
     private val handler get() = thiss.handler
     private val curioHandler get() = handler as ICuriosContainer
 
+    @Suppress("CAST_NEVER_SUCCEEDS")
     private val thiss = thiz as HandledScreenAccessor<*>
 
     ///// private members of the mixin target class ////
     private var x by MixinDelegate(thiss::getX, thiss::setX)
     private var y by MixinDelegate(thiss::getY, thiss::setY)
 
-    fun AbstractInventorioScreen.`curios$init`() {
+    fun InventorioScreen.`curios$init`() {
         thiss.client?.also { client ->
             client.player?.also { player ->
                 hasScrollbar = CuriosApi.getCuriosInventory(player).map { it.visibleSlots > 0 }.orElse(false)
@@ -92,7 +93,7 @@ class InventorioScreenMixinHelper(
         }
     }
 
-    fun AbstractInventorioScreen.`curios$hideCuriosWhenOpeningRecipeBook`() {
+    fun InventorioScreen.`curios$hideCuriosWhenOpeningRecipeBook`() {
         if (recipeBook.isOpen) wasCuriosOpen.add(isCuriosOpen)
         if (recipeBook.isOpen && isCuriosOpen) {
             // close curios when recipe book is being opened
@@ -106,7 +107,7 @@ class InventorioScreenMixinHelper(
         `curios$updateRenderButtons`()
     }
 
-    fun AbstractInventorioScreen.`curios$updateRenderButtons`() {
+    fun InventorioScreen.`curios$updateRenderButtons`() {
         thiss.selectables.removeIf { it is RenderButton }
         thiss.children.removeIf { it is RenderButton }
         drawables.removeIf { it is RenderButton }
@@ -150,7 +151,7 @@ class InventorioScreenMixinHelper(
         return mouseX >= k && mouseY >= l && mouseX < i1 && mouseY < j1
     }
 
-    fun AbstractInventorioScreen.`curios$render`(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
+    fun InventorioScreen.`curios$render`(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
         var isButtonHovered = false
         for (button in drawables.filterIsInstance<RenderButton>()) {
             button.renderButtonOverlay(context, mouseX, mouseY, delta)

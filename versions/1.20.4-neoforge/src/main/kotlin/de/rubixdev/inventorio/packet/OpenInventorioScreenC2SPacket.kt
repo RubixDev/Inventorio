@@ -1,6 +1,6 @@
 package de.rubixdev.inventorio.packet
 
-import de.rubixdev.inventorio.player.AbstractInventorioScreenHandler
+import de.rubixdev.inventorio.player.InventorioScreenHandler
 import kotlin.jvm.optionals.getOrNull
 import net.minecraft.network.PacketByteBuf
 import net.minecraft.network.packet.CustomPayload
@@ -19,7 +19,7 @@ class OpenInventorioScreenC2SPacket : CustomPayload {
     fun consume(context: PlayPayloadContext) {
         val sender = context.player.getOrNull() ?: return
         context.workHandler.execute {
-            AbstractInventorioScreenHandler.open(sender)
+            InventorioScreenHandler.open(sender)
         }
     }
 }

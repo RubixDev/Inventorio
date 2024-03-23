@@ -13,7 +13,7 @@ object ScreenTypeProviderFabric : ScreenTypeProvider {
     private val handlerProvider = Registry.register(
         Registries.SCREEN_HANDLER,
         Identifier("inventorio", "player_screen"),
-        ScreenHandlerType({ syncId, inv -> InventorioScreenHandler.create(syncId, inv) }, FeatureFlags.VANILLA_FEATURES),
+        ScreenHandlerType({ syncId, inv -> InventorioScreenHandler(syncId, inv) }, FeatureFlags.VANILLA_FEATURES),
     )
 
     override fun getScreenHandlerType(): ScreenHandlerType<InventorioScreenHandler> {
@@ -21,6 +21,6 @@ object ScreenTypeProviderFabric : ScreenTypeProvider {
     }
 
     fun registerScreen() {
-        HandledScreens.register(getScreenHandlerType()) { handler, inventory, _ -> InventorioScreen.create(handler, inventory) }
+        HandledScreens.register(getScreenHandlerType()) { handler, inventory, _ -> InventorioScreen(handler, inventory) }
     }
 }
