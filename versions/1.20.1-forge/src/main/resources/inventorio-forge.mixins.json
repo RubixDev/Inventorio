@@ -15,7 +15,8 @@
     "curios.SPacketSyncModifiersMixin"
   ],
   "client": [
-    "curios.InventorioScreenMixin"
+    "curios.InventorioScreenMixin",
+    "curios.InventorioScreenMixin_alternative"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -29,7 +29,8 @@ class InventorioScreenMixinHelper(
     private val recipeBook: RecipeBookWidget,
 ) {
     companion object {
-        private val CURIO_INVENTORY = Identifier("curios", "textures/gui/inventory.png")
+        @JvmField
+        val CURIO_INVENTORY = Identifier("curios", "textures/gui/inventory.png")
         private val CREATIVE_INVENTORY_TABS = Identifier("textures/gui/container/creative_inventory/tabs.png")
 
         var currentScroll = 0f
