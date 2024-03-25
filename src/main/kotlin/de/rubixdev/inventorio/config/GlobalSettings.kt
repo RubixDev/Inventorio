@@ -35,6 +35,22 @@ object GlobalSettings : AbstractSettings() {
         "inventorio.settings.global.2x2_crafting_grid.tooltip",
     )
 
+    //#if FABRIC
+    @JvmField val trinketsIntegration = SettingsEntryBoolean(
+        true,
+        "TrinketsIntegration",
+        "inventorio.settings.global.trinkets_integration",
+        "inventorio.settings.global.trinkets_integration.tooltip",
+    )
+    //#elseif FORGELIKE
+    @JvmField val curiosIntegration = SettingsEntryBoolean(
+        true,
+        "CuriosIntegration",
+        "inventorio.settings.global.curios_integration",
+        "inventorio.settings.global.curios_integration.tooltip",
+    )
+    //#endif
+
     @JvmField val toolBeltMode =
         SettingsEntry(
             ToolBeltMode.ENABLED,
@@ -73,6 +89,11 @@ object GlobalSettings : AbstractSettings() {
             totemFromUtilityBelt,
             allowSwappedHands,
             allow2x2CraftingGrid,
+            //#if FABRIC
+            trinketsIntegration,
+            //#elseif FORGELIKE
+            curiosIntegration,
+            //#endif
 
             toolBeltMode,
             utilityBeltShortDefaultSize,
@@ -83,6 +104,7 @@ object GlobalSettings : AbstractSettings() {
         load(File(".").resolve("config/inventorio_shared.json"))
     }
 
+    @Suppress("unused") // used in non-common package
     fun syncFromServer(newSettingsJson: JsonObject) {
         if (GlobalSettings.anyChanges(newSettingsJson)) {
             MinecraftClient.getInstance()?.setScreen(GlobalSettingsSyncPrompt.get(newSettingsJson))

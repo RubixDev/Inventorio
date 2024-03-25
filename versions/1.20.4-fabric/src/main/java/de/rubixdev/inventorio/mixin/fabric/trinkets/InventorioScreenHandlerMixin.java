@@ -2,6 +2,7 @@ package de.rubixdev.inventorio.mixin.fabric.trinkets;
 
 import de.rubixdev.inventorio.integration.trinkets.InventorioScreenHandlerMixinHelper;
 import de.rubixdev.inventorio.player.InventorioScreenHandler;
+import de.rubixdev.inventorio.util.TrinketsTester;
 import dev.emi.trinkets.Point;
 import dev.emi.trinkets.TrinketPlayerScreenHandler;
 import dev.emi.trinkets.api.SlotGroup;
@@ -27,7 +28,9 @@ import java.util.List;
 @SuppressWarnings("UnresolvedMixinReference") // the Minecraft Dev plugin
                                               // doesn't seem to like Kotlin
                                               // target classes
-@Restriction(require = @Condition("trinkets"))
+@Restriction(
+    require = { @Condition("trinkets"), @Condition(type = Condition.Type.TESTER, tester = TrinketsTester.class) }
+)
 @Mixin(InventorioScreenHandler.class)
 public abstract class InventorioScreenHandlerMixin extends ScreenHandler implements TrinketPlayerScreenHandler {
     protected InventorioScreenHandlerMixin(@Nullable ScreenHandlerType<?> type, int syncId) {

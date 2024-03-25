@@ -80,6 +80,18 @@ inventorio:
         des joueurs duplique des objets. Si rien d'autre ne fonctionne,
         désactiver la grille de fabrication d'inventaire pourrait être une option.
 
+      # trinkets_integration: Trinkets Integration
+      # trinkets_integration.tooltip: |-
+      #   Add the Trinket slots to Inventorio's inventory screen.
+      #   In the future or with some other mods this may cause bugs.
+      #   In that case, turning it off should help.
+      #
+      # curios_integration: Curios Integration
+      # curios_integration.tooltip: |-
+      #   Add the Curios slots to Inventorio's inventory screen.
+      #   In the future or with some other mods this may cause bugs.
+      #   In that case, turning it off should help.
+
       utility_belt_short_default_size: Des cases supplémentaires de barre d'action secondaire requièrent Grandes Poches
       utility_belt_short_default_size.tooltip: |-
         Par défaut, l'enchantement grandes poches augmente

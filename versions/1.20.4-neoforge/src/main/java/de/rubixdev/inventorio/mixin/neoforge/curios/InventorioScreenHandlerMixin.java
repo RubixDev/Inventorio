@@ -3,6 +3,7 @@ package de.rubixdev.inventorio.mixin.neoforge.curios;
 import de.rubixdev.inventorio.integration.curios.ICuriosContainer;
 import de.rubixdev.inventorio.integration.curios.InventorioScreenHandlerMixinHelper;
 import de.rubixdev.inventorio.player.InventorioScreenHandler;
+import de.rubixdev.inventorio.util.CuriosTester;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.entity.player.PlayerInventory;
@@ -22,7 +23,7 @@ import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 @SuppressWarnings("UnresolvedMixinReference") // the Minecraft Dev plugin
                                               // doesn't seem to like Kotlin
                                               // target classes
-@Restriction(require = @Condition("curios"))
+@Restriction(require = { @Condition("curios"), @Condition(type = Condition.Type.TESTER, tester = CuriosTester.class) })
 @Mixin(InventorioScreenHandler.class)
 public abstract class InventorioScreenHandlerMixin extends AbstractRecipeScreenHandler<CraftingInventory>
     implements ICuriosContainer {

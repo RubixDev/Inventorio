@@ -78,6 +78,18 @@ inventorio:
         Some mods cause Player's 2x2 crafting grid to duplicate items.
         If nothing else helps, turning it off could be an option.
 
+      trinkets_integration: Trinkets Integration
+      trinkets_integration.tooltip: |-
+        Füge die Slots von Trinkets zum Inventorio Bildschirm hinzu.
+        In Zukunft oder mit anderen Mods könnte dies zu Bugs führen.
+        Wenn das der Fall ist, sollte es helfen dies auszustellen.
+
+      curios_integration: Curios Integration
+      curios_integration.tooltip: |-
+        Füge die Slots von Curios zum Inventorio Bildschirm hinzu.
+        In Zukunft oder mit anderen Mods könnte dies zu Bugs führen.
+        Wenn das der Fall ist, sollte es helfen dies auszustellen.
+
       utility_belt_short_default_size: Extra Utensiliengürtel Slots erfordern "Tiefe Taschen"
       utility_belt_short_default_size.tooltip: |-
         Standardmäßig erhöht die Verzauberung "Tiefe Taschen"

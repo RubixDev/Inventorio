@@ -4,6 +4,7 @@ import de.rubixdev.inventorio.client.ui.InventorioScreen;
 import de.rubixdev.inventorio.integration.curios.ICuriosScreen;
 import de.rubixdev.inventorio.integration.curios.InventorioScreenMixinHelper;
 import de.rubixdev.inventorio.player.InventorioScreenHandler;
+import de.rubixdev.inventorio.util.CuriosTester;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.client.gui.DrawContext;
@@ -24,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @SuppressWarnings("UnresolvedMixinReference") // the Minecraft Dev plugin
                                               // doesn't seem to like Kotlin
                                               // target classes
-@Restriction(require = @Condition("curios"))
+@Restriction(require = { @Condition("curios"), @Condition(type = Condition.Type.TESTER, tester = CuriosTester.class) })
 @Mixin(InventorioScreen.class)
 public abstract class InventorioScreenMixin extends AbstractInventoryScreen<InventorioScreenHandler>
     implements ICuriosScreen {

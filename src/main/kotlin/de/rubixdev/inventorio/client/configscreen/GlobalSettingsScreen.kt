@@ -3,6 +3,7 @@ package de.rubixdev.inventorio.client.configscreen
 import de.rubixdev.inventorio.client.configscreen.PlayerSettingsScreen.addBoolEntry
 import de.rubixdev.inventorio.client.configscreen.PlayerSettingsScreen.addEnumEntry
 import de.rubixdev.inventorio.config.GlobalSettings
+import de.rubixdev.inventorio.util.PlatformApi
 import de.rubixdev.inventorio.util.ToolBeltMode
 import me.shedaniel.clothconfig2.api.ConfigBuilder
 import net.fabricmc.api.EnvType
@@ -33,6 +34,11 @@ object GlobalSettingsScreen {
         addBoolEntry(category, entryBuilder, GlobalSettings.totemFromUtilityBelt, true, isNotLocal)
         addBoolEntry(category, entryBuilder, GlobalSettings.allowSwappedHands, true, isNotLocal)
         addBoolEntry(category, entryBuilder, GlobalSettings.allow2x2CraftingGrid, true, isNotLocal)
+        //#if FABRIC
+        addBoolEntry(category, entryBuilder, GlobalSettings.trinketsIntegration, true, isNotLocal) { PlatformApi.isModLoaded("trinkets") }
+        //#elseif FORGELIKE
+        addBoolEntry(category, entryBuilder, GlobalSettings.curiosIntegration, true, isNotLocal) { PlatformApi.isModLoaded("curios") }
+        //#endif
 
         addEnumEntry(category, entryBuilder, GlobalSettings.toolBeltMode, true, isNotLocal, ToolBeltMode::class.java, ToolBeltMode.ENABLED)
         addBoolEntry(category, entryBuilder, GlobalSettings.utilityBeltShortDefaultSize, true, isNotLocal)

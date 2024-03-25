@@ -1,6 +1,7 @@
 package de.rubixdev.inventorio.mixin.forge.curios;
 
 import de.rubixdev.inventorio.integration.curios.ICuriosContainer;
+import de.rubixdev.inventorio.util.CuriosTester;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 import top.theillusivec4.curios.common.inventory.CurioStacksHandler;
 
-@Restriction(require = @Condition("curios"))
+@Restriction(require = { @Condition("curios"), @Condition(type = Condition.Type.TESTER, tester = CuriosTester.class) })
 @Mixin(CurioStacksHandler.class)
 public class CurioStacksHandlerMixin {
     @Shadow
@@ -31,7 +32,7 @@ public class CurioStacksHandlerMixin {
                 target = "Lnet/minecraftforge/eventbus/api/IEventBus;post(Lnet/minecraftforge/eventbus/api/Event;)Z"
             )
         ),
-            remap = false
+        remap = false
     )
     private void inventorioResetSlots(CallbackInfo ci) {
         if (

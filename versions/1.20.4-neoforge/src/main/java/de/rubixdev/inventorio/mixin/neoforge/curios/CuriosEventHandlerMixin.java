@@ -1,6 +1,7 @@
 package de.rubixdev.inventorio.mixin.neoforge.curios;
 
 import de.rubixdev.inventorio.integration.curios.ICuriosContainer;
+import de.rubixdev.inventorio.util.CuriosTester;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -13,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 import top.theillusivec4.curios.common.event.CuriosEventHandler;
 
-@Restriction(require = @Condition("curios"))
+@Restriction(require = { @Condition("curios"), @Condition(type = Condition.Type.TESTER, tester = CuriosTester.class) })
 @Mixin(CuriosEventHandler.class)
 public class CuriosEventHandlerMixin {
     //#if MC >= 12004

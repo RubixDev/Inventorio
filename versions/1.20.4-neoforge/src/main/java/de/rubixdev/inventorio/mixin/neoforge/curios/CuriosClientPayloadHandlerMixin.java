@@ -3,6 +3,7 @@ package de.rubixdev.inventorio.mixin.neoforge.curios;
 import com.llamalad7.mixinextras.sugar.Local;
 import de.rubixdev.inventorio.integration.curios.ICuriosContainer;
 import de.rubixdev.inventorio.integration.curios.ICuriosScreen;
+import de.rubixdev.inventorio.util.CuriosTester;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.client.gui.screen.Screen;
@@ -22,7 +23,7 @@ import top.theillusivec4.curios.common.network.server.SPacketScroll;
 import top.theillusivec4.curios.common.network.server.sync.SPacketSyncCurios;
 import top.theillusivec4.curios.common.network.server.sync.SPacketSyncModifiers;
 
-@Restriction(require = @Condition("curios"))
+@Restriction(require = { @Condition("curios"), @Condition(type = Condition.Type.TESTER, tester = CuriosTester.class) })
 @Mixin(CuriosClientPayloadHandler.class)
 public class CuriosClientPayloadHandlerMixin {
     @Inject(

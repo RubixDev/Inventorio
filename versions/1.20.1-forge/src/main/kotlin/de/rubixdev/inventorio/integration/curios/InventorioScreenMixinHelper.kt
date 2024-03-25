@@ -232,7 +232,8 @@ class InventorioScreenMixinHelper(
                         j + 12 + (127f * currentScroll).toInt(),
                         232,
                         0,
-                        12, 15
+                        12,
+                        15,
                     )
                 }
 

@@ -2,6 +2,7 @@ package de.rubixdev.inventorio.mixin.fabric.trinkets;
 
 import de.rubixdev.inventorio.client.ui.InventorioScreen;
 import de.rubixdev.inventorio.player.InventorioScreenHandler;
+import de.rubixdev.inventorio.util.TrinketsTester;
 import dev.emi.trinkets.Point;
 import dev.emi.trinkets.TrinketPlayerScreenHandler;
 import dev.emi.trinkets.TrinketScreen;
@@ -26,7 +27,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @SuppressWarnings("UnresolvedMixinReference") // the Minecraft Dev plugin
                                               // doesn't seem to like Kotlin
                                               // target classes
-@Restriction(require = @Condition("trinkets"))
+@Restriction(
+    require = { @Condition("trinkets"), @Condition(type = Condition.Type.TESTER, tester = TrinketsTester.class) }
+)
 @Mixin(InventorioScreen.class)
 public abstract class InventorioScreenMixin extends AbstractInventoryScreen<InventorioScreenHandler>
     implements RecipeBookProvider, TrinketScreen {

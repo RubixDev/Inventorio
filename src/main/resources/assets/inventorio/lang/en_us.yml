@@ -78,6 +78,18 @@ inventorio:
         Some mods cause Player's 2x2 crafting grid to duplicate items.
         If nothing else helps, turning it off could be an option.
 
+      trinkets_integration: Trinkets Integration
+      trinkets_integration.tooltip: |-
+        Add the Trinket slots to Inventorio's inventory screen.
+        In the future or with some other mods this may cause bugs.
+        In that case, turning it off should help.
+
+      curios_integration: Curios Integration
+      curios_integration.tooltip: |-
+        Add the Curios slots to Inventorio's inventory screen.
+        In the future or with some other mods this may cause bugs.
+        In that case, turning it off should help.
+
       utility_belt_short_default_size: Extra Utility Belt Slots Require Deep Pockets
       utility_belt_short_default_size.tooltip: |-
         By default, the Deep Pockets Enchantment increases

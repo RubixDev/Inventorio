@@ -21,16 +21,16 @@ import top.theillusivec4.curios.common.network.client.CPacketScroll
 import top.theillusivec4.curios.common.network.server.SPacketScroll
 
 fun <MSG> sendToServer(packet: MSG) {
-   NetworkHandler.INSTANCE.send(
-       PacketDistributor.SERVER.noArg(),
-       packet,
-   )
+    NetworkHandler.INSTANCE.send(
+        PacketDistributor.SERVER.noArg(),
+        packet,
+    )
 }
 fun <MSG> sendToPlayer(player: ServerPlayerEntity, packet: MSG) {
-   NetworkHandler.INSTANCE.send(
-       PacketDistributor.PLAYER.with { player },
-       packet,
-   )
+    NetworkHandler.INSTANCE.send(
+        PacketDistributor.PLAYER.with { player },
+        packet,
+    )
 }
 
 /**

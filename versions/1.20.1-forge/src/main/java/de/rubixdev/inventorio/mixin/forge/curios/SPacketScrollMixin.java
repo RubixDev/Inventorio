@@ -3,6 +3,7 @@ package de.rubixdev.inventorio.mixin.forge.curios;
 import com.llamalad7.mixinextras.sugar.Local;
 import de.rubixdev.inventorio.integration.curios.ICuriosContainer;
 import de.rubixdev.inventorio.integration.curios.ICuriosScreen;
+import de.rubixdev.inventorio.util.CuriosTester;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
 import net.minecraft.client.gui.screen.Screen;
@@ -16,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import top.theillusivec4.curios.common.network.server.SPacketScroll;
 
-@Restriction(require = @Condition("curios"))
+@Restriction(require = { @Condition("curios"), @Condition(type = Condition.Type.TESTER, tester = CuriosTester.class) })
 @Mixin(SPacketScroll.class)
 public abstract class SPacketScrollMixin {
     @Shadow

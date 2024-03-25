@@ -9,6 +9,7 @@ import de.rubixdev.inventorio.util.SegmentedHotbar
 import me.shedaniel.clothconfig2.api.ConfigBuilder
 import me.shedaniel.clothconfig2.api.ConfigCategory
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder
+import me.shedaniel.clothconfig2.api.Requirement
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.gui.screen.Screen
@@ -81,7 +82,15 @@ object PlayerSettingsScreen {
         category.addEntry(builder.build())
     }
 
-    fun addBoolEntry(category: ConfigCategory, entryBuilder: ConfigEntryBuilder, settingsEntry: SettingsEntryBoolean, requireRestart: Boolean, blocked: Boolean) {
+    @Suppress("UnstableApiUsage")
+    fun addBoolEntry(
+        category: ConfigCategory,
+        entryBuilder: ConfigEntryBuilder,
+        settingsEntry: SettingsEntryBoolean,
+        requireRestart: Boolean,
+        blocked: Boolean,
+        requirement: Requirement? = null,
+    ) {
         if (blocked) {
             category.addEntry(
                 entryBuilder
@@ -102,6 +111,9 @@ object PlayerSettingsScreen {
             )
             .setDefaultValue(settingsEntry.defaultValue == true)
             .setSaveConsumer { settingsEntry.value = it }
+            .apply {
+                requirement?.let { setRequirement(it) }
+            }
         if (requireRestart) {
             builder.requireRestart()
         }
