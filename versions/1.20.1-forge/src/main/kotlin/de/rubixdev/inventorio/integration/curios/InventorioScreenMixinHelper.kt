@@ -1,6 +1,7 @@
 package de.rubixdev.inventorio.integration.curios
 
 import de.rubixdev.inventorio.client.ui.InventorioScreen
+import de.rubixdev.inventorio.config.PlayerSettings
 import de.rubixdev.inventorio.mixin.client.accessor.HandledScreenAccessor
 import de.rubixdev.inventorio.util.MixinDelegate
 import kotlin.math.min
@@ -76,23 +77,31 @@ class InventorioScreenMixinHelper(
                 14,
                 CURIO_INVENTORY,
             ) {
-                isCuriosOpen = !isCuriosOpen
-                if (isCuriosOpen) wasRecipeBookOpen.add(recipeBook.isOpen)
-                if (isCuriosOpen && recipeBook.isOpen) {
-                    // close the recipe book when opening the curios stuff, so we don't have to deal with that
-                    recipeBook.toggleOpen()
-                } else if (!isCuriosOpen && wasRecipeBookOpen.last()) {
-                    // re-open the recipe book if it was open before
-                    recipeBook.toggleOpen()
-                    wasRecipeBookOpen.removeLast()
-                }
-                updateScreenPosition()
-                `curios$updateRenderButtons`()
+                toggleCurios()
             }
             thiss.callAddDrawableChild(buttonCurios)
 
             `curios$updateRenderButtons`()
+
+            if (PlayerSettings.curiosOpenByDefault.boolValue) {
+                toggleCurios()
+            }
         }
+    }
+
+    private fun InventorioScreen.toggleCurios() {
+        isCuriosOpen = !isCuriosOpen
+        if (isCuriosOpen) wasRecipeBookOpen.add(recipeBook.isOpen)
+        if (isCuriosOpen && recipeBook.isOpen) {
+            // close the recipe book when opening the curios stuff, so we don't have to deal with that
+            recipeBook.toggleOpen()
+        } else if (!isCuriosOpen && wasRecipeBookOpen.last()) {
+            // re-open the recipe book if it was open before
+            recipeBook.toggleOpen()
+            wasRecipeBookOpen.removeLast()
+        }
+        updateScreenPosition()
+        `curios$updateRenderButtons`()
     }
 
     fun InventorioScreen.`curios$hideCuriosWhenOpeningRecipeBook`() {

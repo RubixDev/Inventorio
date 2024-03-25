@@ -39,6 +39,9 @@ inventorio:
         d'inventaires dans l'inventaire Inventorio.
         Si ils causent des problèmes, cette option elèvera les boutons.
 
+      # curios_open_by_default: Curios Open by Default
+      # curios_open_by_default.tooltip: Show the Curios slots by default when opening the Inventorio screen.
+
       segmented_hotbar_mode: Mode barre d'action segmentée
       segmented_hotbar_mode.OFF: §cDésactivé
       segmented_hotbar_mode.ONLY_VISUAL: §dVisuel Seulement

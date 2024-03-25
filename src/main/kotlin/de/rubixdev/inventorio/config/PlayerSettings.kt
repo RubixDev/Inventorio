@@ -84,6 +84,16 @@ object PlayerSettings : AbstractSettings() {
         "inventorio.settings.player.toggle_button",
     )
 
+    //#if FORGELIKE
+    @JvmField
+    val curiosOpenByDefault = SettingsEntryBoolean(
+        false,
+        "CuriosOpenByDefault",
+        "inventorio.settings.player.curios_open_by_default",
+        "inventorio.settings.player.curios_open_by_default.tooltip",
+    )
+    //#endif
+
     init {
         entries = listOf(
             segmentedHotbar,
@@ -95,6 +105,9 @@ object PlayerSettings : AbstractSettings() {
             swappedHands,
             aggressiveButtonRemoval,
             toggleButton,
+            //#if FORGELIKE
+            curiosOpenByDefault,
+            //#endif
         )
     }
 }

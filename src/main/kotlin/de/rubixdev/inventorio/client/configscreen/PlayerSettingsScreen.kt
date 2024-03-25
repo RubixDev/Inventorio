@@ -4,6 +4,7 @@ import de.rubixdev.inventorio.config.GlobalSettings
 import de.rubixdev.inventorio.config.PlayerSettings
 import de.rubixdev.inventorio.config.SettingsEntry
 import de.rubixdev.inventorio.config.SettingsEntryBoolean
+import de.rubixdev.inventorio.util.PlatformApi
 import de.rubixdev.inventorio.util.ScrollWheelUtilityBeltMode
 import de.rubixdev.inventorio.util.SegmentedHotbar
 import me.shedaniel.clothconfig2.api.ConfigBuilder
@@ -37,6 +38,9 @@ object PlayerSettingsScreen {
         addBoolEntry(category, entryBuilder, PlayerSettings.darkTheme, requireRestart = false, blocked = false)
         addBoolEntry(category, entryBuilder, PlayerSettings.aggressiveButtonRemoval, requireRestart = false, blocked = false)
         addBoolEntry(category, entryBuilder, PlayerSettings.toggleButton, requireRestart = false, blocked = false)
+        //#if FORGELIKE
+        addBoolEntry(category, entryBuilder, PlayerSettings.curiosOpenByDefault, requireRestart = false, blocked = false) { PlatformApi.isModLoaded("curios") }
+        //#endif
 
         if (!GlobalSettings.allowSwappedHands.boolValue) {
             category.addEntry(

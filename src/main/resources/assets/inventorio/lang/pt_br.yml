@@ -38,6 +38,9 @@ inventorio:
         Alguns mods conseguem chegar a modificar a tela do Inventorio.
         Caso isso gere problemas, esta opção removerá estas modificações.
 
+      # curios_open_by_default: Curios Open by Default
+      # curios_open_by_default.tooltip: Show the Curios slots by default when opening the Inventorio screen.
+
       segmented_hotbar_mode: Modo de barra rápida segmentada
       segmented_hotbar_mode.OFF: §cNão
       segmented_hotbar_mode.ONLY_VISUAL: §dApenas visual
