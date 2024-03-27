@@ -30,14 +30,17 @@ class PlayerInventoryAddon internal constructor(player: PlayerEntity) : PlayerIn
         bNoMoreToolBeltSlots = true
     }
 
+    private var prevSelectedSlot = -1
+
     fun tick() {
         val ms = Util.getMeasuringTimeMs()
         if (player.handSwinging) {
             displayToolTimeStamp = ms + 1000
         }
-        if (displayToolTimeStamp <= ms) {
+        if (displayToolTimeStamp <= ms || (prevSelectedSlot != -1 && prevSelectedSlot != player.inventory.selectedSlot)) {
             displayTool = ItemStack.EMPTY
         }
+        prevSelectedSlot = player.inventory.selectedSlot
 
         stacks.forEach { syncItems(player, it) }
         stacks.filter { it.isNotEmpty }.forEach {
