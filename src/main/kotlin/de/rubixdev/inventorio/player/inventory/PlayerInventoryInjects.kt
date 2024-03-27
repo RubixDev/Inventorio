@@ -3,7 +3,6 @@ package de.rubixdev.inventorio.player.inventory
 import de.rubixdev.inventorio.util.INVENTORY_HOTBAR_RANGE
 import de.rubixdev.inventorio.util.getLevelOn
 import de.rubixdev.inventorio.util.isNotEmpty
-import kotlin.math.max
 import kotlin.math.min
 import net.minecraft.enchantment.Enchantments
 import net.minecraft.entity.player.PlayerEntity
@@ -88,8 +87,7 @@ abstract class PlayerInventoryInjects protected constructor(player: PlayerEntity
     }
 
     private fun transfer(sourceStack: ItemStack, targetStack: ItemStack) {
-        val i = max(maxCountPerStack, targetStack.maxCount)
-        val j = min(sourceStack.count, i - targetStack.count)
+        val j = min(sourceStack.count, targetStack.maxCount - targetStack.count)
         if (j > 0) {
             targetStack.increment(j)
             sourceStack.decrement(j)
