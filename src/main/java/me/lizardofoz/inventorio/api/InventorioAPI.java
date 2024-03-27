@@ -1,10 +1,10 @@
 package me.lizardofoz.inventorio.api;
 
 import com.google.common.collect.ImmutableList;
-import de.rubixdev.inventorio.client.ui.InventorioScreen;
 import de.rubixdev.inventorio.config.GlobalSettings;
-import de.rubixdev.inventorio.player.InventorioScreenHandler;
-import de.rubixdev.inventorio.player.PlayerInventoryAddon;
+import me.lizardofoz.inventorio.client.ui.InventorioScreen;
+import me.lizardofoz.inventorio.player.InventorioScreenHandler;
+import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.entity.player.PlayerEntity;
@@ -44,7 +44,7 @@ public final class InventorioAPI {
         de.rubixdev.inventorio.api.InventorioAPI.registerInventoryTickHandler(
             customIdentifier,
             (addon, section, stack, index) -> tickHandler
-                .tick(addon, InventorioAddonSection.from(section), stack, index)
+                .tick(PlayerInventoryAddon.ofNonNull(addon), InventorioAddonSection.from(section), stack, index)
         );
     }
 
@@ -60,8 +60,10 @@ public final class InventorioAPI {
         @NotNull Identifier customIdentifier,
         Consumer<InventorioScreenHandler> screenHandlerConsumer
     ) {
-        de.rubixdev.inventorio.api.InventorioAPI
-            .registerScreenHandlerOpenConsumer(customIdentifier, screenHandlerConsumer);
+        de.rubixdev.inventorio.api.InventorioAPI.registerScreenHandlerOpenConsumer(
+            customIdentifier,
+            handler -> screenHandlerConsumer.accept(InventorioScreenHandler.of(handler))
+        );
     }
 
     /**
@@ -77,7 +79,10 @@ public final class InventorioAPI {
         @NotNull Identifier customIdentifier,
         Consumer<InventorioScreen> uiConsumer
     ) {
-        de.rubixdev.inventorio.api.InventorioAPI.registerInventoryUIInitConsumer(customIdentifier, uiConsumer);
+        de.rubixdev.inventorio.api.InventorioAPI.registerInventoryUIInitConsumer(
+            customIdentifier,
+            screen -> uiConsumer.accept(InventorioScreen.of(screen))
+        );
     }
 
     /**
@@ -185,6 +190,6 @@ public final class InventorioAPI {
      */
     @Deprecated(forRemoval = true, since = "1.10.0")
     @Nullable public static PlayerInventoryAddon getInventoryAddon(@NotNull PlayerEntity playerEntity) {
-        return de.rubixdev.inventorio.api.InventorioAPI.getInventoryAddon(playerEntity);
+        return PlayerInventoryAddon.of(de.rubixdev.inventorio.api.InventorioAPI.getInventoryAddon(playerEntity));
     }
 }

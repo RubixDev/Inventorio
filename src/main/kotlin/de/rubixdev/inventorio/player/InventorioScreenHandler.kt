@@ -40,7 +40,12 @@ import net.minecraft.util.Identifier
 import net.minecraft.recipe.RecipeEntry
 //#endif
 
-class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory) :
+/**
+* Note: **Do not extend this class!** It is only marked as `open` for compatibility purposes.
+*/
+// TODO: remove `open` modifier once old api package is removed
+@Suppress("LeakingThis")
+open class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory) :
     AbstractRecipeScreenHandler<CraftingInventory?>(ScreenTypeProvider.INSTANCE.getScreenHandlerType(), syncId) {
     val inventoryAddon = inventory.player.inventoryAddon!!
 

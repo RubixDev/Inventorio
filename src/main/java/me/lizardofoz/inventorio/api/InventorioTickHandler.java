@@ -1,6 +1,6 @@
 package me.lizardofoz.inventorio.api;
 
-import de.rubixdev.inventorio.player.PlayerInventoryAddon;
+import me.lizardofoz.inventorio.player.PlayerInventoryAddon;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 

@@ -35,9 +35,13 @@ import net.minecraft.util.Identifier
 import net.minecraft.client.gui.screen.ButtonTextures
 //#endif
 
+/**
+ * Note: **Do not extend this class!** It is only marked as `open` for compatibility purposes.
+ */
+// TODO: remove `open` modifier once old api package is removed
 @Environment(EnvType.CLIENT)
-class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInventory) :
-    AbstractInventoryScreen<InventorioScreenHandler?>(handler, inventory, Text.translatable("container.crafting")), RecipeBookProvider {
+open class InventorioScreen(handler: InventorioScreenHandler, internal val inventory: PlayerInventory) :
+    AbstractInventoryScreen<InventorioScreenHandler>(handler, inventory, Text.translatable("container.crafting")), RecipeBookProvider {
     private var mouseX = 0f
     private var mouseY = 0f
     private val recipeBook = RecipeBookWidget()
