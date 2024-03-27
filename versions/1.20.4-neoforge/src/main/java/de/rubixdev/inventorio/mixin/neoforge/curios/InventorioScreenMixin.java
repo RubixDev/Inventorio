@@ -132,4 +132,11 @@ public abstract class InventorioScreenMixin extends AbstractInventoryScreen<Inve
         // noinspection DataFlowIssue
         ((InventorioScreenMixin) (HandledScreen<?>) instance).helper.curios$hideCuriosWhenOpeningRecipeBook(instance);
     }
+
+    @Inject(method = "updateScreenPosition", at = @At("TAIL"), remap = false)
+    private void curios$updateScreenPosition(CallbackInfo ci) {
+        if (helper != null) {
+            helper.curios$updateRenderButtons(thiz);
+        }
+    }
 }

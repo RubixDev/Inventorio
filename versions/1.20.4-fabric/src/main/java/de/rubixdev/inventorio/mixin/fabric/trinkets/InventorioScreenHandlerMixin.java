@@ -107,4 +107,11 @@ public abstract class InventorioScreenHandlerMixin extends ScreenHandler impleme
     private void trinkets$quickMove(PlayerEntity player, int index, CallbackInfoReturnable<ItemStack> cir) {
         helper.trinkets$quickMove(thiz, player, index, cir);
     }
+
+    @Inject(method = "updateDeepPocketsCapacity", at = @At("TAIL"), remap = false)
+    private void trinkets$updateDeepPocketsCapacity(CallbackInfo ci) {
+        if (helper != null) {
+            helper.trinkets$updateTrinketSlots(false);
+        }
+    }
 }

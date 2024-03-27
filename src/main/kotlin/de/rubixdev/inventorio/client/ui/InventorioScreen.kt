@@ -103,6 +103,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
     fun onRefresh() {
         backgroundWidth = GUI_INVENTORY_TOP.width + ((inventoryAddon.toolBelt.size - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())) * 20
         backgroundHeight = INVENTORY_HEIGHT + inventoryAddon.getDeepPocketsRowCount() * SLOT_UI_SIZE
+        updateScreenPosition()
     }
 
     @Suppress("MemberVisibilityCanBePrivate") // used from non-common package
@@ -112,6 +113,7 @@ class InventorioScreen(handler: InventorioScreenHandler, inventory: PlayerInvent
             backgroundWidth - 19 - 19
                 * ((inventoryAddon.toolBelt.size - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())),
         )
+        y = (height - backgroundHeight) / 2
         recipeButton?.x = x + GUI_RECIPE_WIDGET_BUTTON.x
         recipeButton?.y = y + GUI_RECIPE_WIDGET_BUTTON.y
         mouseDown = true
