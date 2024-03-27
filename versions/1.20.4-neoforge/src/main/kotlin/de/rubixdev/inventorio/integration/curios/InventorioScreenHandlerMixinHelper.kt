@@ -51,7 +51,12 @@ class InventorioScreenHandlerMixinHelper(
     thiz: InventorioScreenHandler,
 ) {
     val player: PlayerEntity = thiz.inventory.player
+
+    //#if MC >= 12004
     val curiosHandler: ICuriosItemHandler? = CuriosApi.getCuriosInventory(player).orElse(null)
+    //#else
+    //$$ val curiosHandler: ICuriosItemHandler? = CuriosApi.getCuriosInventory(player).resolve().orElse(null)
+    //#endif
 
     private val isLocalWorld = player.world.isClient
     private var lastScrollIndex = 0
@@ -60,7 +65,6 @@ class InventorioScreenHandlerMixinHelper(
     var hasCosmeticColumn = false
         private set
 
-    @Suppress("CAST_NEVER_SUCCEEDS")
     private val thiss = thiz as ScreenHandlerAccessor
 
     fun InventorioScreenHandler.`curios$init`() {
