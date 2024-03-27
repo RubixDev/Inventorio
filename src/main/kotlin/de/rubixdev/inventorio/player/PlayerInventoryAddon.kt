@@ -14,8 +14,6 @@ import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.item.CompassItem
-import net.minecraft.item.FilledMapItem
 import net.minecraft.item.ItemStack
 import net.minecraft.item.NetworkSyncedItem
 import net.minecraft.server.network.ServerPlayerEntity
@@ -42,6 +40,9 @@ class PlayerInventoryAddon internal constructor(player: PlayerEntity) : PlayerIn
         }
 
         stacks.forEach { syncItems(player, it) }
+        stacks.filter { it.isNotEmpty }.forEach {
+            it.inventoryTick(player.world, player, -2, false)
+        }
         for (tickHandler in tickHandlers.entries) {
             for ((index, item) in deepPockets.withIndex())
                 tickMe(tickHandler, this, InventorioAddonSection.DEEP_POCKETS, item, index)
@@ -97,17 +98,7 @@ class PlayerInventoryAddon internal constructor(player: PlayerEntity) : PlayerIn
         val PlayerEntity.inventoryAddon: PlayerInventoryAddon?
             get() = (this as PlayerDuck).inventorioAddon
 
-        private val vanillaTickHandlers = mapOf(
-            "map" to FilledMapItem::class,
-            "compass" to CompassItem::class,
-        )
-        private val tickHandlers = vanillaTickHandlers.map { (id, clazz) ->
-            Identifier(id) to InventorioTickHandler { addon, _, stack, _ ->
-                if (clazz.isInstance(stack.item)) {
-                    stack.inventoryTick(addon.player.world, addon.player, -1, false)
-                }
-            }
-        }.toMap().toMutableMap()
+        private val tickHandlers = mutableMapOf<Identifier, InventorioTickHandler>()
         internal val toolBeltTemplates = mutableListOf<ToolBeltSlotTemplate>()
         private var bNoMoreToolBeltSlots = false
 

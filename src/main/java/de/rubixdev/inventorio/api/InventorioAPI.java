@@ -83,12 +83,11 @@ public final class InventorioAPI {
     /**
      * Items within vanilla Player Inventory can tick
      * ({@link ItemStack#inventoryTick}).<br>
-     * This method opens mod authors the ability to make their items tick within
-     * Inventorio Addon slots.<br>
+     * Inventorio will by default call that method with a slot of -2 for added
+     * inventory slots. If you require to know which exact slot of the addon the
+     * stack is in, you can register a custom tick handler here, which will be
+     * called additionally.<br>
      * Note: each tick handler gets ran within its own try-catch block.<br>
-     * Unfortunately, because the vanilla ticking needs to be supplied with a
-     * VANILLA slot id, it denies the possibility to inject Inventorio ticking
-     * into it.
      */
     public static void registerInventoryTickHandler(
         @NotNull Identifier customIdentifier,
