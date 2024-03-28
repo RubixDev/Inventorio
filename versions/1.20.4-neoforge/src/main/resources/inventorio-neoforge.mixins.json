@@ -9,11 +9,11 @@
     "curios.CuriosEventHandlerMixin",
     "curios.CuriosServerPayloadHandlerMixin",
     "curios.CurioStacksHandlerMixin",
-    "curios.HandledScreenMixin",
     "curios.InventorioScreenHandlerMixin",
     "curios.InventorioScreenMixin_alternative"
   ],
   "client": [
+    "curios.HandledScreenMixin",
     "curios.InventorioScreenMixin"
   ],
   "injectors": {

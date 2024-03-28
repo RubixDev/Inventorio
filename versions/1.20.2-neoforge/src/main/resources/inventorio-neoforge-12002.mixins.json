@@ -5,7 +5,9 @@
   "minVersion": "0.8",
   "plugin": "de.rubixdev.inventorio.InventorioMixinPlugin",
   "mixins": [
-    "curios.CPacketScrollMixin",
+    "curios.CPacketScrollMixin"
+  ],
+  "client": [
     "curios.SPacketScrollMixin",
     "curios.SPacketSyncCuriosMixin",
     "curios.SPacketSyncModifiersMixin"

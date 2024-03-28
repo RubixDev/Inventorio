@@ -8,15 +8,15 @@
     "curios.CPacketScrollMixin",
     "curios.CuriosEventHandlerMixin",
     "curios.CurioStacksHandlerMixin",
+    "curios.InventorioScreenHandlerMixin"
+  ],
+  "client": [
     "curios.HandledScreenMixin",
-    "curios.InventorioScreenHandlerMixin",
+    "curios.InventorioScreenMixin",
+    "curios.InventorioScreenMixin_alternative",
     "curios.SPacketScrollMixin",
     "curios.SPacketSyncCuriosMixin",
     "curios.SPacketSyncModifiersMixin"
-  ],
-  "client": [
-    "curios.InventorioScreenMixin",
-    "curios.InventorioScreenMixin_alternative"
   ],
   "injectors": {
     "defaultRequire": 1
