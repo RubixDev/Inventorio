@@ -114,7 +114,7 @@ open class InventorioScreen(handler: InventorioScreenHandler, internal val inven
     fun updateScreenPosition() {
         x = recipeBook.findLeftEdge(
             width,
-            backgroundWidth - 19 - 19
+            backgroundWidth - 22 - 20
                 * ((inventoryAddon.toolBelt.size - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())),
         )
         y = (height - backgroundHeight) / 2
