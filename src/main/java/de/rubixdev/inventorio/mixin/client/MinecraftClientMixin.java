@@ -49,7 +49,10 @@ public class MinecraftClientMixin {
         )
     )
     private void inventorioOpenReplacingScreen(MinecraftClient instance, Screen old, Operation<Void> original) {
-        if (InventorioScreen.shouldOpenVanillaInventory) {
+        if (
+            InventorioScreen.shouldOpenVanillaInventory
+                || (instance.interactionManager != null && instance.interactionManager.hasCreativeInventory())
+        ) {
             original.call(instance, old);
         } else {
             InventorioNetworking.getInstance().c2sOpenInventorioScreen();
