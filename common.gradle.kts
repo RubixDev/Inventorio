@@ -97,6 +97,7 @@ class Props {
     val cloth_version: String by prop
     val clumps_version: String by prop
 
+    val early_loading_screen_version: String by prop
     val fabric_api_version: String by prop
     val modmenu_version: String by prop
     val trinkets_version: String by prop
@@ -188,6 +189,8 @@ dependencies {
             modCompileOnly("com.github.RubixDev.conditional-mixin:conditional-mixin-common:${props.conditional_mixin_version}")
         }
         Loader.FABRIC -> {
+            modLocalRuntime("maven.modrinth:early-loading-screen:${props.early_loading_screen_version}")
+
             modImplementation("net.fabricmc.fabric-api:fabric-api:${props.fabric_api_version}")
 
             include(modImplementation("com.github.RubixDev.conditional-mixin:conditional-mixin-fabric:${props.conditional_mixin_version}")!!)
