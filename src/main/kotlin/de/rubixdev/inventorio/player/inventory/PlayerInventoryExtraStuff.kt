@@ -28,7 +28,10 @@ abstract class PlayerInventoryExtraStuff protected constructor(player: PlayerEnt
      */
     fun getMiningSpeedMultiplier(block: BlockState): Float {
         val tool = getMostPreferredTool(block)
-        if (tool != getActualMainHandItem()) {
+        if (tool != getActualMainHandItem()
+            // TODO: find a better way around this that's not exclusive to Jade
+            && !Thread.currentThread().stackTrace.any { it.className.startsWith("snownee.jade.addon") }
+        ) {
             displayTool = tool
         }
         return max(1f, tool.getMiningSpeedMultiplier(block))
