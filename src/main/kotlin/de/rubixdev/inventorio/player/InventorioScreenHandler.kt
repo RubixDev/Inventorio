@@ -49,16 +49,6 @@ open class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory) 
     AbstractRecipeScreenHandler<CraftingInventory?>(ScreenTypeProvider.INSTANCE.getScreenHandlerType(), syncId) {
     val inventoryAddon = inventory.player.inventoryAddon!!
 
-    @JvmField val craftingGridRange: IntRange = 0 expandBy CRAFTING_GRID_SIZE
-    @JvmField val armorSlotsRange: IntRange = craftingGridRange.last + 1 expandBy ARMOR_SIZE
-    @JvmField val mainInventoryRange: IntRange = armorSlotsRange.last + 1 expandBy MAIN_INVENTORY_SIZE
-    @JvmField val deepPocketsRange: IntRange = mainInventoryRange.last + 1 expandBy DEEP_POCKETS_MAX_SIZE
-    @JvmField val utilityBeltRange: IntRange = deepPocketsRange.last + 1 expandBy UTILITY_BELT_FULL_SIZE
-    @JvmField val toolBeltRange: IntRange = utilityBeltRange.last + 1 expandBy toolBeltTemplates.size
-
-    @JvmField val mainInventoryWithoutHotbarRange: IntRange = mainInventoryRange.first..mainInventoryRange.last - 9
-    @JvmField val hotbarRange: IntRange = mainInventoryWithoutHotbarRange.last + 1..mainInventoryRange.last
-
     private val craftingInput = CraftingInventory(this, 2, 2)
     private val craftingResult = CraftingResultInventory()
 
@@ -113,16 +103,17 @@ open class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory) 
 
         // Tool Belt
         val deepPocketsRowCount = inventoryAddon.getDeepPocketsRowCount()
-        for ((relativeIndex, toolBeltTemplate) in toolBeltTemplates.withIndex())
+        for ((relativeIndex, toolBeltTemplate) in toolBeltTemplates.withIndex()) {
             addSlot(
                 ToolBeltSlot(
                     toolBeltTemplate,
                     inventoryAddon,
                     relativeIndex + INVENTORY_ADDON_TOOL_BELT_INDEX_OFFSET,
-                    ToolBeltSlot.getSlotPosition(deepPocketsRowCount, relativeIndex, toolBeltTemplates.size).x,
-                    ToolBeltSlot.getSlotPosition(deepPocketsRowCount, relativeIndex, toolBeltTemplates.size).y,
+                    ToolBeltSlot.getSlotPosition(deepPocketsRowCount, relativeIndex, getToolBeltSlotCount()).x,
+                    ToolBeltSlot.getSlotPosition(deepPocketsRowCount, relativeIndex, getToolBeltSlotCount()).y,
                 ),
             )
+        }
 
         updateDeepPocketsCapacity()
 
@@ -308,8 +299,8 @@ open class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory) 
         }
         for ((absoluteIndex, relativeIndex) in toolBeltRange.withRelativeIndex()) {
             val slot = getSlot(absoluteIndex) as SlotAccessor
-            slot.x = ToolBeltSlot.getSlotPosition(deepPocketsRowCount, relativeIndex, toolBeltRange.count()).x
-            slot.y = ToolBeltSlot.getSlotPosition(deepPocketsRowCount, relativeIndex, toolBeltRange.count()).y
+            slot.x = ToolBeltSlot.getSlotPosition(deepPocketsRowCount, relativeIndex, getToolBeltSlotCount()).x
+            slot.y = ToolBeltSlot.getSlotPosition(deepPocketsRowCount, relativeIndex, getToolBeltSlotCount()).y
         }
     }
 
@@ -333,6 +324,8 @@ open class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory) 
     private fun getUnavailableDeepPocketsRange(): IntRange {
         return getAvailableDeepPocketsRange().last + 1..deepPocketsRange.last
     }
+
+    fun getToolBeltSlotCount(): Int = toolBeltTemplates.size
 
     // ===================================================
     // Unmodified methods lifted from InventoryScreen
@@ -411,6 +404,16 @@ open class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory) 
     // Companion Object
     // ===================================================
     companion object {
+        @JvmField val craftingGridRange: IntRange = 0 expandBy CRAFTING_GRID_SIZE
+        @JvmField val armorSlotsRange: IntRange = craftingGridRange.last + 1 expandBy ARMOR_SIZE
+        @JvmField val mainInventoryRange: IntRange = armorSlotsRange.last + 1 expandBy MAIN_INVENTORY_SIZE
+        @JvmField val deepPocketsRange: IntRange = mainInventoryRange.last + 1 expandBy DEEP_POCKETS_MAX_SIZE
+        @JvmField val utilityBeltRange: IntRange = deepPocketsRange.last + 1 expandBy UTILITY_BELT_FULL_SIZE
+        @JvmField val toolBeltRange: IntRange = utilityBeltRange.last + 1 expandBy toolBeltTemplates.size
+
+        @JvmField val mainInventoryWithoutHotbarRange: IntRange = mainInventoryRange.first..mainInventoryRange.last - 9
+        @JvmField val hotbarRange: IntRange = mainInventoryWithoutHotbarRange.last + 1..mainInventoryRange.last
+
         @JvmStatic
         val PlayerEntity.inventorioScreenHandler: InventorioScreenHandler?
             get() = currentScreenHandler as? InventorioScreenHandler

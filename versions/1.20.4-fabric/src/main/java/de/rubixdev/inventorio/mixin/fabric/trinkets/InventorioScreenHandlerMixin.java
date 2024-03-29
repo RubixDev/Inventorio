@@ -1,5 +1,6 @@
 package de.rubixdev.inventorio.mixin.fabric.trinkets;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import de.rubixdev.inventorio.integration.trinkets.InventorioScreenHandlerMixinHelper;
 import de.rubixdev.inventorio.player.InventorioScreenHandler;
 import de.rubixdev.inventorio.util.TrinketsTester;
@@ -113,5 +114,10 @@ public abstract class InventorioScreenHandlerMixin extends ScreenHandler impleme
         if (helper != null) {
             helper.trinkets$updateTrinketSlots(false);
         }
+    }
+
+    @ModifyReturnValue(method = "getToolBeltSlotCount", at = @At("RETURN"), remap = false)
+    private int trinkets$addExtraGroups(int original) {
+        return original + InventorioScreenHandlerMixinHelper.getGroupCount(thiz.getInventory().player);
     }
 }

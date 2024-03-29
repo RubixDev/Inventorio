@@ -2,6 +2,9 @@ package de.rubixdev.inventorio.integration.curios
 
 import de.rubixdev.inventorio.mixin.accessor.ScreenHandlerAccessor
 import de.rubixdev.inventorio.player.InventorioScreenHandler
+import de.rubixdev.inventorio.player.InventorioScreenHandler.Companion.deepPocketsRange
+import de.rubixdev.inventorio.player.InventorioScreenHandler.Companion.mainInventoryRange
+import de.rubixdev.inventorio.player.InventorioScreenHandler.Companion.toolBeltRange
 import de.rubixdev.inventorio.util.insertItem
 import de.rubixdev.inventorio.util.subList
 import kotlin.math.max
@@ -46,12 +49,11 @@ class InventorioScreenHandlerMixinHelper(
 
     private val isLocalWorld = player.world.isClient
     private var lastScrollIndex = 0
-    private var curiosSlotRange = thiz.toolBeltRange.last + 1 until thiz.slots.size
+    private var curiosSlotRange = toolBeltRange.last + 1 until thiz.slots.size
     @get:JvmName("hasCosmeticColumn")
     var hasCosmeticColumn = false
         private set
 
-    @Suppress("CAST_NEVER_SUCCEEDS")
     private val thiss = thiz as ScreenHandlerAccessor
 
     fun InventorioScreenHandler.`curios$init`() {

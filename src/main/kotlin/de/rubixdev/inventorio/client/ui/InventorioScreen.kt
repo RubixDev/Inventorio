@@ -130,8 +130,9 @@ open class InventorioScreen(handler: InventorioScreenHandler, internal val inven
                     && it != recipeButton
                     && it != toggleButton
                     && it != lockedCraftButton
-            })
+            }) {
                 remove(child)
+            }
         }
         toggleButton?.x = x + backgroundWidth + GUI_TOGGLE_BUTTON_OFFSET.x
         toggleButton?.y = y + GUI_TOGGLE_BUTTON_OFFSET.y
@@ -200,7 +201,7 @@ open class InventorioScreen(handler: InventorioScreenHandler, internal val inven
         // Tool Belt
 
         // If Tool Belt is 2+ columns wide, draw extra background pieces
-        val size = inventoryAddon.toolBelt.size
+        val size = handler.getToolBeltSlotCount()
         for (column in 0 until (size - 1) / ToolBeltSlot.getColumnCapacity(deepPocketsRowCount))
             drawContext.drawTexture(
                 texture,
@@ -214,7 +215,8 @@ open class InventorioScreen(handler: InventorioScreenHandler, internal val inven
         for (index in inventoryAddon.toolBelt.indices)
             drawContext.drawTexture(
                 texture,
-                x + ToolBeltSlot.getGuiPosition(deepPocketsRowCount, index, size).x, y + ToolBeltSlot.getGuiPosition(deepPocketsRowCount, index, size).y,
+                x + ToolBeltSlot.getGuiPosition(deepPocketsRowCount, index, size).x,
+                y + ToolBeltSlot.getGuiPosition(deepPocketsRowCount, index, size).y,
                 CANVAS_TOOL_BELT.x, CANVAS_TOOL_BELT.y,
                 SLOT_UI_SIZE, SLOT_UI_SIZE,
                 CANVAS_INVENTORY_TEXTURE_SIZE.x, CANVAS_INVENTORY_TEXTURE_SIZE.y,

@@ -1,8 +1,10 @@
 package de.rubixdev.inventorio.integration.trinkets
 
-import de.rubixdev.inventorio.config.GlobalSettings
 import de.rubixdev.inventorio.mixin.accessor.ScreenHandlerAccessor
 import de.rubixdev.inventorio.player.InventorioScreenHandler
+import de.rubixdev.inventorio.player.InventorioScreenHandler.Companion.deepPocketsRange
+import de.rubixdev.inventorio.player.InventorioScreenHandler.Companion.mainInventoryRange
+import de.rubixdev.inventorio.player.InventorioScreenHandler.Companion.utilityBeltRange
 import de.rubixdev.inventorio.player.PlayerInventoryAddon.Companion.toolBeltTemplates
 import de.rubixdev.inventorio.slot.ToolBeltSlot
 import de.rubixdev.inventorio.util.insertItem
@@ -16,10 +18,10 @@ import dev.emi.trinkets.api.SlotType
 import dev.emi.trinkets.api.TrinketComponent
 import dev.emi.trinkets.api.TrinketInventory
 import dev.emi.trinkets.api.TrinketsApi
-import kotlin.math.max
 import kotlin.math.pow
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
+import net.minecraft.screen.PlayerScreenHandler
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 
 /**
@@ -30,7 +32,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 class InventorioScreenHandlerMixinHelper(
     private val thiz: InventorioScreenHandler,
 ) : TrinketPlayerScreenHandler {
-    @Suppress("CAST_NEVER_SUCCEEDS")
     private val thiss = thiz as ScreenHandlerAccessor
 
     private val groupNums = mutableMapOf<SlotGroup, Int>()
@@ -40,7 +41,13 @@ class InventorioScreenHandlerMixinHelper(
     private val slotWidths = mutableMapOf<SlotGroup, Int>()
     private var trinketSlotStart = 0
     private var trinketSlotEnd = 0
-    private var groupCount = 0
+
+    companion object {
+        @JvmStatic
+        fun getGroupCount(player: PlayerEntity): Int = TrinketsApi.getTrinketComponent(player).map { trinkets ->
+            trinkets.groups.values.count { it.slotId == -1 }
+        }.orElse(0)
+    }
 
     override fun `trinkets$updateTrinketSlots`(slotsChanged: Boolean): Unit = thiz.run {
         TrinketsApi.getTrinketComponent(inventory.player).ifPresent { trinkets ->
@@ -58,7 +65,9 @@ class InventorioScreenHandlerMixinHelper(
 
             for (group in groups.values.sortedBy { it.order }) {
                 if (!hasSlots(trinkets, group)) continue
-                val id = group.slotId
+                val id = group.slotId.let {
+                    if (it == PlayerScreenHandler.OFFHAND_ID) utilityBeltRange.first else it
+                }
                 if (id != -1) {
                     if (slots.size > id) {
                         val slot = slots[id]
@@ -68,25 +77,16 @@ class InventorioScreenHandlerMixinHelper(
                         }
                     }
                 } else {
-                    val pos = if (inventoryAddon.getDeepPocketsRowCount() == 0 && GlobalSettings.utilityBeltShortDefaultSize.boolValue) {
-                        // there is space right next to the 4 default utility belt slots.
-                        // place groups that aren't assigned to another slot there
-                        Point(98, 62 - groupNum * 18)
-                    } else {
-                        // otherwise place such groups above the tool belt with a small gap
-                        val pos = ToolBeltSlot.getSlotPosition(
-                            inventoryAddon.getDeepPocketsRowCount(),
-                            0,
-                            toolBeltTemplates.size + groupNum + 1,
-                        )
-                        Point(pos.x, pos.y - 4)
-                    }
-                    groupPos[group] = pos
+                    val pos = ToolBeltSlot.getSlotPosition(
+                        inventoryAddon.getDeepPocketsRowCount(),
+                        toolBeltTemplates.size + groupNum,
+                        getToolBeltSlotCount(),
+                    )
+                    groupPos[group] = Point(pos.x, pos.y)
                     groupNums[group] = groupNum
                     groupNum++
                 }
             }
-            groupCount = max(0, groupNum - 4)
             trinketSlotStart = slots.size
             slotWidths.clear()
             slotHeights.clear()
@@ -132,7 +132,7 @@ class InventorioScreenHandlerMixinHelper(
     override fun `trinkets$getSlotHeight`(group: SlotGroup?, i: Int): Point? = `trinkets$getSlotHeights`(group).getOrNull(i)
     override fun `trinkets$getSlotTypes`(group: SlotGroup?): List<SlotType> = slotTypes[group] ?: listOf()
     override fun `trinkets$getSlotWidth`(group: SlotGroup?): Int = slotWidths[group] ?: 0
-    override fun `trinkets$getGroupCount`(): Int = groupCount
+    override fun `trinkets$getGroupCount`(): Int = 0
     override fun `trinkets$getTrinketSlotStart`(): Int = trinketSlotStart
     override fun `trinkets$getTrinketSlotEnd`(): Int = trinketSlotEnd
 
