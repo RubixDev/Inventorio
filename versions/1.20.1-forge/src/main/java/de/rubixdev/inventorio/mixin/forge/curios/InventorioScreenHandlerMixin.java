@@ -6,6 +6,7 @@ import de.rubixdev.inventorio.player.InventorioScreenHandler;
 import de.rubixdev.inventorio.util.CuriosTester;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
@@ -71,8 +72,8 @@ public abstract class InventorioScreenHandlerMixin extends AbstractRecipeScreenH
         helper.curios$setStackInSlot(thiz, slot, ci);
     }
 
-    @Inject(method = "quickMoveInner", at = @At("HEAD"), cancellable = true)
-    private void curios$quickMoveInner(int sourceIndex, CallbackInfoReturnable<ItemStack> cir) {
-        helper.curios$quickMoveInner(thiz, sourceIndex, cir);
+    @Inject(method = "quickMove", at = @At("HEAD"), cancellable = true)
+    private void curios$quickMove(PlayerEntity player, int sourceIndex, CallbackInfoReturnable<ItemStack> cir) {
+        helper.curios$quickMove(thiz, sourceIndex, cir);
     }
 }

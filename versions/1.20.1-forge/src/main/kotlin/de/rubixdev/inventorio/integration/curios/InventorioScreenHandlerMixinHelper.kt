@@ -157,7 +157,7 @@ class InventorioScreenHandlerMixinHelper(
         if (slots.size <= slot) ci.cancel()
     }
 
-    fun InventorioScreenHandler.`curios$quickMoveInner`(sourceIndex: Int, cir: CallbackInfoReturnable<ItemStack>) {
+    fun InventorioScreenHandler.`curios$quickMove`(sourceIndex: Int, cir: CallbackInfoReturnable<ItemStack>) {
         // TODO: quick move also works while the client has the curios stuff closed, but to fix that I'd have to sync the
         //  open status using custom packets which is a bit too much for just mod compat
         val slot = slots[sourceIndex]

@@ -137,80 +137,79 @@ open class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory) 
 
     override fun quickMove(player: PlayerEntity, sourceIndex: Int): ItemStack {
         val sourceSlot = slots[sourceIndex]
-        val itemStackDynamic = sourceSlot.stack
-        val itemStackStaticCopy = quickMoveInner(sourceIndex)
-        if (itemStackStaticCopy.isNotEmpty) {
-            if (itemStackDynamic.isEmpty) {
+        val stackDynamic = sourceSlot.stack
+        // fix for #191, issue where "Origins: Classes" copies the crafting result stack each time it is accessed,
+        // so we have to pass the same `stackDynamic` to the inner function instead of re-getting it
+        val stackStatic = quickMoveInner(sourceIndex, stackDynamic)
+        if (stackStatic.isNotEmpty) {
+            if (stackDynamic.isEmpty) {
                 sourceSlot.stack = ItemStack.EMPTY
             } else {
                 sourceSlot.markDirty()
             }
 
-            if (itemStackDynamic.count == itemStackStaticCopy.count) {
+            if (stackDynamic.count == stackStatic.count) {
                 return ItemStack.EMPTY
             }
 
-            slots[sourceIndex].onTakeItem(player, itemStackDynamic)
+            sourceSlot.onTakeItem(player, stackDynamic)
         }
-        return itemStackStaticCopy
+        return stackStatic
     }
 
-    private fun quickMoveInner(sourceIndex: Int): ItemStack {
-        val sourceSlot = slots[sourceIndex]
-        val itemStackDynamic = sourceSlot.stack
-        val itemStackStaticCopy = itemStackDynamic.copy()
+    private fun quickMoveInner(sourceIndex: Int, stackDynamic: ItemStack): ItemStack {
+        val stackStatic = stackDynamic.copy()
         val availableDeepPocketsRange = getAvailableDeepPocketsRange()
 
         // First, we want to transfer armor or tools into their respective slots from any other section
         if (sourceIndex in mainInventoryRange || sourceIndex in availableDeepPocketsRange) {
             // Try to send an item into the armor slots
-            if (MobEntity.getPreferredEquipmentSlot(itemStackStaticCopy).type == EquipmentSlot.Type.ARMOR
-                && insertItem(itemStackDynamic, armorSlotsRange.first, armorSlotsRange.last + 1, false)
+            if (MobEntity.getPreferredEquipmentSlot(stackStatic).type == EquipmentSlot.Type.ARMOR
+                && insertItem(stackDynamic, armorSlotsRange)
             ) {
                 updateDeepPocketsCapacity()
-                return itemStackStaticCopy
+                return stackStatic
             }
             // Try to send an item into the Tool Belt
-            if (insertItem(itemStackDynamic, toolBeltRange.first, toolBeltRange.last + 1, false)) {
-                return itemStackStaticCopy
+            if (insertItem(stackDynamic, toolBeltRange)) {
+                return stackStatic
             }
         }
         // If we're here, an item can't be moved to neither tool belt nor armor slots
 
-        // When we shift-click an item that's in the hotbar, we try to move it to main section and then into deep pockets
-        if (sourceIndex in hotbarRange) {
-            if (insertItem(itemStackDynamic, mainInventoryWithoutHotbarRange.first, mainInventoryWithoutHotbarRange.last + 1, false)) {
-                return itemStackStaticCopy
+        when (sourceIndex) {
+            // when we shift-click an item that's in the hotbar, we try to move it to main section and then into deep pockets
+            in hotbarRange -> if (
+                insertItem(stackDynamic, mainInventoryWithoutHotbarRange)
+                || (!availableDeepPocketsRange.isEmpty() && insertItem(stackDynamic, availableDeepPocketsRange))
+            ) {
+                return stackStatic
             }
-            if (!availableDeepPocketsRange.isEmpty() && insertItem(itemStackDynamic, availableDeepPocketsRange.first, availableDeepPocketsRange.last + 1, false)) {
-                return itemStackStaticCopy
+            // when we shift-click an item that's in the main inventory, we try to move it into deep pockets and then
+            // into hotbar (that's what vanilla does)
+            // TODO: some players would want this reversed
+            in mainInventoryWithoutHotbarRange -> if (
+                (!availableDeepPocketsRange.isEmpty() && insertItem(stackDynamic, availableDeepPocketsRange))
+                || insertItem(stackDynamic, hotbarRange)
+            ) {
+                return stackStatic
             }
-        }
-        // When we shift-click an item that's in the main inventory, we try to move it into deep pockets and then into hotbar (that's what vanilla does)
-        else if (sourceIndex in mainInventoryWithoutHotbarRange) {
-            if (!availableDeepPocketsRange.isEmpty() && insertItem(itemStackDynamic, availableDeepPocketsRange.first, availableDeepPocketsRange.last + 1, false)) {
-                return itemStackStaticCopy
+            // when we shift-click an item that's in the deep pockets, we try to move it into the main inventory
+            in availableDeepPocketsRange -> if (insertItem(stackDynamic, mainInventoryRange)) {
+                return stackStatic
             }
-            if (insertItem(itemStackDynamic, hotbarRange.first, hotbarRange.last + 1, false)) {
-                return itemStackStaticCopy
+            // when we shift-click an item from anywhere else (armor slots, tool belt, utility belt, crafting grid/result),
+            // try to move it into the main inventory or deep pockets
+            else -> if (
+                insertItem(stackDynamic, mainInventoryRange)
+                || (!availableDeepPocketsRange.isEmpty() && insertItem(stackDynamic, availableDeepPocketsRange))
+            ) {
+                if (sourceIndex in craftingGridRange) {
+                    onContentChanged(craftingInput)
+                    onContentChanged(craftingResult)
+                }
+                return stackStatic
             }
-        }
-        // When we shift-click an item that's in the deep pockets, we try to move it into the main inventory
-        else if (sourceIndex in availableDeepPocketsRange) {
-            if (insertItem(itemStackDynamic, mainInventoryRange.first, mainInventoryRange.last + 1, false)) {
-                return itemStackStaticCopy
-            }
-        }
-        // When we shift-click an item in armor slots, tool belt or utility belt, try to move it into the main inventory
-        // If the main inventory is full, move it into the deep pockets
-        else if ((insertItem(itemStackDynamic, mainInventoryRange.first, mainInventoryRange.last + 1, false))
-            || (!availableDeepPocketsRange.isEmpty() && insertItem(itemStackDynamic, availableDeepPocketsRange.first, availableDeepPocketsRange.last + 1, false))
-        ) {
-            if (sourceIndex in craftingGridRange) {
-                onContentChanged(craftingInput)
-                onContentChanged(craftingResult)
-            }
-            return itemStackStaticCopy
         }
 
         return ItemStack.EMPTY
