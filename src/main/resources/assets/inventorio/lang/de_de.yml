@@ -76,10 +76,11 @@ inventorio:
       totem_from_utility_belt: Totem wird durch den Utensiliengürtel aktiviert
       allow_swapped_hands: Vertauschte Hände zulassen
 
-      2x2_crafting_grid: Enable Player's Crafting Grid
+      2x2_crafting_grid: Aktiviere das 2x2 Handwerksfeld
       2x2_crafting_grid.tooltip: |-
-        Some mods cause Player's 2x2 crafting grid to duplicate items.
-        If nothing else helps, turning it off could be an option.
+        Einige Mods können dazu führen, dass das 2x2 Handwerksfeld
+        Gegenstände dupliziert.
+        Wenn nichts anderes hilft, kann dies deaktiviert werden.
 
       trinkets_integration: Trinkets Integration
       trinkets_integration.tooltip: |-
