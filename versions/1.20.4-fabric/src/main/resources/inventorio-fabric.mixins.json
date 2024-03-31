@@ -5,11 +5,11 @@
   "minVersion": "0.8",
   "plugin": "de.rubixdev.inventorio.InventorioMixinPlugin",
   "mixins": [
-    "trinkets.InventorioScreenHandlerMixin",
-    "trinkets.SlotGroupMixin"
+    "trinkets.InventorioScreenHandlerMixin"
   ],
   "client": [
-    "trinkets.InventorioScreenMixin"
+    "trinkets.InventorioScreenMixin",
+    "trinkets.SlotGroupMixin"
   ],
   "injectors": {
     "defaultRequire": 1
