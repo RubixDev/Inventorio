@@ -3,6 +3,7 @@ package de.rubixdev.inventorio.client.ui
 import com.mojang.blaze3d.systems.RenderSystem
 import de.rubixdev.inventorio.config.GlobalSettings
 import de.rubixdev.inventorio.config.PlayerSettings
+import de.rubixdev.inventorio.duck.RecipeBookLeftOffsetOverride
 import de.rubixdev.inventorio.mixin.client.accessor.HandledScreenAccessor
 import de.rubixdev.inventorio.packet.InventorioNetworking
 import de.rubixdev.inventorio.player.InventorioScreenHandler
@@ -71,6 +72,7 @@ open class InventorioScreen(handler: InventorioScreenHandler, internal val inven
         super.init()
         narrow = width < 379
         recipeBook.initialize(width, height, client, narrow, handler)
+        setRecipeLeftOffset()
         open = true
         toggleButton = addToggleButton(this)
         lockedCraftButton = addLockedCraftButton(this)
@@ -86,6 +88,7 @@ open class InventorioScreen(handler: InventorioScreenHandler, internal val inven
                 //$$ 0, 0, 19, RECIPE_BUTTON_TEXTURE,
                 //#endif
             ) {
+                setRecipeLeftOffset()
                 recipeBook.toggleOpen()
                 updateScreenPosition()
             },
@@ -105,22 +108,30 @@ open class InventorioScreen(handler: InventorioScreenHandler, internal val inven
     }
 
     fun onRefresh() {
-        backgroundWidth = GUI_INVENTORY_TOP.width + ((inventoryAddon.toolBelt.size - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())) * 20
+        backgroundWidth = GUI_INVENTORY_TOP.width + ((handler.getToolBeltSlotCount() - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())) * 20
         backgroundHeight = INVENTORY_HEIGHT + inventoryAddon.getDeepPocketsRowCount() * SLOT_UI_SIZE
         updateScreenPosition()
     }
 
     @Suppress("MemberVisibilityCanBePrivate") // used from non-common package
     fun updateScreenPosition() {
-        x = recipeBook.findLeftEdge(
-            width,
-            backgroundWidth - 22 - 20
-                * ((inventoryAddon.toolBelt.size - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())),
-        )
+        x = findLeftEdge()
         y = (height - backgroundHeight) / 2
         recipeButton?.x = x + GUI_RECIPE_WIDGET_BUTTON.x
         recipeButton?.y = y + GUI_RECIPE_WIDGET_BUTTON.y
         mouseDown = true
+    }
+
+    private fun setRecipeLeftOffset() {
+        (recipeBook as RecipeBookLeftOffsetOverride).`inventorio$setBackgroundWidth`(backgroundWidth)
+    }
+
+    private fun findLeftEdge(): Int = when (PlayerSettings.centeredScreen.boolValue) {
+        true -> when (recipeBook.isOpen && !narrow) {
+            true -> (width - backgroundWidth + RecipeBookWidget.field_32408 + 2) / 2
+            false -> (width - backgroundWidth) / 2
+        }.also { setRecipeLeftOffset() }
+        false -> recipeBook.findLeftEdge(width, GUI_INVENTORY_TOP.width - 22)
     }
 
     override fun drawBackground(drawContext: DrawContext, delta: Float, mouseX: Int, mouseY: Int) {
@@ -311,6 +322,7 @@ open class InventorioScreen(handler: InventorioScreenHandler, internal val inven
     override fun handledScreenTick() {
         val client = client!!
         if (client.interactionManager!!.hasCreativeInventory() && client.player != null) {
+            client.player?.closeHandledScreen()
             client.setScreen(CreativeInventoryScreen(client.player, client.player!!.networkHandler.enabledFeatures, client.options.operatorItemsTab.value))
         } else {
             recipeBook.update()

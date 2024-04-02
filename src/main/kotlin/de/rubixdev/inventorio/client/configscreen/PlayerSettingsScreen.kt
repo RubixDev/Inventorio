@@ -38,6 +38,7 @@ object PlayerSettingsScreen {
         addBoolEntry(category, entryBuilder, PlayerSettings.darkTheme, requireRestart = false, blocked = false)
         addBoolEntry(category, entryBuilder, PlayerSettings.aggressiveButtonRemoval, requireRestart = false, blocked = false)
         addBoolEntry(category, entryBuilder, PlayerSettings.toggleButton, requireRestart = false, blocked = false)
+        addBoolEntry(category, entryBuilder, PlayerSettings.centeredScreen, requireRestart = false, blocked = false)
         //#if FORGELIKE
         addBoolEntry(category, entryBuilder, PlayerSettings.curiosOpenByDefault, requireRestart = false, blocked = false) { PlatformApi.isModLoaded("curios") }
         //#endif

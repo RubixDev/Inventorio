@@ -38,6 +38,13 @@ inventorio:
         Einige Mods können einen Weg finden den Inventorio-Bildschirm zu modifizieren.
         Wenn dies Probleme verursacht, werden sie mit dieser Einstellung entfernt.
 
+      centered_screen: Zentrierter Bildschirm
+      centered_screen.tooltip: |-
+        Zentriere den Inventorio Bildschirm horizontal.
+        Wenn aus wird dieser stattdessen so platziert,
+        dass die normalen Slots an der selben Position
+        sind wie normalerweise.
+
       curios_open_by_default: Curios standardmäßig offen
       curios_open_by_default.tooltip: Zeige die Curios Slots sobald der Inventorio Bildschirm geöffnet wird.
 

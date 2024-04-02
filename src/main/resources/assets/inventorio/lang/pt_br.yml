@@ -38,6 +38,12 @@ inventorio:
         Alguns mods conseguem chegar a modificar a tela do Inventorio.
         Caso isso gere problemas, esta opção removerá estas modificações.
 
+      # centered_screen: Centered Screen
+      # centered_screen.tooltip: |-
+      #   Center the Inventorio screen horizontally.
+      #   When off, it will instead be aligned to have the standard slots in
+      #   the same position as the vanilla screen.
+
       # curios_open_by_default: Curios Open by Default
       # curios_open_by_default.tooltip: Show the Curios slots by default when opening the Inventorio screen.
 

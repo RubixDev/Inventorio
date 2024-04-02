@@ -30,6 +30,7 @@
     "client.MinecraftClientMixin",
     "client.accessor.HandledScreenAccessor",
     "client.accessor.MinecraftClientAccessor",
+    "client.RecipeBookWidgetMixin",
     "client.accessor.ScreenAccessor"
   ],
   "injectors": {

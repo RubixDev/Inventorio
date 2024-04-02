@@ -84,6 +84,14 @@ object PlayerSettings : AbstractSettings() {
         "inventorio.settings.player.toggle_button",
     )
 
+    @JvmField
+    val centeredScreen = SettingsEntryBoolean(
+        false,
+        "CenteredScreen",
+        "inventorio.settings.player.centered_screen",
+        "inventorio.settings.player.centered_screen.tooltip",
+    )
+
     //#if FORGELIKE
     @JvmField
     val curiosOpenByDefault = SettingsEntryBoolean(
@@ -105,6 +113,7 @@ object PlayerSettings : AbstractSettings() {
             swappedHands,
             aggressiveButtonRemoval,
             toggleButton,
+            centeredScreen,
             //#if FORGELIKE
             curiosOpenByDefault,
             //#endif
