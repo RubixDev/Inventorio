@@ -59,11 +59,20 @@ abstract class PlayerInventoryExtraStuff protected constructor(player: PlayerEnt
         return ItemStack.EMPTY
     }
 
-    fun prePlayerAttack() {
-        // If a player tries to attack with a tool, respect that tool and don't change anything
+    private fun playerAttackConditions(): Boolean {
+        // if a player tries to attack with a tool, respect that tool and don't change anything
         if (getActualMainHandItem().item is ToolItem || findFittingToolBeltIndex(getActualMainHandItem()) != -1) {
-            return
+            return false
         }
+        // if the attack is done through a Pickarang (from Quark), do nothing
+        if (Thread.currentThread().stackTrace.any { it.className.startsWith("org.violetmoon.quark.content.tools.entity.rang") }) {
+            return false
+        }
+        return true
+    }
+
+    fun prePlayerAttack() {
+        if (!playerAttackConditions()) return
         // Or else set a sword/trident as a weapon of choice, or an axe if a sword slot is empty
         player.handSwinging = true
         val swordStack = findFittingToolBeltStack(ItemStack(Items.DIAMOND_SWORD))
@@ -77,9 +86,7 @@ abstract class PlayerInventoryExtraStuff protected constructor(player: PlayerEnt
     }
 
     fun postPlayerAttack() {
-        if (getActualMainHandItem().item is ToolItem) {
-            return
-        }
+        if (!playerAttackConditions()) return
         player.attributes.removeModifiers(displayTool.getAttributeModifiers(EquipmentSlot.MAINHAND))
     }
 
