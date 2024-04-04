@@ -1,5 +1,10 @@
 # Inventorio - An inventory enhancement mod for Minecraft (Forge / Fabric)
 
+[![GitHub Downloads](https://img.shields.io/github/downloads/RubixDev/Inventorio/total?style=for-the-badge&logo=github&label=GitHub%20Downloads&color=%23753fc7)](https://github.com/RubixDev/Inventorio/releases)
+[![Modrinth Downloads](https://img.shields.io/modrinth/dt/LcafSQPm?style=for-the-badge&logo=modrinth&label=Modrinth%20Downloads&color=%2300af5c)](https://modrinth.com/mod/inventorio)
+[![CurseForge Downloads Fabric](https://img.shields.io/curseforge/dt/491073?style=for-the-badge&logo=curseforge&label=CurseForge%20Downloads%20(Fabric)&color=%23f16436)](https://www.curseforge.com/minecraft/mc-mods/inventorio)
+[![CurseForge Downloads Forge](https://img.shields.io/curseforge/dt/497122?style=for-the-badge&logo=curseforge&label=CurseForge%20Downloads%20(Forge)&color=%23f16436)](https://www.curseforge.com/minecraft/mc-mods/inventorio-forge)
+
 ## Showcase Video
 
 [![Video Demonstration](https://img.youtube.com/vi/ZXQb49LaC30/maxresdefault.jpg)](https://youtu.be/ZXQb49LaC30)
