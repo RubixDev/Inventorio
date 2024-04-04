@@ -25,6 +25,7 @@ import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.loading.FMLEnvironment
 import net.minecraftforge.fml.loading.FMLPaths
 import net.minecraftforge.registries.ForgeRegistries
+import thedarkcolour.kotlinforforge.KotlinModLoadingContext
 
 @Mod("inventorio")
 class InventorioForge {
@@ -41,6 +42,7 @@ class InventorioForge {
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
             MinecraftForge.EVENT_BUS.register(ForgeEvents)
+            KotlinModLoadingContext.get().getKEventBus().register(ForgeModEvents)
             MinecraftClient.getInstance().options.allKeys += InventorioControls.keys
             PlayerSettings.load(FMLPaths.CONFIGDIR.get().resolve("inventorio.json").toFile())
             ScreenTypeProviderForge.registerScreen()

@@ -52,6 +52,7 @@ class InventorioNeoForge {
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
             NeoForge.EVENT_BUS.register(NeoForgeEvents)
+            KotlinModLoadingContext.get().getKEventBus().register(NeoForgeModEvents)
             MinecraftClient.getInstance().options.allKeys += InventorioControls.keys
             PlayerSettings.load(FMLPaths.CONFIGDIR.get().resolve("inventorio.json").toFile())
             //#if MC >= 12004
