@@ -108,7 +108,7 @@ open class InventorioScreen(handler: InventorioScreenHandler, internal val inven
     }
 
     fun onRefresh() {
-        backgroundWidth = GUI_INVENTORY_TOP.width + ((handler.getToolBeltSlotCount() - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())) * 20
+        backgroundWidth = GUI_INVENTORY_TOP.width + ((handler.getToolBeltSlotCount() - 1) / ToolBeltSlot.getColumnCapacity(inventoryAddon.getDeepPocketsRowCount())) * SLOT_UI_SIZE
         backgroundHeight = INVENTORY_HEIGHT + inventoryAddon.getDeepPocketsRowCount() * SLOT_UI_SIZE
         updateScreenPosition()
     }
@@ -213,14 +213,26 @@ open class InventorioScreen(handler: InventorioScreenHandler, internal val inven
 
         // If Tool Belt is 2+ columns wide, draw extra background pieces
         val size = handler.getToolBeltSlotCount()
-        for (column in 0 until (size - 1) / ToolBeltSlot.getColumnCapacity(deepPocketsRowCount))
+        for (column in 0 until (size - 1) / ToolBeltSlot.getColumnCapacity(deepPocketsRowCount)) {
             drawContext.drawTexture(
                 texture,
-                x + GUI_TOOL_BELT_UI_EXTENSION.x + column * 20, y + GUI_TOOL_BELT_UI_EXTENSION.y,
+                x + GUI_TOOL_BELT_UI_EXTENSION.x + column * SLOT_UI_SIZE, y + GUI_TOOL_BELT_UI_EXTENSION.y,
                 CANVAS_TOOL_BELT_UI_EXTENSION.x.toFloat(), CANVAS_TOOL_BELT_UI_EXTENSION.y.toFloat(),
                 CANVAS_TOOL_BELT_UI_EXTENSION.width, CANVAS_TOOL_BELT_UI_EXTENSION.height,
                 CANVAS_INVENTORY_TEXTURE_SIZE.x, CANVAS_INVENTORY_TEXTURE_SIZE.y,
             )
+            if (deepPocketsRowCount > 0) {
+                drawContext.drawTexture(
+                    texture,
+                    x + GUI_TOOL_BELT_UI_EXTENSION.x + column * SLOT_UI_SIZE,
+                    y + GUI_TOOL_BELT_UI_EXTENSION.y + CANVAS_TOOL_BELT_UI_EXTENSION.height / 2 + DEEP_POCKETS_EXTRA_HEIGHT(deepPocketsRowCount),
+                    CANVAS_TOOL_BELT_UI_EXTENSION.x.toFloat(),
+                    CANVAS_TOOL_BELT_UI_EXTENSION.y.toFloat() + CANVAS_TOOL_BELT_UI_EXTENSION.height / 2,
+                    CANVAS_TOOL_BELT_UI_EXTENSION.width, CANVAS_TOOL_BELT_UI_EXTENSION.height / 2,
+                    CANVAS_INVENTORY_TEXTURE_SIZE.x, CANVAS_INVENTORY_TEXTURE_SIZE.y,
+                )
+            }
+        }
 
         // Draw a slot background per each tool belt slot
         for (index in inventoryAddon.toolBelt.indices)

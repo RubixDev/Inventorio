@@ -18,7 +18,7 @@ open class ToolBeltSlot(private val template: ToolBeltSlotTemplate, private val 
             val heightOffset = 177 - min(totalCount, columnCapacity) * SLOT_UI_SIZE + DEEP_POCKETS_EXTRA_HEIGHT(deepPocketsRows)
             val relativeIndex = index % columnCapacity
             return Rectangle(
-                173 + (index / columnCapacity) * (SLOT_UI_SIZE + 2),
+                173 + (index / columnCapacity) * SLOT_UI_SIZE,
                 heightOffset + (relativeIndex - 1) * SLOT_UI_SIZE,
                 18,
                 90,

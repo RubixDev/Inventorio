@@ -25,7 +25,7 @@ fun GUI_INVENTORY_DEEP_POCKETS(deepPocketsRows: Int) = Rectangle(0, 79, 198, DEE
 
 @JvmField val CANVAS_TOOL_BELT = Point2F(238f, 95f)
 
-@JvmField val CANVAS_TOOL_BELT_UI_EXTENSION = Rectangle(198, 0, 27, 166)
+@JvmField val CANVAS_TOOL_BELT_UI_EXTENSION = Rectangle(200, 0, 25, 166)
 @JvmField val GUI_TOOL_BELT_UI_EXTENSION = Point2I(191, 0)
 
 @JvmField val CANVAS_UTILITY_BELT_FRAME = Rectangle(234, 0, 22, 22)
