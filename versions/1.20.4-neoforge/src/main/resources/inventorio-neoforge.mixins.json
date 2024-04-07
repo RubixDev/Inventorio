@@ -5,16 +5,16 @@
   "minVersion": "0.8",
   "plugin": "de.rubixdev.inventorio.InventorioMixinPlugin",
   "mixins": [
-    "curios.CuriosClientPayloadHandlerMixin",
     "curios.CuriosEventHandlerMixin",
     "curios.CuriosServerPayloadHandlerMixin",
     "curios.CurioStacksHandlerMixin",
-    "curios.InventorioScreenHandlerMixin",
-    "curios.InventorioScreenMixin_alternative"
+    "curios.InventorioScreenHandlerMixin"
   ],
   "client": [
+    "curios.CuriosClientPayloadHandlerMixin",
     "curios.HandledScreenMixin",
-    "curios.InventorioScreenMixin"
+    "curios.InventorioScreenMixin",
+    "curios.InventorioScreenMixin_alternative"
   ],
   "injectors": {
     "defaultRequire": 1
