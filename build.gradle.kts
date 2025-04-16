@@ -2,7 +2,7 @@ import com.diffplug.gradle.spotless.BaseKotlinExtension
 
 plugins {
     id("maven-publish")
-    id("dev.architectury.loom") version "1.5-SNAPSHOT" apply false
+    id("dev.architectury.loom") version "1.7-SNAPSHOT" apply false
     // TODO: the preprocessor doesn't yet work with Kotlin 1.9
     // https://github.com/ReplayMod/remap/pull/17
     kotlin("jvm") version "1.8.22" apply false

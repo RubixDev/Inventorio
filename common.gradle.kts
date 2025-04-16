@@ -159,6 +159,8 @@ repositories {
         maven("https://maven.theillusivec4.top/")
     }
 
+    // Mixin
+    maven("https://repo.spongepowered.org/maven/")
     // Cloth Config
     maven("https://maven.shedaniel.me/")
     // Conditional Mixin
@@ -219,8 +221,8 @@ dependencies {
             implementation("thedarkcolour:kotlinforforge:${props.forge_kotlin_version}")
             modImplementation("me.shedaniel.cloth:cloth-config-forge:${props.cloth_version}")
 
-            compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.3.5")!!)
-            implementation(include("io.github.llamalad7:mixinextras-forge:0.3.5")!!)
+            compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1")!!)
+            implementation(include("io.github.llamalad7:mixinextras-forge:0.4.1")!!)
 
             // other mods we do integration with
             // - Curios API
