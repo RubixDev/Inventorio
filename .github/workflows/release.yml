@@ -20,6 +20,7 @@ on:
 
 jobs:
   show_action_parameters:
+    if: github.actor == 'RubixDev'
     runs-on: ubuntu-latest
     steps:
       - name: Show action parameters
@@ -31,17 +32,20 @@ jobs:
           EOF
 
   matrix_prep:
+    if: github.actor == 'RubixDev'
     uses: ./.github/workflows/matrix_prep.yml
     with:
       target_subproject: ${{ github.event.inputs.target_subproject }}
 
   build:
+    if: github.actor == 'RubixDev'
     uses: ./.github/workflows/build.yml
     with:
       target_subproject: ${{ github.event.inputs.target_subproject }}
       release: true
 
   release:
+    if: github.actor == 'RubixDev'
     needs:
       - matrix_prep
       - build
