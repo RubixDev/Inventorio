@@ -163,6 +163,7 @@ repositories {
     maven("https://maven.shedaniel.me/")
     // Conditional Mixin
     maven("https://jitpack.io")
+    maven("https://maven.fallenbreath.me/releases")
     // Other mods from Modrinth
     maven("https://api.modrinth.com/maven")
 }
@@ -186,14 +187,14 @@ dependencies {
             modCompileOnly("me.shedaniel.cloth:cloth-config-fabric:${props.cloth_version}") {
                 exclude(group = "net.fabricmc.fabric-api")
             }
-            modCompileOnly("com.github.Fallen-Breath.conditional-mixin:conditional-mixin-common:${props.conditional_mixin_version}")
+            modCompileOnly("me.fallenbreath:conditional-mixin-common:${props.conditional_mixin_version}")
         }
         Loader.FABRIC -> {
             modLocalRuntime("maven.modrinth:early-loading-screen:${props.early_loading_screen_version}")
 
             modImplementation("net.fabricmc.fabric-api:fabric-api:${props.fabric_api_version}")
 
-            include(modImplementation("com.github.Fallen-Breath.conditional-mixin:conditional-mixin-fabric:${props.conditional_mixin_version}")!!)
+            include(modImplementation("me.fallenbreath:conditional-mixin-fabric:${props.conditional_mixin_version}")!!)
 
             modImplementation("net.fabricmc:fabric-language-kotlin:${props.fabric_kotlin_version}")
             modImplementation("com.terraformersmc:modmenu:${props.modmenu_version}")
@@ -213,7 +214,7 @@ dependencies {
         Loader.FORGE -> {
             "forge"("net.minecraftforge:forge:${props.forge_version}")
 
-            include(modImplementation("com.github.Fallen-Breath.conditional-mixin:conditional-mixin-forge:${props.conditional_mixin_version}")!!)
+            include(modImplementation("me.fallenbreath:conditional-mixin-forge:${props.conditional_mixin_version}")!!)
 
             implementation("thedarkcolour:kotlinforforge:${props.forge_kotlin_version}")
             modImplementation("me.shedaniel.cloth:cloth-config-forge:${props.cloth_version}")
@@ -228,7 +229,7 @@ dependencies {
         Loader.NEOFORGE -> {
             "neoForge"("net.neoforged:neoforge:${props.neoforge_version}")
 
-            include(modImplementation("com.github.Fallen-Breath.conditional-mixin:conditional-mixin-neoforge:${props.conditional_mixin_version}")!!)
+            include(modImplementation("me.fallenbreath:conditional-mixin-neoforge:${props.conditional_mixin_version}")!!)
 
             implementation("thedarkcolour:kotlinforforge-neoforge:${props.forge_kotlin_version}")
             modImplementation("me.shedaniel.cloth:cloth-config-neoforge:${props.cloth_version}")
