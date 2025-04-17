@@ -16,9 +16,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 import top.theillusivec4.curios.common.network.server.sync.SPacketSyncModifiers;
 
-@Restriction(require = { @Condition("curios"), @Condition(type = Condition.Type.TESTER, tester = CuriosTester.class) })
+@Restriction(
+    require = {
+        @Condition(value = "curios", versionPredicates = "(,5.11)"),
+        @Condition(type = Condition.Type.TESTER, tester = CuriosTester.class) }
+)
 @Mixin(SPacketSyncModifiers.class)
-public class SPacketSyncModifiersMixin {
+public class SPacketSyncModifiersMixinV1 {
     @Inject(
         method = "lambda$handle$0",
         at = @At(value = "JUMP", opcode = Opcodes.IFEQ, shift = At.Shift.BEFORE, ordinal = 0),
