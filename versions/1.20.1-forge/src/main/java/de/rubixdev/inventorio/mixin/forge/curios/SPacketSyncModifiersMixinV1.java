@@ -24,7 +24,7 @@ import top.theillusivec4.curios.common.network.server.sync.SPacketSyncModifiers;
 @Mixin(SPacketSyncModifiers.class)
 public class SPacketSyncModifiersMixinV1 {
     @Inject(
-        method = "lambda$handle$0",
+        method = "lambda$handle$0(Ltop/theillusivec4/curios/common/network/server/sync/SPacketSyncModifiers;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/Entity;Ltop/theillusivec4/curios/api/type/capability/ICuriosItemHandler;)V",
         at = @At(value = "JUMP", opcode = Opcodes.IFEQ, shift = At.Shift.BEFORE, ordinal = 0),
         slice = @Slice(
             from = @At(
