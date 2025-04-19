@@ -16,7 +16,8 @@
     "curios.InventorioScreenMixin_alternative",
     "curios.SPacketScrollMixin",
     "curios.SPacketSyncCuriosMixin",
-    "curios.SPacketSyncModifiersMixin"
+    "curios.SPacketSyncModifiersMixinV1",
+    "curios.SPacketSyncModifiersMixinV2"
   ],
   "injectors": {
     "defaultRequire": 1
