@@ -11,14 +11,14 @@ object InventorioModIntegration {
     fun applyModIntegrations(modIntegrations: Collection<ModIntegration>) {
         for (modIntegration in modIntegrations) {
             try {
-                if (modIntegration.shouldApply()) {
+                if (modIntegration.shouldApply) {
                     modIntegration.apply()
                     logger.info("Mod integration succeeded for ${modIntegration.displayName}")
                 } else {
                     logger.info("Skipping mod integration for ${modIntegration.displayName}")
                 }
             } catch (e: Throwable) {
-                logger.error("Failed to apply mod integration for ${modIntegration.displayName} (${modIntegration.name})", e)
+                logger.error("Failed to apply mod integration for ${modIntegration.displayName} (${modIntegration.modId})", e)
             }
         }
     }
