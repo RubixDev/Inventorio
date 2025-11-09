@@ -26,6 +26,7 @@ import net.minecraft.inventory.CraftingResultInventory
 import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
 import net.minecraft.recipe.Recipe
+import net.minecraft.recipe.RecipeEntry
 import net.minecraft.recipe.RecipeMatcher
 import net.minecraft.recipe.book.RecipeBookCategory
 import net.minecraft.screen.AbstractRecipeScreenHandler
@@ -35,10 +36,6 @@ import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
-
-//#if MC >= 12002
-import net.minecraft.recipe.RecipeEntry
-//#endif
 
 /**
 * Note: **Do not extend this class!** It is only marked as `open` for compatibility purposes.
@@ -343,18 +340,12 @@ open class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory) 
         craftingInput.clear()
     }
 
-    //#if MC >= 12002
     override fun matches(recipe: RecipeEntry<out Recipe<CraftingInventory?>>?): Boolean {
         if (recipe != null) {
             return recipe.value.matches(craftingInput, inventory.player.world)
         }
         return false
     }
-    //#else
-    //$$ override fun matches(recipe: Recipe<in CraftingInventory?>): Boolean {
-    //$$     return recipe.matches(craftingInput, inventory.player.world)
-    //$$ }
-    //#endif
 
     override fun onContentChanged(inventory: Inventory) {
         CraftingScreenHandlerAccessor.updateTheResult(this, this.inventory.player.world, this.inventory.player, this.craftingInput, this.craftingResult)

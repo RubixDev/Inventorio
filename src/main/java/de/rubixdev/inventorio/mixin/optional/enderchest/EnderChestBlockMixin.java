@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(value = EnderChestBlock.class)
 public class EnderChestBlockMixin {
     @Redirect(
-        method = "method_17468",
+        method = "method_55773",
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/screen/GenericContainerScreenHandler;createGeneric9x3(ILnet/minecraft/entity/player/PlayerInventory;Lnet/minecraft/inventory/Inventory;)Lnet/minecraft/screen/GenericContainerScreenHandler;"

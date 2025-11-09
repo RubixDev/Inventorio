@@ -36,7 +36,7 @@ object GlobalSettingsScreen {
         addBoolEntry(category, entryBuilder, GlobalSettings.allow2x2CraftingGrid, true, isNotLocal)
         //#if FABRIC
         addBoolEntry(category, entryBuilder, GlobalSettings.trinketsIntegration, true, isNotLocal) { PlatformApi.isModLoaded("trinkets") }
-        //#elseif FORGELIKE
+        //#elseif NEOFORGE
         addBoolEntry(category, entryBuilder, GlobalSettings.curiosIntegration, true, isNotLocal) { PlatformApi.isModLoaded("curios") }
         //#endif
 

@@ -15,7 +15,7 @@
     "accessor.ScreenHandlerAccessor",
     "accessor.SimpleInventoryAccessor",
     "accessor.SlotAccessor",
-    "optional.bowfix.BowItemMixin",
+    "optional.bowfix.PlayerEntityMixin",
     "optional.enderchest.EnderChestBlockMixin",
     "optional.enderchest.PlayerEntityMixin",
     "optional.totem.LivingEntityMixin"
@@ -28,9 +28,9 @@
     "client.InGameHudMixinLP",
     "client.InventoryScreenMixin",
     "client.MinecraftClientMixin",
+    "client.RecipeBookWidgetMixin",
     "client.accessor.HandledScreenAccessor",
     "client.accessor.MinecraftClientAccessor",
-    "client.RecipeBookWidgetMixin",
     "client.accessor.ScreenAccessor"
   ],
   "injectors": {

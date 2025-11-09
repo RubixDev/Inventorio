@@ -22,12 +22,12 @@ public class InGameHudMixinLP {
      * is selected.
      */
     @Inject(method = "renderHotbar", at = @At(value = "HEAD"), cancellable = true, require = 0)
-    private void inventorioRenderSegmentedHotbar(float tickDelta, DrawContext context, CallbackInfo ci) {
+    private void inventorioRenderSegmentedHotbar(DrawContext context, float tickDelta, CallbackInfo ci) {
         if (HotbarHUDRenderer.INSTANCE.renderSegmentedHotbar(context)) ci.cancel();
     }
 
     @Inject(method = "renderHotbar", at = @At(value = "RETURN"), require = 0)
-    private void inventorioRenderFunctionOnlySelector(float tickDelta, DrawContext context, CallbackInfo ci) {
+    private void inventorioRenderFunctionOnlySelector(DrawContext context, float tickDelta, CallbackInfo ci) {
         HotbarHUDRenderer.INSTANCE.renderFunctionOnlySelector(context);
     }
 

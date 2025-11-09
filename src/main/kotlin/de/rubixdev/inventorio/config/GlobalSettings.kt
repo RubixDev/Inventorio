@@ -42,7 +42,7 @@ object GlobalSettings : AbstractSettings() {
         "inventorio.settings.global.trinkets_integration",
         "inventorio.settings.global.trinkets_integration.tooltip",
     )
-    //#elseif FORGELIKE
+    //#elseif NEOFORGE
     @JvmField val curiosIntegration = SettingsEntryBoolean(
         true,
         "CuriosIntegration",
@@ -91,7 +91,7 @@ object GlobalSettings : AbstractSettings() {
             allow2x2CraftingGrid,
             //#if FABRIC
             trinketsIntegration,
-            //#elseif FORGELIKE
+            //#elseif NEOFORGE
             curiosIntegration,
             //#endif
 

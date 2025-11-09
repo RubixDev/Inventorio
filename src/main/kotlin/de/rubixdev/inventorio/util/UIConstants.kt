@@ -39,11 +39,5 @@ const val CRAFTING_GRID_OFFSET_X = 20
 @JvmField val CANVAS_INVENTORY_TEXTURE_SIZE = Point2I(256, 256)
 @JvmField val CANVAS_WIDGETS_TEXTURE_SIZE = Point2I(256, 64)
 
-//#if MC < 12002
-//$$ @JvmField val CANVAS_TOGGLE_BUTTON_ON = Point2I(243, 114)
-//$$ @JvmField val CANVAS_TOGGLE_BUTTON_OFF = Point2I(243, 120)
-//$$ const val CANVAS_TOGGLE_BUTTON_HOVER_SHIFT = 12
-//$$ @JvmField val CANVAS_LOCKED_CRAFT_BUTTON = Point2I(236, 138)
-//#endif
 @JvmField val GUI_TOGGLE_BUTTON_OFFSET = Rectangle(-19, 5, 13, 6)
 @JvmField val GUI_LOCKED_CRAFTING_POS = Rectangle(125, 25, 20, 20)

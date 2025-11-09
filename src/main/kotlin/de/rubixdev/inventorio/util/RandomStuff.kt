@@ -58,7 +58,7 @@ fun canRMBItem(itemStack: ItemStack): Boolean {
 }
 
 fun Enchantment.getLevelOn(stack: ItemStack): Int {
-    //#if FORGELIKE
+    //#if NEOFORGE
     //$$ return stack.getEnchantmentLevel(this)
     //#else
     return EnchantmentHelper.getLevel(this, stack)

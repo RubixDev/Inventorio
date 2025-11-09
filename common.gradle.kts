@@ -1,7 +1,6 @@
 import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.jvmErasure
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("maven-publish")
@@ -12,25 +11,21 @@ plugins {
 }
 
 val loaderName = if (project.name.endsWith("-common")) "common" else loom.platform.get().name.lowercase()
-assert(loaderName in listOf("common", "fabric", "forge", "neoforge"))
+assert(loaderName in listOf("common", "fabric", "neoforge"))
 assert(project.name.endsWith("-$loaderName"))
 enum class Loader {
     COMMON,
     FABRIC,
-    FORGE,
     NEOFORGE,
     ;
 
     val isCommon get() = this == COMMON
     val isFabric get() = this == FABRIC
-    val isForge get() = this == FORGE
     val isNeoForge get() = this == NEOFORGE
-    val isForgeLike get() = this == FORGE || this == NEOFORGE
 }
 val loader = when (loaderName) {
     "common" -> Loader.COMMON
     "fabric" -> Loader.FABRIC
-    "forge" -> Loader.FORGE
     "neoforge" -> Loader.NEOFORGE
     else -> throw AssertionError("invalid loader '$loaderName'")
 }
@@ -42,9 +37,7 @@ val mcVersion: Int by project.extra
 preprocess {
     vars.put("MC", mcVersion)
     vars.put("FABRIC", loader.isFabric.toInt())
-    vars.put("FORGE", loader.isForge.toInt())
     vars.put("NEOFORGE", loader.isNeoForge.toInt())
-    vars.put("FORGELIKE", loader.isForgeLike.toInt())
 }
 
 @Suppress("PropertyName")
@@ -77,8 +70,7 @@ class Props {
     val issues_url: String by prop
 
     val fabric_kotlin_version: String by prop
-    val forge_kotlin_version: String by prop
-    val mixinextras_version: String by prop
+    val neoforge_kotlin_version: String by prop
     val conditional_mixin_version: String by prop
 
     val run_with_compat_mods: Boolean by prop
@@ -86,11 +78,10 @@ class Props {
     //// Version Specific Properties ////
     val minecraft_version: String by prop
     val yarn_mappings: String by prop
+    val yarn_mappings_patch: String by prop
 
     val minecraft_version_range_fabric: String by prop
     val minecraft_version_range_forge: String by prop
-    val forge_version: String by prop
-    val forge_version_range: String by prop
     val neoforge_version: String by prop
     val neoforge_version_range: String by prop
 
@@ -101,7 +92,6 @@ class Props {
     val fabric_api_version: String by prop
     val modmenu_version: String by prop
     val trinkets_version: String by prop
-    val cca_version: String by prop
 
     val curios_version: String by prop
 }
@@ -113,18 +103,6 @@ loom {
         isIdeConfigGenerated = !loader.isCommon
         runDir = "../../run-$loaderName"
         vmArg("-Dmixin.debug.export=true")
-    }
-
-    if (loader.isForge) {
-        forge.mixinConfigs = listOf(
-            "${props.mod_id}.mixins.json",
-            "${props.mod_id}-forge.mixins.json",
-        )
-        // workaround for https://github.com/SpongePowered/Mixin/issues/560
-        // TODO: remove this when Mixin 0.8.6 is out or you find another proper fix
-        forge.useCustomMixin = false
-        @Suppress("UnstableApiUsage")
-        mixin.useLegacyMixinAp = false
     }
 
     rootDir.resolve("src/main/resources/${props.mod_id}.accesswidener").let {
@@ -147,10 +125,6 @@ repositories {
             // NeoForge
             maven("https://maven.neoforged.net/releases")
         }
-        Loader.FORGE -> {
-            // MixinExtras
-            mavenCentral()
-        }
     }
     if (!loader.isFabric) {
         // Kotlin for Forge
@@ -172,10 +146,17 @@ repositories {
 
 dependencies {
     minecraft("com.mojang:minecraft:${props.minecraft_version}")
-    mappings("net.fabricmc:yarn:${props.yarn_mappings}:v2")
+    mappings(
+        loom.layered {
+            mappings("net.fabricmc:yarn:${props.yarn_mappings}:v2")
+            if (loader == Loader.NEOFORGE) {
+                mappings("dev.architectury:yarn-mappings-patch-neoforge:${props.yarn_mappings_patch}")
+            }
+        },
+    )
 
     // outside the fabric specific projects this should only be used for the @Environment annotation
-    modImplementation("net.fabricmc:fabric-loader:${props.fabric_loader_version}")
+    modCompileOnly("net.fabricmc:fabric-loader:${props.fabric_loader_version}")
 
     fun modCompat(dependencyNotation: String, dependencyConfiguration: ExternalModuleDependency.() -> Unit = {}) =
         if (props.run_with_compat_mods) {
@@ -194,6 +175,7 @@ dependencies {
         Loader.FABRIC -> {
             modLocalRuntime("maven.modrinth:early-loading-screen:${props.early_loading_screen_version}")
 
+            modImplementation("net.fabricmc:fabric-loader:${props.fabric_loader_version}")
             modImplementation("net.fabricmc.fabric-api:fabric-api:${props.fabric_api_version}")
 
             include(modImplementation("me.fallenbreath:conditional-mixin-fabric:${props.conditional_mixin_version}")!!)
@@ -207,33 +189,16 @@ dependencies {
             // other mods we do integration with
             // - Trinkets
             modCompat("dev.emi:trinkets:${props.trinkets_version}")
-            // before 3.8.1 these weren't included as modApi but as modImplementation in Trinkets, so we must add them ourselves
-            if (mcVersion < 12004) {
-                modCompileOnly("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${props.cca_version}")
-                modCompileOnly("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${props.cca_version}")
-            }
-        }
-        Loader.FORGE -> {
-            "forge"("net.minecraftforge:forge:${props.forge_version}")
-
-            include(modImplementation("me.fallenbreath:conditional-mixin-forge:${props.conditional_mixin_version}")!!)
-
-            implementation("thedarkcolour:kotlinforforge:${props.forge_kotlin_version}")
-            modImplementation("me.shedaniel.cloth:cloth-config-forge:${props.cloth_version}")
-
-            compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1")!!)
-            implementation(include("io.github.llamalad7:mixinextras-forge:0.4.1")!!)
-
-            // other mods we do integration with
-            // - Curios API
-            modCompat("top.theillusivec4.curios:curios-forge:${props.curios_version}")
         }
         Loader.NEOFORGE -> {
             "neoForge"("net.neoforged:neoforge:${props.neoforge_version}")
 
             include(modImplementation("me.fallenbreath:conditional-mixin-neoforge:${props.conditional_mixin_version}")!!)
 
-            implementation("thedarkcolour:kotlinforforge-neoforge:${props.forge_kotlin_version}")
+            implementation("thedarkcolour:kotlinforforge-neoforge:${props.neoforge_kotlin_version}") {
+                // TODO: remove after kff 5.8
+                exclude(group = "net.neoforged.fancymodloader", module = "loader")
+            }
             modImplementation("me.shedaniel.cloth:cloth-config-neoforge:${props.cloth_version}")
 
             // other mods we do integration with
@@ -260,21 +225,18 @@ tasks.named<ProcessResources>("processResources") {
 
     val authors = props.mod_authors.joinToString(if (loader.isFabric) "\",\"" else ", ")
 
-    val versionsMap = mapOf(
-        11904 to 13,
-        12001 to 15,
-        12002 to 18,
-        12004 to 22,
+    // See https://minecraft.wiki/w/Pack_format#List_of_resource_pack_formats
+    val resourcePackVersions = mapOf(
+        12006 to 32,
     )
 
     val replaceProperties = mapOf(
         "minecraft_version_range_fabric" to props.minecraft_version_range_fabric,
         "minecraft_version_range_forge" to props.minecraft_version_range_forge,
         "fabric_loader_version" to props.fabric_loader_version,
-        "forge_version_range" to props.forge_version_range,
         "neoforge_version_range" to props.neoforge_version_range,
         "fabric_kotlin_version" to props.fabric_kotlin_version,
-        "forge_kotlin_version" to props.forge_kotlin_version,
+        "neoforge_kotlin_version" to props.neoforge_kotlin_version,
         "description" to props.mod_description,
         "homepage_url" to props.homepage_url,
         "sources_url" to props.sources_url,
@@ -284,11 +246,11 @@ tasks.named<ProcessResources>("processResources") {
         "version" to fullModVersion,
         "license" to props.license,
         "authors" to authors,
-        "pack_format_number" to versionsMap[mcVersion],
+        "pack_format_number" to resourcePackVersions[mcVersion],
     )
     inputs.properties(replaceProperties)
 
-    filesMatching(listOf("fabric.mod.json", "META-INF/mods.toml", "pack.mcmeta")) {
+    filesMatching(listOf("fabric.mod.json", "META-INF/neoforge.mods.toml", "pack.mcmeta")) {
         expand(replaceProperties + mapOf("project" to project))
     }
 
@@ -313,14 +275,11 @@ version = "v$fullModVersion"
 group = props.maven_group
 
 tasks.withType<JavaCompile> {
-    sourceCompatibility = "17"
-    targetCompatibility = "17"
     options.encoding = "UTF-8"
 }
 
-tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions.jvmTarget = "17"
-    kotlinOptions.freeCompilerArgs = listOf("-Xjvm-default=all")
+kotlin {
+    jvmToolchain(21)
 }
 
 java {

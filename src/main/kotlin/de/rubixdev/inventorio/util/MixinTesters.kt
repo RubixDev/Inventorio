@@ -24,7 +24,7 @@ class TotemTester : ConditionTester {
 //$$ class TrinketsTester : ConditionTester {
 //$$     override fun isSatisfied(mixinClassName: String) = GlobalSettings.trinketsIntegration.boolValue
 //$$ }
-//#elseif FORGELIKE
+//#elseif NEOFORGE
 //$$ class CuriosTester : ConditionTester {
 //$$     override fun isSatisfied(mixinClassName: String) = GlobalSettings.curiosIntegration.boolValue
 //$$ }

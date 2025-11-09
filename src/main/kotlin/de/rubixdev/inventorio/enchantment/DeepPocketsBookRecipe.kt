@@ -11,15 +11,11 @@ import net.minecraft.recipe.RecipeSerializer
 import net.minecraft.recipe.SpecialCraftingRecipe
 import net.minecraft.recipe.SpecialRecipeSerializer
 import net.minecraft.recipe.book.CraftingRecipeCategory
-import net.minecraft.registry.DynamicRegistryManager
+import net.minecraft.registry.RegistryWrapper
 import net.minecraft.util.collection.DefaultedList
 import net.minecraft.world.World
 
-//#if MC >= 12002
 class DeepPocketsBookRecipe(category: CraftingRecipeCategory) : SpecialCraftingRecipe(category) {
-//#else
-//$$ class DeepPocketsBookRecipe(identifier: net.minecraft.util.Identifier, category: CraftingRecipeCategory) : SpecialCraftingRecipe(identifier, category) {
-//#endif
     override fun matches(craftingInventory: RecipeInputInventory, world: World): Boolean {
         if (!GlobalSettings.deepPocketsBookCraft.boolValue) {
             return false
@@ -39,11 +35,8 @@ class DeepPocketsBookRecipe(category: CraftingRecipeCategory) : SpecialCraftingR
         return shells == 2 && books == 1
     }
 
-    override fun craft(inventory: RecipeInputInventory, registryManager: DynamicRegistryManager): ItemStack {
-        val bookItem = ItemStack(Items.ENCHANTED_BOOK, 1)
-        EnchantedBookItem.addEnchantment(bookItem, EnchantmentLevelEntry(DeepPocketsEnchantment, 1))
-        return bookItem
-    }
+    override fun craft(inventory: RecipeInputInventory, lookup: RegistryWrapper.WrapperLookup): ItemStack =
+        EnchantedBookItem.forEnchantment(EnchantmentLevelEntry(DeepPocketsEnchantment, 1))
 
     override fun fits(width: Int, height: Int): Boolean {
         return width >= 2 && height >= 2
@@ -61,13 +54,9 @@ class DeepPocketsBookRecipe(category: CraftingRecipeCategory) : SpecialCraftingR
         return DefaultedList.copyOf(SHULKER_SHELL, SHULKER_SHELL, BOOKS, SHULKER_SHELL)
     }
 
-    override fun getResult(registryManager: DynamicRegistryManager): ItemStack {
-        if (!GlobalSettings.deepPocketsBookCraft.boolValue) {
-            ItemStack.EMPTY
-        }
-        val bookItem = ItemStack(Items.ENCHANTED_BOOK, 1)
-        EnchantedBookItem.addEnchantment(bookItem, EnchantmentLevelEntry(DeepPocketsEnchantment, 1))
-        return bookItem
+    override fun getResult(lookup: RegistryWrapper.WrapperLookup): ItemStack = when (GlobalSettings.deepPocketsBookCraft.boolValue) {
+        true -> EnchantedBookItem.forEnchantment(EnchantmentLevelEntry(DeepPocketsEnchantment, 1))
+        false -> ItemStack.EMPTY
     }
 
     companion object {

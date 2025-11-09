@@ -92,7 +92,7 @@ object PlayerSettings : AbstractSettings() {
         "inventorio.settings.player.centered_screen.tooltip",
     )
 
-    //#if FORGELIKE
+    //#if NEOFORGE
     @JvmField
     val curiosOpenByDefault = SettingsEntryBoolean(
         false,
@@ -114,7 +114,7 @@ object PlayerSettings : AbstractSettings() {
             aggressiveButtonRemoval,
             toggleButton,
             centeredScreen,
-            //#if FORGELIKE
+            //#if NEOFORGE
             curiosOpenByDefault,
             //#endif
         )

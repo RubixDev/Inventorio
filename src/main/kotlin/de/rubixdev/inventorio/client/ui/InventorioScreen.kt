@@ -18,6 +18,7 @@ import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.Drawable
+import net.minecraft.client.gui.screen.ButtonTextures
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen
@@ -31,10 +32,6 @@ import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
-
-//#if MC >= 12002
-import net.minecraft.client.gui.screen.ButtonTextures
-//#endif
 
 /**
  * Note: **Do not extend this class!** It is only marked as `open` for compatibility purposes.
@@ -82,11 +79,7 @@ open class InventorioScreen(handler: InventorioScreenHandler, internal val inven
                 y + GUI_RECIPE_WIDGET_BUTTON.y,
                 GUI_RECIPE_WIDGET_BUTTON.width,
                 GUI_RECIPE_WIDGET_BUTTON.height,
-                //#if MC >= 12002
                 RecipeBookWidget.BUTTON_TEXTURES,
-                //#else
-                //$$ 0, 0, 19, RECIPE_BUTTON_TEXTURE,
-                //#endif
             ) {
                 setRecipeLeftOffset()
                 recipeBook.toggleOpen()
@@ -131,6 +124,7 @@ open class InventorioScreen(handler: InventorioScreenHandler, internal val inven
             true -> (width - backgroundWidth + RecipeBookWidget.field_32408 + 2) / 2
             false -> (width - backgroundWidth) / 2
         }.also { setRecipeLeftOffset() }
+        // TODO: fix recipe book offset for non-centered screen
         false -> recipeBook.findLeftEdge(width, GUI_INVENTORY_TOP.width - 22)
     }
 
@@ -256,11 +250,7 @@ open class InventorioScreen(handler: InventorioScreenHandler, internal val inven
                 )
             }
 
-        //#if MC >= 12002
         InventoryScreen.drawEntity(drawContext, x + 26, y + 8, x + 75, y + 78, 30, 0.0625f, this.mouseX, this.mouseY, client!!.player)
-        //#else
-        //$$ InventoryScreen.drawEntity(drawContext, x + 51, y + 75, 30, (x + 51).toFloat() - this.mouseX, (y + 75 - 50).toFloat() - this.mouseY, client!!.player!!)
-        //#endif
     }
 
     // ===================================================
@@ -271,15 +261,8 @@ open class InventorioScreen(handler: InventorioScreenHandler, internal val inven
     }
 
     override fun render(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
-        //#if MC < 12002
-        //$$ this.renderBackground(context)
-        //#endif
         if (recipeBook.isOpen && narrow) {
-            //#if MC >= 12002
             this.renderBackground(context, mouseX, mouseY, delta)
-            //#else
-            //$$ drawBackground(context, delta, mouseX, mouseY)
-            //#endif
             recipeBook.render(context, mouseX, mouseY, delta)
         } else {
             super.render(context, mouseX, mouseY, delta)
@@ -354,32 +337,22 @@ open class InventorioScreen(handler: InventorioScreenHandler, internal val inven
     override fun mouseScrolled(
         mouseX: Double,
         mouseY: Double,
-        //#if MC >= 12002
         horizontalAmount: Double,
-        //#endif
         verticalAmount: Double,
     ): Boolean {
-        //#if MC >= 12002
         return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)
-        //#else
-        //$$ return super.mouseScrolled(mouseX, mouseY, verticalAmount)
-        //#endif
     }
 
     // ===================================================
     // Companion Object
     // ===================================================
     companion object {
-        //#if MC >= 12002
         private val TOGGLE_BUTTON_ON_TEXTURES = ButtonTextures(Identifier("inventorio", "toggle_button_on"), Identifier("inventorio", "toggle_button_active_on"))
         private val TOGGLE_BUTTON_OFF_TEXTURES = ButtonTextures(Identifier("inventorio", "toggle_button_off"), Identifier("inventorio", "toggle_button_active_off"))
         private val LOCK_BUTTON_TEXTURES = ButtonTextures(Identifier("inventorio", "lock_button"), Identifier("inventorio", "lock_button_active"))
         private val TOGGLE_BUTTON_ON_TEXTURES_DARK = ButtonTextures(Identifier("inventorio", "toggle_button_on_dark"), Identifier("inventorio", "toggle_button_active_on_dark"))
         private val TOGGLE_BUTTON_OFF_TEXTURES_DARK = ButtonTextures(Identifier("inventorio", "toggle_button_off_dark"), Identifier("inventorio", "toggle_button_active_off_dark"))
         private val LOCK_BUTTON_TEXTURES_DARK = ButtonTextures(Identifier("inventorio", "lock_button_dark"), Identifier("inventorio", "lock_button_active_dark"))
-        //#else
-        //$$ private val RECIPE_BUTTON_TEXTURE = Identifier("textures/gui/recipe_button.png")
-        //#endif
         private val BACKGROUND_TEXTURE = Identifier("inventorio", "textures/gui/player_inventory.png")
         private val BACKGROUND_TEXTURE_DARK = Identifier("inventorio", "textures/gui/player_inventory_dark.png")
 
@@ -403,24 +376,15 @@ open class InventorioScreen(handler: InventorioScreenHandler, internal val inven
             if (!PlayerSettings.toggleButton.boolValue) {
                 return null
             }
-            //#if MC >= 12002
             val textures = if (screen is InventorioScreen) TOGGLE_BUTTON_ON_TEXTURES else TOGGLE_BUTTON_OFF_TEXTURES
             val texturesDark = if (screen is InventorioScreen) TOGGLE_BUTTON_ON_TEXTURES_DARK else TOGGLE_BUTTON_OFF_TEXTURES_DARK
-            //#else
-            //$$ val canvas = if (screen is InventorioScreen) CANVAS_TOGGLE_BUTTON_ON else CANVAS_TOGGLE_BUTTON_OFF
-            //#endif
             val screenAccessor = screen as HandledScreenAccessor<*>
             val button = TexturedButtonWidget(
                 screenAccessor.x + screen.backgroundWidth + GUI_TOGGLE_BUTTON_OFFSET.x,
                 screenAccessor.y + GUI_TOGGLE_BUTTON_OFFSET.y,
                 GUI_TOGGLE_BUTTON_OFFSET.width,
                 GUI_TOGGLE_BUTTON_OFFSET.height,
-                //#if MC >= 12002
                 if (PlayerSettings.darkTheme.boolValue) texturesDark else textures,
-                //#else
-                //$$ canvas.x, canvas.y, CANVAS_TOGGLE_BUTTON_HOVER_SHIFT,
-                //$$ if (PlayerSettings.darkTheme.boolValue) BACKGROUND_TEXTURE_DARK else BACKGROUND_TEXTURE,
-                //#endif
             ) {
                 val client = MinecraftClient.getInstance() ?: return@TexturedButtonWidget
                 shouldOpenVanillaInventory = client.currentScreen is InventorioScreen
@@ -450,13 +414,7 @@ open class InventorioScreen(handler: InventorioScreenHandler, internal val inven
                 screenAccessor.y + GUI_LOCKED_CRAFTING_POS.y,
                 GUI_LOCKED_CRAFTING_POS.width,
                 GUI_LOCKED_CRAFTING_POS.height,
-                //#if MC >= 12002
                 if (PlayerSettings.darkTheme.boolValue) LOCK_BUTTON_TEXTURES_DARK else LOCK_BUTTON_TEXTURES,
-                //#else
-                //$$ CANVAS_LOCKED_CRAFT_BUTTON.x, CANVAS_LOCKED_CRAFT_BUTTON.y,
-                //$$ GUI_LOCKED_CRAFTING_POS.height,
-                //$$ if (PlayerSettings.darkTheme.boolValue) BACKGROUND_TEXTURE_DARK else BACKGROUND_TEXTURE,
-                //#endif
             ) {
                 val client = MinecraftClient.getInstance() ?: return@TexturedButtonWidget
                 isSwappingInvScreens = true
