@@ -2,19 +2,17 @@ import com.diffplug.gradle.spotless.BaseKotlinExtension
 
 plugins {
     id("maven-publish")
-    id("dev.architectury.loom") version "1.7-SNAPSHOT" apply false
-    // TODO: the preprocessor doesn't yet work with Kotlin 1.9
-    // https://github.com/ReplayMod/remap/pull/17
-    kotlin("jvm") version "1.8.22" apply false
+    id("dev.architectury.loom") version "1.13-SNAPSHOT" apply false
+    kotlin("jvm") version "2.0.21" apply false
 
     // https://github.com/ReplayMod/preprocessor
     // https://github.com/Fallen-Breath/preprocessor
-    id("com.replaymod.preprocess") version "ce1aeb2b"
+    id("com.replaymod.preprocess") version "d452ef76"
 
     // https://github.com/Fallen-Breath/yamlang
-    id("me.fallenbreath.yamlang") version "1.3.1" apply false
+    id("me.fallenbreath.yamlang") version "1.5.0" apply false
 
-    id("com.diffplug.spotless") version "6.25.0"
+    id("com.diffplug.spotless") version "8.0.0"
 }
 
 tasks.named("assemble").get().dependsOn("spotlessApply")
@@ -28,27 +26,17 @@ repositories {
 
 @Suppress("LocalVariableName", "ktlint:standard:property-naming")
 preprocess {
-    val mc12001_common = createNode("1.20.1-common", 1_20_01, "yarn")
-    val mc12001_fabric = createNode("1.20.1-fabric", 1_20_01, "yarn")
-    val mc12001_forge = createNode("1.20.1-forge", 1_20_01, "yarn")
+    // it doesn't seem to be possible to explicitly set the descriptor of a field,
+    // which we would need for strict mappings to work
+    strictExtraMappings = false
 
-    val mc12002_fabric = createNode("1.20.2-fabric", 1_20_02, "yarn")
-    val mc12002_neoforge = createNode("1.20.2-neoforge", 1_20_02, "yarn")
+    val mc12006_common = createNode("1.20.6-common", 1_20_06, "yarn")
+    val mc12006_fabric = createNode("1.20.6-fabric", 1_20_06, "yarn")
+    val mc12006_neoforge = createNode("1.20.6-neoforge", 1_20_06, "yarn")
 
-    val mc12004_common = createNode("1.20.4-common", 1_20_04, "yarn")
-    val mc12004_fabric = createNode("1.20.4-fabric", 1_20_04, "yarn")
-    val mc12004_neoforge = createNode("1.20.4-neoforge", 1_20_04, "yarn")
-
-    // 1.20.1
-    mc12002_fabric.link(mc12001_fabric, null)
-    mc12004_common.link(mc12001_common, null)
-    mc12001_common.link(mc12001_forge, file("versions/mappings-common-forge.txt"))
-    // 1.20.2
-    mc12004_fabric.link(mc12002_fabric, null)
-    mc12004_neoforge.link(mc12002_neoforge, null)
-    // 1.20.4
-    mc12004_common.link(mc12004_fabric, null)
-    mc12004_common.link(mc12004_neoforge, file("versions/mappings-common-neoforge.txt"))
+    // 1.20.6
+    mc12006_common.link(mc12006_fabric, null)
+    mc12006_common.link(mc12006_neoforge, file("versions/mappings-common-neoforge.txt"))
 }
 
 spotless {

@@ -285,8 +285,7 @@ object HotbarHUDRenderer {
                 val crashReport = CrashReport.create(var12, "Rendering item")
                 val crashReportSection = crashReport.addElement("Item being rendered")
                 crashReportSection.add("Item Type") { stack.item.toString() }
-                crashReportSection.add("Item Damage") { stack.damage.toString() }
-                crashReportSection.add("Item NBT") { stack.nbt.toString() }
+                crashReportSection.add("Item Components") { stack.components.toString() }
                 crashReportSection.add("Item Foil") { stack.hasGlint().toString() }
                 throw CrashException(crashReport)
             }

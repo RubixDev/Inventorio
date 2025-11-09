@@ -3,26 +3,20 @@ package de.rubixdev.inventorio.enchantment
 import de.rubixdev.inventorio.config.GlobalSettings
 import de.rubixdev.inventorio.util.DEEP_POCKETS_MAX_LEVEL
 import net.minecraft.enchantment.Enchantment
-import net.minecraft.enchantment.EnchantmentTarget
 import net.minecraft.entity.EquipmentSlot
+import net.minecraft.registry.tag.ItemTags
 
-object DeepPocketsEnchantment : Enchantment(Rarity.UNCOMMON, EnchantmentTarget.ARMOR_LEGS, arrayOf(EquipmentSlot.LEGS)) {
-    override fun getMinLevel(): Int {
-        return 1
-    }
-
-    override fun getMaxLevel(): Int {
-        return DEEP_POCKETS_MAX_LEVEL
-    }
-
-    override fun getMinPower(level: Int): Int {
-        return 5 + (level - 1) * 8
-    }
-
-    override fun getMaxPower(level: Int): Int {
-        return super.getMinPower(level) + 50
-    }
-
+object DeepPocketsEnchantment : Enchantment(
+    properties(
+        ItemTags.LEG_ARMOR_ENCHANTABLE,
+        5,
+        DEEP_POCKETS_MAX_LEVEL,
+        leveledCost(5, 8),
+        leveledCost(55, 8),
+        2,
+        EquipmentSlot.LEGS,
+    ),
+) {
     override fun isAvailableForEnchantedBookOffer(): Boolean {
         return GlobalSettings.deepPocketsInTrades.boolValue
     }

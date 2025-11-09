@@ -10,7 +10,9 @@ import de.rubixdev.inventorio.player.PlayerInventoryAddon;
 import de.rubixdev.inventorio.util.MixinHelpers;
 import de.rubixdev.inventorio.util.PlayerDuck;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -29,7 +31,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin implements PlayerDuck {
+public abstract class PlayerEntityMixin extends LivingEntity implements PlayerDuck {
+    protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
+        super(entityType, world);
+    }
+
     @Shadow
     public abstract PlayerInventory getInventory();
 
@@ -129,13 +135,14 @@ public abstract class PlayerEntityMixin implements PlayerDuck {
      */
     @Inject(method = "readCustomDataFromNbt", at = @At(value = "RETURN"))
     private void inventorioDeserializePlayerAddon(NbtCompound tag, CallbackInfo ci) {
-        PlayerAddonSerializer.INSTANCE.deserialize(inventorioAddon, tag.getCompound("Inventorio"));
+        PlayerAddonSerializer.INSTANCE
+            .deserialize(this.getRegistryManager(), inventorioAddon, tag.getCompound("Inventorio"));
     }
 
     @Inject(method = "writeCustomDataToNbt", at = @At(value = "RETURN"))
     private void inventorioSerializePlayerAddon(NbtCompound tag, CallbackInfo ci) {
         NbtCompound inventorioTag = new NbtCompound();
-        PlayerAddonSerializer.INSTANCE.serialize(inventorioAddon, inventorioTag);
+        PlayerAddonSerializer.INSTANCE.serialize(this.getRegistryManager(), inventorioAddon, inventorioTag);
         tag.put("Inventorio", inventorioTag);
     }
 

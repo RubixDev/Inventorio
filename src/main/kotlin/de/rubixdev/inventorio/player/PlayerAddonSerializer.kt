@@ -3,44 +3,58 @@ package de.rubixdev.inventorio.player
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NbtCompound
 import net.minecraft.nbt.NbtList
+import net.minecraft.registry.RegistryWrapper
 
 object PlayerAddonSerializer {
-    fun serialize(inventoryAddon: PlayerInventoryAddon, inventorioTag: NbtCompound) {
+    fun serialize(
+        registries: RegistryWrapper.WrapperLookup,
+        inventoryAddon: PlayerInventoryAddon,
+        inventorioTag: NbtCompound,
+    ) {
         inventorioTag.putInt("SelectedUtilitySlot", inventoryAddon.selectedUtility)
-        inventorioTag.put("DeepPockets", serializeSection(inventoryAddon.deepPockets))
-        inventorioTag.put("UtilityBelt", serializeSection(inventoryAddon.utilityBelt))
-        inventorioTag.put("ToolBelt", serializeSection(inventoryAddon.toolBelt))
+        inventorioTag.put("DeepPockets", serializeSection(registries, inventoryAddon.deepPockets))
+        inventorioTag.put("UtilityBelt", serializeSection(registries, inventoryAddon.utilityBelt))
+        inventorioTag.put("ToolBelt", serializeSection(registries, inventoryAddon.toolBelt))
     }
 
-    private fun serializeSection(section: List<ItemStack>): NbtList {
+    private fun serializeSection(registries: RegistryWrapper.WrapperLookup, section: List<ItemStack>): NbtList {
         val resultTag = NbtList()
         for ((slotIndex, itemStack) in section.withIndex()) {
             if (itemStack.isEmpty) {
                 continue
             }
-            val itemTag = NbtCompound()
+            var itemTag = NbtCompound()
             itemTag.putInt("Slot", slotIndex)
-            itemStack.writeNbt(itemTag)
+            itemTag = itemStack.encode(registries, itemTag) as NbtCompound
             resultTag.add(itemTag)
         }
         return resultTag
     }
 
-    fun deserialize(inventoryAddon: PlayerInventoryAddon, inventorioTag: NbtCompound) {
+    fun deserialize(
+        registries: RegistryWrapper.WrapperLookup,
+        inventoryAddon: PlayerInventoryAddon,
+        inventorioTag: NbtCompound,
+    ) {
         inventoryAddon.selectedUtility = inventorioTag.getInt("SelectedUtilitySlot")
 
-        deserializeSection(inventoryAddon, inventoryAddon.utilityBelt, inventorioTag.getList("UtilityBelt", 10))
-        deserializeSection(inventoryAddon, inventoryAddon.toolBelt, inventorioTag.getList("ToolBelt", 10))
-        deserializeSection(inventoryAddon, inventoryAddon.deepPockets, inventorioTag.getList("DeepPockets", 10))
+        deserializeSection(registries, inventoryAddon, inventoryAddon.utilityBelt, inventorioTag.getList("UtilityBelt", 10))
+        deserializeSection(registries, inventoryAddon, inventoryAddon.toolBelt, inventorioTag.getList("ToolBelt", 10))
+        deserializeSection(registries, inventoryAddon, inventoryAddon.deepPockets, inventorioTag.getList("DeepPockets", 10))
     }
 
-    private fun deserializeSection(inventoryAddon: PlayerInventoryAddon, inventorySection: MutableList<ItemStack>, sectionTag: NbtList) {
+    private fun deserializeSection(
+        registries: RegistryWrapper.WrapperLookup,
+        inventoryAddon: PlayerInventoryAddon,
+        inventorySection: MutableList<ItemStack>,
+        sectionTag: NbtList,
+    ) {
         for (i in inventorySection.indices)
             inventorySection[i] = ItemStack.EMPTY
 
         for (itemTag in sectionTag) {
             val compoundTag = itemTag as NbtCompound
-            val itemStack = ItemStack.fromNbt(compoundTag)
+            val itemStack = ItemStack.fromNbtOrEmpty(registries, compoundTag)
             val slotIndex = compoundTag.getInt("Slot")
             if (slotIndex in inventorySection.indices) {
                 inventorySection[slotIndex] = itemStack
