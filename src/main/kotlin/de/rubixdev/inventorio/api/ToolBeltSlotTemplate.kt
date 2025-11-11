@@ -5,11 +5,7 @@ import java.util.function.BiPredicate
 import net.minecraft.item.ItemStack
 import net.minecraft.util.Identifier
 
-/**
- * Note: **Do not extend this class!** It is only marked as `open` for compatibility purposes.
- */
-// TODO: remove `open` modifier once old api package is removed
-open class ToolBeltSlotTemplate(val name: String, val emptyIcon: Identifier) {
+class ToolBeltSlotTemplate(val name: String, val emptyIcon: Identifier) {
     private val isAllowed: MutableList<BiPredicate<ItemStack, PlayerInventoryAddon>> = ArrayList()
     private val isDenied: MutableList<BiPredicate<ItemStack, PlayerInventoryAddon>> = ArrayList()
 

@@ -5,7 +5,6 @@ import de.rubixdev.inventorio.client.ui.InventorioScreen;
 import de.rubixdev.inventorio.config.GlobalSettings;
 import de.rubixdev.inventorio.player.InventorioScreenHandler;
 import de.rubixdev.inventorio.player.PlayerInventoryAddon;
-import de.rubixdev.inventorio.util.ToolBeltMode;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,58 +23,7 @@ public final class InventorioAPI {
     public static final String SLOT_HOE = "hoe";
 
     static {
-        if (GlobalSettings.toolBeltMode.getValue() == ToolBeltMode.ENABLED) {
-            InventorioAPI
-                .registerToolBeltSlotIfNotExists(
-                    InventorioAPI.SLOT_PICKAXE,
-                    new Identifier("inventorio", "textures/gui/empty/pickaxe.png")
-                )
-                .addAllowingCondition(((itemStack, addon) -> itemStack.getItem() instanceof PickaxeItem))
-                .addAllowingTag(new Identifier("inventorio", "pickaxes"))
-                .addDenyingTag(new Identifier("inventorio", "pickaxes_blacklist"));
-
-            InventorioAPI
-                .registerToolBeltSlotIfNotExists(
-                    InventorioAPI.SLOT_SWORD,
-                    new Identifier("inventorio", "textures/gui/empty/sword.png")
-                )
-                .addAllowingCondition(
-                    ((itemStack, addon) -> itemStack.getItem() instanceof SwordItem
-                        || itemStack.getItem() instanceof TridentItem)
-                )
-                .addAllowingTag(new Identifier("inventorio", "swords"))
-                .addDenyingTag(new Identifier("inventorio", "swords_blacklist"));
-
-            InventorioAPI
-                .registerToolBeltSlotIfNotExists(
-                    InventorioAPI.SLOT_AXE,
-                    new Identifier("inventorio", "textures/gui/empty/axe.png")
-                )
-                .addAllowingCondition(((itemStack, addon) -> itemStack.getItem() instanceof AxeItem))
-                .addAllowingTag(new Identifier("inventorio", "axes"))
-                .addDenyingTag(new Identifier("inventorio", "axes_blacklist"));
-
-            InventorioAPI
-                .registerToolBeltSlotIfNotExists(
-                    InventorioAPI.SLOT_SHOVEL,
-                    new Identifier("inventorio", "textures/gui/empty/shovel.png")
-                )
-                .addAllowingCondition(((itemStack, addon) -> itemStack.getItem() instanceof ShovelItem))
-                .addAllowingTag(new Identifier("inventorio", "shovels"))
-                .addDenyingTag(new Identifier("inventorio", "shovels_blacklist"));
-
-            InventorioAPI
-                .registerToolBeltSlotIfNotExists(
-                    InventorioAPI.SLOT_HOE,
-                    new Identifier("inventorio", "textures/gui/empty/hoe.png")
-                )
-                .addAllowingCondition(
-                    ((itemStack, addon) -> itemStack.getItem() instanceof HoeItem
-                        || itemStack.getItem() instanceof ShearsItem)
-                )
-                .addAllowingTag(new Identifier("inventorio", "hoes"))
-                .addDenyingTag(new Identifier("inventorio", "hoes_blacklist"));
-        }
+        OnInitKt.onApiInit();
     }
 
     private InventorioAPI() {}

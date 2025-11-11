@@ -33,12 +33,8 @@ import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 
-/**
- * Note: **Do not extend this class!** It is only marked as `open` for compatibility purposes.
- */
-// TODO: remove `open` modifier once old api package is removed
 @Environment(EnvType.CLIENT)
-open class InventorioScreen(handler: InventorioScreenHandler, internal val inventory: PlayerInventory) :
+class InventorioScreen(handler: InventorioScreenHandler, internal val inventory: PlayerInventory) :
     AbstractInventoryScreen<InventorioScreenHandler>(handler, inventory, Text.translatable("container.crafting")), RecipeBookProvider {
     private var mouseX = 0f
     private var mouseY = 0f
@@ -328,12 +324,10 @@ open class InventorioScreen(handler: InventorioScreenHandler, internal val inven
         super.drawMouseoverTooltip(context, x, y)
     }
 
-    @Suppress("RedundantOverride") // this makes it easier to add functionality for mod compat via mixin
     override fun mouseDragged(mouseX: Double, mouseY: Double, button: Int, deltaX: Double, deltaY: Double): Boolean {
         return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY)
     }
 
-    @Suppress("RedundantOverride") // this makes it easier to add functionality for mod compat via mixin
     override fun mouseScrolled(
         mouseX: Double,
         mouseY: Double,

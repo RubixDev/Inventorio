@@ -15,6 +15,7 @@ import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookProvider;
 import net.minecraft.client.util.math.Rect2i;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
@@ -77,7 +78,8 @@ public abstract class InventorioScreenMixin extends AbstractInventoryScreen<Inve
 
     @Override
     public TrinketPlayerScreenHandler trinkets$getHandler() {
-        return (TrinketPlayerScreenHandler) handler;
+        // noinspection DataFlowIssue
+        return (TrinketPlayerScreenHandler) (ScreenHandler) handler;
     }
 
     @Override
