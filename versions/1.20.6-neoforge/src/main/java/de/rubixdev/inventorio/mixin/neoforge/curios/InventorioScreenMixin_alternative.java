@@ -2,6 +2,7 @@ package de.rubixdev.inventorio.mixin.neoforge.curios;
 
 import de.rubixdev.inventorio.client.ui.InventorioScreen;
 import de.rubixdev.inventorio.integration.curios.CustomCuriosButton;
+import de.rubixdev.inventorio.packet.InventorioNetworking;
 import de.rubixdev.inventorio.player.InventorioScreenHandler;
 import me.fallenbreath.conditionalmixin.api.annotation.Condition;
 import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
@@ -20,8 +21,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import top.theillusivec4.curios.client.gui.CuriosButton;
 import top.theillusivec4.curios.client.gui.CuriosScreen;
 import top.theillusivec4.curios.common.network.client.CPacketOpenCurios;
-
-import static de.rubixdev.inventorio.integration.curios.InventorioScreenHandlerMixinHelperKt.sendToServer;
 
 @SuppressWarnings("UnresolvedMixinReference") // the Minecraft Dev plugin
                                               // doesn't seem to like Kotlin
@@ -60,7 +59,7 @@ public abstract class InventorioScreenMixin_alternative extends AbstractInventor
                         client.player.currentScreenHandler.setCursorStack(ItemStack.EMPTY);
 
                         if (recipeBook.isOpen()) recipeBook.toggleOpen();
-                        sendToServer(new CPacketOpenCurios(stack));
+                        InventorioNetworking.getInstance().sendToServer(new CPacketOpenCurios(stack));
                     }
                 }
             )

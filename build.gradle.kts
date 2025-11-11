@@ -3,6 +3,7 @@ import com.diffplug.gradle.spotless.BaseKotlinExtension
 plugins {
     id("maven-publish")
     id("dev.architectury.loom") version "1.13-SNAPSHOT" apply false
+    // Kotlin 2.1+ is still incompatible with the preprocessor/remap
     kotlin("jvm") version "2.0.21" apply false
 
     // https://github.com/ReplayMod/preprocessor

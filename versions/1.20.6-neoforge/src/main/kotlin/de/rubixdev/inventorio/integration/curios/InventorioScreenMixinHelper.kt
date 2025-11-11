@@ -1,10 +1,11 @@
 package de.rubixdev.inventorio.integration.curios
 
+import com.mojang.blaze3d.systems.RenderSystem
 import de.rubixdev.inventorio.client.ui.InventorioScreen
 import de.rubixdev.inventorio.config.PlayerSettings
 import de.rubixdev.inventorio.mixin.client.accessor.HandledScreenAccessor
+import de.rubixdev.inventorio.packet.InventorioNetworking
 import de.rubixdev.inventorio.util.MixinDelegate
-import kotlin.math.min
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget
@@ -15,13 +16,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 import top.theillusivec4.curios.api.CuriosApi
 import top.theillusivec4.curios.client.gui.CuriosButton
 import top.theillusivec4.curios.client.gui.CuriosScreen
+import top.theillusivec4.curios.client.gui.PageButton
 import top.theillusivec4.curios.client.gui.RenderButton
 import top.theillusivec4.curios.common.inventory.CosmeticCurioSlot
 import top.theillusivec4.curios.common.inventory.CurioSlot
+import top.theillusivec4.curios.common.network.client.CPacketPage
 import top.theillusivec4.curios.common.network.client.CPacketToggleRender
 
 /**
- * This is basically a re-implementation of https://github.com/TheIllusiveC4/Curios/blob/7bd447467d1a881d9217ebf938337723fafaabf4/neoforge/src/main/java/top/theillusivec4/curios/client/gui/CuriosScreen.java
+ * This is basically a re-implementation of https://github.com/TheIllusiveC4/Curios/blob/ab847aab52213afd87c78f48ad9382212846f1b7/neoforge/src/main/java/top/theillusivec4/curios/client/gui/CuriosScreen.java
  * for the Inventorio screen (and in Kotlin).
  */
 @Suppress("FunctionName")
@@ -30,22 +33,23 @@ class InventorioScreenMixinHelper(
     private val recipeBook: RecipeBookWidget,
 ) {
     companion object {
-        private val CURIO_INVENTORY = Identifier("curios", "textures/gui/curios/inventory.png")
-        private val SCROLLER = Identifier("container/creative_inventory/scroller")
+        val CURIO_INVENTORY = Identifier("curios", "textures/gui/curios/inventory.png")
 
-        var currentScroll = 0f
+        private var scrollCooldown = 0
     }
 
     var isCuriosOpen = false
         private set
 
-    private var hasScrollbar = false
     private lateinit var buttonCurios: TexturedButtonWidget
+    private lateinit var cosmeticButton: CustomCosmeticButton
+    private lateinit var nextPage: CustomPageButton
+    private lateinit var prevPage: CustomPageButton
     private var wasRecipeBookOpen = mutableListOf(false)
     private var wasCuriosOpen = mutableListOf(false)
-    private var isScrolling = false
     private var buttonClicked = false
     private var isRenderButtonHovered = false
+    private var panelWidth = 0
 
     private val handler get() = thiss.handler
     private val curioHandler get() = handler as ICuriosContainer
@@ -59,17 +63,12 @@ class InventorioScreenMixinHelper(
 
     fun InventorioScreen.`curios$init`() {
         thiss.client?.also { client ->
-            client.player?.also { player ->
-                hasScrollbar = CuriosApi.getCuriosInventory(player).map { it.visibleSlots > 0 }.orElse(false)
-                if (hasScrollbar) {
-                    curioHandler.`inventorio$scrollTo`(currentScroll)
-                }
-            }
+            panelWidth = curioHandler.`inventorio$panelWidth`
 
             val offsets = CuriosScreen.getButtonOffset(false)
             buttonCurios = CustomCuriosButton(
                 thiz,
-                x + offsets.left + 2,
+                guiLeft + offsets.left - 2,
                 height / 2 + offsets.right + 2,
                 10,
                 10,
@@ -117,11 +116,24 @@ class InventorioScreenMixinHelper(
     }
 
     fun InventorioScreen.`curios$updateRenderButtons`() {
-        thiss.selectables.removeIf { it is RenderButton }
-        thiss.children.removeIf { it is RenderButton }
-        drawables.removeIf { it is RenderButton }
+        thiss.selectables.removeIf { it is RenderButton || it is CustomCosmeticButton || it is CustomPageButton }
+        thiss.children.removeIf { it is RenderButton || it is CustomCosmeticButton || it is CustomPageButton }
+        drawables.removeIf { it is RenderButton || it is CustomCosmeticButton || it is CustomPageButton }
+        panelWidth = curioHandler.`inventorio$panelWidth`
 
         if (!isCuriosOpen) return
+
+        if (curioHandler.`inventorio$hasCosmetics`) {
+            cosmeticButton = CustomCosmeticButton(thiz, guiLeft + 17, guiTop - 18, 20, 17)
+            thiss.callAddDrawableChild(cosmeticButton)
+        }
+
+        if (curioHandler.`inventorio$totalPages` > 1) {
+            nextPage = CustomPageButton(thiz, guiLeft + 17, guiTop + 2, 11, 12, PageButton.Type.NEXT)
+            thiss.callAddDrawableChild(nextPage)
+            prevPage = CustomPageButton(thiz, guiLeft + 17, guiTop + 2, 11, 12, PageButton.Type.PREVIOUS)
+            thiss.callAddDrawableChild(prevPage)
+        }
 
         for (inventorySlot in handler.slots) {
             if (inventorySlot is CurioSlot && inventorySlot !is CosmeticCurioSlot) {
@@ -129,35 +141,20 @@ class InventorioScreenMixinHelper(
                     thiss.callAddDrawableChild(
                         RenderButton(
                             inventorySlot,
-                            x + inventorySlot.x + 11,
-                            y + inventorySlot.y - 3,
+                            x + inventorySlot.x + 12,
+                            y + inventorySlot.y - 1,
                             8,
                             8,
                             75,
                             0,
                             CURIO_INVENTORY,
                         ) {
-                            sendToServer(CPacketToggleRender(inventorySlot.identifier, inventorySlot.slotIndex))
+                            InventorioNetworking.INSTANCE.sendToServer(CPacketToggleRender(inventorySlot.identifier, inventorySlot.slotIndex))
                         },
                     )
                 }
             }
         }
-    }
-
-    private fun inScrollbar(mouseX: Double, mouseY: Double): Boolean {
-        if (!isCuriosOpen) return false
-        val i = x
-        val j = y
-        var k = i - 34
-        val l = j + 12
-        var i1 = k + 14
-        val j1 = l + 139
-        if (curioHandler.`inventorio$hasCosmeticColumn`) {
-            i1 -= 19
-            k -= 19
-        }
-        return mouseX >= k && mouseY >= l && mouseX < i1 && mouseY < j1
     }
 
     fun InventorioScreen.`curios$render`(context: DrawContext, mouseX: Int, mouseY: Int, delta: Float) {
@@ -185,75 +182,122 @@ class InventorioScreenMixinHelper(
         }
     }
 
-    fun drawBackground(drawContext: DrawContext) {
+    fun InventorioScreen.`curios$drawBackground`(drawContext: DrawContext) {
         if (!isCuriosOpen) return
         thiss.client?.player?.let { player ->
+            if (scrollCooldown > 0 && player.age % 5 == 0) scrollCooldown--
+            panelWidth = curioHandler.`inventorio$panelWidth`
             val i = x
             val j = y
-            CuriosApi.getCuriosInventory(player).ifPresent { handler ->
-                val slotCount = handler.visibleSlots
-                if (slotCount <= 0) return@ifPresent
-                val upperHeight = 7 + min(slotCount, 9) * 18
-                var xTexOffset = 0
-                var width = 27
-                var xOffset = -26
-                if (curioHandler.`inventorio$hasCosmeticColumn`) {
-                    xTexOffset = 92
-                    width = 46
-                    xOffset -= 19
-                }
-                drawContext.drawTexture(
-                    CURIO_INVENTORY,
-                    i + xOffset,
-                    j + 4,
-                    xTexOffset,
-                    0,
-                    width,
-                    upperHeight,
-                )
+            CuriosApi.getCuriosInventory(player).ifPresent {
+                var xOffset = -33
+                var yOffset = j
+                val pageOffset = curioHandler.`inventorio$totalPages` > 1
 
-                if (slotCount <= 8) {
+                if (curioHandler.`inventorio$hasCosmetics`) {
+                    drawContext.drawTexture(
+                        CURIO_INVENTORY,
+                        i + xOffset + 2,
+                        yOffset - 23,
+                        32,
+                        0,
+                        28,
+                        24,
+                    )
+                }
+                val grid = curioHandler.`inventorio$grid`
+                xOffset -= (grid.size - 1) * 18
+
+                // render backplate
+                for (r in 0..<grid.size) {
+                    val rows = grid.first()
+                    var upperHeight = 7 + rows * 18
+                    var xTexOffset = 91
+
+                    if (pageOffset) {
+                        upperHeight += 8
+                    }
+
+                    if (r != 0) {
+                        xTexOffset += 7
+                    }
                     drawContext.drawTexture(
                         CURIO_INVENTORY,
                         i + xOffset,
-                        j + 4 + upperHeight,
+                        yOffset,
                         xTexOffset,
-                        151,
-                        width,
+                        0,
+                        25,
+                        upperHeight,
+                    )
+                    drawContext.drawTexture(
+                        CURIO_INVENTORY,
+                        i + xOffset,
+                        yOffset + upperHeight,
+                        xTexOffset,
+                        159,
+                        25,
                         7,
                     )
-                } else {
-                    drawContext.drawTexture(
-                        CURIO_INVENTORY,
-                        i + xOffset - 16,
-                        j + 4,
-                        27,
-                        0,
-                        23,
-                        158,
-                    )
-                    drawContext.drawGuiTexture(
-                        SCROLLER,
-                        i + xOffset - 8,
-                        j + 12 + (127f * currentScroll).toInt(),
-                        12,
-                        15,
-                    )
-                }
 
-                for (slot in this.handler.slots.filterIsInstance<CosmeticCurioSlot>()) {
-                    val x = x + slot.x - 1
-                    val y = y + slot.y - 1
+                    if (grid.size == 1) {
+                        xTexOffset += 7
+                        drawContext.drawTexture(
+                            CURIO_INVENTORY,
+                            i + xOffset + 7,
+                            yOffset,
+                            xTexOffset,
+                            0,
+                            25,
+                            upperHeight,
+                        )
+                        drawContext.drawTexture(
+                            CURIO_INVENTORY,
+                            i + xOffset + 7,
+                            yOffset + upperHeight,
+                            xTexOffset,
+                            159,
+                            25,
+                            7,
+                        )
+                    }
+
+                    xOffset += if (r == 0) 25 else 18
+                }
+                xOffset -= (grid.size) * 18
+                if (pageOffset) yOffset += 8
+
+                // render slots
+                for (rows in grid) {
+                    val upperHeight = rows * 18
+
                     drawContext.drawTexture(
                         CURIO_INVENTORY,
-                        x,
-                        y,
-                        138,
-                        0,
+                        i + xOffset,
+                        yOffset + 7,
+                        7,
+                        7,
                         18,
-                        18,
+                        upperHeight,
                     )
+                    xOffset += 18
                 }
+                RenderSystem.enableBlend()
+
+                for (slot in handler.slots) {
+                    if (slot is CurioSlot && slot.isCosmetic) {
+                        drawContext.drawTexture(
+                            CURIO_INVENTORY,
+                            slot.x + guiLeft - 1,
+                            slot.y + guiTop - 1,
+                            32,
+                            50,
+                            18,
+                            18,
+                        )
+                    }
+                }
+                RenderSystem.disableBlend()
             }
         }
     }
@@ -262,42 +306,23 @@ class InventorioScreenMixinHelper(
         if (isRenderButtonHovered) cir.returnValue = false
     }
 
-    fun mouseClicked(mouseX: Double, mouseY: Double, cir: CallbackInfoReturnable<Boolean>) {
-        if (inScrollbar(mouseX, mouseY)) {
-            isScrolling = curioHandler.`inventorio$canScroll`
-            cir.returnValue = true
-        }
-    }
-
-    fun mouseReleased(button: Int, cir: CallbackInfoReturnable<Boolean>) {
-        if (button == 0) {
-            isScrolling = false
-        }
+    fun mouseReleased(cir: CallbackInfoReturnable<Boolean>) {
         if (buttonClicked) {
             buttonClicked = false
             cir.returnValue = true
         }
     }
 
-    fun mouseDragged(mouseY: Double, cir: CallbackInfoReturnable<Boolean>) {
-        if (isScrolling) {
-            val i = y + 8
-            val j = i + 148
-            currentScroll = ((mouseY.toFloat() - i - 7.5f) / (j - i - 15f)).coerceIn(0f, 1f)
-            curioHandler.`inventorio$scrollTo`(currentScroll)
-            cir.returnValue = true
-        }
-    }
-
-    fun mouseScrolled(verticalAmount: Double, cir: CallbackInfoReturnable<Boolean>) {
-        if (curioHandler.`inventorio$canScroll` && isCuriosOpen) {
-            var i = 1
-            curioHandler.`inventorio$curiosHandler`?.let { handler ->
-                i = handler.visibleSlots
-            }
-            currentScroll = (currentScroll - verticalAmount / i).toFloat().coerceIn(0f, 1f)
-            curioHandler.`inventorio$scrollTo`(currentScroll)
-            cir.returnValue = true
+    fun InventorioScreen.`curios$mouseScrolled`(
+        mouseX: Double,
+        mouseY: Double,
+        verticalAmount: Double,
+    ) {
+        if (curioHandler.`inventorio$totalPages` > 1 && mouseX < guiLeft && mouseX > guiLeft - panelWidth
+            && mouseY > guiTop && mouseY < guiTop + thiss.backgroundHeight && scrollCooldown <= 0
+        ) {
+            InventorioNetworking.INSTANCE.sendToServer(CPacketPage(handler.syncId, verticalAmount < 0))
+            scrollCooldown = 2
         }
     }
 }

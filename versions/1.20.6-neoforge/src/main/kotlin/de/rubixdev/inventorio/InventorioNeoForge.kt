@@ -7,8 +7,8 @@ import de.rubixdev.inventorio.config.PlayerSettings
 import de.rubixdev.inventorio.enchantment.DeepPocketsBookRecipe
 import de.rubixdev.inventorio.enchantment.DeepPocketsEnchantment
 import de.rubixdev.inventorio.integration.ClumpsIntegration
+import de.rubixdev.inventorio.integration.CuriosIntegration
 import de.rubixdev.inventorio.integration.InventorioModIntegration
-import de.rubixdev.inventorio.integration.ModIntegration
 import de.rubixdev.inventorio.packet.InventorioNetworking
 import de.rubixdev.inventorio.packet.InventorioNetworkingNeoForge
 import net.minecraft.client.MinecraftClient
@@ -29,7 +29,7 @@ import thedarkcolour.kotlinforforge.neoforge.KotlinModLoadingContext
 
 @Mod("inventorio")
 class InventorioNeoForge {
-    private val neoForgeModIntegrations = listOf<ModIntegration>(ClumpsIntegration)
+    private val neoForgeModIntegrations = listOf(ClumpsIntegration, CuriosIntegration)
 
     init {
         ScreenTypeProvider.INSTANCE = ScreenTypeProviderNeoForge

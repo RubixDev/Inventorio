@@ -67,7 +67,7 @@ public abstract class InventorioScreenMixin extends AbstractInventoryScreen<Inve
 
     @Inject(method = "drawBackground", at = @At("RETURN"))
     private void curios$drawBackground(DrawContext drawContext, float delta, int mouseX, int mouseY, CallbackInfo ci) {
-        helper.drawBackground(drawContext);
+        helper.curios$drawBackground(thiz, drawContext);
     }
 
     @Inject(method = "isPointWithinBounds", at = @At("HEAD"), cancellable = true)
@@ -83,29 +83,12 @@ public abstract class InventorioScreenMixin extends AbstractInventoryScreen<Inve
         helper.isPointWithinBounds(cir);
     }
 
-    @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
-    private void curios$mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-        helper.mouseClicked(mouseX, mouseY, cir);
-    }
-
     @Inject(method = "mouseReleased", at = @At("HEAD"), cancellable = true)
     private void curios$mouseReleased(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
-        helper.mouseReleased(button, cir);
+        helper.mouseReleased(cir);
     }
 
-    @Inject(method = "mouseDragged", at = @At("HEAD"), cancellable = true)
-    private void curios$mouseDragged(
-        double mouseX,
-        double mouseY,
-        int button,
-        double deltaX,
-        double deltaY,
-        CallbackInfoReturnable<Boolean> cir
-    ) {
-        helper.mouseDragged(mouseY, cir);
-    }
-
-    @Inject(method = "mouseScrolled", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "mouseScrolled", at = @At("HEAD"))
     private void curios$mouseScrolled(
         double mouseX,
         double mouseY,
@@ -113,7 +96,7 @@ public abstract class InventorioScreenMixin extends AbstractInventoryScreen<Inve
         double verticalAmount,
         CallbackInfoReturnable<Boolean> cir
     ) {
-        helper.mouseScrolled(verticalAmount, cir);
+        helper.curios$mouseScrolled(thiz, mouseX, mouseY, verticalAmount);
     }
 
     @Inject(

@@ -14,6 +14,9 @@ public interface HandledScreenAccessor<T extends ScreenHandler>extends ScreenAcc
     @Accessor("backgroundWidth")
     int getBackgroundWidth();
 
+    @Accessor("backgroundHeight")
+    int getBackgroundHeight();
+
     @Accessor("x")
     int getX();
 

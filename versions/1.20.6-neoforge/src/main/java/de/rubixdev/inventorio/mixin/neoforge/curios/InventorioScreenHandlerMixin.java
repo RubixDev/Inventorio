@@ -12,14 +12,16 @@ import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.AbstractRecipeScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
+import top.theillusivec4.curios.api.type.ICuriosMenu;
+
+import java.util.List;
 
 @SuppressWarnings("UnresolvedMixinReference") // the Minecraft Dev plugin
                                               // doesn't seem to like Kotlin
@@ -27,7 +29,7 @@ import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 @Restriction(require = { @Condition("curios"), @Condition(type = Condition.Type.TESTER, tester = CuriosTester.class) })
 @Mixin(InventorioScreenHandler.class)
 public abstract class InventorioScreenHandlerMixin extends AbstractRecipeScreenHandler<CraftingInventory>
-    implements ICuriosContainer {
+    implements ICuriosContainer, ICuriosMenu {
     public InventorioScreenHandlerMixin(ScreenHandlerType<?> arg, int i) {
         super(arg, i);
     }
@@ -38,28 +40,57 @@ public abstract class InventorioScreenHandlerMixin extends AbstractRecipeScreenH
     @Unique private InventorioScreenHandlerMixinHelper helper;
 
     @Override
+    public void resetSlots() {
+        inventorio$resetSlots();
+    }
+
+    @Override
     public void inventorio$resetSlots() {
         helper.curios$resetSlots(thiz);
     }
 
     @Override
-    public void inventorio$scrollTo(float pos) {
-        helper.curios$scrollTo(thiz, pos);
+    public void inventorio$setPage(int page) {
+        helper.curios$setPage(thiz, page);
     }
 
     @Override
-    public void inventorio$scrollToIndex(int indexIn) {
-        helper.curios$scrollToIndex(thiz, indexIn);
+    public void inventorio$toggleCosmetics() {
+        helper.curios$toggleCosmetics(thiz);
     }
 
     @Override
-    public boolean getInventorio$hasCosmeticColumn() { return helper.hasCosmeticColumn(); }
+    public void inventorio$nextPage() {
+        helper.curios$nextPage(thiz);
+    }
 
     @Override
-    public boolean getInventorio$canScroll() { return helper.canScroll(); }
+    public void inventorio$prevPage() {
+        helper.curios$prevPage(thiz);
+    }
 
-    @Nullable @Override
-    public ICuriosItemHandler getInventorio$curiosHandler() { return helper.getCuriosHandler(); }
+    @Override
+    public void inventorio$checkQuickMove() {
+        helper.curios$checkQuickMove(thiz);
+    }
+
+    @Override
+    public int getInventorio$currentPage() { return helper.getCurrentPage(); }
+
+    @Override
+    public int getInventorio$totalPages() { return helper.getTotalPages(); }
+
+    @Override
+    public @NotNull List<Integer> getInventorio$grid() { return helper.getGrid(); }
+
+    @Override
+    public boolean getInventorio$hasCosmetics() { return helper.getHasCosmetics(); }
+
+    @Override
+    public boolean getInventorio$isViewingCosmetics() { return helper.isViewingCosmetics(); }
+
+    @Override
+    public int getInventorio$panelWidth() { return helper.getPanelWidth(); }
 
     @Inject(method = "<init>(ILnet/minecraft/entity/player/PlayerInventory;)V", at = @At("RETURN"))
     private void curios$init(int syncId, PlayerInventory inventory, CallbackInfo ci) {
@@ -74,6 +105,6 @@ public abstract class InventorioScreenHandlerMixin extends AbstractRecipeScreenH
 
     @Inject(method = "quickMove", at = @At("HEAD"), cancellable = true)
     private void curios$quickMove(PlayerEntity player, int sourceIndex, CallbackInfoReturnable<ItemStack> cir) {
-        helper.curios$quickMove(thiz, sourceIndex, cir);
+        helper.curios$quickMove(thiz, player, sourceIndex, cir);
     }
 }
