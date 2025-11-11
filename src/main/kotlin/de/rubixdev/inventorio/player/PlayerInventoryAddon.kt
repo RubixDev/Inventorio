@@ -24,11 +24,8 @@ import net.minecraft.util.Util
  * This class is responsible for the inventory addon itself,
  * while [InventorioScreen] is responsible for the visuals of the Player Screen UI
  * and [InventorioScreenHandler] is responsible for the slots and player interacting with the slots
- *
- * Note: **Do not extend this class!** It is only marked as `open` for compatibility purposes.
 */
-// TODO: remove `open` modifier once old api package is removed
-open class PlayerInventoryAddon internal constructor(player: PlayerEntity) : PlayerInventoryExtraStuff(player) {
+class PlayerInventoryAddon internal constructor(player: PlayerEntity) : PlayerInventoryExtraStuff(player) {
     init {
         bNoMoreToolBeltSlots = true
     }
@@ -82,14 +79,6 @@ open class PlayerInventoryAddon internal constructor(player: PlayerEntity) : Pla
                 player.networkHandler.sendPacket(packet)
             }
         }
-    }
-
-    protected fun copyFrom(other: PlayerInventoryAddon) {
-        cloneFrom(other)
-        prevSelectedSlot = other.prevSelectedSlot
-        displayToolTimeStamp = other.displayToolTimeStamp
-        displayTool = other.displayTool
-        swappedHands = other.swappedHands
     }
 
     @Environment(EnvType.CLIENT)

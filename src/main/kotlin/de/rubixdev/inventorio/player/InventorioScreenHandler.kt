@@ -37,12 +37,7 @@ import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 
-/**
-* Note: **Do not extend this class!** It is only marked as `open` for compatibility purposes.
-*/
-// TODO: remove `open` modifier once old api package is removed
-@Suppress("LeakingThis")
-open class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory) :
+class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory) :
     AbstractRecipeScreenHandler<CraftingInventory?>(ScreenTypeProvider.INSTANCE.getScreenHandlerType(), syncId) {
     val inventoryAddon = inventory.player.inventoryAddon!!
 
@@ -387,6 +382,7 @@ open class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory) 
         return RecipeBookCategory.CRAFTING
     }
 
+    @Suppress("RedundantOverride") // this makes it easier to add functionality for mod compat via mixin
     override fun setStackInSlot(slot: Int, revision: Int, stack: ItemStack?) {
         super.setStackInSlot(slot, revision, stack)
     }
