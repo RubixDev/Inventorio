@@ -2,8 +2,8 @@ package de.rubixdev.inventorio.api
 
 import de.rubixdev.inventorio.config.GlobalSettings
 import de.rubixdev.inventorio.util.ToolBeltMode
+import de.rubixdev.inventorio.util.id
 import net.minecraft.item.*
-import net.minecraft.util.Identifier
 
 fun onApiInit() {
     if (GlobalSettings.toolBeltMode.value != ToolBeltMode.ENABLED) return
@@ -11,45 +11,45 @@ fun onApiInit() {
     InventorioAPI
         .registerToolBeltSlotIfNotExists(
             InventorioAPI.SLOT_PICKAXE,
-            Identifier("inventorio", "textures/gui/empty/pickaxe.png"),
+            "textures/gui/empty/pickaxe.png".id,
         )!!
         .addAllowingCondition { stack, _ -> stack.item is PickaxeItem }
-        .addAllowingTag(Identifier("inventorio", "pickaxes"))
-        .addDenyingTag(Identifier("inventorio", "pickaxes_blacklist"))
+        .addAllowingTag("pickaxes".id)
+        .addDenyingTag("pickaxes_blacklist".id)
 
     InventorioAPI
         .registerToolBeltSlotIfNotExists(
             InventorioAPI.SLOT_SWORD,
-            Identifier("inventorio", "textures/gui/empty/sword.png"),
+            "textures/gui/empty/sword.png".id,
         )!!
         .addAllowingCondition { stack, _ -> stack.item is SwordItem || stack.item is TridentItem }
-        .addAllowingTag(Identifier("inventorio", "swords"))
-        .addDenyingTag(Identifier("inventorio", "swords_blacklist"))
+        .addAllowingTag("swords".id)
+        .addDenyingTag("swords_blacklist".id)
 
     InventorioAPI
         .registerToolBeltSlotIfNotExists(
             InventorioAPI.SLOT_AXE,
-            Identifier("inventorio", "textures/gui/empty/axe.png"),
+            "textures/gui/empty/axe.png".id,
         )!!
         .addAllowingCondition { stack, _ -> stack.item is AxeItem }
-        .addAllowingTag(Identifier("inventorio", "axes"))
-        .addDenyingTag(Identifier("inventorio", "axes_blacklist"))
+        .addAllowingTag("axes".id)
+        .addDenyingTag("axes_blacklist".id)
 
     InventorioAPI
         .registerToolBeltSlotIfNotExists(
             InventorioAPI.SLOT_SHOVEL,
-            Identifier("inventorio", "textures/gui/empty/shovel.png"),
+            "textures/gui/empty/shovel.png".id,
         )!!
         .addAllowingCondition { stack, _ -> stack.item is ShovelItem }
-        .addAllowingTag(Identifier("inventorio", "shovels"))
-        .addDenyingTag(Identifier("inventorio", "shovels_blacklist"))
+        .addAllowingTag("shovels".id)
+        .addDenyingTag("shovels_blacklist".id)
 
     InventorioAPI
         .registerToolBeltSlotIfNotExists(
             InventorioAPI.SLOT_HOE,
-            Identifier("inventorio", "textures/gui/empty/hoe.png"),
+            "textures/gui/empty/hoe.png".id,
         )!!
         .addAllowingCondition { stack, _ -> stack.item is HoeItem || stack.item is ShearsItem }
-        .addAllowingTag(Identifier("inventorio", "hoes"))
-        .addDenyingTag(Identifier("inventorio", "hoes_blacklist"))
+        .addAllowingTag("hoes".id)
+        .addDenyingTag("hoes_blacklist".id)
 }

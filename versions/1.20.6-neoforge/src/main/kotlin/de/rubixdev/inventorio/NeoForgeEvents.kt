@@ -2,7 +2,7 @@ package de.rubixdev.inventorio
 
 import de.rubixdev.inventorio.client.control.InventorioKeyHandler
 import de.rubixdev.inventorio.client.ui.HotbarHUDRenderer.renderHotbarAddons
-import net.minecraft.util.Identifier
+import de.rubixdev.inventorio.util.id
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.api.distmarker.OnlyIn
 import net.neoforged.bus.api.SubscribeEvent
@@ -21,7 +21,7 @@ object NeoForgeEvents {
 object NeoForgeModEvents {
     @SubscribeEvent
     fun preGuiRender(event: RegisterGuiLayersEvent) {
-        event.registerBelowAll(Identifier("inventorio", "hotbar_addons")) { guiGraphics, _ ->
+        event.registerBelowAll("hotbar_addons".id) { guiGraphics, _ ->
             renderHotbarAddons(guiGraphics)
         }
     }

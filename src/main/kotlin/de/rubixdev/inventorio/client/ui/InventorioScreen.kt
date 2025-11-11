@@ -341,14 +341,14 @@ class InventorioScreen(handler: InventorioScreenHandler, internal val inventory:
     // Companion Object
     // ===================================================
     companion object {
-        private val TOGGLE_BUTTON_ON_TEXTURES = ButtonTextures(Identifier("inventorio", "toggle_button_on"), Identifier("inventorio", "toggle_button_active_on"))
-        private val TOGGLE_BUTTON_OFF_TEXTURES = ButtonTextures(Identifier("inventorio", "toggle_button_off"), Identifier("inventorio", "toggle_button_active_off"))
-        private val LOCK_BUTTON_TEXTURES = ButtonTextures(Identifier("inventorio", "lock_button"), Identifier("inventorio", "lock_button_active"))
-        private val TOGGLE_BUTTON_ON_TEXTURES_DARK = ButtonTextures(Identifier("inventorio", "toggle_button_on_dark"), Identifier("inventorio", "toggle_button_active_on_dark"))
-        private val TOGGLE_BUTTON_OFF_TEXTURES_DARK = ButtonTextures(Identifier("inventorio", "toggle_button_off_dark"), Identifier("inventorio", "toggle_button_active_off_dark"))
-        private val LOCK_BUTTON_TEXTURES_DARK = ButtonTextures(Identifier("inventorio", "lock_button_dark"), Identifier("inventorio", "lock_button_active_dark"))
-        private val BACKGROUND_TEXTURE = Identifier("inventorio", "textures/gui/player_inventory.png")
-        private val BACKGROUND_TEXTURE_DARK = Identifier("inventorio", "textures/gui/player_inventory_dark.png")
+        private val TOGGLE_BUTTON_ON_TEXTURES = ButtonTextures("toggle_button_on".id, "toggle_button_active_on".id)
+        private val TOGGLE_BUTTON_OFF_TEXTURES = ButtonTextures("toggle_button_off".id, "toggle_button_active_off".id)
+        private val LOCK_BUTTON_TEXTURES = ButtonTextures("lock_button".id, "lock_button_active".id)
+        private val TOGGLE_BUTTON_ON_TEXTURES_DARK = ButtonTextures("toggle_button_on_dark".id, "toggle_button_active_on_dark".id)
+        private val TOGGLE_BUTTON_OFF_TEXTURES_DARK = ButtonTextures("toggle_button_off_dark".id, "toggle_button_active_off_dark".id)
+        private val LOCK_BUTTON_TEXTURES_DARK = ButtonTextures("lock_button_dark".id, "lock_button_active_dark".id)
+        private val BACKGROUND_TEXTURE = "textures/gui/player_inventory.png".id
+        private val BACKGROUND_TEXTURE_DARK = "textures/gui/player_inventory_dark.png".id
 
         private val initConsumers = mutableMapOf<Identifier, Consumer<InventorioScreen>>()
 

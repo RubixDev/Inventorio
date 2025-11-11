@@ -6,12 +6,12 @@ import de.rubixdev.inventorio.config.PlayerSettings
 import de.rubixdev.inventorio.mixin.client.accessor.HandledScreenAccessor
 import de.rubixdev.inventorio.packet.InventorioNetworking
 import de.rubixdev.inventorio.util.MixinDelegate
+import de.rubixdev.inventorio.util.id
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget
 import net.minecraft.client.gui.widget.TexturedButtonWidget
 import net.minecraft.text.Text
-import net.minecraft.util.Identifier
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable
 import top.theillusivec4.curios.api.CuriosApi
 import top.theillusivec4.curios.client.gui.CuriosButton
@@ -33,7 +33,7 @@ class InventorioScreenMixinHelper(
     private val recipeBook: RecipeBookWidget,
 ) {
     companion object {
-        val CURIO_INVENTORY = Identifier("curios", "textures/gui/curios/inventory.png")
+        val CURIO_INVENTORY = "textures/gui/curios/inventory.png".id("curios")
 
         private var scrollCooldown = 0
     }
@@ -62,7 +62,7 @@ class InventorioScreenMixinHelper(
     private var y by MixinDelegate(thiss::getY, thiss::setY)
 
     fun InventorioScreen.`curios$init`() {
-        thiss.client?.also { client ->
+        thiss.client?.also { _ ->
             panelWidth = curioHandler.`inventorio$panelWidth`
 
             val offsets = CuriosScreen.getButtonOffset(false)

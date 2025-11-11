@@ -11,6 +11,7 @@ import de.rubixdev.inventorio.integration.InventorioModIntegration
 import de.rubixdev.inventorio.integration.ModIntegration
 import de.rubixdev.inventorio.packet.InventorioNetworking
 import de.rubixdev.inventorio.packet.InventorioNetworkingFabric
+import de.rubixdev.inventorio.util.id
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
@@ -19,7 +20,6 @@ import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.recipe.SpecialRecipeSerializer
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
-import net.minecraft.util.Identifier
 
 open class InventorioFabric : ModInitializer {
     private val fabricModIntegrations = listOf<ModIntegration>(ClumpsIntegration)
@@ -27,10 +27,10 @@ open class InventorioFabric : ModInitializer {
     override fun onInitialize() {
         ScreenTypeProvider.INSTANCE = ScreenTypeProviderFabric
         InventorioNetworking.INSTANCE = InventorioNetworkingFabric
-        Registry.register(Registries.ENCHANTMENT, Identifier("inventorio", "deep_pockets"), DeepPocketsEnchantment)
+        Registry.register(Registries.ENCHANTMENT, "deep_pockets".id, DeepPocketsEnchantment)
         DeepPocketsBookRecipe.SERIALIZER = Registry.register(
             Registries.RECIPE_SERIALIZER,
-            Identifier("inventorio", "deep_pockets_book"),
+            "deep_pockets_book".id,
             SpecialRecipeSerializer { category -> DeepPocketsBookRecipe(category) },
         )
 
@@ -51,24 +51,24 @@ open class InventorioFabric : ModInitializer {
         // The reason why we do it this way is that we can't guarantee that other mods
         // won't call [InventorioAPI] BEFORE [InventorioFabric#onInitialize] has been invoked
         InventorioAPI.getToolBeltSlotTemplate(InventorioAPI.SLOT_PICKAXE)
-            ?.addAllowingTag(Identifier("fabric", "pickaxes"))
-            ?.addAllowingTag(Identifier("fabric", "hammers"))
+            ?.addAllowingTag("pickaxes".id("fabric"))
+            ?.addAllowingTag("hammers".id("fabric"))
 
         InventorioAPI.getToolBeltSlotTemplate(InventorioAPI.SLOT_SWORD)
-            ?.addAllowingTag(Identifier("fabric", "swords"))
-            ?.addAllowingTag(Identifier("fabric", "tridents"))
-            ?.addAllowingTag(Identifier("fabric", "battleaxes"))
+            ?.addAllowingTag("swords".id("fabric"))
+            ?.addAllowingTag("tridents".id("fabric"))
+            ?.addAllowingTag("battleaxes".id("fabric"))
 
         InventorioAPI.getToolBeltSlotTemplate(InventorioAPI.SLOT_AXE)
-            ?.addAllowingTag(Identifier("fabric", "axes"))
-            ?.addAllowingTag(Identifier("fabric", "battleaxes"))
+            ?.addAllowingTag("axes".id("fabric"))
+            ?.addAllowingTag("battleaxes".id("fabric"))
 
         InventorioAPI.getToolBeltSlotTemplate(InventorioAPI.SLOT_SHOVEL)
-            ?.addAllowingTag(Identifier("fabric", "shovels"))
-            ?.addAllowingTag(Identifier("fabric", "mattocks"))
+            ?.addAllowingTag("shovels".id("fabric"))
+            ?.addAllowingTag("mattocks".id("fabric"))
 
         InventorioAPI.getToolBeltSlotTemplate(InventorioAPI.SLOT_HOE)
-            ?.addAllowingTag(Identifier("fabric", "hoes"))
-            ?.addAllowingTag(Identifier("fabric", "shears"))
+            ?.addAllowingTag("hoes".id("fabric"))
+            ?.addAllowingTag("shears".id("fabric"))
     }
 }
