@@ -14,7 +14,6 @@ import net.minecraft.client.render.model.json.ModelTransformationMode
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.util.Arm
-import net.minecraft.util.Identifier
 import net.minecraft.util.crash.CrashException
 import net.minecraft.util.crash.CrashReport
 import net.minecraft.util.math.MathHelper
@@ -23,8 +22,8 @@ import org.joml.Matrix4f
 
 @Environment(EnvType.CLIENT)
 object HotbarHUDRenderer {
-    private val WIDGETS_TEXTURE = Identifier("inventorio", "textures/gui/widgets.png")
-    private val WIDGETS_TEXTURE_DARK = Identifier("inventorio", "textures/gui/widgets_dark.png")
+    private val WIDGETS_TEXTURE = "textures/gui/widgets.png".id
+    private val WIDGETS_TEXTURE_DARK = "textures/gui/widgets_dark.png".id
     private val client = MinecraftClient.getInstance()!!
 
     fun renderSegmentedHotbar(drawContext: DrawContext): Boolean {

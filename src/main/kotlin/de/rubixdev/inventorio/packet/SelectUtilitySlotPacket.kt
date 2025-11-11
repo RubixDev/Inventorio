@@ -3,6 +3,7 @@ package de.rubixdev.inventorio.packet
 import com.mojang.datafixers.util.Pair
 import de.rubixdev.inventorio.player.PlayerInventoryAddon
 import de.rubixdev.inventorio.player.PlayerInventoryAddon.Companion.inventoryAddon
+import de.rubixdev.inventorio.util.id
 import io.netty.buffer.ByteBuf
 import java.util.concurrent.Executor
 import net.minecraft.entity.EquipmentSlot
@@ -12,11 +13,10 @@ import net.minecraft.network.packet.CustomPayload
 import net.minecraft.network.packet.s2c.play.EntityEquipmentUpdateS2CPacket
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.server.world.ServerWorld
-import net.minecraft.util.Identifier
 
 data class SelectUtilitySlotPacket(val slot: Byte = 0) : CustomPayload {
     companion object {
-        val ID = CustomPayload.Id<SelectUtilitySlotPacket>(Identifier("inventorio", "select_utility"))
+        val ID = CustomPayload.Id<SelectUtilitySlotPacket>("select_utility".id)
         val CODEC: PacketCodec<ByteBuf, SelectUtilitySlotPacket> =
             PacketCodecs.BYTE.xmap(::SelectUtilitySlotPacket) { it.slot }
     }

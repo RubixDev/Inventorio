@@ -14,6 +14,7 @@ import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.item.ItemStack
 import net.minecraft.item.TridentItem
 import net.minecraft.screen.ScreenHandler
+import net.minecraft.util.Identifier
 import org.apache.logging.log4j.LogManager
 
 data class Point2I(@JvmField val x: Int, @JvmField val y: Int)
@@ -77,3 +78,12 @@ class MixinDelegate<T>(
     override fun getValue(thisRef: Any?, property: KProperty<*>): T = getter.get()
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) = setter.accept(value)
 }
+
+/** Turn this String into an [Identifier] in this mod's namespace */
+val String.id get() = Identifier("inventorio", this)
+
+/** Turn this String into an [Identifier] in the vanilla namespace */
+fun String.id() = Identifier(this)
+
+/** Turn this String into an [Identifier] in the given namespace */
+fun String.id(namespace: String) = Identifier(namespace, this)
