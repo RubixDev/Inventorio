@@ -106,7 +106,7 @@ class InventorioScreenHandlerMixinHelper(
                     val x = ((groupOffset / 2) * 18 * (-1.0).pow(groupOffset)).toInt()
                     slotHeights.computeIfAbsent(group) { mutableListOf() }.add(Point(x, stacks.size()))
                     slotTypes.computeIfAbsent(group) { mutableListOf() }.add(stacks.slotType)
-                    for (i in 0 until stacks.size()) {
+                    for (i in 0..<stacks.size()) {
                         val y = (pos.y + (slotOffset / 2) * 18 * (-1.0).pow(slotOffset)).toInt()
                         thiss.callAddSlot(
                             SurvivalTrinketSlot(stacks, i, x + pos.x, y, group, stacks.slotType, i, groupOffset == 1 && i == 0),
@@ -156,7 +156,7 @@ class InventorioScreenHandlerMixinHelper(
 
         if (slot.hasStack()) {
             val stack = slot.stack
-            if (sourceIndex in trinketSlotStart until trinketSlotEnd) {
+            if (sourceIndex in trinketSlotStart..<trinketSlotEnd) {
                 val availableDeepPocketsRange = getAvailableDeepPocketsRange()
                 cir.returnValue = if (!insertItem(stack, mainInventoryRange)
                     && !(!availableDeepPocketsRange.isEmpty() && insertItem(stack, availableDeepPocketsRange))
@@ -167,7 +167,7 @@ class InventorioScreenHandlerMixinHelper(
                 }
             } else if (sourceIndex in mainInventoryRange || sourceIndex in deepPocketsRange) {
                 TrinketsApi.getTrinketComponent(player).ifPresent {
-                    for (i in trinketSlotStart until trinketSlotEnd) {
+                    for (i in trinketSlotStart..<trinketSlotEnd) {
                         val s = slots[i]
                         if (s !is SurvivalTrinketSlot || !s.canInsert(stack)) continue
 

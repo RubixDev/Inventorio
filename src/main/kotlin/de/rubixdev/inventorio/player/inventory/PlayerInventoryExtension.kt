@@ -84,7 +84,7 @@ abstract class PlayerInventoryExtension protected constructor(val player: Player
 
     fun getTotalAmount(sampleStack: ItemStack): Int {
         var count = 0
-        for (i in 0 until player.inventory.size()) {
+        for (i in 0..<player.inventory.size()) {
             val stack = player.inventory.getStack(i)
             if (areItemsSimilar(stack, sampleStack)) {
                 count += stack.count
@@ -111,7 +111,7 @@ abstract class PlayerInventoryExtension protected constructor(val player: Player
      */
     fun findNextUtility(direction: Int, skipEmptySlots: Boolean): Pair<ItemStack, Int> {
         val range = if (direction.sign >= 0) {
-            (selectedUtility + 1 until getAvailableUtilityBeltSize()) + (0 until selectedUtility)
+            (selectedUtility + 1..<getAvailableUtilityBeltSize()) + (0..<selectedUtility)
         } else {
             (selectedUtility - 1 downTo 0) + (getAvailableUtilityBeltSize() - 1 downTo selectedUtility + 1)
         }
@@ -140,7 +140,7 @@ abstract class PlayerInventoryExtension protected constructor(val player: Player
      */
     private fun findEmptyUtility(direction: Int): Int {
         val range = if (direction.sign >= 0) {
-            (selectedUtility + 1 until getAvailableUtilityBeltSize()) + (0 until selectedUtility)
+            (selectedUtility + 1..<getAvailableUtilityBeltSize()) + (0..<selectedUtility)
         } else {
             (selectedUtility - 1 downTo 0) + (getAvailableUtilityBeltSize() - 1 downTo selectedUtility + 1)
         }

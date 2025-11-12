@@ -23,5 +23,5 @@ data class IntProgressionIndices(@JvmField val absoluteIndex: Int, @JvmField val
 
 infix fun Int.expandBy(addition: Int): IntRange {
     if (addition < 0) return IntRange.EMPTY
-    return this until this + addition
+    return this..<this + addition
 }

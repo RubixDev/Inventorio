@@ -203,7 +203,7 @@ class InventorioScreen(handler: InventorioScreenHandler, internal val inventory:
 
         // If Tool Belt is 2+ columns wide, draw extra background pieces
         val size = handler.getToolBeltSlotCount()
-        for (column in 0 until (size - 1) / ToolBeltSlot.getColumnCapacity(deepPocketsRowCount)) {
+        for (column in 0..<(size - 1) / ToolBeltSlot.getColumnCapacity(deepPocketsRowCount)) {
             drawContext.drawTexture(
                 texture,
                 x + GUI_TOOL_BELT_UI_EXTENSION.x + column * SLOT_UI_SIZE, y + GUI_TOOL_BELT_UI_EXTENSION.y,

@@ -86,7 +86,7 @@ object HotbarHUDRenderer {
         }
 
         // Draw hotbar items
-        for (slotNum in 0 until VANILLA_ROW_LENGTH) {
+        for (slotNum in 0..<VANILLA_ROW_LENGTH) {
             val x = scaledWidthHalved - HUD_SECTION_SELECTION.x + (slotNum * SLOT_HOTBAR_SIZE.width) + (HUD_SEGMENTED_HOTBAR_GAP * (slotNum / 3))
             val y = scaledHeight - SLOT_HOTBAR_SIZE.height
             val itemStack = inventory.getStack(slotNum)

@@ -23,7 +23,7 @@ class DeepPocketsBookRecipe(category: CraftingRecipeCategory) : SpecialCraftingR
         var shells = 0
         var books = 0
 
-        for (i in 0 until craftingInventory.size()) {
+        for (i in 0..<craftingInventory.size()) {
             val itemStack = craftingInventory.getStack(i)
             if (SHULKER_SHELL.test(itemStack)) {
                 shells++
