@@ -61,7 +61,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerDu
      * hands. First, the offhand is attached to the utility belt, rather than a
      * vanilla slot. Second, a player can swap the main hand and the offhand.
      */
-    @SuppressWarnings({ "unchecked", "MixinExtrasOperationParameters" })
+    @SuppressWarnings("unchecked")
     @WrapOperation(
         method = "equipStack",
         at = @At(
@@ -102,7 +102,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerDu
      */
     @Inject(method = "equipStack", at = @At(value = "RETURN"))
     private void inventorioOnEquipArmor(EquipmentSlot slot, ItemStack stack, CallbackInfo ci) {
-        if (slot.getType() == EquipmentSlot.Type.ARMOR) MixinHelpers
+        if (slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) MixinHelpers
             .withScreenHandler((PlayerEntity) (Object) this, InventorioScreenHandler::updateDeepPocketsCapacity);
     }
 

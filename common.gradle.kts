@@ -227,7 +227,14 @@ tasks.named<ProcessResources>("processResources") {
 
     // See https://minecraft.wiki/w/Pack_format#List_of_resource_pack_formats
     val resourcePackVersions = mapOf(
-        12006 to 32,
+        12006 to "32",
+        12101 to "34",
+        12103 to "42",
+        12104 to "46",
+        12105 to "55",
+        12106 to "63",
+        12108 to "64",
+        12110 to "69.0",
     )
 
     val replaceProperties = mapOf(

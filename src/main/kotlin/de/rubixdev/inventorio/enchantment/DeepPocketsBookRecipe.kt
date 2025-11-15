@@ -2,7 +2,6 @@ package de.rubixdev.inventorio.enchantment
 
 import de.rubixdev.inventorio.config.GlobalSettings
 import net.minecraft.enchantment.EnchantmentLevelEntry
-import net.minecraft.inventory.RecipeInputInventory
 import net.minecraft.item.EnchantedBookItem
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
@@ -15,16 +14,33 @@ import net.minecraft.registry.RegistryWrapper
 import net.minecraft.util.collection.DefaultedList
 import net.minecraft.world.World
 
+//#if MC >= 12101
+import de.rubixdev.inventorio.pack.InventorioResources
+import de.rubixdev.inventorio.util.getEnchantment
+import net.minecraft.recipe.input.CraftingRecipeInput
+//#else
+//$$ import net.minecraft.inventory.RecipeInputInventory
+//#endif
+
 class DeepPocketsBookRecipe(category: CraftingRecipeCategory) : SpecialCraftingRecipe(category) {
-    override fun matches(craftingInventory: RecipeInputInventory, world: World): Boolean {
+    //#if MC >= 12101
+    override fun matches(input: CraftingRecipeInput, world: World): Boolean {
+    //#else
+    //$$ override fun matches(input: RecipeInputInventory, world: World): Boolean {
+    //#endif
         if (!GlobalSettings.deepPocketsBookCraft.boolValue) {
             return false
         }
         var shells = 0
         var books = 0
 
-        for (i in 0..<craftingInventory.size()) {
-            val itemStack = craftingInventory.getStack(i)
+        //#if MC >= 12101
+        for (i in 0..<input.size) {
+            val itemStack = input.getStackInSlot(i)
+        //#else
+        //$$ for (i in 0..<input.size()) {
+        //$$     val itemStack = input.getStack(i)
+        //#endif
             if (SHULKER_SHELL.test(itemStack)) {
                 shells++
             }
@@ -35,8 +51,13 @@ class DeepPocketsBookRecipe(category: CraftingRecipeCategory) : SpecialCraftingR
         return shells == 2 && books == 1
     }
 
-    override fun craft(inventory: RecipeInputInventory, lookup: RegistryWrapper.WrapperLookup): ItemStack =
-        EnchantedBookItem.forEnchantment(EnchantmentLevelEntry(DeepPocketsEnchantment, 1))
+    //#if MC >= 12101
+    override fun craft(input: CraftingRecipeInput, lookup: RegistryWrapper.WrapperLookup): ItemStack =
+        EnchantedBookItem.forEnchantment(EnchantmentLevelEntry(lookup.getEnchantment(InventorioResources.DEEP_POCKETS), 1))
+    //#else
+    //$$ override fun craft(inventory: RecipeInputInventory, lookup: RegistryWrapper.WrapperLookup): ItemStack =
+    //$$     EnchantedBookItem.forEnchantment(EnchantmentLevelEntry(DeepPocketsEnchantment, 1))
+    //#endif
 
     override fun fits(width: Int, height: Int): Boolean {
         return width >= 2 && height >= 2
@@ -55,7 +76,11 @@ class DeepPocketsBookRecipe(category: CraftingRecipeCategory) : SpecialCraftingR
     }
 
     override fun getResult(lookup: RegistryWrapper.WrapperLookup): ItemStack = when (GlobalSettings.deepPocketsBookCraft.boolValue) {
-        true -> EnchantedBookItem.forEnchantment(EnchantmentLevelEntry(DeepPocketsEnchantment, 1))
+        //#if MC >= 12101
+        true -> EnchantedBookItem.forEnchantment(EnchantmentLevelEntry(lookup.getEnchantment(InventorioResources.DEEP_POCKETS), 1))
+        //#else
+        //$$ true -> EnchantedBookItem.forEnchantment(EnchantmentLevelEntry(DeepPocketsEnchantment, 1))
+        //#endif
         false -> ItemStack.EMPTY
     }
 

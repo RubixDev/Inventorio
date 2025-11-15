@@ -1,0 +1,2 @@
+net.neoforged.neoforge.common.ItemAbilities net.neoforged.neoforge.common.ToolActions
+net.neoforged.neoforge.common.ItemAbility net.neoforged.neoforge.common.ToolAction

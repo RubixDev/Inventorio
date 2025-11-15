@@ -35,7 +35,12 @@ import net.minecraft.util.Identifier
 
 @Environment(EnvType.CLIENT)
 class InventorioScreen(handler: InventorioScreenHandler, internal val inventory: PlayerInventory) :
-    AbstractInventoryScreen<InventorioScreenHandler>(handler, inventory, Text.translatable("container.crafting")), RecipeBookProvider {
+    AbstractInventoryScreen<InventorioScreenHandler>(
+        handler,
+        inventory,
+        Text.translatable("container.crafting"),
+    ),
+    RecipeBookProvider {
     private var mouseX = 0f
     private var mouseY = 0f
     private val recipeBook = RecipeBookWidget()

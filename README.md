@@ -15,7 +15,7 @@ This is my vision of the Inventory Update for Minecraft. Of
 [features](#Features) I believe are in line with Mojang's vision and could be
 potentially added to the game.
 
-Available for both Fabric and (Neo)Forge.
+Available for both Fabric and NeoForge.
 
 ## Installation
 

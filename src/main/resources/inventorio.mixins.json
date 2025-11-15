@@ -6,9 +6,11 @@
   "plugin": "de.rubixdev.inventorio.InventorioMixinPlugin",
   "mixins": [
     "ExperienceOrbEntityMixin",
+    "LifecycledResourceManagerImplMixin",
     "PlayerEntityMixin",
     "PlayerInventoryMixin",
     "PlayerManagerMixin",
+    "RegistryEntryListCodecMixin",
     "ServerPlayerEntity_ScreenHandlerSyncHandlerMixin",
     "ServerPlayNetworkHandlerMixin",
     "accessor.CraftingScreenHandlerAccessor",

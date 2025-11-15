@@ -18,14 +18,12 @@ import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.EquipmentSlot
-import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.inventory.CraftingInventory
 import net.minecraft.inventory.CraftingResultInventory
 import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
-import net.minecraft.recipe.Recipe
 import net.minecraft.recipe.RecipeEntry
 import net.minecraft.recipe.RecipeMatcher
 import net.minecraft.recipe.book.RecipeBookCategory
@@ -37,8 +35,21 @@ import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 
+//#if MC >= 12101
+import net.minecraft.recipe.CraftingRecipe
+import net.minecraft.recipe.input.CraftingRecipeInput
+//#else
+//$$ import net.minecraft.entity.mob.MobEntity
+//$$ import net.minecraft.recipe.Recipe
+//#endif
+
 class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory) :
-    AbstractRecipeScreenHandler<CraftingInventory?>(ScreenTypeProvider.INSTANCE.getScreenHandlerType(), syncId) {
+    //#if MC >= 12101
+    AbstractRecipeScreenHandler<CraftingRecipeInput, CraftingRecipe>
+    //#else
+    //$$ AbstractRecipeScreenHandler<CraftingInventory?>
+    //#endif
+    (ScreenTypeProvider.INSTANCE.getScreenHandlerType(), syncId) {
     val inventoryAddon = inventory.player.inventoryAddon!!
 
     private val craftingInput = CraftingInventory(this, 2, 2)
@@ -61,7 +72,7 @@ class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory) :
 
         // Armor
         for ((_, relativeIndex) in armorSlotsRange.withRelativeIndex())
-            addSlot(ArmorSlot(inventory, 39 - relativeIndex, 8, 8 + relativeIndex * 18, armorSlots[relativeIndex]))
+            addSlot(ArmorSlot(inventory, inventory.player, armorSlots[relativeIndex], 39 - relativeIndex, 8, 8 + relativeIndex * 18))
 
         // Main Inventory
         for ((_, relativeIndex) in mainInventoryWithoutHotbarRange.withRelativeIndex())
@@ -123,7 +134,7 @@ class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory) :
         val stackDynamic = sourceSlot.stack
         // fix for #191, issue where "Origins: Classes" copies the crafting result stack each time it is accessed,
         // so we have to pass the same `stackDynamic` to the inner function instead of re-getting it
-        val stackStatic = quickMoveInner(sourceIndex, stackDynamic)
+        val stackStatic = quickMoveInner(player, sourceIndex, stackDynamic)
         if (stackStatic.isNotEmpty) {
             if (stackDynamic.isEmpty) {
                 sourceSlot.stack = ItemStack.EMPTY
@@ -140,14 +151,19 @@ class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory) :
         return stackStatic
     }
 
-    private fun quickMoveInner(sourceIndex: Int, stackDynamic: ItemStack): ItemStack {
+    private fun quickMoveInner(player: PlayerEntity, sourceIndex: Int, stackDynamic: ItemStack): ItemStack {
         val stackStatic = stackDynamic.copy()
         val availableDeepPocketsRange = getAvailableDeepPocketsRange()
 
         // First, we want to transfer armor or tools into their respective slots from any other section
         if (sourceIndex in mainInventoryRange || sourceIndex in availableDeepPocketsRange) {
             // Try to send an item into the armor slots
-            if (MobEntity.getPreferredEquipmentSlot(stackStatic).type == EquipmentSlot.Type.ARMOR
+            if (
+                //#if MC >= 12101
+                player.getPreferredEquipmentSlot(stackStatic).type == EquipmentSlot.Type.HUMANOID_ARMOR
+                //#else
+                //$$ MobEntity.getPreferredEquipmentSlot(stackStatic).type == EquipmentSlot.Type.ARMOR
+                //#endif
                 && insertItem(stackDynamic, armorSlotsRange)
             ) {
                 updateDeepPocketsCapacity()
@@ -335,15 +351,25 @@ class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory) :
         craftingInput.clear()
     }
 
-    override fun matches(recipe: RecipeEntry<out Recipe<CraftingInventory?>>?): Boolean {
-        if (recipe != null) {
-            return recipe.value.matches(craftingInput, inventory.player.world)
-        }
-        return false
-    }
+    //#if MC >= 12101
+    override fun matches(recipe: RecipeEntry<CraftingRecipe>?): Boolean =
+        recipe?.value?.matches(craftingInput.createRecipeInput(), inventory.player.world) ?: false
+    //#else
+    //$$ override fun matches(recipe: RecipeEntry<out Recipe<CraftingInventory?>>?): Boolean =
+    //$$     recipe?.value?.matches(craftingInput, inventory.player.world) ?: false
+    //#endif
 
     override fun onContentChanged(inventory: Inventory) {
-        CraftingScreenHandlerAccessor.updateTheResult(this, this.inventory.player.world, this.inventory.player, this.craftingInput, this.craftingResult)
+        CraftingScreenHandlerAccessor.updateTheResult(
+            this,
+            this.inventory.player.world,
+            this.inventory.player,
+            this.craftingInput,
+            this.craftingResult,
+            //#if MC >= 12101
+            null,
+            //#endif
+        )
     }
 
     override fun onClosed(player: PlayerEntity) {

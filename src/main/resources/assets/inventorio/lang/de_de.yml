@@ -67,7 +67,7 @@ inventorio:
       swapped_hands.disabled.tooltip: |-
         Weisen Sie die Hotbar der Zweithand
         und den Utensiliengürtel der Haupthand zu.
-        §cAktuell deaktiviert in den gloabalen Einstellungen!
+        §cAktuell deaktiviert in den globalen Einstellungen!
 
     global:
       title: Inventorio (Globale Einstellungen)
@@ -117,9 +117,10 @@ inventorio:
       tool_belt_mode.NO_VANILLA_SLOTS_ONLY: §dNur modifizierte Slots
       tool_belt_mode.DISABLED: §cNein
 
-      deep_pockets_in_trades: '"Tiefe Taschen" Buch bei Villager Handel'
+      deep_pockets_in_trades: '"Tiefe Taschen" bei Villager Handel'
       deep_pockets_book_craft: '"Tiefe Taschen" Buch Handwerksrezept'
-      deep_pockets_in_random_selection: '"Tiefe Taschen" Buch in zufälliger Auswahl'
+      deep_pockets_in_random_selection: '"Tiefe Taschen" Buch in zufälliger Beute'
+      deep_pockets_in_enchanting_table: '"Tiefe Taschen" im Zaubertisch'
 
       sync_restart_prompt: |-
         §eWarnung!

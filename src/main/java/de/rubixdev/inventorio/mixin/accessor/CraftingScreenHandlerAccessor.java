@@ -9,6 +9,12 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
+//#if MC >= 12101
+import net.minecraft.recipe.CraftingRecipe;
+import net.minecraft.recipe.RecipeEntry;
+import org.jetbrains.annotations.Nullable;
+//#endif
+
 @Mixin(CraftingScreenHandler.class)
 public interface CraftingScreenHandlerAccessor {
     @Invoker("updateResult")
@@ -18,5 +24,8 @@ public interface CraftingScreenHandlerAccessor {
         PlayerEntity player,
         RecipeInputInventory craftingInventory,
         CraftingResultInventory resultInventory
+        //#if MC >= 12101
+        , @Nullable RecipeEntry<CraftingRecipe> recipe
+        //#endif
     ) {}
 }

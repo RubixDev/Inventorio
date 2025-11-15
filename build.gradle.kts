@@ -31,13 +31,19 @@ preprocess {
     // which we would need for strict mappings to work
     strictExtraMappings = false
 
-    val mc12006_common = createNode("1.20.6-common", 1_20_06, "yarn")
     val mc12006_fabric = createNode("1.20.6-fabric", 1_20_06, "yarn")
     val mc12006_neoforge = createNode("1.20.6-neoforge", 1_20_06, "yarn")
 
+    val mc12101_common = createNode("1.21.1-common", 1_21_01, "yarn")
+    val mc12101_fabric = createNode("1.21.1-fabric", 1_21_01, "yarn")
+    val mc12101_neoforge = createNode("1.21.1-neoforge", 1_21_01, "yarn")
+
     // 1.20.6
-    mc12006_common.link(mc12006_fabric, null)
-    mc12006_common.link(mc12006_neoforge, file("versions/mappings-common-neoforge.txt"))
+    mc12101_fabric.link(mc12006_fabric, null)
+    mc12101_neoforge.link(mc12006_neoforge, file("versions/mappings-neoforge-1.21.1-1.20.6.txt"))
+    // 1.21.1
+    mc12101_common.link(mc12101_fabric, null)
+    mc12101_common.link(mc12101_neoforge, file("versions/mappings-common-neoforge.txt"))
 }
 
 spotless {
@@ -46,12 +52,13 @@ spotless {
             "ktlint_standard_no-wildcard-imports" to "disabled",
             "ktlint_standard_blank-line-before-declaration" to "disabled",
             "ktlint_standard_spacing-between-declarations-with-annotations" to "disabled",
+            "ktlint_standard_no-empty-file" to "disabled",
             // these are replaced by the custom rule set
             "ktlint_standard_import-ordering" to "disabled",
             "ktlint_standard_comment-spacing" to "disabled",
             "ktlint_standard_chain-wrapping" to "disabled",
         ),
-    ).customRuleSets(listOf("com.github.RubixDev:ktlint-ruleset-mc-preprocessor:2c5a3687bb"))
+    ).customRuleSets(listOf("com.github.RubixDev:ktlint-ruleset-mc-preprocessor:54d81aa9b4"))
 
     kotlinGradle {
         target("**/*.gradle.kts")

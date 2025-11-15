@@ -86,7 +86,7 @@ object PlayerSettings : AbstractSettings() {
 
     @JvmField
     val centeredScreen = SettingsEntryBoolean(
-        false,
+        true,
         "CenteredScreen",
         "inventorio.settings.player.centered_screen",
         "inventorio.settings.player.centered_screen.tooltip",

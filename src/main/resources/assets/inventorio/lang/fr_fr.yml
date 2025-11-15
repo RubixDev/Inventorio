@@ -120,6 +120,7 @@ inventorio:
       deep_pockets_in_trades: Livre enchanté Grandes Poches dans les échanges avec villageois
       deep_pockets_book_craft: Recette de fabrication pour un Livre enchanté Grandes Poches
       deep_pockets_in_random_selection: Livre enchanté Grandes Poches dans une sélection aléatoire
+      # deep_pockets_in_enchanting_table: Deep Pockets in Enchanting Table
 
       sync_restart_prompt: |-
         §eAttention!

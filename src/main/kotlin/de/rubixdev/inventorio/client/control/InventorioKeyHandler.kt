@@ -23,8 +23,8 @@ object InventorioKeyHandler {
         // Some items which can be used as a tool (e.g. trident) would REPLACE a selected hotbar stack upon use.
         // But something like VANILLA axes and shovels work fine.
         // Some modded stuff breaks it tho.
-        var useMainHand = canRMBItem(player.getStackInHand(Hand.MAIN_HAND))
-        var useOffHand = canRMBItem(player.getStackInHand(Hand.OFF_HAND))
+        var useMainHand = canRMBItem(player.getStackInHand(Hand.MAIN_HAND), player.registryManager)
+        var useOffHand = canRMBItem(player.getStackInHand(Hand.OFF_HAND), player.registryManager)
 
         if (PlayerInventoryAddon.Client.triesToUseUtility) {
             useMainHand = false
