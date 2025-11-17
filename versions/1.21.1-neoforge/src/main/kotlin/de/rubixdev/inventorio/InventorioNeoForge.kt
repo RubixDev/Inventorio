@@ -51,6 +51,8 @@ class InventorioNeoForge {
         DeepPocketsBookRecipe.SERIALIZER = serializer
         recipeRegistry.register("deep_pockets_book") { -> serializer }
 
+        InventorioResources.register()
+
         initToolBelt()
         KotlinModLoadingContext.get().getKEventBus().register(InventorioNetworkingNeoForge)
 

@@ -38,6 +38,7 @@ open class InventorioFabric : ModInitializer {
             "deep_pockets_book".id,
             SpecialRecipeSerializer { category -> DeepPocketsBookRecipe(category) },
         )
+        InventorioResources.register()
 
         initToolBelt()
 

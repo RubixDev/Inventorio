@@ -15,7 +15,7 @@ import net.minecraft.util.collection.DefaultedList
 import net.minecraft.world.World
 
 //#if MC >= 12101
-import de.rubixdev.inventorio.pack.InventorioResources
+import de.rubixdev.inventorio.InventorioResources
 import de.rubixdev.inventorio.util.getEnchantment
 import net.minecraft.recipe.input.CraftingRecipeInput
 //#else

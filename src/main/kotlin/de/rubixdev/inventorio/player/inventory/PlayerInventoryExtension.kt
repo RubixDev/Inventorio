@@ -18,7 +18,7 @@ import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.collection.DefaultedList
 
 //#if MC >= 12101
-import de.rubixdev.inventorio.pack.InventorioResources
+import de.rubixdev.inventorio.InventorioResources
 import net.minecraft.component.EnchantmentEffectComponentTypes
 //#else
 //$$ import de.rubixdev.inventorio.enchantment.DeepPocketsEnchantment

@@ -31,7 +31,8 @@
         "fabricloader": ">=${fabric_loader_version}",
         "fabric-api": "*",
         "fabric-language-kotlin": ">=${fabric_kotlin_version}",
-        "cloth-config": "*"
+        "cloth-config": "*",
+        "yarrp": "*"
     },
     "suggests": {
         "modmenu": "*"

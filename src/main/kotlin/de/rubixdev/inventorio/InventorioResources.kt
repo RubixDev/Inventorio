@@ -1,12 +1,17 @@
-package de.rubixdev.inventorio.pack
+package de.rubixdev.inventorio
 
 import de.rubixdev.inventorio.config.GlobalSettings
 import de.rubixdev.inventorio.enchantment.DeepPocketsBookRecipe
 import de.rubixdev.inventorio.util.MOD_ID
 import de.rubixdev.inventorio.util.PlatformApi
 import de.rubixdev.inventorio.util.id
+import de.rubixdev.yarrp.api.DummyHolderSet
+import de.rubixdev.yarrp.api.PackPosition
+import de.rubixdev.yarrp.api.RuntimeResourcePack
+import de.rubixdev.yarrp.api.YarrpCallbacks
 import net.minecraft.advancement.criterion.TickCriterion
 import net.minecraft.data.server.recipe.ComplexRecipeJsonBuilder
+import net.minecraft.resource.ResourceType
 import net.minecraft.text.Text
 
 //#if MC >= 12101
@@ -19,6 +24,10 @@ import net.minecraft.registry.tag.ItemTags
 //#endif
 
 object InventorioResources {
+    fun register() {
+        YarrpCallbacks.register(PackPosition.AFTER_VANILLA, ResourceType.SERVER_DATA) { add(PACK) }
+    }
+
     @JvmField
     val PACK = RuntimeResourcePack(
         RuntimeResourcePack.createInfo(
@@ -33,7 +42,7 @@ object InventorioResources {
     val DEEP_POCKETS: RegistryKey<Enchantment> = PACK.addEnchantment(
         "deep_pockets".id,
         Enchantment.definition(
-            DummyRegistryEntryList(ItemTags.LEG_ARMOR_ENCHANTABLE),
+            DummyHolderSet(ItemTags.LEG_ARMOR_ENCHANTABLE),
             5,
             DEEP_POCKETS_MAX_LEVEL,
             Enchantment.leveledCost(5, 8),
@@ -50,17 +59,17 @@ object InventorioResources {
             && GlobalSettings.deepPocketsInRandomSelection.boolValue
             && GlobalSettings.deepPocketsInEnchantingTable.boolValue
         ) {
-            PACK.addItemsToTag(EnchantmentTags.NON_TREASURE) { add(DEEP_POCKETS) }
+            PACK.addTag(EnchantmentTags.NON_TREASURE) { add(DEEP_POCKETS) }
         } else {
             if (GlobalSettings.deepPocketsInTrades.boolValue) {
-                PACK.addItemsToTag(EnchantmentTags.TRADEABLE) { add(DEEP_POCKETS) }
-                PACK.addItemsToTag(EnchantmentTags.ON_TRADED_EQUIPMENT) { add(DEEP_POCKETS) }
+                PACK.addTag(EnchantmentTags.TRADEABLE) { add(DEEP_POCKETS) }
+                PACK.addTag(EnchantmentTags.ON_TRADED_EQUIPMENT) { add(DEEP_POCKETS) }
             }
             if (GlobalSettings.deepPocketsInRandomSelection.boolValue) {
-                PACK.addItemsToTag(EnchantmentTags.ON_RANDOM_LOOT) { add(DEEP_POCKETS) }
+                PACK.addTag(EnchantmentTags.ON_RANDOM_LOOT) { add(DEEP_POCKETS) }
             }
             if (GlobalSettings.deepPocketsInEnchantingTable.boolValue) {
-                PACK.addItemsToTag(EnchantmentTags.IN_ENCHANTING_TABLE) { add(DEEP_POCKETS) }
+                PACK.addTag(EnchantmentTags.IN_ENCHANTING_TABLE) { add(DEEP_POCKETS) }
             }
         }
         //#endif
