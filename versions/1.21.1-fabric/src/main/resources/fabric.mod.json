@@ -40,7 +40,12 @@
     "custom": {
         "modmenu": {
             "links": {
-                "modmenu.discord": "https://discord.gg/Etq9EBYU7Q"
+                "modmenu.discord": "https://discord.gg/Etq9EBYU7Q",
+                "modmenu.kofi": "https://ko-fi.com/rubixdev",
+                "modmenu.paypal": "https://paypal.me/RubixDev42",
+                "modmenu.github_releases": "https://github.com/RubixDev/Inventorio/releases",
+                "modmenu.modrinth": "https://modrinth.com/project/inventorio",
+                "modmenu.curseforge": "https://www.curseforge.com/minecraft/mc-mods/inventorio"
             }
         }
     }
