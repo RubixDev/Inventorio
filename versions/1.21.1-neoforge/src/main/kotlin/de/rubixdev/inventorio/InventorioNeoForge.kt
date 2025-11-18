@@ -18,6 +18,7 @@ import net.minecraft.registry.Registries
 import net.neoforged.api.distmarker.Dist
 import net.neoforged.fml.ModLoadingContext
 import net.neoforged.fml.common.Mod
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent
 import net.neoforged.fml.loading.FMLEnvironment
 import net.neoforged.fml.loading.FMLPaths
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory
@@ -36,32 +37,33 @@ class InventorioNeoForge {
     private val neoForgeModIntegrations = listOf(ClumpsIntegration, CuriosIntegration)
 
     init {
+        val modBus = KotlinModLoadingContext.get().getKEventBus()
+
         ScreenTypeProvider.INSTANCE = ScreenTypeProviderNeoForge
         InventorioNetworking.INSTANCE = InventorioNetworkingNeoForge
 
         //#if MC < 12101
         //$$ val enchantmentRegistry = DeferredRegister.create(Registries.ENCHANTMENT, MOD_ID)
-        //$$ enchantmentRegistry.register(KotlinModLoadingContext.get().getKEventBus())
+        //$$ enchantmentRegistry.register(modBus)
         //$$ enchantmentRegistry.register("deep_pockets") { -> DeepPocketsEnchantment }
         //#endif
 
         val recipeRegistry = DeferredRegister.create(Registries.RECIPE_SERIALIZER, MOD_ID)
-        recipeRegistry.register(KotlinModLoadingContext.get().getKEventBus())
+        recipeRegistry.register(modBus)
         val serializer = SpecialRecipeSerializer { category -> DeepPocketsBookRecipe(category) }
         DeepPocketsBookRecipe.SERIALIZER = serializer
         recipeRegistry.register("deep_pockets_book") { -> serializer }
 
-        InventorioResources.register()
-
         initToolBelt()
-        KotlinModLoadingContext.get().getKEventBus().register(InventorioNetworkingNeoForge)
+        modBus.register(InventorioNetworkingNeoForge)
+        modBus.addListener<FMLCommonSetupEvent> { InventorioResources.register() }
 
         if (FMLEnvironment.dist == Dist.CLIENT) {
             NeoForge.EVENT_BUS.register(NeoForgeEvents)
-            KotlinModLoadingContext.get().getKEventBus().register(NeoForgeModEvents)
+            modBus.register(NeoForgeModEvents)
             MinecraftClient.getInstance().options.allKeys += InventorioControls.keys
             PlayerSettings.load(FMLPaths.CONFIGDIR.get().resolve("inventorio.json").toFile())
-            KotlinModLoadingContext.get().getKEventBus().register(ScreenTypeProviderNeoForge)
+            modBus.register(ScreenTypeProviderNeoForge)
             ModLoadingContext.get().registerExtensionPoint(IConfigScreenFactory::class.java) {
                 IConfigScreenFactory { _, parent -> PlayerSettingsScreen.get(parent) }
             }
