@@ -25,9 +25,16 @@ import top.theillusivec4.curios.common.inventory.CurioSlot
 import top.theillusivec4.curios.common.network.server.SPacketPage
 import top.theillusivec4.curios.common.network.server.SPacketQuickMove
 
+//#if MC >= 12101
+import net.minecraft.screen.slot.SlotActionType
+//#endif
+
 /**
- * This is basically a re-implementation of https://github.com/TheIllusiveC4/Curios/blob/ab847aab52213afd87c78f48ad9382212846f1b7/neoforge/src/main/java/top/theillusivec4/curios/common/inventory/container/CuriosContainer.java
+ * This is basically a re-implementation of `CuriosContainer`
  * with adjustments for the Inventorio screen (and in Kotlin).
+ *
+ * - [1.20.6](https://github.com/TheIllusiveC4/Curios/blob/ab847aab52213afd87c78f48ad9382212846f1b7/neoforge/src/main/java/top/theillusivec4/curios/common/inventory/container/CuriosContainer.java)
+ * - [1.21.1](https://github.com/TheIllusiveC4/Curios/blob/6b122c8a7e2b514fd94197459ade11f19a0bfb09/neoforge/src/main/java/top/theillusivec4/curios/common/inventory/container/CuriosContainer.java)
  */
 @Suppress("FunctionName")
 class InventorioScreenHandlerMixinHelper(
@@ -53,6 +60,7 @@ class InventorioScreenHandlerMixinHelper(
         private set
     var panelWidth = 0
 
+    @Suppress("CAST_NEVER_SUCCEEDS")
     private val thiss = thiz as ScreenHandlerAccessor
 
     fun InventorioScreenHandler.`curios$init`() {
@@ -121,6 +129,9 @@ class InventorioScreenHandlerMixinHelper(
                                     (currentColumn - 1) * 18 + 7 - panelWidth,
                                     yOffset + (currentRow - 1) * 18,
                                     stacksHandler.renders,
+                                    //#if MC >= 12101
+                                    stacksHandler.activeStates,
+                                    //#endif
                                     stacksHandler.canToggleRendering(),
                                     isCosmetic,
                                     isCosmetic,
@@ -151,6 +162,9 @@ class InventorioScreenHandlerMixinHelper(
                                         (currentColumn - 1) * 18 + 7 - panelWidth,
                                         yOffset + (currentRow - 1) * 18,
                                         stacksHandler.renders,
+                                        //#if MC >= 12101
+                                        stacksHandler.activeStates,
+                                        //#endif
                                         stacksHandler.canToggleRendering(),
                                         isCosmetic,
                                         isCosmetic,
@@ -269,6 +283,23 @@ class InventorioScreenHandlerMixinHelper(
             }
         }
     }
+
+    //#if MC >= 12101
+    // i guess we don't actually need this, cos the inventorio screen can't be accessed from creative anyway,
+    // but it shouldn't hurt to have either
+    fun InventorioScreenHandler.`curios$onSlotClick`(slotId: Int, clickType: SlotActionType, player: PlayerEntity, ci: CallbackInfo) {
+        val slot = getSlot(slotId)
+
+        if (slot is CurioSlot && clickType == SlotActionType.CLONE && player.isInCreativeMode && cursorStack.isEmpty) {
+            val stack = slot.slotExtension.getCloneStack(slot.slotContext, slot.stack)
+
+            if (stack.isNotEmpty) {
+                cursorStack = stack.copyWithCount(stack.maxCount)
+            }
+            ci.cancel()
+        }
+    }
+    //#endif
 
     private data class ProxySlot(val page: Int, val slot: Slot)
 }

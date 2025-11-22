@@ -62,7 +62,7 @@ public abstract class InventorioScreenMixin extends AbstractInventoryScreen<Inve
 
     @Inject(method = "drawMouseoverTooltip", at = @At("RETURN"))
     private void curios$drawMouseoverTooltip(DrawContext context, int x, int y, CallbackInfo ci) {
-        helper.drawMouseoverTooltip(context, x, y);
+        helper.curios$drawMouseoverTooltip(thiz, context, x, y);
     }
 
     @Inject(method = "drawBackground", at = @At("RETURN"))

@@ -22,9 +22,10 @@ import top.theillusivec4.curios.api.type.ICuriosMenu;
 
 import java.util.List;
 
-//#if MC > 12101
+//#if MC >= 12101
 import net.minecraft.recipe.CraftingRecipe;
 import net.minecraft.recipe.input.CraftingRecipeInput;
+import net.minecraft.screen.slot.SlotActionType;
 //#else
 //$$ import net.minecraft.inventory.CraftingInventory;
 //#endif
@@ -34,7 +35,7 @@ import net.minecraft.recipe.input.CraftingRecipeInput;
                                               // target classes
 @Restriction(require = { @Condition("curios"), @Condition(type = Condition.Type.TESTER, tester = CuriosTester.class) })
 @Mixin(InventorioScreenHandler.class)
-//#if MC > 12101
+//#if MC >= 12101
 public abstract class InventorioScreenHandlerMixin extends AbstractRecipeScreenHandler<CraftingRecipeInput, CraftingRecipe>
 //#else
 //$$ public abstract class InventorioScreenHandlerMixin extends AbstractRecipeScreenHandler<CraftingInventory>
@@ -45,7 +46,7 @@ public abstract class InventorioScreenHandlerMixin extends AbstractRecipeScreenH
     }
 
     @SuppressWarnings("DataFlowIssue")
-    //#if MC > 12101
+    //#if MC >= 12101
     @Unique private final InventorioScreenHandler thiz = (InventorioScreenHandler) (AbstractRecipeScreenHandler<?, ?>) this;
     //#else
     //$$ @Unique private final InventorioScreenHandler thiz = (InventorioScreenHandler) (AbstractRecipeScreenHandler<?>) this;
@@ -121,4 +122,11 @@ public abstract class InventorioScreenHandlerMixin extends AbstractRecipeScreenH
     private void curios$quickMove(PlayerEntity player, int sourceIndex, CallbackInfoReturnable<ItemStack> cir) {
         helper.curios$quickMove(thiz, player, sourceIndex, cir);
     }
+
+    //#if MC >= 12101
+    @Inject(method = "onSlotClick", at = @At("HEAD"), cancellable = true)
+    private void curios$onSlotClick(int slotIndex, int clickDelta, SlotActionType actionType, PlayerEntity player, CallbackInfo ci) {
+        helper.curios$onSlotClick(thiz, slotIndex, actionType, player, ci);
+    }
+    //#endif
 }

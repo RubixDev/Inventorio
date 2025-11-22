@@ -16,9 +16,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import top.theillusivec4.curios.common.inventory.CurioSlot;
 
+//#if MC >= 12101
+import de.rubixdev.inventorio.client.ui.InventorioScreen;
+import net.minecraft.item.ItemStack;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+//#endif
+
 @Restriction(require = { @Condition("curios"), @Condition(type = Condition.Type.TESTER, tester = CuriosTester.class) })
 @Mixin(HandledScreen.class)
-public class HandledScreenMixin extends Screen {
+public abstract class HandledScreenMixin extends Screen {
     protected HandledScreenMixin(Text title) {
         super(title);
     }
@@ -45,4 +51,23 @@ public class HandledScreenMixin extends Screen {
             ci.cancel();
         }
     }
+
+    //#if MC >= 12101
+    @ModifyVariable(
+        method = "drawSlot",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/screen/ScreenHandler;getCursorStack()Lnet/minecraft/item/ItemStack;",
+            ordinal = 0
+        )
+    )
+    protected ItemStack drawSlot(ItemStack itemstack, DrawContext drawContext, Slot slot) {
+        // noinspection ConstantValue
+        if ((Screen) this instanceof InventorioScreen && slot instanceof CurioSlot curioSlot) {
+            return curioSlot.getSlotExtension().getDisplayStack(curioSlot.getSlotContext(), itemstack);
+        }
+
+        return itemstack;
+    }
+    //#endif
 }

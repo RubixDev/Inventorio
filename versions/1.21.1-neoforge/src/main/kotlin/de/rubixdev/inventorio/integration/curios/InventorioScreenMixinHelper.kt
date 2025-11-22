@@ -23,9 +23,20 @@ import top.theillusivec4.curios.common.inventory.CurioSlot
 import top.theillusivec4.curios.common.network.client.CPacketPage
 import top.theillusivec4.curios.common.network.client.CPacketToggleRender
 
+//#if MC >= 12101
+import de.rubixdev.inventorio.util.isNotEmpty
+import net.minecraft.client.gui.screen.Screen
+import net.minecraft.item.tooltip.TooltipType
+import net.minecraft.util.Formatting
+import net.neoforged.neoforge.client.ClientTooltipFlag
+//#endif
+
 /**
- * This is basically a re-implementation of https://github.com/TheIllusiveC4/Curios/blob/ab847aab52213afd87c78f48ad9382212846f1b7/neoforge/src/main/java/top/theillusivec4/curios/client/gui/CuriosScreen.java
+ * This is basically a re-implementation of `CuriosScreen`
  * for the Inventorio screen (and in Kotlin).
+ *
+ * - [1.20.6](https://github.com/TheIllusiveC4/Curios/blob/ab847aab52213afd87c78f48ad9382212846f1b7/neoforge/src/main/java/top/theillusivec4/curios/client/gui/CuriosScreen.java)
+ * - [1.21.1](https://github.com/TheIllusiveC4/Curios/blob/6b122c8a7e2b514fd94197459ade11f19a0bfb09/neoforge/src/main/java/top/theillusivec4/curios/client/gui/CuriosScreen.java)
  */
 @Suppress("FunctionName")
 class InventorioScreenMixinHelper(
@@ -167,18 +178,66 @@ class InventorioScreenMixinHelper(
         val clientPlayer = MinecraftClient.getInstance().player
         if (!isRenderButtonHovered && clientPlayer != null && clientPlayer.playerScreenHandler.cursorStack.isEmpty) {
             slotUnderMouse?.let { slot ->
-                if (slot is CurioSlot && !slot.hasStack()) {
-                    context.drawTooltip(thiss.textRenderer, Text.literal(slot.slotName), mouseX, mouseY)
+                //#if MC >= 12101
+                if (slot is CurioSlot && minecraft != null) {
+                    val stack = slot.slotExtension.getDisplayStack(slot.slotContext, slot.stack)
+
+                    if (stack.isEmpty) {
+                        val slotTooltips =
+                            slot.slotExtension.getSlotTooltip(
+                                slot.slotContext,
+                                ClientTooltipFlag.of(
+                                    when (minecraft.options.advancedItemTooltips) {
+                                        true -> TooltipType.ADVANCED
+                                        false -> TooltipType.BASIC
+                                    },
+                                ),
+                            ).toMutableList()
+
+                        if (slotTooltips.isEmpty()) {
+                            slotTooltips.add(Text.literal(slot.slotName))
+                        }
+
+                        if (!slot.isActiveState) {
+                            slotTooltips.add(Text.translatable("curios.tooltip.inactive").formatted(Formatting.RED))
+                        }
+
+                        context.drawTooltip(thiss.textRenderer, slotTooltips, mouseX, mouseY)
+                    }
                 }
+                //#else
+                //$$ if (slot is CurioSlot && !slot.hasStack()) {
+                //$$     context.drawTooltip(thiss.textRenderer, Text.literal(slot.slotName), mouseX, mouseY)
+                //$$ }
+                //#endif
             }
         }
     }
 
-    fun drawMouseoverTooltip(context: DrawContext, x: Int, y: Int) {
+    fun InventorioScreen.`curios$drawMouseoverTooltip`(context: DrawContext, x: Int, y: Int) {
         thiss.client?.player?.let { player ->
             if (player.playerScreenHandler.cursorStack.isEmpty && isRenderButtonHovered) {
                 context.drawTooltip(thiss.textRenderer, Text.translatable("gui.curios.toggle"), x, y)
             }
+            //#if MC >= 12101
+            else slotUnderMouse?.let { slot ->
+                var stack = slot.stack
+
+                if (slot is CurioSlot) {
+                    stack = slot.slotExtension.getDisplayStack(slot.slotContext, stack)
+                }
+
+                if (stack.isNotEmpty) {
+                    val components = Screen.getTooltipFromItem(minecraft, stack)
+
+                    if (slot is CurioSlot && slot.isActiveState) {
+                        components.add(Text.empty())
+                        components.add(Text.translatable("curios.tooltip.inactive").formatted(Formatting.RED))
+                    }
+                    context.drawTooltip(thiss.textRenderer, components, stack.tooltipData, x, y)
+                }
+            }
+            //#endif
         }
     }
 
