@@ -408,6 +408,11 @@ class InventorioScreenHandler(syncId: Int, val inventory: PlayerInventory) :
         return RecipeBookCategory.CRAFTING
     }
 
+    // required for curios integration because curios does the same
+    override fun getSlot(index: Int): Slot {
+        return super.getSlot(index.coerceIn(slots.indices))
+    }
+
     @Suppress("RedundantOverride") // this makes it easier to add functionality for mod compat via mixin
     override fun setStackInSlot(slot: Int, revision: Int, stack: ItemStack?) {
         super.setStackInSlot(slot, revision, stack)
