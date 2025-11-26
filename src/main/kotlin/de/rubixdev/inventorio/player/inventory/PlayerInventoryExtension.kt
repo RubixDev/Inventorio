@@ -1,7 +1,6 @@
 package de.rubixdev.inventorio.player.inventory
 
 import de.rubixdev.inventorio.config.GlobalSettings
-import de.rubixdev.inventorio.enchantment.DeepPocketsEnchantment
 import de.rubixdev.inventorio.mixin.accessor.SimpleInventoryAccessor
 import de.rubixdev.inventorio.packet.InventorioNetworking
 import de.rubixdev.inventorio.player.PlayerInventoryAddon
@@ -17,6 +16,13 @@ import net.minecraft.item.ItemStack
 import net.minecraft.registry.tag.TagKey
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.collection.DefaultedList
+
+//#if MC >= 12101
+import de.rubixdev.inventorio.InventorioResources
+import net.minecraft.component.EnchantmentEffectComponentTypes
+//#else
+//$$ import de.rubixdev.inventorio.enchantment.DeepPocketsEnchantment
+//#endif
 
 abstract class PlayerInventoryExtension protected constructor(val player: PlayerEntity) :
     SimpleInventory(DEEP_POCKETS_MAX_SIZE + UTILITY_BELT_FULL_SIZE + PlayerInventoryAddon.toolBeltTemplates.size) {
@@ -75,7 +81,12 @@ abstract class PlayerInventoryExtension protected constructor(val player: Player
 
     fun dropAll() {
         for ((index, itemStack) in stacks.withIndex()) {
-            if (!EnchantmentHelper.hasVanishingCurse(itemStack)) {
+            //#if MC >= 12101
+            val shouldDrop = !EnchantmentHelper.hasAnyEnchantmentsWith(itemStack, EnchantmentEffectComponentTypes.PREVENT_EQUIPMENT_DROP)
+            //#else
+            //$$ val shouldDrop = !EnchantmentHelper.hasVanishingCurse(itemStack)
+            //#endif
+            if (shouldDrop) {
                 player.dropItem(itemStack, true, false)
             }
             stacks[index] = ItemStack.EMPTY
@@ -178,9 +189,13 @@ abstract class PlayerInventoryExtension protected constructor(val player: Player
         return getAvailableDeepPocketsRange().last + 1..INVENTORY_ADDON_DEEP_POCKETS_RANGE.last
     }
 
-    fun getDeepPocketsRowCount(): Int {
-        return EnchantmentHelper.getEquipmentLevel(DeepPocketsEnchantment, player).coerceIn(0, 3)
-    }
+    //#if MC >= 12101
+    fun getDeepPocketsRowCount(): Int =
+        EnchantmentHelper.getEquipmentLevel(player.getEnchantment(InventorioResources.DEEP_POCKETS), player).coerceIn(0, 3)
+    //#else
+    //$$ fun getDeepPocketsRowCount(): Int =
+    //$$     EnchantmentHelper.getEquipmentLevel(DeepPocketsEnchantment, player).coerceIn(0, 3)
+    //#endif
 
     protected fun areItemsSimilar(stack1: ItemStack, stack2: ItemStack): Boolean {
         return stack1.isNotEmpty && ItemStack.areItemsAndComponentsEqual(stack1, stack2)

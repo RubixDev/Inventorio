@@ -82,6 +82,14 @@ object GlobalSettings : AbstractSettings() {
         "inventorio.settings.global.deep_pockets_in_random_selection",
     )
 
+    //#if MC >= 12101
+    @JvmField val deepPocketsInEnchantingTable = SettingsEntryBoolean(
+        true,
+        "DeepPocketsInEnchantingTable",
+        "inventorio.settings.global.deep_pockets_in_enchanting_table",
+    )
+    //#endif
+
     init {
         entries = listOf(
             expandedEnderChest,
@@ -100,13 +108,15 @@ object GlobalSettings : AbstractSettings() {
             deepPocketsBookCraft,
             deepPocketsInTrades,
             deepPocketsInRandomSelection,
+            //#if MC >= 12101
+            deepPocketsInEnchantingTable,
+            //#endif
         )
         load(File(".").resolve("config/inventorio_shared.json"))
     }
 
-    @Suppress("unused") // used in non-common package
     fun syncFromServer(newSettingsJson: JsonObject) {
-        if (GlobalSettings.anyChanges(newSettingsJson)) {
+        if (anyChanges(newSettingsJson)) {
             MinecraftClient.getInstance()?.setScreen(GlobalSettingsSyncPrompt.get(newSettingsJson))
         }
     }

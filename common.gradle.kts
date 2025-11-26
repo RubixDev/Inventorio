@@ -86,6 +86,7 @@ class Props {
     val neoforge_version_range: String by prop
 
     val cloth_version: String by prop
+    val yarrp_version: String by prop
     val clumps_version: String by prop
 
     val early_loading_screen_version: String by prop
@@ -135,11 +136,12 @@ repositories {
 
     // Mixin
     maven("https://repo.spongepowered.org/maven/")
+    // Conditional Mixin
+    maven("https://maven.fallenbreath.me/releases")
     // Cloth Config
     maven("https://maven.shedaniel.me/")
-    // Conditional Mixin
+    // YARRP
     maven("https://jitpack.io")
-    maven("https://maven.fallenbreath.me/releases")
     // Other mods from Modrinth
     maven("https://api.modrinth.com/maven")
 }
@@ -171,6 +173,7 @@ dependencies {
                 exclude(group = "net.fabricmc.fabric-api")
             }
             modCompileOnly("me.fallenbreath:conditional-mixin-common:${props.conditional_mixin_version}")
+            modCompileOnly("com.github.RubixDev.YARRP:yarrp-mc${props.minecraft_version}-fabric:${props.yarrp_version}")
         }
         Loader.FABRIC -> {
             modLocalRuntime("maven.modrinth:early-loading-screen:${props.early_loading_screen_version}")
@@ -185,6 +188,7 @@ dependencies {
             modImplementation("me.shedaniel.cloth:cloth-config-fabric:${props.cloth_version}") {
                 exclude(group = "net.fabricmc.fabric-api")
             }
+            modImplementation("com.github.RubixDev.YARRP:yarrp-mc${props.minecraft_version}-fabric:${props.yarrp_version}")
 
             // other mods we do integration with
             // - Trinkets
@@ -200,6 +204,7 @@ dependencies {
                 exclude(group = "net.neoforged.fancymodloader", module = "loader")
             }
             modImplementation("me.shedaniel.cloth:cloth-config-neoforge:${props.cloth_version}")
+            modImplementation("com.github.RubixDev.YARRP:yarrp-mc${props.minecraft_version}-neoforge:${props.yarrp_version}")
 
             // other mods we do integration with
             // - Curios API
@@ -227,7 +232,14 @@ tasks.named<ProcessResources>("processResources") {
 
     // See https://minecraft.wiki/w/Pack_format#List_of_resource_pack_formats
     val resourcePackVersions = mapOf(
-        12006 to 32,
+        12006 to "32",
+        12101 to "34",
+        12103 to "42",
+        12104 to "46",
+        12105 to "55",
+        12106 to "63",
+        12108 to "64",
+        12110 to "69.0",
     )
 
     val replaceProperties = mapOf(

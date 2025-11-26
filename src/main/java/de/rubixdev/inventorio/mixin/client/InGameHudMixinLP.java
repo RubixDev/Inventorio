@@ -14,6 +14,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+//#if MC >= 12101
+import net.minecraft.client.render.RenderTickCounter;
+//#endif
+
 @Mixin(value = InGameHud.class, priority = 99)
 @Environment(EnvType.CLIENT)
 public class InGameHudMixinLP {
@@ -22,12 +26,28 @@ public class InGameHudMixinLP {
      * is selected.
      */
     @Inject(method = "renderHotbar", at = @At(value = "HEAD"), cancellable = true, require = 0)
-    private void inventorioRenderSegmentedHotbar(DrawContext context, float tickDelta, CallbackInfo ci) {
+    private void inventorioRenderSegmentedHotbar(/* #if <- hack around formatter */
+        DrawContext context,
+        //#if MC >= 12101
+        RenderTickCounter tickCounter,
+        //#else
+        //$$ float tickDelta,
+        //#endif
+        CallbackInfo ci
+    ) {
         if (HotbarHUDRenderer.INSTANCE.renderSegmentedHotbar(context)) ci.cancel();
     }
 
     @Inject(method = "renderHotbar", at = @At(value = "RETURN"), require = 0)
-    private void inventorioRenderFunctionOnlySelector(DrawContext context, float tickDelta, CallbackInfo ci) {
+    private void inventorioRenderFunctionOnlySelector(/* #if <- hack around formatter */
+        DrawContext context,
+        //#if MC >= 12101
+        RenderTickCounter tickCounter,
+        //#else
+        //$$ float tickDelta,
+        //#endif
+        CallbackInfo ci
+    ) {
         HotbarHUDRenderer.INSTANCE.renderFunctionOnlySelector(context);
     }
 

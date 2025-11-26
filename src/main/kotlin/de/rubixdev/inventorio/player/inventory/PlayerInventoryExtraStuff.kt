@@ -18,6 +18,10 @@ import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
 import net.minecraft.item.ToolItem
 
+//#if MC >= 12101
+import de.rubixdev.inventorio.util.getEnchantment
+//#endif
+
 abstract class PlayerInventoryExtraStuff protected constructor(player: PlayerEntity) : PlayerInventoryHandFeatures(player) {
     /**
      * Returns the block breaking speed based on the return of [getMostPreferredTool]
@@ -46,7 +50,12 @@ abstract class PlayerInventoryExtraStuff protected constructor(player: PlayerEnt
         }
         val isGlass = block.block is StainedGlassBlock || block.isOf(Blocks.GLASS)
         if (isGlass) {
-            return toolBelt.firstOrNull { Enchantments.SILK_TOUCH.getLevelOn(it) > 0 } ?: ItemStack.EMPTY
+            //#if MC >= 12101
+            val silkTouch = player.getEnchantment(Enchantments.SILK_TOUCH)
+            //#else
+            //$$ val silkTouch = Enchantments.SILK_TOUCH
+            //#endif
+            return toolBelt.firstOrNull { silkTouch.getLevelOn(it) > 0 } ?: ItemStack.EMPTY
         }
         return ItemStack.EMPTY
     }

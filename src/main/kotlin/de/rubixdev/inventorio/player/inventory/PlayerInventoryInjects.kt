@@ -9,11 +9,20 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.item.RangedWeaponItem
 
+//#if MC >= 12101
+import de.rubixdev.inventorio.util.getEnchantment
+//#endif
+
 abstract class PlayerInventoryInjects protected constructor(player: PlayerEntity) : PlayerInventoryExtension(player) {
     fun mendToolBeltItems(xpAmount: Int): Int {
         var xpLeft = xpAmount
         for (itemStack in toolBelt) {
-            if (itemStack.isNotEmpty && itemStack.isDamaged && Enchantments.MENDING.getLevelOn(itemStack) > 0) {
+            //#if MC >= 12101
+            val mending = player.getEnchantment(Enchantments.MENDING)
+            //#else
+            //$$ val mending = Enchantments.MENDING
+            //#endif
+            if (itemStack.isNotEmpty && itemStack.isDamaged && mending.getLevelOn(itemStack) > 0) {
                 val damageRestored = min(xpAmount * 2, itemStack.damage)
                 itemStack.damage -= damageRestored
                 xpLeft = xpAmount - damageRestored / 2

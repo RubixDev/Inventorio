@@ -12,6 +12,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+//#if MC >= 12101
+import net.minecraft.entity.Entity;
+//#endif
+
 @Mixin(PlayerManager.class)
 public class PlayerManagerMixin {
     /**
@@ -34,9 +38,12 @@ public class PlayerManagerMixin {
      * server to the client
      */
     @Inject(method = "respawnPlayer", at = @At(value = "RETURN"), require = 0)
-    private void inventorioSetPlayerSettings(
+    private void inventorioSetPlayerSettings(/* #if <- hack around formatter */
         ServerPlayerEntity oldPlayer,
         boolean alive,
+        //#if MC >= 12101
+        Entity.RemovalReason removalReason,
+        //#endif
         CallbackInfoReturnable<ServerPlayerEntity> cir
     ) {
         ServerPlayerEntity newPlayer = cir.getReturnValue();

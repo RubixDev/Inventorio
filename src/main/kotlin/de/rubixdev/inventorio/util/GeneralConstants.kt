@@ -2,6 +2,8 @@
 
 package de.rubixdev.inventorio.util
 
+const val MOD_ID = "inventorio"
+
 const val DEEP_POCKETS_MAX_LEVEL = 3
 const val VANILLA_ROW_LENGTH = 9
 
